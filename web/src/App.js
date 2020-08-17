@@ -1,24 +1,17 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React from "react";
+import RenderPlayers from "./components/renderPlayers";
+import PlayerContext from "./components/providers/PlayerContext";
+import { playersPlaceHolder } from "./components/providers/databasePlaceholder";
 
 function App() {
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <PlayerContext.Provider value={playersPlaceHolder}>
+        Roll Me in
+        {/* <Guild /> */}
+        <RenderPlayers />
+        {/* <AddPlayer players={currentPlayers} setPlayers={setCurrentPlayers} /> */}
+      </PlayerContext.Provider>
     </div>
   );
 }

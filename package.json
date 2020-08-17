@@ -4,8 +4,15 @@
   "description": "Web and React native app to choose who is going on the mythic + dungeon from a guild or custom list",
   "main": "index.js",
   "scripts": {
+    "start": "cd web && yarn start",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Scott Key <scottdkey@gmail.com> (www.github.com/scottdkey)",
-  "license": "MIT"
+  "license": "MIT",
+  "dependencies": {
+    "axios": "^0.19.2",
+    "formik": "^2.1.5",
+    "react-awesome-modal": "^2.0.5",
+    "react-dropdown-select": "^4.4.2"
+  }
 }
