@@ -33,7 +33,7 @@ export const playersPlaceHolder = [
     tank: false,
     dps: true,
     healer: true,
-    locked: true,
+    locked: false,
     in: true,
     id: 4,
   },
@@ -42,7 +42,8 @@ export const playersPlaceHolder = [
     tank: true,
     dps: true,
     healer: true,
-    locked: true,
+    locked: false,
+    in: true,
     id: 5,
   },
   {

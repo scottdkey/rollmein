@@ -8,9 +8,9 @@ const PlayerFormModal = ({
   updatePlayer,
   addPlayer,
   arrayLength,
+  removePlayer,
 }) => {
   const [name, setName] = useState(player ? player.name : "");
-  const [locked, setLocked] = useState(player ? player.locked : false);
 
   const [tank, setTank] = useState(player ? player.tank : false);
 
@@ -20,7 +20,6 @@ const PlayerFormModal = ({
 
   const clearForm = () => {
     setName("");
-    setLocked(false);
     setTank(false);
     setDps(false);
     setHealer(false);
@@ -32,7 +31,8 @@ const PlayerFormModal = ({
       tank,
       dps,
       healer,
-      locked,
+      locked: false,
+      in: true,
     };
     if (player) {
       const updatedPlayer = { ...p, id: player.id };
@@ -53,12 +53,6 @@ const PlayerFormModal = ({
           type="text"
           value={name}
           onChange={(e) => setName(e.target.value)}
-        />
-        <label>Locked?</label>
-        <input
-          type="checkbox"
-          checked={locked}
-          onChange={() => setLocked(!locked)}
         />
         <label>Tank:</label>
         <input
@@ -87,6 +81,15 @@ const PlayerFormModal = ({
             setHealer(!healer);
           }}
         />
+        {player ? (
+          <button
+            onClick={() => {
+              removePlayer(player.id);
+            }}
+          >
+            remove
+          </button>
+        ) : null}
         <button onClick={close}>Close</button>
         <input type="submit" />
       </form>
