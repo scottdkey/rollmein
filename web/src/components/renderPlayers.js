@@ -1,17 +1,15 @@
-import React, { useContext, useState } from "react";
+import React, { useState } from "react";
 import PlayerCard from "./playerCard";
-import PlayerContext from "./providers/PlayerContext";
 import PlayerFormModal from "./playerFormModal";
 
-const RenderPlayers = () => {
-  const playerContext = useContext(PlayerContext);
-  const [players, setPlayers] = useState(playerContext);
+const RenderPlayers = ({ players, setPlayers }) => {
   const [modalOpen, setModalOpen] = useState(false);
 
   const removePlayer = (id) => {
     const newPlayers = players.filter((player) => player.id !== id);
     setPlayers(newPlayers);
   };
+
   const updatePlayer = (updatedPlayer) => {
     const updatedPlayers = players.map((p) => {
       if (p.id === updatedPlayer.id) {
@@ -40,7 +38,6 @@ const RenderPlayers = () => {
         updatePlayer={updatePlayer}
       />
     ));
-
   return (
     <>
       <Players />
