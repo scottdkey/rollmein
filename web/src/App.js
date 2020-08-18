@@ -7,13 +7,20 @@ import ValidGroup from "./components/ValidGroup";
 function App() {
   const playerContext = useContext(PlayerContext);
   const [players, setPlayers] = useState(playerContext);
-  const [valid, setValid] = useState(false);
+  const [valid, setValid] = useState(true);
+  const [inGroup, setInGroup] = useState([]);
   return (
     <div className="App">
       <PlayerContext.Provider value={playersPlaceHolder}>
         <h1>Roll Me in</h1>
         <RenderPlayers players={players} setPlayers={setPlayers} />
-        <ValidGroup players={players} valid={valid} setValid={setValid} />
+        <ValidGroup
+          inGroup={inGroup}
+          setInGroup={setInGroup}
+          players={players}
+          valid={valid}
+          setValid={setValid}
+        />
       </PlayerContext.Provider>
     </div>
   );

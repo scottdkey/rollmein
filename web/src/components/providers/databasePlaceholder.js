@@ -7,7 +7,7 @@ export const playersPlaceHolder = [
     dps: true,
     healer: true,
     locked: false,
-    in: false,
+    in: true,
     id: 1,
   },
   {
@@ -16,7 +16,7 @@ export const playersPlaceHolder = [
     dps: true,
     healer: true,
     locked: false,
-    in: false,
+    in: true,
     id: 2,
   },
   {
@@ -25,7 +25,7 @@ export const playersPlaceHolder = [
     dps: true,
     healer: false,
     locked: false,
-    in: false,
+    in: true,
     id: 3,
   },
   {
@@ -34,7 +34,7 @@ export const playersPlaceHolder = [
     dps: true,
     healer: true,
     locked: true,
-    in: false,
+    in: true,
     id: 4,
   },
   {
@@ -42,7 +42,7 @@ export const playersPlaceHolder = [
     tank: true,
     dps: true,
     healer: true,
-    locked: false,
+    locked: true,
     id: 5,
   },
   {
@@ -51,7 +51,7 @@ export const playersPlaceHolder = [
     dps: true,
     healer: false,
     locked: false,
-    in: false,
+    in: true,
     id: 6,
   },
   {
@@ -60,7 +60,7 @@ export const playersPlaceHolder = [
     dps: true,
     healer: true,
     locked: true,
-    in: false,
+    in: true,
     id: 7,
   },
   {
