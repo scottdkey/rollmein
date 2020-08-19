@@ -4,10 +4,7 @@ import PlayerContext from "./components/providers/PlayerContext";
 import { playersPlaceHolder } from "./components/providers/databasePlaceholder";
 import ValidGroup from "./components/ValidGroup";
 import GroupRoll from "./components/groupRoll";
-import {
-  validCheck,
-  createInGroup,
-} from "./components/providers/BaseAppLogic";
+import { validCheck, createInGroup } from "./components/providers/BaseAppLogic";
 
 function App() {
   const playerContext = useContext(PlayerContext);

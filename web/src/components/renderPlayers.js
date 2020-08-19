@@ -32,6 +32,7 @@ const RenderPlayers = ({ players, setPlayers }) => {
   const Players = () =>
     players.map((player) => (
       <PlayerCard
+        style={styles.card}
         key={player.id}
         player={player}
         removePlayer={removePlayer}
@@ -39,7 +40,7 @@ const RenderPlayers = ({ players, setPlayers }) => {
       />
     ));
   return (
-    <>
+    <div style={styles.cardContainer}>
       <Players />
       <br />
       <br />
@@ -51,7 +52,19 @@ const RenderPlayers = ({ players, setPlayers }) => {
         arrayLength={players.length}
       />
       <button onClick={() => setModalOpen(!modalOpen)}>Add Player</button>
-    </>
+    </div>
   );
 };
 export default RenderPlayers;
+
+const styles = {
+  card: {
+    width: "30%",
+    height: "100%",
+  },
+  cardContainer: {
+    display: "flex",
+    flexDirection: "row",
+    flexWrap: "wrap",
+  },
+};

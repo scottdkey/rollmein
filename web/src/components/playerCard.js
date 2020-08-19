@@ -3,7 +3,7 @@ import PlayerFormModal from "./playerFormModal";
 import { images } from "./providers/images";
 import { roleLogo } from "./providers/imageStyles";
 
-const PlayerCard = ({ player, removePlayer, updatePlayer }) => {
+const PlayerCard = ({ player, removePlayer, updatePlayer, style }) => {
   const [modalOpen, setModalOpen] = useState(false);
 
   const [tank, setTank] = useState(player.tank);
@@ -24,13 +24,12 @@ const PlayerCard = ({ player, removePlayer, updatePlayer }) => {
   const updateRoles = (roleToUpdate, newBoolean) => {
     const updatedPlayer = { ...player };
     updatedPlayer[roleToUpdate] = newBoolean;
-    console.log(updatedPlayer);
     updatePlayer(updatedPlayer);
   };
 
   useEffect(() => {}, [player]);
   return (
-    <div>
+    <div style={style}>
       <div> Name: {player.name}</div>
       <label>Locked?</label>
       <input type="checkbox" checked={player.locked} onChange={handleLocked} />
@@ -65,17 +64,12 @@ const PlayerCard = ({ player, removePlayer, updatePlayer }) => {
           }}
         />
       </div>
-      <button onClick={() => setModalOpen(true)}> Edit</button>
-
-      <PlayerFormModal
-        player={player}
-        visible={modalOpen}
-        close={() => setModalOpen(false)}
-        updatePlayer={updatePlayer}
-        removePlayer={removePlayer}
-      />
     </div>
   );
 };
 
 export default PlayerCard;
+
+const styles = {
+  card: { width: "100%" },
+};
