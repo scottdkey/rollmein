@@ -16,7 +16,12 @@ app.keys = [process.env.SECRETKEY];
 
 app.use(bodyParser());
 
+//routes
+app.use(indexRoutes.routes());
+
+
 const server = app.listen(PORT, () => {
+  console.log(process.env.NODE_ENV);
   console.log(`Server is listening on port: ${PORT}`);
 });
 

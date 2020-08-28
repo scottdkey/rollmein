@@ -15,6 +15,7 @@
     "@fortawesome/react-fontawesome": "^0.1.11",
     "axios": "^0.19.2",
     "formik": "^2.1.5",
+    "knex": "^0.21.5",
     "react-awesome-modal": "^2.0.5",
     "react-dropdown-select": "^4.4.2"
   }
