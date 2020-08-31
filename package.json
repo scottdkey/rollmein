@@ -5,18 +5,15 @@
   "main": "index.js",
   "scripts": {
     "start": "cd web && yarn start",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start-api": "cd api && npm run watch",
+    "install-dev": "run-s install-api-deps install-web-deps",
+    "install-api-deps": "cd api && npm i",
+    "install-web-deps": "cd web && npm i"
   },
   "author": "Scott Key <scottdkey@gmail.com> (www.github.com/scottdkey)",
   "license": "MIT",
-  "dependencies": {
-    "@fortawesome/fontawesome-svg-core": "^1.2.30",
-    "@fortawesome/free-solid-svg-icons": "^5.14.0",
-    "@fortawesome/react-fontawesome": "^0.1.11",
-    "axios": "^0.19.2",
-    "formik": "^2.1.5",
-    "knex": "^0.21.5",
-    "react-awesome-modal": "^2.0.5",
-    "react-dropdown-select": "^4.4.2"
+  "dependencies": {},
+  "devDependencies": {
+    "npm-run-all": "^4.1.5"
   }
 }

@@ -1,9 +1,9 @@
-const BASE_PATH = `${__dirname}/src/server/db`;
 require("dotenv").config();
+const BASE_PATH = `${__dirname}/src/db`;
 
 const { PGPORT, PGHOST, PGPASS, PGUSER } = process.env;
 
-function BaseConfig(envDB) {
+function BaseConfig(environemntDB) {
   return {
     client: "pg",
     migrations: {
@@ -12,12 +12,11 @@ function BaseConfig(envDB) {
     seeds: {
       directory: `${BASE_PATH}/seeds`,
     },
-    connection: `postgres://${PGUSER}:${PGPASS}@${PGHOST}:${PGPORT}/${envDB}`,
+    connection: `postgres://${PGUSER}:${PGPASS}@${PGHOST}:${PGPORT}/${environemntDB}`,
   };
 }
 
 module.exports = {
   test: BaseConfig("rollmein_test"),
   development: BaseConfig("rollmein_dev"),
-  production: BaseConfig("rollmein_api")
 };

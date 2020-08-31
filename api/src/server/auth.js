@@ -2,7 +2,7 @@ const passport = require("koa-passport");
 const LocalStrategy = require("passport-local").Strategy;
 const bcrypt = require("bcryptjs");
 
-const knex = require("./db/connection");
+const knex = require("../db/connection");
 
 const options = {};
 
