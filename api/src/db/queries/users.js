@@ -12,7 +12,11 @@ function addUser(user) {
     })
     .returning("*");
 }
+function getAllUsers() {
+  return knex("users").select("*");
+}
 
 module.exports = {
   addUser,
+  getAllUsers,
 };

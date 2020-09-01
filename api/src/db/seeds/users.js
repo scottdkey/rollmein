@@ -5,13 +5,15 @@ exports.seed = (knex) => {
   const hash = bcrypt.hashSync("password", salt);
   return knex("users")
     .del()
-    .then(() => {
-      return knex("users")
+    .then(async () => {
+      const res = await knex("users")
         .insert({
           email: "test@test.com",
           username: "testing",
           password: hash,
         })
         .returning("*");
+      process.env.SEED_UID = res.data.id;
+      return res.data;
     });
 };

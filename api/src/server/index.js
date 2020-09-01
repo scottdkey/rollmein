@@ -7,17 +7,13 @@ const passport = require("koa-passport");
 
 const indexRoutes = require("../routes/index");
 const playerRoutes = require("../routes/players");
+const userRoutes = require("../routes/users");
 
-const app = new Koa();
 const PORT = process.env.PORT || 1337;
 
-app.use(bodyParser());
-
-app.use(indexRoutes.routes());
-app.use(playerRoutes.routes());
-
-const server = app.listen(PORT, () => {
-  console.log(`Server ready on port: ${PORT}`);
-});
-
-module.exports = server;
+module.exports = new Koa()
+  .use(bodyParser())
+  .use(indexRoutes.routes())
+  .use(playerRoutes.routes())
+  .use(userRoutes.routes())
+  .listen(PORT, () => console.log(`Rollmein API running on PORT: ${PORT}`));
