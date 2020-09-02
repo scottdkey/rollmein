@@ -1,10 +1,13 @@
 const passport = require("koa-passport");
 const LocalStrategy = require("passport-local").Strategy;
+const FacebookStrategy = require("passport-facebook");
 const bcrypt = require("bcryptjs");
 
 const knex = require("../db/connection");
 
-const options = {};
+const options = { usernameField: "email" };
+
+const { FB_CLINET_ID, FB_CLIENT_SECRET } = process.env;
 
 passport.serializeUser((user, done) => {
   done(null, user.id);
@@ -23,9 +26,9 @@ passport.deserializeUser((id, done) => {
 });
 
 passport.use(
-  new LocalStrategy(options, (email, password, done) => {
+  new LocalStrategy(options, (username, password, done) => {
     knex("users")
-      .where({ email })
+      .where({ email: username })
       .first()
       .then((user) => {
         if (!user) return done(null, false);
@@ -39,6 +42,22 @@ passport.use(
         return done(err);
       });
   })
+);
+
+passport.use(
+  new FacebookStrategy({
+    clientID: FB_CLINET_ID,
+    clientSecret: FB_CLIENT_SECRET,
+    callbackURL: "http://www.rollmein.com/auth/facebook/callback",
+  }),
+  function (accessToken, refreshToken, profile, done) {
+    User.findOrCreate(function (err, user) {
+      if (err) {
+        return done(err);
+      }
+      done(null, user);
+    });
+  }
 );
 
 function comparePass(userPassword, databasePassword) {
