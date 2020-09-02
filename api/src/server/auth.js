@@ -44,21 +44,6 @@ passport.use(
   })
 );
 
-passport.use(
-  new FacebookStrategy({
-    clientID: FB_CLINET_ID,
-    clientSecret: FB_CLIENT_SECRET,
-    callbackURL: "http://www.rollmein.com/auth/facebook/callback",
-  }),
-  function (accessToken, refreshToken, profile, done) {
-    User.findOrCreate(function (err, user) {
-      if (err) {
-        return done(err);
-      }
-      done(null, user);
-    });
-  }
-);
 
 function comparePass(userPassword, databasePassword) {
   return bcrypt.compareSync(userPassword, databasePassword);

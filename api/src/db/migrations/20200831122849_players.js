@@ -7,14 +7,9 @@ exports.up = function (knex) {
     table.boolean("healer").defaultTo(false);
     table.boolean("locked").defaultTo(false);
     table.boolean("in").defaultTo(false);
-    table
-      .uuid("user_id")
-      .unsigned()
-      .references("users.id")
-      .onUpdate("CASCADE")
-      .onDelete("CASCADE");
-    table.timestamp("created_at").defaultTo(knex.fn.now());
-    table.timestamp("updated_at").defaultTo(knex.fn.now());
+    table.uuid("user_id").unsigned().references("users.id").onDelete("CASCADE");
+    table.timestamp("createdAt").defaultTo(knex.fn.now());
+    table.timestamp("updatedAt").defaultTo(knex.fn.now());
   });
 };
 

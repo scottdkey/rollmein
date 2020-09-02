@@ -1,6 +1,8 @@
-const { SEED_UID } = process.env;
 
-exports.seed = function (knex) {
+
+exports.seed = async(knex) => {
+  const res = await knex('users')
+  const SEED_UID = res[0].id
   return knex("players")
     .del()
     .then(() => {

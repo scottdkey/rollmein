@@ -13,7 +13,7 @@ exports.seed = (knex) => {
           password: hash,
         })
         .returning("*");
-      process.env.SEED_UID = res.data.id;
-      return res.data;
+
+      process.env.SEED_UID = res[0].id;
     });
 };
