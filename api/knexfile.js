@@ -1,22 +1,37 @@
 require("dotenv").config();
-const BASE_PATH = `${__dirname}/src/db`;
+const BASE_PATH = `./src/db`;
 
-const { PGPORT, PGHOST, PGPASS, PGUSER } = process.env;
+const {
+  PGPORT,
+  PGHOST,
+  PGPASS,
+  PGUSER,
+  DEV_DB,
+  TEST_DB,
+  PROD_DB,
+} = process.env;
 
 function BaseConfig(environemntDB) {
   return {
     client: "pg",
     migrations: {
-      directory: `${BASE_PATH}/migrations`,
+      directory: `./src/db/migrations`,
     },
     seeds: {
-      directory: `${BASE_PATH}/seeds`,
+      directory: `./src/db/seeds`,
     },
-    connection: `postgres://${PGUSER}:${PGPASS}@${PGHOST}:${PGPORT}/${environemntDB}`,
+    connection: {
+      host: PGHOST,
+      user: PGUSER,
+      password: PGPASS,
+      database: environemntDB,
+      port: PGPORT,
+    },
   };
 }
 
 module.exports = {
-  test: BaseConfig("rollmein_test"),
-  development: BaseConfig("rollmein_dev"),
+  test: BaseConfig(TEST_DB),
+  development: BaseConfig(DEV_DB),
+  production: BaseConfig(PROD_DB),
 };

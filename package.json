@@ -4,16 +4,21 @@
   "description": "Web and React native app to choose who is going on the mythic + dungeon from a guild or custom list",
   "main": "index.js",
   "scripts": {
-    "start": "cd web && yarn start",
-    "start-api": "cd api && npm run watch",
-    "install-dev": "run-s install-api-deps install-web-deps",
-    "install-api-deps": "cd api && npm i",
-    "install-web-deps": "cd web && npm i"
+    "start": "run-p start_web start_api",
+    "start_web": "cd web && yarn start",
+    "start_api": "cd api && npm start",
+    "reset_db": "run-s setup_db seed_db",
+    "setup_db": "cd api && npm run reset_db",
+    "seed_db": "cd api && npm run seed_db",
+    "install_dev": "run-s install_api_deps install_web_deps",
+    "install_api_deps": "cd api && npm i",
+    "install_web_deps": "cd web && npm i"
   },
   "author": "Scott Key <scottdkey@gmail.com> (www.github.com/scottdkey)",
   "license": "MIT",
   "dependencies": {
-    "knex": "^0.21.5"
+    "knex": "^0.21.5",
+    "prompt-confirm": "^2.0.4"
   },
   "devDependencies": {
     "npm-run-all": "^4.1.5"

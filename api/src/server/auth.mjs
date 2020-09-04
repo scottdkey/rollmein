@@ -1,9 +1,12 @@
-const passport = require("koa-passport");
-const LocalStrategy = require("passport-local").Strategy;
-const FacebookStrategy = require("passport-facebook");
-const bcrypt = require("bcryptjs");
+import passport from "koa-passport";
+import passportLocal from "passport-local";
+import passportFB from "passport-facebook";
+import bcrypt from "bcryptjs";
 
-const knex = require("../db/connection");
+import knex from "../db/connection.mjs";
+
+const LocalStrategy = passportLocal.Strategy;
+const FacebookStrategy = passportFB.Strategy;
 
 const options = { usernameField: "email" };
 
@@ -43,7 +46,6 @@ passport.use(
       });
   })
 );
-
 
 function comparePass(userPassword, databasePassword) {
   return bcrypt.compareSync(userPassword, databasePassword);

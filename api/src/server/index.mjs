@@ -1,15 +1,16 @@
-require("dotenv").config();
+import Koa from "koa";
+import bodyParser from "koa-bodyparser";
+import session from "koa-session";
+import passport from "koa-passport";
+import RedisStore from "koa-redis";
+import dotenv from "dotenv";
 
-const Koa = require("koa");
-const bodyParser = require("koa-bodyparser");
-const session = require("koa-session");
-const passport = require("koa-passport");
-const RedisStore = require("koa-redis");
+dotenv.config();
 
-const indexRoutes = require("../routes/index");
-const playerRoutes = require("../routes/players");
-const userRoutes = require("../routes/users");
-const authRoutes = require("../routes/auth");
+import indexRoutes from "../routes/index.mjs";
+import playerRoutes from "../routes/players.mjs";
+import userRoutes from "../routes/users.mjs";
+import authRoutes from "../routes/auth.mjs";
 
 const PORT = process.env.PORT || 1337;
 const app = new Koa();
@@ -22,7 +23,7 @@ app.use(session({ store: new RedisStore() }, app));
 app.use(bodyParser());
 
 //authentication
-require("./auth");
+import "./auth.mjs";
 app.use(passport.initialize());
 app.use(passport.session());
 
@@ -37,4 +38,4 @@ const server = app.listen(PORT, () => {
   console.log(`Server listening on port: ${PORT}`);
 });
 
-module.exports = server;
+export default server;

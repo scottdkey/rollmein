@@ -1,4 +1,4 @@
-const knex = require("../connection");
+import knex from "../connection.mjs";
 
 function getAllPlayers(user_id) {
   return knex("players").where({ user_id }).select("*");
@@ -25,7 +25,7 @@ function deletePlayer(id) {
     .returning("*");
 }
 
-module.exports = {
+export default {
   getAllPlayers,
   getSinglePlayer,
   addPlayer,

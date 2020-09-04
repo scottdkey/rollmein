@@ -1,5 +1,5 @@
-const bcrypt = require("bcryptjs");
-const knex = require("../connection");
+import bcrypt from "bcryptjs";
+import knex from "../connection.mjs";
 
 function addUser(user) {
   const salt = bcrypt.genSaltSync();
@@ -16,7 +16,4 @@ function getAllUsers() {
   return knex("users").select("*");
 }
 
-module.exports = {
-  addUser,
-  getAllUsers,
-};
+export default { addUser, getAllUsers };

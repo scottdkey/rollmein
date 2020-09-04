@@ -1,4 +1,4 @@
-exports.up = function (knex) {
+const up = (knex) => {
   return knex.schema.createTable("players", (table) => {
     table.increments("id");
     table.string("name").notNullable();
@@ -12,7 +12,8 @@ exports.up = function (knex) {
     table.timestamp("updatedAt").defaultTo(knex.fn.now());
   });
 };
-
-exports.down = function (knex) {
+const down = function (knex) {
   return knex.schema.dropTable("players");
 };
+
+export default { up, down };

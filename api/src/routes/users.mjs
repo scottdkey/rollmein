@@ -1,5 +1,5 @@
-const Router = require("koa-router");
-const queries = require("../db/queries/users");
+import Router from "koa-router";
+import queries from "../db/queries/users.mjs";
 
 const router = new Router();
 const BASE_URL = `${process.env.BASE_API_URL}/users`;
@@ -16,4 +16,4 @@ router.get(`${BASE_URL}`, async (ctx) => {
   }
 });
 
-module.exports = router;
+export default router;

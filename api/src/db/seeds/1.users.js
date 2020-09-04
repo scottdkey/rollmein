@@ -1,6 +1,6 @@
 const bcrypt = require("bcryptjs");
 
-exports.seed = (knex) => {
+module.exports.seed = (knex) => {
   const salt = bcrypt.genSaltSync();
   const hash = bcrypt.hashSync("password", salt);
   return knex("users")

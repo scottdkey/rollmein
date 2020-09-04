@@ -1,7 +1,7 @@
-const Router = require("koa-router");
-const passport = require("koa-passport");
-const fs = require("fs");
-const queries = require("../db/queries/users");
+import Router from "koa-router";
+import passport from "koa-passport";
+import fs from "fs";
+import queries from "../db/queries/users.mjs";
 
 const router = new Router();
 
@@ -80,4 +80,4 @@ router.get("/logout", async (ctx) => {
   }
 });
 
-module.exports = router;
+export default router;
