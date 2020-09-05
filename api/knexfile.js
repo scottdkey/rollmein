@@ -1,5 +1,5 @@
-require("dotenv").config();
-const BASE_PATH = `./src/db`;
+import * as dotenv from "dotenv";
+dotenv.config();
 
 const {
   PGPORT,
@@ -30,7 +30,7 @@ function BaseConfig(environemntDB) {
   };
 }
 
-module.exports = {
+export default {
   test: BaseConfig(TEST_DB),
   development: BaseConfig(DEV_DB),
   production: BaseConfig(PROD_DB),

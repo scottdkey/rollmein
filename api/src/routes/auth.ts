@@ -1,7 +1,7 @@
 import Router from "koa-router";
 import passport from "koa-passport";
 import fs from "fs";
-import queries from "../db/queries/users.mjs";
+import queries from "../db/queries/users.js";
 
 const router = new Router();
 

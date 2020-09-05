@@ -1,5 +1,5 @@
 import Router from "koa-router";
-import queries from "../db/queries/users.mjs";
+import queries from "../db/queries/users.js";
 
 const router = new Router();
 const BASE_URL = `${process.env.BASE_API_URL}/users`;

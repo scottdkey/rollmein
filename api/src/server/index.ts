@@ -3,27 +3,28 @@ import bodyParser from "koa-bodyparser";
 import session from "koa-session";
 import passport from "koa-passport";
 import RedisStore from "koa-redis";
-import dotenv from "dotenv";
+import * as dotenv from "dotenv";
 
 dotenv.config();
 
-import indexRoutes from "../routes/index.mjs";
-import playerRoutes from "../routes/players.mjs";
-import userRoutes from "../routes/users.mjs";
-import authRoutes from "../routes/auth.mjs";
+import indexRoutes from "../routes/index.js";
+import playerRoutes from "../routes/players.js";
+import userRoutes from "../routes/users.js";
+import authRoutes from "../routes/auth.js";
 
 const PORT = process.env.PORT || 1337;
 const app = new Koa();
 
 //sessions
-app.keys = [process.env.SECRETKEY];
-app.use(session({ store: new RedisStore() }, app));
+const store = new RedisStore();
+app.keys = [process.env.SECRETKEY!];
+app.use(session({ store: store }, app));
 
 //body parser
-app.use(bodyParser());
+app.use(bodyParser({}));
 
 //authentication
-import "./auth.mjs";
+import "./auth.js";
 app.use(passport.initialize());
 app.use(passport.session());
 
