@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import Select from "react-dropdown-select"
-
+import Select from "react-dropdown-select";
 
 const Guild = ({}) => {
   const [guildName, setGuildName] = useState("");
@@ -23,12 +22,12 @@ const Guild = ({}) => {
     }
   };
 
-  const getRealms = async() => {
-    const res = await axios.get('')
-  } 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    getGuildInfo();
+  const getRealms = async () => {
+    const res = await axios.get("");
+  };
+  const handleSubmit = () => {
+    // e.preventDefault();
+    // getGuildInfo();
   };
 
   useEffect(() => {}, []);
@@ -48,13 +47,13 @@ const Guild = ({}) => {
           placeholder="Guild Name"
         />
         <label>Realm Name:</label>
-        <Select
+        {/* <Select
           options={realmNames}
           onChange={(e) => {
             setRealmName(e.target.value);
           }}
           placeholder="Realm Name"
-        />
+        /> */}
         <input type="submit" />
       </form>
     </>

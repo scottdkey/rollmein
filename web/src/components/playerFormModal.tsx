@@ -1,6 +1,25 @@
 import React, { useState } from "react";
-import Modal from "react-awesome-modal";
+import Modal from "react-modal";
+
+import { PlayerObject } from "./providers/interfaces";
 //todo: form validation.
+
+interface PlayerFormModalInterface {
+  visible: boolean;
+  player: PlayerObject | null;
+  arrayLength: number;
+  close(): void;
+  updatePlayer(player: PlayerObject): void;
+  addPlayer(player: PlayerObject): void;
+  removePlayer(id: number): void;
+}
+type PersonForm = {
+  name: string;
+  tank: boolean;
+  dps: boolean;
+  healer: boolean;
+};
+
 const PlayerFormModal = ({
   visible,
   close,
@@ -9,7 +28,7 @@ const PlayerFormModal = ({
   addPlayer,
   arrayLength,
   removePlayer,
-}) => {
+}: PlayerFormModalInterface) => {
   const [name, setName] = useState(player ? player.name : "");
 
   const [tank, setTank] = useState(player ? player.tank : false);
@@ -24,7 +43,7 @@ const PlayerFormModal = ({
     setDps(false);
     setHealer(false);
   };
-  const handleSubmit = (e) => {
+  const handleSubmit = (e: any) => {
     e.preventDefault();
     const p = {
       name,
@@ -46,7 +65,7 @@ const PlayerFormModal = ({
   };
 
   return (
-    <Modal visible={visible} effect="fadeInUp">
+    <Modal isOpen={visible}>
       <form onSubmit={handleSubmit}>
         <label>Name:</label>
         <input

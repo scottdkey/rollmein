@@ -1,9 +1,22 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, Props } from "react";
 import PlayerFormModal from "./playerFormModal";
 import { images } from "./providers/images";
 import { roleLogo } from "./providers/imageStyles";
+import { PlayerObject } from "./providers/interfaces";
 
-const PlayerCard = ({ player, removePlayer, updatePlayer, style }) => {
+interface PlayerCardInterface {
+  player: PlayerObject;
+  style: object;
+  removePlayer(id: number): void;
+  updatePlayer(player: PlayerObject): PlayerObject;
+}
+
+const PlayerCard = ({
+  player,
+  removePlayer,
+  updatePlayer,
+  style,
+}: PlayerCardInterface) => {
   const [modalOpen, setModalOpen] = useState(false);
 
   const [tank, setTank] = useState(player.tank);
@@ -21,9 +34,11 @@ const PlayerCard = ({ player, removePlayer, updatePlayer, style }) => {
     updatePlayer(p);
   };
 
-  const updateRoles = (roleToUpdate, newBoolean) => {
-    const updatedPlayer = { ...player };
-    updatedPlayer[roleToUpdate] = newBoolean;
+  const updateRoles = (
+    role: string,
+    newBoolean: boolean,
+  ) => {
+    const updatedPlayer: PlayerObject = { ...player, [role]: newBoolean };
     updatePlayer(updatedPlayer);
   };
 

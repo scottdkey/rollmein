@@ -1,5 +1,4 @@
 require("dotenv").config();
-const BASE_PATH = `./src/db`;
 
 const {
   PGPORT,
