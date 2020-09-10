@@ -5,13 +5,12 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var koa_passport_1 = __importDefault(require("koa-passport"));
 var passport_local_1 = __importDefault(require("passport-local"));
-var passport_facebook_1 = __importDefault(require("passport-facebook"));
+// import passportFB from "passport-facebook";
 var bcryptjs_1 = __importDefault(require("bcryptjs"));
 var connection_js_1 = __importDefault(require("../db/connection.js"));
 var LocalStrategy = passport_local_1.default.Strategy;
-var FacebookStrategy = passport_facebook_1.default.Strategy;
+// const FacebookStrategy = passportFB.Strategy;
 var options = { usernameField: "email" };
-var _a = process.env, FB_CLINET_ID = _a.FB_CLINET_ID, FB_CLIENT_SECRET = _a.FB_CLIENT_SECRET;
 koa_passport_1.default.serializeUser(function (user, done) {
     done(null, user.id);
 });

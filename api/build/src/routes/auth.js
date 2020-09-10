@@ -67,24 +67,23 @@ router.get("/register", function (ctx) { return __awaiter(void 0, void 0, void 0
     });
 }); });
 router.post("/register", function (ctx, next) { return __awaiter(void 0, void 0, void 0, function () {
-    var user;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0: return [4 /*yield*/, users_js_1.default.addUser(ctx.request.body)];
             case 1:
-                user = _a.sent();
+                _a.sent();
                 return [2 /*return*/, koa_passport_1.default.authenticate("local", function (err, user, info) {
                         if (user) {
                             ctx.login(user, function (err) {
                                 if (err) {
-                                    return next(err);
+                                    return next();
                                 }
-                                return res.redirect("/auth/status");
+                                return ctx.redirect("/auth/status");
                             });
                         }
                         if (err) {
                             ctx.body = { info: info };
-                            return next(err);
+                            return next();
                         }
                         else {
                             return ctx.redirect("/login");
@@ -111,14 +110,14 @@ router.post("/login", function (ctx, next) { return __awaiter(void 0, void 0, vo
                 if (user) {
                     ctx.login(user, function (err) {
                         if (err) {
-                            return next(err);
+                            return next();
                         }
-                        return res.redirect("/auth/status");
+                        return ctx.redirect("/auth/status");
                     });
                 }
                 if (err) {
                     ctx.body = { info: info };
-                    return next(err);
+                    return next();
                 }
                 else {
                     return ctx.redirect("/login");

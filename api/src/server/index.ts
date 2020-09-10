@@ -2,7 +2,7 @@ import Koa from "koa";
 import bodyParser from "koa-bodyparser";
 import session from "koa-session";
 import passport from "koa-passport";
-import RedisStore from "koa-redis";
+import redisStore from "koa-redis";
 import * as dotenv from "dotenv";
 
 dotenv.config();
@@ -16,9 +16,8 @@ const PORT = process.env.PORT || 1337;
 const app = new Koa();
 
 //sessions
-const store = new RedisStore();
 app.keys = [process.env.SECRETKEY!];
-app.use(session({ store: store }, app));
+app.use(session({ store: redisStore({}) }, app));
 
 //body parser
 app.use(bodyParser({}));

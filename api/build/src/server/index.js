@@ -36,9 +36,8 @@ var auth_js_1 = __importDefault(require("../routes/auth.js"));
 var PORT = process.env.PORT || 1337;
 var app = new koa_1.default();
 //sessions
-var store = new koa_redis_1.default();
 app.keys = [process.env.SECRETKEY];
-app.use(koa_session_1.default({ store: store }, app));
+app.use(koa_session_1.default({ store: koa_redis_1.default({}) }, app));
 //body parser
 app.use(koa_bodyparser_1.default({}));
 //authentication

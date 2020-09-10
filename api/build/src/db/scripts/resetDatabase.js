@@ -45,9 +45,6 @@ var child_process_1 = require("child_process");
 dotenv_1.default.config();
 var NODE_ENV = process.env.NODE_ENV;
 var dbName = process.env[NODE_ENV];
-// const prompt = new Confirm(
-//   "Doing this will destroy the production database. Are you sure you would like to continue? Y/N"
-// );
 function sh(cmd) {
     return __awaiter(this, void 0, void 0, function () {
         return __generator(this, function (_a) {

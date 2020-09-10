@@ -2,8 +2,9 @@ import Router from "koa-router";
 import passport from "koa-passport";
 import fs from "fs";
 import queries from "../db/queries/users.js";
+import { Context, DefaultState } from "koa";
 
-const router = new Router();
+const router = new Router<DefaultState, Context>();
 
 router.get("/auth/status", async (ctx) => {
   if (ctx.isAuthenticated()) {
@@ -23,19 +24,19 @@ router.get("/register", async (ctx) => {
 });
 
 router.post("/register", async (ctx, next) => {
-  const user = await queries.addUser(ctx.request.body);
-  return passport.authenticate("local", (err, user, info) => {
+  await queries.addUser(ctx.request.body);
+  return passport.authenticate("local", (err: any, user, info) => {
     if (user) {
-      ctx.login(user, (err) => {
+      ctx.login(user, (err: any) => {
         if (err) {
-          return next(err);
+          return next();
         }
-        return res.redirect("/auth/status");
+        return ctx.redirect("/auth/status");
       });
     }
     if (err) {
       ctx.body = { info };
-      return next(err);
+      return next();
     } else {
       return ctx.redirect("/login");
     }
@@ -52,18 +53,18 @@ router.get("/login", async (ctx) => {
 });
 
 router.post("/login", async (ctx, next) => {
-  return passport.authenticate("local", (err, user, info) => {
+  return passport.authenticate("local", (err: any, user, info) => {
     if (user) {
-      ctx.login(user, (err) => {
+      ctx.login(user, (err: any) => {
         if (err) {
-          return next(err);
+          return next();
         }
-        return res.redirect("/auth/status");
+        return ctx.redirect("/auth/status");
       });
     }
     if (err) {
       ctx.body = { info };
-      return next(err);
+      return next();
     } else {
       return ctx.redirect("/login");
     }

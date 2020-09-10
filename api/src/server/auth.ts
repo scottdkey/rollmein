@@ -1,16 +1,16 @@
 import passport from "koa-passport";
 import passportLocal from "passport-local";
-import passportFB from "passport-facebook";
+// import passportFB from "passport-facebook";
 import bcrypt from "bcryptjs";
 
 import knex from "../db/connection.js";
 
 const LocalStrategy = passportLocal.Strategy;
-const FacebookStrategy = passportFB.Strategy;
+// const FacebookStrategy = passportFB.Strategy;
 
 const options = { usernameField: "email" };
 
-const { FB_CLINET_ID, FB_CLIENT_SECRET } = process.env;
+// const { FB_CLINET_ID, FB_CLIENT_SECRET } = process.env;
 
 interface UserInfo {
   id: number;
@@ -30,7 +30,7 @@ passport.deserializeUser((id: number, done) => {
     .then((user: UserInfo) => {
       done(null, user);
     })
-    .catch((err) => {
+    .catch((err: any) => {
       done(err, null);
     });
 });
@@ -48,7 +48,7 @@ passport.use(
           return done(null, user);
         }
       })
-      .catch((err) => {
+      .catch((err: any) => {
         return done(err);
       });
   })

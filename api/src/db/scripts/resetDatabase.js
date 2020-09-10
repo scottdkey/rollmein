@@ -5,9 +5,6 @@ import { exec } from "child_process";
 dotenv.config()
 const { NODE_ENV } = process.env;
 const dbName = process.env[NODE_ENV];
-// const prompt = new Confirm(
-//   "Doing this will destroy the production database. Are you sure you would like to continue? Y/N"
-// );
 
 async function sh(cmd) {
   return new Promise((resolve, reject) => {

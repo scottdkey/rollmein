@@ -54,7 +54,6 @@ module.exports.seed = function (knex) {
                         .returning("*")];
                 case 1:
                     res = _a.sent();
-                    process.env.SEED_UID = res[0].id;
                     return [2 /*return*/];
             }
         });
