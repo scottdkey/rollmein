@@ -13,3 +13,10 @@ export interface DPSObject {
   newDPS: Array<PlayerObject>;
   players: Array<PlayerObject>;
 }
+
+export interface UserObject {
+  id: number,
+  email: string,
+  username: string,
+  password: string,
+}

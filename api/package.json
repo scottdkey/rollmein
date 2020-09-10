@@ -32,6 +32,7 @@
     "babel-node": "0.0.1-security",
     "bcryptjs": "^2.4.3",
     "dotenv": "^8.2.0",
+    "eslint": "^7.8.1",
     "knex": "^0.21.5",
     "koa": "^2.13.0",
     "koa-bodyparser": "^4.3.0",

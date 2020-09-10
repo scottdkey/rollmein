@@ -13,12 +13,12 @@ interface PlayerFormModalInterface {
   addPlayer(player: PlayerObject): void;
   removePlayer(id: number): void;
 }
-type PersonForm = {
-  name: string;
-  tank: boolean;
-  dps: boolean;
-  healer: boolean;
-};
+// type PersonForm = {
+//   name: string;
+//   tank: boolean;
+//   dps: boolean;
+//   healer: boolean;
+// };
 
 const PlayerFormModal = ({
   visible,

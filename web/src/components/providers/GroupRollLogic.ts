@@ -34,8 +34,8 @@ const removeFromGroup = (
 };
 export const FFARoll = (currentGroup: Array<PlayerObject>) => {
   let remaining = currentGroup
-  let players: Array<PlayerObject> = []
-  for (let i = 1; i >= 5; i++) {
+  const players: Array<PlayerObject> = []
+  for (let i = 1; i <= 5; i++) {
     const pickedPlayer = rollWithLocked(remaining)
     players.push(pickedPlayer)
     remaining = removeFromGroup(pickedPlayer, remaining)

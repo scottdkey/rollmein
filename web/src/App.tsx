@@ -11,6 +11,7 @@ import {
 } from "./components/providers/BaseAppLogic";
 import { PlayerObject } from "./components/providers/interfaces";
 
+
 function App() {
   const playerContext = useContext(PlayerContext);
   const [players, setPlayers] = useState<Array<PlayerObject>>(playerContext);
