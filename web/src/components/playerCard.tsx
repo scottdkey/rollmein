@@ -1,5 +1,4 @@
-import React, { useState, useEffect, Props } from "react";
-import PlayerFormModal from "./playerFormModal";
+import React, { useState, useEffect } from "react";
 import { images } from "./providers/images";
 import { roleLogo } from "./providers/imageStyles";
 import { PlayerObject } from "./providers/interfaces";
@@ -8,7 +7,7 @@ interface PlayerCardInterface {
   player: PlayerObject;
   style: object;
   removePlayer(id: number): void;
-  updatePlayer(player: PlayerObject): PlayerObject;
+  updatePlayer(player: PlayerObject): void;
 }
 
 const PlayerCard = ({
@@ -17,10 +16,7 @@ const PlayerCard = ({
   updatePlayer,
   style,
 }: PlayerCardInterface) => {
-  const [modalOpen, setModalOpen] = useState(false);
-
   const [tank, setTank] = useState(player.tank);
-
   const [dps, setDps] = useState(player.dps);
   const [healer, setHealer] = useState(player.healer);
 
@@ -42,7 +38,7 @@ const PlayerCard = ({
     updatePlayer(updatedPlayer);
   };
 
-  useEffect(() => {}, [player]);
+  useEffect(() => { }, [player]);
   return (
     <div style={style}>
       <div> Name: {player.name}</div>
@@ -84,7 +80,3 @@ const PlayerCard = ({
 };
 
 export default PlayerCard;
-
-const styles = {
-  card: { width: "100%" },
-};

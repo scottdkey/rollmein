@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import PlayerCard from "./playerCard";
 import PlayerFormModal from "./playerFormModal";
 import { PlayerObject } from "./providers/interfaces";
+import { PlayerUpdate, NewPlayer, DeletePlayer } from "./providers/renderPlayersCalls";
 
 interface RenderPlayersInterface {
   players: Array<PlayerObject>;
@@ -11,32 +12,19 @@ interface RenderPlayersInterface {
 const RenderPlayers = ({ players, setPlayers }: RenderPlayersInterface) => {
   const [modalOpen, setModalOpen] = useState(false);
 
-  const removePlayer = (id: number): void => {
-    const newPlayers = players.filter(
-      (player: PlayerObject) => player.id !== id
-    );
-    setPlayers(newPlayers);
+  const removePlayer = (id: number) => {
+    setPlayers(DeletePlayer(id, players));
   };
 
-  const updatePlayer = (updatedPlayer: PlayerObject): PlayerObject => {
-    const updatedPlayers = players.map((p) => {
-      if (p.id === updatedPlayer.id) {
-        const player = updatedPlayer;
-        return player;
-      } else {
-        return p;
-      }
-    });
-    setPlayers(updatedPlayers);
+  const updatePlayer = (player: PlayerObject) => {
+    setPlayers(PlayerUpdate(player, players));
     setModalOpen(false);
-    return updatedPlayer;
-  };
+  }
 
-  const addPlayer = (newPlayer: PlayerObject): void => {
-    const newPlayers: Array<PlayerObject> = [...players, newPlayer];
-    setPlayers(newPlayers);
+
+  const addPlayer = (newPlayer: PlayerObject) => {
+    setPlayers(NewPlayer(newPlayer, players));
     setModalOpen(false);
-    return;
   };
 
   const Players = () =>

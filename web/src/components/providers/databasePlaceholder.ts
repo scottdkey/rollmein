@@ -1,6 +1,6 @@
-// import React from "react";
+import { PlayerObject } from "./interfaces"
 
-export const playersPlaceHolder = [
+export const playersPlaceHolder: Array<PlayerObject> = [
   {
     name: "Emily",
     tank: false,

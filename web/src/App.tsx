@@ -20,7 +20,7 @@ function App() {
 
   useEffect(() => {
     const currentPlayers: Array<PlayerObject> = players ? players : blankPlayer;
-    const currentGroup : Array<PlayerObject> = createInGroup(currentPlayers);
+    const currentGroup: Array<PlayerObject> = createInGroup(currentPlayers);
     setInGroup(currentGroup);
     setValid(validCheck(currentGroup));
   }, [players]);
