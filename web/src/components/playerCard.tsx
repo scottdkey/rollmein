@@ -1,13 +1,22 @@
 import React, { useState, useEffect } from "react";
-import PlayerFormModal from "./playerFormModal";
 import { images } from "./providers/images";
 import { roleLogo } from "./providers/imageStyles";
+import { PlayerObject } from "./providers/interfaces";
 
-const PlayerCard = ({ player, removePlayer, updatePlayer, style }) => {
-  const [modalOpen, setModalOpen] = useState(false);
+interface PlayerCardInterface {
+  player: PlayerObject;
+  style: object;
+  removePlayer(id: number): void;
+  updatePlayer(player: PlayerObject): void;
+}
 
+const PlayerCard = ({
+  player,
+  removePlayer,
+  updatePlayer,
+  style,
+}: PlayerCardInterface) => {
   const [tank, setTank] = useState(player.tank);
-
   const [dps, setDps] = useState(player.dps);
   const [healer, setHealer] = useState(player.healer);
 
@@ -21,13 +30,15 @@ const PlayerCard = ({ player, removePlayer, updatePlayer, style }) => {
     updatePlayer(p);
   };
 
-  const updateRoles = (roleToUpdate, newBoolean) => {
-    const updatedPlayer = { ...player };
-    updatedPlayer[roleToUpdate] = newBoolean;
+  const updateRoles = (
+    role: string,
+    newBoolean: boolean,
+  ) => {
+    const updatedPlayer: PlayerObject = { ...player, [role]: newBoolean };
     updatePlayer(updatedPlayer);
   };
 
-  useEffect(() => {}, [player]);
+  useEffect(() => { }, [player]);
   return (
     <div style={style}>
       <div> Name: {player.name}</div>
@@ -69,7 +80,3 @@ const PlayerCard = ({ player, removePlayer, updatePlayer, style }) => {
 };
 
 export default PlayerCard;
-
-const styles = {
-  card: { width: "100%" },
-};
