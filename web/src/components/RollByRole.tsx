@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { rollByRole } from "./utils/GroupRollLogic";
 import { PlayerObject } from "./utils/Interfaces";
-import RenderRemaining from "./RenderRemaining";
+import RenderGroup from "./RenderGroup";
 
 type RollByRoleProps = {
   valid: boolean;
@@ -40,8 +40,8 @@ const RollByRole = ({ valid, rollGroup }: RollByRoleProps) => {
             {healer.name}
           </>
         )}
-        <RenderRemaining players={dps!} header={"Dps"} />
-        <RenderRemaining players={outOfGroup!} header={"Out of Current Roll"} />
+        <RenderGroup players={dps!} header={"Dps"} />
+        <RenderGroup players={outOfGroup!} header={"Out of Current Roll"} />
       </div>
     </>
   );

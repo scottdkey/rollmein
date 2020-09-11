@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { PlayerObject } from "./utils/Interfaces";
 import { FFARoll } from "./utils/GroupRollLogic";
-import RenderRemaining from "./RenderRemaining";
+import RenderGroup from "./RenderGroup";
 
 type FreeForAllRollType = {
   rollGroup: Array<PlayerObject>;
@@ -33,8 +33,8 @@ const FreeForAllRoll = ({ rollGroup }: FreeForAllRollType) => {
       <button disabled={valid === true} onClick={rollForGroup}>
         Roll!
       </button>
-      <RenderRemaining players={players!} header={"Players"} />
-      <RenderRemaining players={outGroup!} header={"Not in the roll"} />
+      <RenderGroup players={players!} header={"Players"} />
+      <RenderGroup players={outGroup!} header={"Not in the roll"} />
     </>
   );
 };
