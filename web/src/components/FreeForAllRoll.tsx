@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { PlayerObject } from './providers/interfaces'
 import { FFARoll } from "./providers/GroupRollLogic"
+import RenderGroup from './RenderGroup'
 
 type FreeForAllRollType = {
   valid: boolean,
@@ -22,6 +23,8 @@ const FreeForAllRoll = ({ valid, rollGroup }: FreeForAllRollType) => {
       <button disabled={valid === true} onClick={rollForGroup}>
         Roll!
     </button>
+      <RenderGroup players={players!} header={"Group"} />
+      <RenderGroup players={outGroup!} header={"Not in Roll"} />
     </>
   )
 }

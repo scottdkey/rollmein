@@ -32,13 +32,13 @@ const removeFromGroup = (
   );
   return newRollGroup;
 };
-export const FFARoll = (currentGroup: Array<PlayerObject>) => {
+export const FFARoll = async (currentGroup: Array<PlayerObject>) => {
   let remaining = currentGroup
   let players: Array<PlayerObject> = []
-  for (let i = 1; i >= 5; i++) {
-    const pickedPlayer = rollWithLocked(remaining)
+  for (let i = 1; i <= 5; i++) {
+    const pickedPlayer = await rollWithLocked(remaining)
     players.push(pickedPlayer)
-    remaining = removeFromGroup(pickedPlayer, remaining)
+    remaining = await removeFromGroup(pickedPlayer, remaining)
   }
   return { players, remaining }
 }

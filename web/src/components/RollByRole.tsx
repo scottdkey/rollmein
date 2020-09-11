@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState } from 'react'
 import { rollByRole } from "./providers/GroupRollLogic"
 import { PlayerObject } from "./providers/interfaces";
-import OutOfGroup from './OutOfGroup';
-import RenderRemaining from './RenderRemaining';
+import RenderGroup from './RenderGroup';
+import RenderSingle from './RenderSingle';
 
 
 type RollByRoleProps = {
@@ -25,18 +25,17 @@ const RollByRole = ({ valid, rollGroup }: RollByRoleProps) => {
     setOutOfGroup(players.d.players);
   };
 
-
-  console.log(outOfGroup)
   return (
     <>
       <button disabled={valid === false} onClick={rollForGroup}>
         Roll!
       </button>
       <div>
-        {tank === undefined ? null : <><h3>Tank: </h3>{tank.name}</>}
-        {healer === undefined ? null : <><h3>Healer:</h3>{healer.name}</>}
-        <RenderRemaining players={dps!} headerName={"Dps"} />
-        <RenderRemaining players={outOfGroup!} headerName={"Out of Current Roll"} />
+
+        <RenderSingle player={tank!} header={"Tank"} />
+        <RenderSingle player={healer!} header={"Healer"} />
+        <RenderGroup players={dps!} header={"Dps"} />
+        <RenderGroup players={outOfGroup!} header={"Out of Current Roll"} />
       </div>
     </>
   )

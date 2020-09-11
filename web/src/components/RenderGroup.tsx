@@ -3,16 +3,16 @@ import { PlayerObject } from "./providers/interfaces"
 
 type RenderDPSType = {
   players: Array<PlayerObject>
-  headerName: string
+  header: string
 }
 
-const RenderRemaining = ({ players, headerName }: RenderDPSType) => {
+const RenderGroup = ({ players, header }: RenderDPSType) => {
   if (players === undefined) {
     return null
   } else {
     return (
       <>
-        <h3>{headerName}</h3>
+        <h3>{header}</h3>
         {players.map((player: PlayerObject) => (
           <div key={player.name + 10 + player.id}>{player.name}, </div>
         ))}
@@ -23,4 +23,4 @@ const RenderRemaining = ({ players, headerName }: RenderDPSType) => {
 
 
 
-export default RenderRemaining
+export default RenderGroup
