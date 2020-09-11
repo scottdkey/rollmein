@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import { rollByRole } from "./providers/GroupRollLogic";
-import { PlayerObject } from "./providers/interfaces";
+import { rollByRole } from "./utils/GroupRollLogic";
+import { PlayerObject } from "./utils/Interfaces";
 import RenderRemaining from "./RenderRemaining";
 
 type RollByRoleProps = {
@@ -16,10 +16,10 @@ const RollByRole = ({ valid, rollGroup }: RollByRoleProps) => {
 
   const rollForGroup = () => {
     const players = rollByRole(rollGroup!);
-    setTank(players.t);
-    setHealer(players.h);
-    setDps(players.d.newDPS);
-    setOutOfGroup(players.d.players);
+    setTank(players.tank);
+    setHealer(players.healer);
+    setDps(players.dps);
+    setOutOfGroup(players.remainder);
   };
 
   console.log(outOfGroup);

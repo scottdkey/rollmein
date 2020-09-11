@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import PlayerCard from "./playerCard";
 import PlayerFormModal from "./playerFormModal";
-import { PlayerObject } from "./providers/interfaces";
-import { PlayerUpdate, NewPlayer, DeletePlayer } from "./providers/renderPlayersCalls";
+import { PlayerObject } from "./utils/Interfaces";
+import { PlayerUpdate, NewPlayer, DeletePlayer } from "./utils/PlayerCRUD";
 
 interface RenderPlayersInterface {
   players: Array<PlayerObject>;

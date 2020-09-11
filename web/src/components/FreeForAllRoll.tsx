@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { PlayerObject } from "./providers/interfaces";
-import { FFARoll } from "./providers/GroupRollLogic";
+import { PlayerObject } from "./utils/Interfaces";
+import { FFARoll } from "./utils/GroupRollLogic";
 import RenderRemaining from "./RenderRemaining";
 
 type FreeForAllRollType = {

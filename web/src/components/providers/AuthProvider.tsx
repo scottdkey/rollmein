@@ -1,5 +1,5 @@
 import React, { createContext, useState, useContext } from "react";
-import { UserObject } from "./interfaces";
+import { UserObject } from "../utils/Interfaces";
 const UserContext = createContext(null);
 
 const UserInfo = () => {

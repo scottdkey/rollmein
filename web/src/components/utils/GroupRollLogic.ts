@@ -1,4 +1,4 @@
-import { PlayerObject, DPSObject } from "./interfaces";
+import { PlayerObject, DPSObject } from "./Interfaces";
 
 const rollForRole = (role: string, players: Array<PlayerObject>): PlayerObject => {
   const group: Array<PlayerObject> = players.filter(
@@ -32,6 +32,21 @@ const removeFromGroup = (
   );
   return newRollGroup;
 };
+
+const rollForDps = (currentGroup: Array<PlayerObject>) => {
+  let remaining = currentGroup;
+
+  const newDPS: Array<PlayerObject> = [];
+  for (let dpsCount = 1; dpsCount < 4; dpsCount++) {
+    const pickedDPS = rollForRole("dps", remaining);
+    newDPS.push(pickedDPS);
+    remaining = removeFromGroup(pickedDPS, remaining);
+  }
+  const players = remaining
+  return { players, newDPS };
+};
+
+
 export const FFARoll = (currentGroup: Array<PlayerObject>) => {
   let remaining = currentGroup
   const players: Array<PlayerObject> = []
@@ -45,23 +60,12 @@ export const FFARoll = (currentGroup: Array<PlayerObject>) => {
 
 export const rollByRole = (arrayOfPlayers: Array<PlayerObject>) => {
   let remaining = arrayOfPlayers;
-  const t: PlayerObject = rollForRole("tank", remaining);
-  remaining = removeFromGroup(t, remaining);
-  const h: PlayerObject = rollForRole("healer", remaining);
-  remaining = removeFromGroup(h, remaining);
-  const d: DPSObject = rollForDps(remaining);
-  return { t, h, d };
-};
-
-const rollForDps = (currentGroup: Array<PlayerObject>) => {
-  let remaining = currentGroup;
-
-  const newDPS: Array<PlayerObject> = [];
-  for (let dpsCount = 1; dpsCount < 4; dpsCount++) {
-    const pickedDPS = rollForRole("dps", remaining);
-    newDPS.push(pickedDPS);
-    remaining = removeFromGroup(pickedDPS, remaining);
-  }
-  const players = remaining
-  return { players, newDPS };
+  const tank: PlayerObject = rollForRole("tank", remaining);
+  remaining = removeFromGroup(tank, remaining);
+  const healer: PlayerObject = rollForRole("healer", remaining);
+  remaining = removeFromGroup(healer, remaining);
+  const dpsRoll: DPSObject = rollForDps(remaining);
+  const dps = dpsRoll.newDPS
+  const remainder = dpsRoll.players
+  return { tank, healer, dps, remainder };
 };

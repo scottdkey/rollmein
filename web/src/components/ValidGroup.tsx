@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { countRoles } from "./providers/BaseAppLogic";
-import { PlayerObject } from "./providers/interfaces";
+import { countRoles } from "./utils/BaseAppLogic";
+import { PlayerObject } from "./utils/Interfaces";
 
 interface GetAGroupInterface {
   players: Array<PlayerObject>;

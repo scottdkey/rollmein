@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Tab, Tabs, TabList, TabPanel } from "react-tabs";
-import { PlayerObject } from "./providers/interfaces";
+import { PlayerObject } from "./utils/Interfaces";
 import RollByRole from "./RollByRole";
 import FreeForAllRoll from "./FreeForAllRoll";
 import "react-tabs/style/react-tabs.scss";
