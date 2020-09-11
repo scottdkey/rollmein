@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
-import { images } from "./providers/images";
-import { roleLogo } from "./providers/imageStyles";
-import { PlayerObject } from "./providers/interfaces";
+import { images } from "./utils/Images";
+import { roleLogo } from "./styles/ImageStyles";
+import { PlayerObject } from "./utils/Interfaces";
 
 interface PlayerCardInterface {
   player: PlayerObject;

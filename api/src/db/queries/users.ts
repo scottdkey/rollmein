@@ -1,9 +1,16 @@
 import bcrypt from "bcryptjs";
-import knex from "../connection.mjs";
+import knex from "../connection.js";
 
-function addUser(user) {
+interface userObject {
+  id: number;
+  email: string;
+  password: string;
+  username: string;
+}
+
+function addUser(user: userObject) {
   const salt = bcrypt.genSaltSync();
-  const hash = bcrypt.hashSync(user.password, salt);
+  const hash: string = bcrypt.hashSync(user.password, salt);
   return knex("users")
     .insert({
       email: user.email,

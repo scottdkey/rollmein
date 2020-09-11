@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
-import { Tab, Tabs, TabList, TabPanel } from "react-tabs"
-import { PlayerObject } from "./providers/interfaces";
+import { Tab, Tabs, TabList, TabPanel } from "react-tabs";
+import { PlayerObject } from "./utils/Interfaces";
 import RollByRole from "./RollByRole";
 import FreeForAllRoll from "./FreeForAllRoll";
-
+import "react-tabs/style/react-tabs.scss";
 
 type GroupRollProps = {
   valid: boolean;
@@ -12,22 +12,10 @@ type GroupRollProps = {
 
 const GroupRoll = ({ valid, inGroup }: GroupRollProps) => {
   const [rollGroup, setRollGroup] = useState<Array<PlayerObject>>();
-  const [freeForAllValid, setFreeForAllValid] = useState(false);
-
-
-
 
   useEffect(() => {
-    const inCheck = () => {
-      if (inGroup && inGroup.length <= 6) {
-        setFreeForAllValid(true);
-      } else {
-        setFreeForAllValid(false);
-      }
-    };
     setRollGroup(inGroup);
-    inCheck();
-  }, [valid, inGroup]);
+  }, [inGroup, valid]);
 
   return (
     <>
@@ -40,7 +28,7 @@ const GroupRoll = ({ valid, inGroup }: GroupRollProps) => {
           <RollByRole valid={valid!} rollGroup={rollGroup!} />
         </TabPanel>
         <TabPanel>
-          <FreeForAllRoll valid={freeForAllValid} rollGroup={rollGroup!} />
+          <FreeForAllRoll rollGroup={rollGroup!} />
         </TabPanel>
       </Tabs>
     </>

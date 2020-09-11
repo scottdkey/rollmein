@@ -1,4 +1,4 @@
-import { PlayerObject } from "./interfaces"
+import { PlayerObject } from "../utils/Interfaces"
 
 export const playersPlaceHolder: Array<PlayerObject> = [
   {

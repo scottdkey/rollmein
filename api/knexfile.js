@@ -28,9 +28,15 @@ function BaseConfig(environemntDB) {
     },
   };
 }
-
-module.exports = {
-  test: BaseConfig(TEST_DB),
-  development: BaseConfig(DEV_DB),
-  production: BaseConfig(PROD_DB),
+const knex = (env) => {
+  if (env === "production") {
+    return BaseConfig(PROD_DB);
+  }
+  if (env === "test") {
+    return BaseConfig(TEST_DB);
+  } else {
+    return BaseConfig(DEV_DB);
+  }
 };
+
+module.exports = knex;

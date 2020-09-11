@@ -13,7 +13,5 @@ module.exports.seed = (knex) => {
           password: hash,
         })
         .returning("*");
-
-      process.env.SEED_UID = res[0].id;
     });
 };

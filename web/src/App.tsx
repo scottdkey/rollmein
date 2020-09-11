@@ -8,8 +8,9 @@ import {
   validCheck,
   createInGroup,
   blankPlayer,
-} from "./components/providers/BaseAppLogic";
-import { PlayerObject } from "./components/providers/interfaces";
+} from "./components/utils/BaseAppLogic";
+import { PlayerObject } from "./components/utils/Interfaces";
+
 
 function App() {
   const playerContext = useContext(PlayerContext);

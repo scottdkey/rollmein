@@ -1,12 +1,12 @@
 import React from 'react';
-import { PlayerObject } from "./providers/interfaces"
+import { PlayerObject } from "./utils/Interfaces"
 
 type RenderDPSType = {
   players: Array<PlayerObject>
   header: string
 }
 
-const RenderGroup = ({ players, header }: RenderDPSType) => {
+const RenderRemaining = ({ players, header }: RenderDPSType) => {
   if (players === undefined) {
     return null
   } else {
@@ -23,4 +23,4 @@ const RenderGroup = ({ players, header }: RenderDPSType) => {
 
 
 
-export default RenderGroup
+export default RenderRemaining

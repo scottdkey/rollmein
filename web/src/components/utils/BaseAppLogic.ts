@@ -1,4 +1,4 @@
-import { PlayerObject } from "./interfaces";
+import { PlayerObject } from "./Interfaces";
 
 export const validCheck = (playersArray: Array<PlayerObject>) => {
   const roleCount = countRoles(playersArray);

@@ -1,4 +1,4 @@
-import { PlayerObject } from "./interfaces"
+import { PlayerObject } from "./Interfaces"
 
 export const PlayerUpdate = (updatedPlayer: PlayerObject, players: Array<PlayerObject>): Array<PlayerObject> => {
   const updatedPlayers = players.map((p) => {

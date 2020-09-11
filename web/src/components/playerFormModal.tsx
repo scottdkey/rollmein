@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import Modal from "react-modal";
 
-import { PlayerObject } from "./providers/interfaces";
+import { PlayerObject } from "./utils/Interfaces";
 //todo: form validation.
 
 interface PlayerFormModalInterface {
@@ -13,12 +13,12 @@ interface PlayerFormModalInterface {
   addPlayer(player: PlayerObject): void;
   removePlayer(id: number): void;
 }
-type PersonForm = {
-  name: string;
-  tank: boolean;
-  dps: boolean;
-  healer: boolean;
-};
+// type PersonForm = {
+//   name: string;
+//   tank: boolean;
+//   dps: boolean;
+//   healer: boolean;
+// };
 
 const PlayerFormModal = ({
   visible,
