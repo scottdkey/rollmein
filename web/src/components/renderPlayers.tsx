@@ -1,6 +1,7 @@
-import React, { useState } from "react";
-import PlayerCard from "./playerCard";
-import PlayerFormModal from "./playerFormModal";
+// eslint-disable-next-line
+import React from "react";
+import PlayerCard from "./PlayerCard";
+import PlayerFormModal from "./PlayerFormModal";
 import { PlayerObject } from "./utils/Interfaces";
 import { PlayerUpdate, NewPlayer, DeletePlayer } from "./utils/PlayerCRUD";
 
@@ -10,7 +11,7 @@ interface RenderPlayersInterface {
 }
 
 const RenderPlayers = ({ players, setPlayers }: RenderPlayersInterface) => {
-  const [modalOpen, setModalOpen] = useState(false);
+  const [modalOpen, setModalOpen] = React.useState(false);
 
   const removePlayer = (id: number) => {
     setPlayers(DeletePlayer(id, players));

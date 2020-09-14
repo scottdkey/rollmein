@@ -1,9 +1,10 @@
+// eslint-disable-next-line
 import React, { useState, useContext, useEffect } from "react";
-import RenderPlayers from "./components/renderPlayers";
+import RenderPlayers from "./components/RenderPlayers";
 import PlayerContext from "./components/providers/PlayerContext";
 import { playersPlaceHolder } from "./components/providers/databasePlaceholder";
 import ValidGroup from "./components/ValidGroup";
-import GroupRoll from "./components/groupRoll";
+import GroupRoll from "./components/GroupRoll";
 import {
   validCheck,
   createInGroup,
