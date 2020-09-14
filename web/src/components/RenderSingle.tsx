@@ -1,5 +1,5 @@
 import React from 'react'
-import { PlayerObject } from './providers/interfaces'
+import { PlayerObject } from './utils/Interfaces'
 
 type RenderSingleProps = {
   player: PlayerObject,

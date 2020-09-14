@@ -68,7 +68,7 @@ export default RenderPlayers;
 
 const cardStyle: React.CSSProperties = {
   width: "30%",
-  height: "100%",
+  height: "30%",
 };
 const cardContainer: React.CSSProperties = {
   display: "flex",

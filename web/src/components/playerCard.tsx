@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { images } from "./utils/Images";
-import { roleLogo } from "./styles/ImageStyles";
 import { PlayerObject } from "./utils/Interfaces";
+import "./styles/imageStyles.scss"
 
 interface PlayerCardInterface {
   player: PlayerObject;
@@ -41,14 +41,26 @@ const PlayerCard = ({
   useEffect(() => { }, [player]);
   return (
     <div style={style}>
-      <div> Name: {player.name}</div>
-      <label>Locked?</label>
-      <input type="checkbox" checked={player.locked} onChange={handleLocked} />
-      <label>In the Roll?</label>
-      <input type="checkbox" checked={player.in} onChange={handleIn} />
+      <h2>{player.name}</h2>
+
+      <img className={player.locked ? "image locked" : "image unlocked"} src={player.locked ? images.closedLock : images.openLock}
+        alt="padlock logo"
+        onClick={handleLocked}
+
+      />
+      <img className={player.in ? "image inTheRoll" : "image outOfTheRoll"} src={images.dice}
+        alt="padlock logo"
+        onClick={handleIn}
+
+      />
+      <img className="image deleteIcon" src={images.trash}
+        alt="padlock logo"
+        onClick={() => removePlayer(player.id)}
+
+      />
       <div>
         <img
-          style={roleLogo}
+          className={tank ? "image roles_active" : "image roles_inactive"}
           src={player.tank ? images.tank : images.tankUnselected}
           alt="tank logo"
           onClick={() => {
@@ -57,7 +69,7 @@ const PlayerCard = ({
           }}
         />
         <img
-          style={roleLogo}
+          className={healer ? "image roles_active" : "image roles_inactive"}
           src={healer ? images.healer : images.healerUnselected}
           alt="healer logo"
           onClick={() => {
@@ -66,7 +78,7 @@ const PlayerCard = ({
           }}
         />
         <img
-          style={roleLogo}
+          className={dps ? "image roles_active" : "image roles_inactive"}
           src={dps ? images.dps : images.dpsUnselected}
           alt="dps logo"
           onClick={() => {

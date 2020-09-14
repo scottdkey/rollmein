@@ -1,0 +1,54 @@
+.image {
+  height: 50px;
+  width: 50px;
+}
+.locked {
+  opacity: 100%;
+  &:hover{
+    opacity: 80%;
+  }
+}
+.unlocked {
+    opacity: 40%;
+  &:hover{
+    opacity: 80%;
+  }
+}
+.roles_inactive {
+  opacity: 50%;
+  &:hover{
+    opacity: 100%;
+    border-radius: 20px;
+  }
+}
+.roles_active {
+  opacity: 100%;
+  &:hover{
+    opacity: 50%;
+  }
+}
+
+
+
+.inTheRoll {
+  opacity: 100%;
+  &:hover{
+    opacity: 60%;
+    // outline: 4px solid red;
+  }
+}
+.outOfTheRoll {
+  opacity: 50%;
+  &:hover{
+    opacity: 70%;
+  }
+}
+
+.deleteIcon {
+  opacity: 30%;
+  color: none;
+  &:hover{
+    opacity: 100%;
+    color: red;
+  }
+}
