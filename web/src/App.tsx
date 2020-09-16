@@ -1,39 +1,17 @@
 // eslint-disable-next-line
-import React, { useState, useContext, useEffect } from "react";
+import React from "react";
 import RenderPlayers from "./components/RenderPlayers";
-import PlayerContext from "./components/providers/PlayerContext";
-import { playersPlaceHolder } from "./components/providers/databasePlaceholder";
-import ValidGroup from "./components/ValidGroup";
+import { PlayerProvider } from "./components/providers/PlayerProvider";
 import GroupRoll from "./components/GroupRoll";
-import {
-  validCheck,
-  createInGroup,
-  blankPlayer,
-} from "./components/utils/BaseAppLogic";
-import { PlayerObject } from "./components/utils/Interfaces";
-
 
 function App() {
-  const playerContext = useContext(PlayerContext);
-  const [players, setPlayers] = useState<Array<PlayerObject>>(playerContext);
-  const [valid, setValid] = useState(false);
-  const [inGroup, setInGroup] = useState<Array<PlayerObject>>();
-  // const [theme, setTheme] = useState("lightTheme");
-
-  useEffect(() => {
-    const currentPlayers: Array<PlayerObject> = players ? players : blankPlayer;
-    const currentGroup: Array<PlayerObject> = createInGroup(currentPlayers);
-    setInGroup(currentGroup);
-    setValid(validCheck(currentGroup));
-  }, [players]);
   return (
     <div className="App">
-      <PlayerContext.Provider value={playersPlaceHolder}>
+      <PlayerProvider>
         <h1>Roll Me in</h1>
-        <RenderPlayers players={players!} setPlayers={setPlayers} />
-        <ValidGroup inGroup={inGroup!} players={players!} valid={valid} />
-        <GroupRoll valid={valid} inGroup={inGroup!} />
-      </PlayerContext.Provider>
+        <RenderPlayers />
+        <GroupRoll />
+      </PlayerProvider>
     </div>
   );
 }

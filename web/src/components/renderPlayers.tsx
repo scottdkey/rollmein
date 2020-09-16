@@ -2,31 +2,12 @@
 import React from "react";
 import PlayerCard from "./PlayerCard";
 import PlayerFormModal from "./PlayerFormModal";
-import { PlayerObject } from "./utils/Interfaces";
-import { PlayerUpdate, NewPlayer, DeletePlayer } from "./utils/PlayerCRUD";
+import { usePlayerData } from "./providers/PlayerProvider";
 
-interface RenderPlayersInterface {
-  players: Array<PlayerObject>;
-  setPlayers(players: Array<PlayerObject>): void;
-}
-
-const RenderPlayers = ({ players, setPlayers }: RenderPlayersInterface) => {
+const RenderPlayers = () => {
   const [modalOpen, setModalOpen] = React.useState(false);
 
-  const removePlayer = (id: number) => {
-    setPlayers(DeletePlayer(id, players));
-  };
-
-  const updatePlayer = (player: PlayerObject) => {
-    setPlayers(PlayerUpdate(player, players));
-    setModalOpen(false);
-  }
-
-
-  const addPlayer = (newPlayer: PlayerObject) => {
-    setPlayers(NewPlayer(newPlayer, players));
-    setModalOpen(false);
-  };
+  const { players } = usePlayerData()!;
 
   const Players = () =>
     players ? (
@@ -36,14 +17,12 @@ const RenderPlayers = ({ players, setPlayers }: RenderPlayersInterface) => {
             style={cardStyle}
             key={player.id.toString()}
             player={player}
-            removePlayer={removePlayer}
-            updatePlayer={updatePlayer}
           />
         ))}
       </>
     ) : null;
 
-  const havePlayers = () => (players ? players.length : 0);
+ 
 
   return (
     <>
@@ -54,10 +33,6 @@ const RenderPlayers = ({ players, setPlayers }: RenderPlayersInterface) => {
         <PlayerFormModal
           visible={modalOpen}
           close={() => setModalOpen(false)}
-          addPlayer={addPlayer}
-          arrayLength={havePlayers()}
-          removePlayer={removePlayer}
-          updatePlayer={updatePlayer}
           player={null}
         />
         <button onClick={() => setModalOpen(!modalOpen)}>Add Player</button>

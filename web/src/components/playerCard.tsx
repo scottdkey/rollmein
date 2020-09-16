@@ -2,24 +2,20 @@
 import React, { useState, useEffect } from "react";
 import { images } from "./utils/Images";
 import { PlayerObject } from "./utils/Interfaces";
-import "./styles/imageStyles.scss"
+import "./styles/imageStyles.scss";
+import { usePlayerData } from "./providers/PlayerProvider";
 
 interface PlayerCardInterface {
   player: PlayerObject;
   style: object;
-  removePlayer(id: number): void;
-  updatePlayer(player: PlayerObject): void;
 }
 
-const PlayerCard = ({
-  player,
-  removePlayer,
-  updatePlayer,
-  style,
-}: PlayerCardInterface) => {
+const PlayerCard = ({ player, style }: PlayerCardInterface) => {
   const [tank, setTank] = useState(player.tank);
   const [dps, setDps] = useState(player.dps);
   const [healer, setHealer] = useState(player.healer);
+
+  const { updatePlayer, removePlayer } = usePlayerData()!;
 
   const handleLocked = () => {
     const p = { ...player, locked: !player.locked };
@@ -31,33 +27,33 @@ const PlayerCard = ({
     updatePlayer(p);
   };
 
-  const updateRoles = (
-    role: string,
-    newBoolean: boolean,
-  ) => {
+  const updateRoles = (role: string, newBoolean: boolean) => {
     const updatedPlayer: PlayerObject = { ...player, [role]: newBoolean };
     updatePlayer(updatedPlayer);
   };
 
-  useEffect(() => { }, [player]);
+  useEffect(() => {}, [player]);
   return (
     <div style={style}>
       <h2>{player.name}</h2>
 
-      <img className={player.locked ? "image locked" : "image unlocked"} src={player.locked ? images.closedLock : images.openLock}
+      <img
+        className={player.locked ? "image locked" : "image unlocked"}
+        src={player.locked ? images.closedLock : images.openLock}
         alt="padlock logo"
         onClick={handleLocked}
-
       />
-      <img className={player.in ? "image inTheRoll" : "image outOfTheRoll"} src={images.dice}
+      <img
+        className={player.in ? "image inTheRoll" : "image outOfTheRoll"}
+        src={images.dice}
         alt="padlock logo"
         onClick={handleIn}
-
       />
-      <img className="image deleteIcon" src={images.trash}
+      <img
+        className="image deleteIcon"
+        src={images.trash}
         alt="padlock logo"
         onClick={() => removePlayer(player.id)}
-
       />
       <div>
         <img

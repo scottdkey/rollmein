@@ -1,36 +1,29 @@
 import React, { useState, useEffect } from "react";
 import { PlayerObject } from "./utils/Interfaces";
-import { FFARoll } from "./utils/GroupRollLogic";
+import { FFARoll, inCheck } from "./utils/GroupRollLogic";
 import RenderGroup from "./RenderGroup";
+import { usePlayerData } from "./providers/PlayerProvider";
 
-type FreeForAllRollType = {
-  rollGroup: Array<PlayerObject>;
-};
-
-const FreeForAllRoll = ({ rollGroup }: FreeForAllRollType) => {
+const FreeForAllRoll = () => {
   const [players, setPlayers] = useState<Array<PlayerObject>>();
   const [outGroup, setOutGroup] = useState<Array<PlayerObject>>();
   const [valid, setValid] = useState(false);
 
-  const rollForGroup = async() => {
-    const res = await FFARoll(rollGroup);
+  const { inGroup, inGroupCount } = usePlayerData()!;
+
+  const rollForGroup = async () => {
+    const res = await FFARoll(inGroup!);
     setPlayers(res.players);
     setOutGroup(res.remaining);
   };
   useEffect(() => {
-    const inCheck = () => {
-      if (rollGroup && rollGroup.length <= 5) {
-        setValid(true);
-      } else {
-        setValid(false);
-      }
-    };
-    inCheck();
-  }, [valid, rollGroup]);
+    const checkValid = inCheck(inGroupCount);
+    setValid(checkValid);
+  }, [inGroup]);
 
   return (
     <>
-      <button disabled={valid === true} onClick={rollForGroup}>
+      <button disabled={valid === false} onClick={rollForGroup}>
         Roll!
       </button>
       <RenderGroup players={players!} header={"Players"} />

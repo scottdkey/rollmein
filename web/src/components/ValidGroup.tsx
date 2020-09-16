@@ -1,17 +1,19 @@
 import React, { useState, useEffect } from "react";
-import { countRoles } from "./utils/BaseAppLogic";
+import { usePlayerData } from "./providers/PlayerProvider";
+import { countRoles, validCheck } from "./utils/BaseAppLogic";
 import { PlayerObject } from "./utils/Interfaces";
 
-interface GetAGroupInterface {
-  players: Array<PlayerObject>;
-  inGroup: Array<PlayerObject>;
-  valid: boolean;
-}
+const GetAGroup = () => {
 
-const GetAGroup = ({ players, inGroup, valid }: GetAGroupInterface) => {
+  const { inGroup, players } = usePlayerData()!;
+
   const [tanks, setTanks] = useState(0);
   const [dps, setDps] = useState(0);
   const [healers, setHealers] = useState(0);
+  const [valid, setValid] = useState<boolean>(false);
+
+
+
 
   const LongEnough = () =>
     inGroup ? (
@@ -28,6 +30,10 @@ const GetAGroup = ({ players, inGroup, valid }: GetAGroupInterface) => {
     setDps(roleCounts.dps);
     setHealers(roleCounts.healers);
   }, [players]);
+
+  useEffect(() => {
+    setValid(validCheck(inGroup!));
+  }, [inGroup]);
   return (
     <>
       <div>Number of Tanks: {tanks}</div>

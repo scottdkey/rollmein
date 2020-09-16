@@ -69,3 +69,11 @@ export const rollByRole = (arrayOfPlayers: Array<PlayerObject>) => {
   const remainder = dpsRoll.players
   return { tank, healer, dps, remainder };
 };
+
+export const inCheck = (playerCount: number) => {
+  if (playerCount >= 6) {
+    return true;
+  } else {
+    return false;
+  }
+};

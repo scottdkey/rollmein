@@ -7,7 +7,7 @@ export const validCheck = (playersArray: Array<PlayerObject>) => {
   const healers = roleCount.healers > 0;
 
   const rolesValid = tanks && dps && healers;
-  const groupValid = playersArray.length >= 5;
+  const groupValid = playersArray.length >= 6;
 
   const isValid = groupValid === true && rolesValid === true;
   return isValid;

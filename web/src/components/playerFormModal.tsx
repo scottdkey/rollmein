@@ -1,6 +1,7 @@
 // eslint-disable-next-line
 import React, { useState } from "react";
 import Modal from "react-modal";
+import { usePlayerData } from "./providers/PlayerProvider";
 
 import { PlayerObject } from "./utils/Interfaces";
 //todo: form validation.
@@ -8,11 +9,7 @@ import { PlayerObject } from "./utils/Interfaces";
 interface PlayerFormModalInterface {
   visible: boolean;
   player: PlayerObject | null;
-  arrayLength: number;
   close(): void;
-  updatePlayer(player: PlayerObject): void;
-  addPlayer(player: PlayerObject): void;
-  removePlayer(id: number): void;
 }
 // type PersonForm = {
 //   name: string;
@@ -25,10 +22,6 @@ const PlayerFormModal = ({
   visible,
   close,
   player,
-  updatePlayer,
-  addPlayer,
-  arrayLength,
-  removePlayer,
 }: PlayerFormModalInterface) => {
   const [name, setName] = useState(player ? player.name : "");
 
@@ -37,6 +30,13 @@ const PlayerFormModal = ({
   const [dps, setDps] = useState(player ? player.dps : false);
 
   const [healer, setHealer] = useState(player ? player.healer : false);
+
+  const {
+    updatePlayer,
+    addPlayer,
+    inGroupCount,
+    removePlayer,
+  } = usePlayerData()!;
 
   const clearForm = () => {
     setName("");
@@ -58,7 +58,7 @@ const PlayerFormModal = ({
       const updatedPlayer = { ...p, id: player.id };
       updatePlayer(updatedPlayer);
     } else {
-      const id = arrayLength + 1;
+      const id = inGroupCount + 1;
       const newPlayer = { ...p, id };
       addPlayer(newPlayer);
     }
@@ -66,7 +66,7 @@ const PlayerFormModal = ({
   };
 
   return (
-    <Modal isOpen={visible} >
+    <Modal isOpen={visible}>
       <form onSubmit={handleSubmit}>
         <label>Name:</label>
         <input
@@ -118,7 +118,6 @@ const PlayerFormModal = ({
 };
 
 export default PlayerFormModal;
-
 
 // const styles = {
 //   overlay: {
