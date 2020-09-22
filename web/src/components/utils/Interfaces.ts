@@ -20,3 +20,8 @@ export interface UserObject {
   username: string,
   password: string,
 }
+export interface AuthObject {
+  username: string;
+  password: string;
+}
+

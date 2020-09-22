@@ -1,17 +1,22 @@
 // eslint-disable-next-line
 import React from "react";
-import RenderPlayers from "./components/RenderPlayers";
 import { PlayerProvider } from "./components/providers/PlayerProvider";
-import GroupRoll from "./components/GroupRoll";
+import { AuthProvider } from "./components/providers/AuthProvider";
+import Navbar from "./components/Navbar";
+import ReactRouterRoutes from "./components/providers/React-Router-Routes";
+import { BrowserRouter as Router } from "react-router-dom";
 
 function App() {
   return (
-    <div className="App">
-      <PlayerProvider>
-        <h1>Roll Me in</h1>
-        <RenderPlayers />
-        <GroupRoll />
-      </PlayerProvider>
+    <div className="app">
+      <Router>
+        <AuthProvider>
+          <PlayerProvider>
+            <Navbar />
+            <ReactRouterRoutes />
+          </PlayerProvider>
+        </AuthProvider>
+      </Router>
     </div>
   );
 }

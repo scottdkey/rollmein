@@ -1,0 +1,45 @@
+body {
+  padding: 0px;
+  margin: 0px;
+}
+
+.Nav-Bar {
+  background-color: red;
+  position: relative;
+  height: 100%;
+  width: 100%;
+  margin: 0px;
+  padding: 0px;
+  margin-bottom: 40px;
+  height: 100%;
+  max-height: 200px;
+  h1 {
+    position: relative;
+
+    font-size: 50px;
+    margin: 0px;
+    padding: 0px;
+  }
+  .Nav-Section {
+    display: inline;
+    position: relative;
+    .Nav-Item {
+      padding: 5px;
+      font-size: 20px;
+      text-decoration: none;
+      &:hover {
+        background-color: white;
+      }
+    }
+    .Nav-Item-Active {
+      background-color: white;
+    }
+  }
+  .Left {
+    @extend .Nav-Section;
+  }
+  .Right {
+    @extend .Nav-Section;
+    float: right;
+  }
+}
