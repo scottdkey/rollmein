@@ -1,3 +1,4 @@
+// eslint-disable-next-line
 import React, { useState, useEffect } from "react";
 import { rollByRole } from "./utils/GroupRollLogic";
 import { PlayerObject } from "./utils/Interfaces";

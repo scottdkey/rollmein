@@ -3,6 +3,8 @@ import bodyParser from "koa-bodyparser";
 import session from "koa-session";
 import passport from "koa-passport";
 import redisStore from "koa-redis";
+import cors from "@koa/cors"
+
 import keys from "../../config"
 
 import indexRoutes from "../routes/index.js";
@@ -12,6 +14,7 @@ import authRoutes from "../routes/auth.js";
 
 const PORT: number = parseInt(keys.PORT!) || 1337;
 const app = new Koa();
+
 
 //sessions
 app.keys = [keys.SECRETKEY!];
@@ -29,7 +32,7 @@ app.use(passport.session());
 app.use(indexRoutes.routes());
 app.use(playerRoutes.routes());
 app.use(userRoutes.routes());
-app.use(authRoutes.routes());
+app.use(authRoutes.routes())
 
 // server
 const server = app.listen(PORT, () => {

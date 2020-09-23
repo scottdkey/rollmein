@@ -6,6 +6,9 @@ const up = (knex) => {
       table.string("email").notNullable();
       table.string("username");
       table.string("password").notNullable();
+      table.string("appleAuth");
+      table.string("twitterAuth");
+      table.string("googleAuth");
       table.timestamp("created_at").notNullable().defaultTo(knex.fn.now());
       table.unique("email");
       table.unique("username");
@@ -16,4 +19,4 @@ const down = (knex) => {
   return knex.schema.dropTable("users");
 };
 
-export default { up, down };
+module.exports = { up, down };

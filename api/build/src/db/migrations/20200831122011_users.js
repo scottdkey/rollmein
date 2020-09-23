@@ -1,5 +1,4 @@
 "use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
 var up = function (knex) {
     return knex.schema
         .raw('CREATE EXTENSION IF NOT EXISTS "uuid-ossp"')
@@ -8,6 +7,9 @@ var up = function (knex) {
         table.string("email").notNullable();
         table.string("username");
         table.string("password").notNullable();
+        table.string("appleAuth");
+        table.string("twitterAuth");
+        table.string("googleAuth");
         table.timestamp("created_at").notNullable().defaultTo(knex.fn.now());
         table.unique("email");
         table.unique("username");
@@ -16,4 +18,4 @@ var up = function (knex) {
 var down = function (knex) {
     return knex.schema.dropTable("users");
 };
-exports.default = { up: up, down: down };
+module.exports = { up: up, down: down };

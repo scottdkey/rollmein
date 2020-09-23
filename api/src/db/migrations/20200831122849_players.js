@@ -16,4 +16,4 @@ const down = function (knex) {
   return knex.schema.dropTable("players");
 };
 
-export default { up, down };
+module.exports = { up, down };

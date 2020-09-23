@@ -1,19 +1,19 @@
-import React, {useState} from 'react'
-
+// eslint-disable-next-line
+import React from "react";
 
 const Register = () => {
-const handleChange = () => {}
+  const handleChange = () => {};
   return (
     <form>
       <label>Email</label>
-      <input name="email" onChange={handleChange}/>
+      <input name="email" onChange={handleChange} />
       <label>Password</label>
-      <input name="password" onChange={handleChange}/>
+      <input name="password" onChange={handleChange} />
       <label>Confirm Password</label>
-      <input name="passwordConfirm" onChange={handleChange}/>
+      <input name="passwordConfirm" onChange={handleChange} />
       <button type="submit">Submit</button>
     </form>
-  )
-}
+  );
+};
 
-export default Register
+export default Register;

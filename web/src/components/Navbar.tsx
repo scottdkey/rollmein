@@ -1,5 +1,6 @@
+// eslint-disable-next-line
 import React from "react";
-import { NavLink, Link, Redirect } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 import { useAuth } from "./providers/AuthProvider";
 
 type NavType = {
@@ -27,13 +28,8 @@ type NavSectionType = {
   children?: any;
 };
 
-type isActiveType = {
-  match: string;
-  location?: string;
-};
-
 const Navbar = () => {
-  const { logout, authenticated } = useAuth()!;
+  const { user, authenticated } = useAuth()!;
 
   const isActive = (routeToMatch: string) => {
     if (window.location.pathname === `${routeToMatch}`) {
@@ -67,6 +63,7 @@ const Navbar = () => {
     <>
       <div className="Nav-Bar">
         <h1 className="Nav-Header">Roll Me in</h1>
+        <h4>{user ? user.id : "nothing"}</h4>
         <NavSection className="Left" NavArray={leftNav} />
         {authenticated ? (
           <NavSection className="Right" NavArray={authedRight} />

@@ -21,7 +21,7 @@ export interface UserObject {
   password: string,
 }
 export interface AuthObject {
-  username: string;
+  email: string;
   password: string;
 }
 

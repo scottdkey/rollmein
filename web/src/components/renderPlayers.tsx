@@ -1,13 +1,16 @@
 // eslint-disable-next-line
 import React from "react";
+import Login from "./Login";
 import PlayerCard from "./PlayerCard";
 import PlayerFormModal from "./PlayerFormModal";
+import { useAuth } from "./providers/AuthProvider";
 import { usePlayerData } from "./providers/PlayerProvider";
 
 const RenderPlayers = () => {
   const [modalOpen, setModalOpen] = React.useState(false);
 
   const { players } = usePlayerData()!;
+  const { authenticated } = useAuth()!;
 
   const Players = () =>
     players ? (
@@ -22,12 +25,10 @@ const RenderPlayers = () => {
       </>
     ) : null;
 
- 
-
   return (
     <>
       <div style={cardContainer}>
-        <Players />
+        {authenticated ? <Players /> : <Login />}
         <br />
         <br />
         <PlayerFormModal

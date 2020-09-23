@@ -1,5 +1,4 @@
 "use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
 var up = function (knex) {
     return knex.schema.createTable("players", function (table) {
         table.increments("id");
@@ -17,4 +16,4 @@ var up = function (knex) {
 var down = function (knex) {
     return knex.schema.dropTable("players");
 };
-exports.default = { up: up, down: down };
+module.exports = { up: up, down: down };

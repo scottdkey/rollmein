@@ -42,7 +42,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var koa_router_1 = __importDefault(require("koa-router"));
 var users_js_1 = __importDefault(require("../db/queries/users.js"));
 var router = new koa_router_1.default();
-var BASE_URL = process.env.BASE_API_URL + "/users";
+var BASE_URL = "/users";
 router.get("" + BASE_URL, function (ctx) { return __awaiter(void 0, void 0, void 0, function () {
     var users, err_1;
     return __generator(this, function (_a) {

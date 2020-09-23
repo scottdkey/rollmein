@@ -2,7 +2,7 @@ import Router from "koa-router";
 import queries from "../db/queries/users.js";
 
 const router = new Router();
-const BASE_URL = `${process.env.BASE_API_URL}/users`;
+const BASE_URL = `/users`;
 
 router.get(`${BASE_URL}`, async (ctx) => {
   try {

@@ -1,19 +1,15 @@
+// eslint-disable-next-line
 import React, { useState, useEffect } from "react";
 import { usePlayerData } from "./providers/PlayerProvider";
 import { countRoles, validCheck } from "./utils/BaseAppLogic";
-import { PlayerObject } from "./utils/Interfaces";
 
 const GetAGroup = () => {
-
   const { inGroup, players } = usePlayerData()!;
 
   const [tanks, setTanks] = useState(0);
   const [dps, setDps] = useState(0);
   const [healers, setHealers] = useState(0);
   const [valid, setValid] = useState<boolean>(false);
-
-
-
 
   const LongEnough = () =>
     inGroup ? (

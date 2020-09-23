@@ -1,3 +1,4 @@
+// eslint-disable-next-line
 import React, { createContext, useState, useEffect, useContext } from "react";
 import { PlayerObject } from "../utils/Interfaces";
 import { playersPlaceHolder } from "./databasePlaceholder";

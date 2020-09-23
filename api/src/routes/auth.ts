@@ -3,15 +3,21 @@ import passport from "koa-passport";
 import fs from "fs";
 import queries from "../db/queries/users.js";
 import { Context, DefaultState } from "koa";
+import * as keys from "../utils/config"
 
 const router = new Router<DefaultState, Context>();
 
-router.get("/auth/status", async (ctx) => {
+
+
+router.get(`/status`, async (ctx) => {
   if (ctx.isAuthenticated()) {
+
     ctx.type = "html";
-    ctx.body = fs.createReadStream("./src/views/status.html");
+    const { user } = ctx.state
+    ctx.body = { user, success: true }
   } else {
-    ctx.redirect("/auth/login");
+    ctx.body = { user: {}, success: false }
+    ctx.redirect("/login");
   }
 });
 
@@ -19,7 +25,7 @@ router.get("/register", async (ctx) => {
   ctx.type = "html";
   ctx.body = fs.createReadStream("./src/views/register.html");
   if (ctx.isAuthenticated()) {
-    ctx.redirect("/auth/status");
+    ctx.redirect("/status");
   }
 });
 
@@ -31,11 +37,11 @@ router.post("/register", async (ctx, next) => {
         if (err) {
           return next();
         }
-        return ctx.redirect("/auth/status");
+        return ctx.redirect("/status");
       });
     }
     if (err) {
-      ctx.body = { info };
+      ctx.body = { error: info };
       return next();
     } else {
       return ctx.redirect("/login");
@@ -48,25 +54,26 @@ router.get("/login", async (ctx) => {
     ctx.type = "html";
     ctx.body = fs.createReadStream("./src/views/login.html");
   } else {
-    ctx.redirect("/auth/status");
+    ctx.redirect("/status");
   }
 });
 
 router.post("/login", async (ctx, next) => {
   return passport.authenticate("local", (err: any, user, info) => {
+    failureFlash: "Invalid username or password."
     if (user) {
       ctx.login(user, (err: any) => {
         if (err) {
+          ctx.body = { info };
           return next();
         }
-        return ctx.redirect("/auth/status");
       });
+      return ctx.body = { authenticated: true, user: { email: user.email, id: user.id, username: user.username } };
+    } else if (err) {
+      ctx.body = { ...info }
     }
-    if (err) {
-      ctx.body = { info };
-      return next();
-    } else {
-      return ctx.redirect("/login");
+    else {
+      return ctx.logout();
     }
   })(ctx, next);
 });
@@ -74,7 +81,9 @@ router.post("/login", async (ctx, next) => {
 router.get("/logout", async (ctx) => {
   if (ctx.isAuthenticated()) {
     ctx.logout();
-    ctx.redirect("/login");
+    // ctx.redirect("/login");
+    ctx.body = { success: true }
+    ctx.throw(200)
   } else {
     ctx.body = { success: false };
     ctx.throw(401);

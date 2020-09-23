@@ -1,4 +1,15 @@
 "use strict";
+var __assign = (this && this.__assign) || function () {
+    __assign = Object.assign || function(t) {
+        for (var s, i = 1, n = arguments.length; i < n; i++) {
+            s = arguments[i];
+            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
+                t[p] = s[p];
+        }
+        return t;
+    };
+    return __assign.apply(this, arguments);
+};
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -44,14 +55,17 @@ var koa_passport_1 = __importDefault(require("koa-passport"));
 var fs_1 = __importDefault(require("fs"));
 var users_js_1 = __importDefault(require("../db/queries/users.js"));
 var router = new koa_router_1.default();
-router.get("/auth/status", function (ctx) { return __awaiter(void 0, void 0, void 0, function () {
+router.get("/status", function (ctx) { return __awaiter(void 0, void 0, void 0, function () {
+    var user;
     return __generator(this, function (_a) {
         if (ctx.isAuthenticated()) {
             ctx.type = "html";
-            ctx.body = fs_1.default.createReadStream("./src/views/status.html");
+            user = ctx.state.user;
+            ctx.body = { user: user, success: true };
         }
         else {
-            ctx.redirect("/auth/login");
+            ctx.body = { user: {}, success: false };
+            ctx.redirect("/login");
         }
         return [2 /*return*/];
     });
@@ -61,7 +75,7 @@ router.get("/register", function (ctx) { return __awaiter(void 0, void 0, void 0
         ctx.type = "html";
         ctx.body = fs_1.default.createReadStream("./src/views/register.html");
         if (ctx.isAuthenticated()) {
-            ctx.redirect("/auth/status");
+            ctx.redirect("/status");
         }
         return [2 /*return*/];
     });
@@ -78,11 +92,11 @@ router.post("/register", function (ctx, next) { return __awaiter(void 0, void 0,
                                 if (err) {
                                     return next();
                                 }
-                                return ctx.redirect("/auth/status");
+                                return ctx.redirect("/status");
                             });
                         }
                         if (err) {
-                            ctx.body = { info: info };
+                            ctx.body = { error: info };
                             return next();
                         }
                         else {
@@ -99,7 +113,7 @@ router.get("/login", function (ctx) { return __awaiter(void 0, void 0, void 0, f
             ctx.body = fs_1.default.createReadStream("./src/views/login.html");
         }
         else {
-            ctx.redirect("/auth/status");
+            ctx.redirect("/status");
         }
         return [2 /*return*/];
     });
@@ -107,20 +121,21 @@ router.get("/login", function (ctx) { return __awaiter(void 0, void 0, void 0, f
 router.post("/login", function (ctx, next) { return __awaiter(void 0, void 0, void 0, function () {
     return __generator(this, function (_a) {
         return [2 /*return*/, koa_passport_1.default.authenticate("local", function (err, user, info) {
+                failureFlash: "Invalid username or password.";
                 if (user) {
                     ctx.login(user, function (err) {
                         if (err) {
+                            ctx.body = { info: info };
                             return next();
                         }
-                        return ctx.redirect("/auth/status");
                     });
+                    return ctx.body = { authenticated: true, user: { email: user.email, id: user.id, username: user.username } };
                 }
-                if (err) {
-                    ctx.body = { info: info };
-                    return next();
+                else if (err) {
+                    ctx.body = __assign({}, info);
                 }
                 else {
-                    return ctx.redirect("/login");
+                    return ctx.logout();
                 }
             })(ctx, next)];
     });
@@ -129,7 +144,9 @@ router.get("/logout", function (ctx) { return __awaiter(void 0, void 0, void 0, 
     return __generator(this, function (_a) {
         if (ctx.isAuthenticated()) {
             ctx.logout();
-            ctx.redirect("/login");
+            // ctx.redirect("/login");
+            ctx.body = { success: true };
+            ctx.throw(200);
         }
         else {
             ctx.body = { success: false };
