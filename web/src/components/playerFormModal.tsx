@@ -3,40 +3,26 @@ import React, { useState } from "react";
 import Modal from "react-modal";
 import { usePlayerData } from "./providers/PlayerProvider";
 
-import { PlayerObject } from "./utils/Interfaces";
-//todo: form validation.
-
-interface PlayerFormModalInterface {
-  visible: boolean;
-  player: PlayerObject | null;
-  close(): void;
-}
-// type PersonForm = {
-//   name: string;
-//   tank: boolean;
-//   dps: boolean;
-//   healer: boolean;
-// };
+import {
+  PlayerObject,
+  PlayerFormModalInterface,
+  PlayerFormObject,
+} from "./utils/Interfaces";
 
 const PlayerFormModal = ({
   visible,
   close,
   player,
 }: PlayerFormModalInterface) => {
-  const [name, setName] = useState(player ? player.name : "");
+  const [name, setName] = useState<string>(player ? player.name : "");
 
-  const [tank, setTank] = useState(player ? player.tank : false);
+  const [tank, setTank] = useState<boolean>(player ? player.tank : false);
 
-  const [dps, setDps] = useState(player ? player.dps : false);
+  const [dps, setDps] = useState<boolean>(player ? player.dps : false);
 
-  const [healer, setHealer] = useState(player ? player.healer : false);
+  const [healer, setHealer] = useState<boolean>(player ? player.healer : false);
 
-  const {
-    updatePlayer,
-    addPlayer,
-    inGroupCount,
-    removePlayer,
-  } = usePlayerData()!;
+  const { updatePlayer, addPlayer, removePlayer } = usePlayerData()!;
 
   const clearForm = () => {
     setName("");
@@ -46,7 +32,7 @@ const PlayerFormModal = ({
   };
   const handleSubmit = (e: any) => {
     e.preventDefault();
-    const p = {
+    const p: PlayerFormObject = {
       name,
       tank,
       dps,
@@ -55,14 +41,14 @@ const PlayerFormModal = ({
       in: true,
     };
     if (player) {
-      const updatedPlayer = { ...p, id: player.id };
+      const updatedPlayer: PlayerObject = { ...p, id: player.id };
       updatePlayer(updatedPlayer);
     } else {
-      const id = inGroupCount + 1;
-      const newPlayer = { ...p, id };
+      const newPlayer: PlayerFormObject = { ...p };
       addPlayer(newPlayer);
     }
     clearForm();
+    close();
   };
 
   return (
@@ -118,27 +104,3 @@ const PlayerFormModal = ({
 };
 
 export default PlayerFormModal;
-
-// const styles = {
-//   overlay: {
-//     position: 'fixed',
-//     top: 0,
-//     left: 0,
-//     right: 0,
-//     bottom: 0,
-//     backgroundColor: 'rgba(255, 255, 255, 0.75)'
-//   },
-//   content: {
-//     position: 'absolute',
-//     top: '40px',
-//     left: '40px',
-//     right: '40px',
-//     bottom: '40px',
-//     border: '1px solid #ccc',
-//     background: '#fff',
-//     overflow: 'auto',
-//     borderRadius: '4px',
-//     outline: 'none',
-//     padding: '20px'
-//   }
-// }

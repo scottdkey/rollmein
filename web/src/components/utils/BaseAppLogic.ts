@@ -7,7 +7,7 @@ export const validCheck = (playersArray: Array<PlayerObject>) => {
   const healers = roleCount.healers > 0;
 
   const rolesValid = tanks && dps && healers;
-  const groupValid = playersArray.length >= 6;
+  const groupValid = playersArray ? playersArray.length >= 6 : 0;
 
   const isValid = groupValid === true && rolesValid === true;
   return isValid;
@@ -31,8 +31,10 @@ export const countRoles = (playersArray: Array<PlayerObject>) => {
   return { tanks, healers, dps };
 };
 
-export const createInGroup = (playersArray: Array<PlayerObject>) =>
-  playersArray.filter((player) => player.in === true);
+export function createInGroup(playersArray: Array<PlayerObject>) {
+  return playersArray.filter((player) => player.in === true);
+}
+
 
 export const blankPlayer: Array<PlayerObject> = [
   {

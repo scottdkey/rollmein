@@ -21,7 +21,7 @@ const GetAGroup = () => {
     ) : null;
 
   useEffect(() => {
-    const roleCounts = countRoles(players);
+    const roleCounts = countRoles(players!);
     setTanks(roleCounts.tanks);
     setDps(roleCounts.dps);
     setHealers(roleCounts.healers);

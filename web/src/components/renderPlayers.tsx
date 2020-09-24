@@ -1,6 +1,6 @@
 // eslint-disable-next-line
 import React from "react";
-import Login from "./Login";
+import Login from "./Authenticate";
 import PlayerCard from "./PlayerCard";
 import PlayerFormModal from "./PlayerFormModal";
 import { useAuth } from "./providers/AuthProvider";

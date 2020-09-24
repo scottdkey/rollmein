@@ -10,7 +10,7 @@ type NavType = {
 
 const leftNav: Array<NavType> = [
   // { name: "Friends", route: "/friends" },
-  { name: "Home", route: "/" },
+  { name: "Test", route: "/" },
   { name: "Players", route: "/players" },
 ];
 const authedRight: Array<NavType> = [
@@ -29,7 +29,7 @@ type NavSectionType = {
 };
 
 const Navbar = () => {
-  const { user, authenticated } = useAuth()!;
+  const { authenticated } = useAuth()!;
 
   const isActive = (routeToMatch: string) => {
     if (window.location.pathname === `${routeToMatch}`) {
@@ -63,7 +63,6 @@ const Navbar = () => {
     <>
       <div className="Nav-Bar">
         <h1 className="Nav-Header">Roll Me in</h1>
-        <h4>{user ? user.id : "nothing"}</h4>
         <NavSection className="Left" NavArray={leftNav} />
         {authenticated ? (
           <NavSection className="Right" NavArray={authedRight} />

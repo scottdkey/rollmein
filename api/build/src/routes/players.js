@@ -63,10 +63,7 @@ router.get(BASE_URL + "/:uid", function (ctx) { return __awaiter(void 0, void 0,
                 return [4 /*yield*/, players_js_1.default.getAllPlayers(ctx.params.uid)];
             case 1:
                 players = _a.sent();
-                ctx.body = {
-                    status: "success",
-                    data: players,
-                };
+                ctx.body = players;
                 return [3 /*break*/, 3];
             case 2:
                 err_1 = _a.sent();
@@ -86,17 +83,11 @@ router.get(BASE_URL + "/:uid/:id", function (ctx) { return __awaiter(void 0, voi
             case 1:
                 player = _a.sent();
                 if (player.length) {
-                    ctx.body = {
-                        status: "success",
-                        data: player,
-                    };
+                    ctx.body = player;
                 }
                 else {
                     ctx.status = 404;
-                    ctx.body = {
-                        status: "error",
-                        message: "That player was not found.",
-                    };
+                    ctx.body = "That player was not found.";
                 }
                 return [3 /*break*/, 3];
             case 2:
@@ -121,26 +112,17 @@ router.post(BASE_URL + "/:uid", function (ctx) { return __awaiter(void 0, void 0
                 player = _a.sent();
                 if (player.length) {
                     ctx.status = 201;
-                    ctx.body = {
-                        status: "success",
-                        data: player,
-                    };
+                    ctx.body = player;
                 }
                 else {
                     ctx.status = 400;
-                    ctx.body = {
-                        status: "error",
-                        message: "Something when wrong",
-                    };
+                    ctx.body = "Something went wrong";
                 }
                 return [3 /*break*/, 4];
             case 3:
                 err_3 = _a.sent();
                 ctx.status = 400;
-                ctx.body = {
-                    status: "error",
-                    message: err_3.message || "Sorry, an error has occurred.",
-                };
+                ctx.body = err_3.message || "Sorry, an error has occurred.";
                 return [3 /*break*/, 4];
             case 4: return [2 /*return*/];
         }
@@ -157,26 +139,17 @@ router.put(BASE_URL + "/:id", function (ctx) { return __awaiter(void 0, void 0, 
                 player = _a.sent();
                 if (player.length) {
                     ctx.status = 200;
-                    ctx.body = {
-                        status: "success",
-                        data: player,
-                    };
+                    ctx.body = player;
                 }
                 else {
                     ctx.status = 404;
-                    ctx.body = {
-                        status: "error",
-                        message: "That player either doesn't exist or was not found.",
-                    };
+                    ctx.body = "That player either doesn't exist or was not found.";
                 }
                 return [3 /*break*/, 3];
             case 2:
                 err_4 = _a.sent();
                 ctx.status = 400;
-                ctx.body = {
-                    status: "error",
-                    message: err_4.message || "Sorry, an error has occurred",
-                };
+                ctx.body = err_4.message || "Sorry, an error has occurred";
                 return [3 /*break*/, 3];
             case 3: return [2 /*return*/];
         }
@@ -193,26 +166,17 @@ router.patch(BASE_URL + "/:id", function (ctx) { return __awaiter(void 0, void 0
                 player = _a.sent();
                 if (player.length) {
                     ctx.status = 200;
-                    ctx.body = {
-                        status: "success",
-                        data: player,
-                    };
+                    ctx.body = player;
                 }
                 else {
                     ctx.status = 404;
-                    ctx.body = {
-                        status: "error",
-                        message: "That player either doesn't exist or was not found.",
-                    };
+                    ctx.body = "That player either doesn't exist or was not found.";
                 }
                 return [3 /*break*/, 3];
             case 2:
                 err_5 = _a.sent();
                 ctx.status = 400;
-                ctx.body = {
-                    status: "error",
-                    message: err_5.message || "Sorry, an error has occurred",
-                };
+                ctx.body = err_5.message || "Sorry, an error has occurred";
                 return [3 /*break*/, 3];
             case 3: return [2 /*return*/];
         }
@@ -229,26 +193,17 @@ router.delete(BASE_URL + "/:id", function (ctx) { return __awaiter(void 0, void 
                 player = _a.sent();
                 if (player.length) {
                     ctx.status = 200;
-                    ctx.body = {
-                        status: "success",
-                        data: player,
-                    };
+                    ctx.body = player;
                 }
                 else {
                     ctx.status = 404;
-                    ctx.body = {
-                        status: "error",
-                        message: "That movie does not exist.",
-                    };
+                    ctx.body = "That player does not exist.";
                 }
                 return [3 /*break*/, 3];
             case 2:
                 err_6 = _a.sent();
                 ctx.status = 400;
-                ctx.body = {
-                    status: "error",
-                    message: err_6.message || "Sorry, an error has occurred.",
-                };
+                ctx.body = err_6.message || "Sorry, an error has occurred.";
                 return [3 /*break*/, 3];
             case 3: return [2 /*return*/];
         }
