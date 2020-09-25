@@ -12,6 +12,9 @@ const up = (knex) => {
       table.timestamp("created_at").notNullable().defaultTo(knex.fn.now());
       table.unique("email");
       table.unique("username");
+      table.unique("appleAuth");
+      table.unique("googleAuth");
+      table.unique("twitterAuth");
     });
 };
 

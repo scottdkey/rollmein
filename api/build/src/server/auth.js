@@ -58,6 +58,7 @@ var config_1 = __importDefault(require("../../config"));
 var connection_js_1 = __importDefault(require("../db/connection.js"));
 var LocalStrategy = passport_local_1.default.Strategy;
 var FacebookStrategy = passport_facebook_1.default.Strategy;
+// const { FB_CLINET_ID, FB_CLIENT_SECRET } = process.env;
 koa_passport_1.default.serializeUser(function (user, done) {
     done(null, user.id);
 });
@@ -97,8 +98,8 @@ koa_passport_1.default.use(new LocalStrategy(localStratOptions, function (userna
     });
 }));
 var fbStratOptions = {
-    clientID: config_1.default.FACEBOOK.clientID,
-    clientSecret: config_1.default.FACEBOOK.clientSecret,
+    clientID: config_1.default.FACEBOOK_CID,
+    clientSecret: config_1.default.FACEBOOK_CS,
     callbackURL: "/auth/facebook/callback"
 };
 koa_passport_1.default.use(new FacebookStrategy(fbStratOptions, function (token, tokenSecret, profile, done) {

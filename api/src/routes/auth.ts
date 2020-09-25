@@ -3,11 +3,11 @@ import passport from "koa-passport";
 import fs from "fs";
 import queries from "../db/queries/users.js";
 import { Context, DefaultState } from "koa";
-import * as keys from "../utils/config"
+import keys from "../../config"
 
 const router = new Router<DefaultState, Context>();
 
-
+router.prefix(`${keys.BASE_URL}/auth`)
 
 router.get(`/status`, async (ctx) => {
   if (ctx.isAuthenticated()) {

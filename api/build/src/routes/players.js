@@ -52,8 +52,9 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var koa_router_1 = __importDefault(require("koa-router"));
 var players_js_1 = __importDefault(require("../db/queries/players.js"));
+var config_1 = __importDefault(require("../../config"));
 var router = new koa_router_1.default();
-var BASE_URL = process.env.BASE_API_URL + "/players";
+var BASE_URL = config_1.default.BASE_URL + "/players";
 router.get(BASE_URL + "/:uid", function (ctx) { return __awaiter(void 0, void 0, void 0, function () {
     var players, err_1;
     return __generator(this, function (_a) {

@@ -12,12 +12,13 @@ import playerRoutes from "../routes/players.js";
 import userRoutes from "../routes/users.js";
 import authRoutes from "../routes/auth.js";
 
-const PORT: number = parseInt(keys.PORT!) || 1337;
+
+const PORT: number = parseInt(keys.PORT) || 1337;
 const app = new Koa();
 
 
 //sessions
-app.keys = [keys.SECRETKEY!];
+app.keys = [keys.SECRETKEY];
 app.use(session({ store: redisStore({}) }, app));
 
 //body parser

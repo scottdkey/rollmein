@@ -54,7 +54,9 @@ var koa_router_1 = __importDefault(require("koa-router"));
 var koa_passport_1 = __importDefault(require("koa-passport"));
 var fs_1 = __importDefault(require("fs"));
 var users_js_1 = __importDefault(require("../db/queries/users.js"));
+var config_1 = __importDefault(require("../../config"));
 var router = new koa_router_1.default();
+router.prefix(config_1.default.BASE_URL + "/auth");
 router.get("/status", function (ctx) { return __awaiter(void 0, void 0, void 0, function () {
     var user;
     return __generator(this, function (_a) {

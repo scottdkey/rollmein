@@ -1,9 +1,7 @@
 // import Confirm from "prompt-confirm";
 import dotenv from "dotenv"
 import { exec } from "child_process";
-
-dotenv.config()
-const { NODE_ENV } = process.env;
+import keys from "../../../config"
 const dbName = process.env[NODE_ENV];
 
 async function sh(cmd) {

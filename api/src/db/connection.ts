@@ -1,14 +1,8 @@
 import knex from "knex";
 import Config from "../../knexfile.js";
+import keys from "../../config"
+import { KnexConfigObject } from "../../config/interfaces"
 
-const currentEnv: string = process.env.NODE_ENV! || "development";
-interface ConfigObject {
-  client: string;
-  migrations: object;
-  seeds: object;
-  connection: object;
-}
-
-const knexConfig: ConfigObject = Config(currentEnv);
+const knexConfig: KnexConfigObject = Config(keys.NODE_ENV || "development");
 
 export default knex(knexConfig);

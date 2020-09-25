@@ -3,6 +3,7 @@ import passportLocal from "passport-local";
 import passportFB from "passport-facebook";
 import bcrypt from "bcryptjs";
 import keys from "../../config"
+import { UserInfo } from "../../config/interfaces"
 
 import knex from "../db/connection.js";
 
@@ -13,12 +14,7 @@ const FacebookStrategy = passportFB.Strategy;
 
 // const { FB_CLINET_ID, FB_CLIENT_SECRET } = process.env;
 
-interface UserInfo {
-  id: number;
-  email: string;
-  username: string;
-  password: string;
-}
+
 
 passport.serializeUser((user: UserInfo, done) => {
   done(null, user.id);
@@ -57,8 +53,8 @@ passport.use(
   })
 );
 const fbStratOptions = {
-  clientID: keys.FACEBOOK.clientID!,
-  clientSecret: keys.FACEBOOK.clientSecret!,
+  clientID: keys.FACEBOOK_CID,
+  clientSecret: keys.FACEBOOK_CS,
   callbackURL: "/auth/facebook/callback"
 }
 

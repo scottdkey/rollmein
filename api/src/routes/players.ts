@@ -1,8 +1,10 @@
 import Router from "koa-router";
 import queries from "../db/queries/players.js";
+import keys from "../../config"
 
 const router = new Router();
-const BASE_URL = `${process.env.BASE_API_URL}/players`;
+
+const BASE_URL = `${keys.BASE_URL}/players`
 
 router.get(`${BASE_URL}/:uid`, async (ctx) => {
   try {
