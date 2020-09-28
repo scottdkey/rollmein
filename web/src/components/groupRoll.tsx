@@ -2,7 +2,7 @@
 import React from "react";
 import { Tab, Tabs, TabList, TabPanel } from "react-tabs";
 import RollByRole from "./RollByRole";
-import FreeForAllRoll from "./utils/FreeForAllRoll";
+import FreeForAllRoll from "./FreeForAllRoll";
 import "react-tabs/style/react-tabs.scss";
 
 const GroupRoll = () => (

@@ -14,10 +14,10 @@ router.get(`/status`, async (ctx) => {
 
     ctx.type = "html";
     const { user } = ctx.state
-    ctx.body = { user, success: true }
+    ctx.body = user
   } else {
-    ctx.body = { user: {}, success: false }
-    ctx.redirect("/login");
+    ctx.body = "user is not authenticated"
+    ctx.status = 401
   }
 });
 
@@ -41,7 +41,7 @@ router.post("/register", async (ctx, next) => {
       });
     }
     if (err) {
-      ctx.body = { error: info };
+      ctx.error = err;
       return next();
     } else {
       return ctx.redirect("/login");

@@ -13,7 +13,7 @@ const Authenticate = ({ type }: AuthType) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [passwordConfirm, setPasswordConfirm] = useState("");
-  const { login, register } = useAuth()!;
+  const { login, register, error } = useAuth()!;
   const history = useHistory();
 
   const handleSubmit = (e: any) => {
@@ -63,6 +63,7 @@ const Authenticate = ({ type }: AuthType) => {
         <CheckPassword />
         <button type="submit">Submit</button>
       </form>
+      {error}
     </>
   );
 };

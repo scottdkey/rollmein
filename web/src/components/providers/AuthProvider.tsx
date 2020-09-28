@@ -1,76 +1,46 @@
 // eslint-disable-next-line
-import React, { createContext, useState, useContext, useEffect } from "react";
+import React, { createContext, useState, useContext } from "react";
+import {
+  Login,
+  CheckStatus,
+  Logout,
+  Register,
+  Update,
+} from "../utils/AuthCRUD";
 import { UserObject, AuthObject } from "../utils/Interfaces";
-import axios from "axios";
-
-type AuthContextType = {
-  login: (value: AuthObject) => void;
-  logout(): any;
-  register: (value: AuthObject) => void;
-  checkStatus: () => void;
-  appleLogin: (value: Object) => void;
-  googleLogin: (value: Object) => void;
-  updateUser: (value: Object) => void;
-  deleteUser: (value: Object) => void;
-  user: UserObject | undefined;
-  authenticated: boolean;
-};
-
-type AuthReturn = {
-  user: UserObject;
-  success: boolean;
-};
+import { AuthReturn, AuthContextType } from "../utils/Types";
 
 const UserContext = createContext<AuthContextType | undefined>(undefined);
 
 const AuthProvider = ({ children }: any) => {
   const [user, setUser] = useState<UserObject | undefined>(undefined);
   const [authenticated, setAuthenticated] = useState<boolean>(false);
+  const [error, setError] = useState<string>("");
 
-  function updateStatus(data: AuthReturn) {
-    setUser(data.user);
-    setAuthenticated(data.success);
+  function updateAuth(res: AuthReturn) {
+    setUser(res.data);
+    setAuthenticated(res.status === 200);
   }
 
-  const login = async (authObject: AuthObject | undefined) => {
+  const login = (authObject: AuthObject) => {
     checkStatus();
-    const res = await axios.post("/login", authObject);
-    try {
-      updateStatus(res.data);
-    } catch (error) {
-      console.log(error);
-      updateStatus(res.data);
-    }
+    Login(authObject!, updateAuth);
   };
 
-  const checkStatus = async () => {
-    const res = await axios.get("/status");
-    try {
-      updateStatus(res.data);
-    } catch (error) {
-      console.log(error);
-      updateStatus(res.data);
-    }
+  const checkStatus = () => {
+    CheckStatus(updateAuth, setError);
   };
-  const logout = async () => {
-    const res = await axios.get("/logout", { withCredentials: true });
-    if (res.status === 200) {
-      updateStatus(res.data);
-    } else {
-      console.log("error, loggout didn't work");
-    }
+  const logout = () => {
+    Logout(updateAuth);
   };
   const register = async (user: AuthObject) => {
-    const res = await axios.post("/register", user);
-    if (res.status === 200) {
-      updateStatus(res.data);
-    } else {
-      console.log(res);
-    }
+    Register(user, updateAuth);
   };
   const appleLogin = () => {};
   const googleLogin = () => {};
-  const updateUser = () => {};
+  const updateUser = (updatedUser: UserObject) => {
+    Update(updatedUser, updateAuth);
+  };
   const deleteUser = () => {};
 
   return (
@@ -86,6 +56,7 @@ const AuthProvider = ({ children }: any) => {
         checkStatus,
         user,
         authenticated,
+        error,
       }}
     >
       {children}

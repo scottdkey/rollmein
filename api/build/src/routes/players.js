@@ -56,26 +56,20 @@ var config_1 = __importDefault(require("../../config"));
 var router = new koa_router_1.default();
 var BASE_URL = config_1.default.BASE_URL + "/players";
 router.get(BASE_URL + "/:uid", function (ctx) { return __awaiter(void 0, void 0, void 0, function () {
-    var players, err_1;
+    var players;
     return __generator(this, function (_a) {
         switch (_a.label) {
-            case 0:
-                _a.trys.push([0, 2, , 3]);
-                return [4 /*yield*/, players_js_1.default.getAllPlayers(ctx.params.uid)];
+            case 0: return [4 /*yield*/, players_js_1.default.getAllPlayers(ctx.params.uid)];
             case 1:
                 players = _a.sent();
                 ctx.body = players;
-                return [3 /*break*/, 3];
-            case 2:
-                err_1 = _a.sent();
-                console.log(err_1);
-                return [3 /*break*/, 3];
-            case 3: return [2 /*return*/];
+                console.log(ctx);
+                return [2 /*return*/];
         }
     });
 }); });
 router.get(BASE_URL + "/:uid/:id", function (ctx) { return __awaiter(void 0, void 0, void 0, function () {
-    var player, err_2;
+    var player, err_1;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
@@ -88,19 +82,19 @@ router.get(BASE_URL + "/:uid/:id", function (ctx) { return __awaiter(void 0, voi
                 }
                 else {
                     ctx.status = 404;
-                    ctx.body = "That player was not found.";
+                    ctx.body = { error: { error: true, message: "That player was not found." } };
                 }
                 return [3 /*break*/, 3];
             case 2:
-                err_2 = _a.sent();
-                console.log(err_2);
+                err_1 = _a.sent();
+                console.log(err_1);
                 return [3 /*break*/, 3];
             case 3: return [2 /*return*/];
         }
     });
 }); });
 router.post(BASE_URL + "/:uid", function (ctx) { return __awaiter(void 0, void 0, void 0, function () {
-    var newPlayer, player, err_3;
+    var newPlayer, player, err_2;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
@@ -121,15 +115,42 @@ router.post(BASE_URL + "/:uid", function (ctx) { return __awaiter(void 0, void 0
                 }
                 return [3 /*break*/, 4];
             case 3:
-                err_3 = _a.sent();
+                err_2 = _a.sent();
                 ctx.status = 400;
-                ctx.body = err_3.message || "Sorry, an error has occurred.";
+                ctx.body = err_2.message || "Sorry, an error has occurred.";
                 return [3 /*break*/, 4];
             case 4: return [2 /*return*/];
         }
     });
 }); });
 router.put(BASE_URL + "/:id", function (ctx) { return __awaiter(void 0, void 0, void 0, function () {
+    var player, err_3;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                _a.trys.push([0, 2, , 3]);
+                return [4 /*yield*/, players_js_1.default.updatePlayer(ctx.params.id, ctx.request.body)];
+            case 1:
+                player = _a.sent();
+                if (player.length) {
+                    ctx.status = 200;
+                    ctx.body = player;
+                }
+                else {
+                    ctx.status = 404;
+                    ctx.body = "That player either doesn't exist or was not found.";
+                }
+                return [3 /*break*/, 3];
+            case 2:
+                err_3 = _a.sent();
+                ctx.status = 400;
+                ctx.body = err_3.message || "Sorry, an error has occurred";
+                return [3 /*break*/, 3];
+            case 3: return [2 /*return*/];
+        }
+    });
+}); });
+router.patch(BASE_URL + "/:id", function (ctx) { return __awaiter(void 0, void 0, void 0, function () {
     var player, err_4;
     return __generator(this, function (_a) {
         switch (_a.label) {
@@ -156,35 +177,8 @@ router.put(BASE_URL + "/:id", function (ctx) { return __awaiter(void 0, void 0, 
         }
     });
 }); });
-router.patch(BASE_URL + "/:id", function (ctx) { return __awaiter(void 0, void 0, void 0, function () {
-    var player, err_5;
-    return __generator(this, function (_a) {
-        switch (_a.label) {
-            case 0:
-                _a.trys.push([0, 2, , 3]);
-                return [4 /*yield*/, players_js_1.default.updatePlayer(ctx.params.id, ctx.request.body)];
-            case 1:
-                player = _a.sent();
-                if (player.length) {
-                    ctx.status = 200;
-                    ctx.body = player;
-                }
-                else {
-                    ctx.status = 404;
-                    ctx.body = "That player either doesn't exist or was not found.";
-                }
-                return [3 /*break*/, 3];
-            case 2:
-                err_5 = _a.sent();
-                ctx.status = 400;
-                ctx.body = err_5.message || "Sorry, an error has occurred";
-                return [3 /*break*/, 3];
-            case 3: return [2 /*return*/];
-        }
-    });
-}); });
 router.delete(BASE_URL + "/:id", function (ctx) { return __awaiter(void 0, void 0, void 0, function () {
-    var player, err_6;
+    var player, err_5;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
@@ -202,9 +196,9 @@ router.delete(BASE_URL + "/:id", function (ctx) { return __awaiter(void 0, void 
                 }
                 return [3 /*break*/, 3];
             case 2:
-                err_6 = _a.sent();
+                err_5 = _a.sent();
                 ctx.status = 400;
-                ctx.body = err_6.message || "Sorry, an error has occurred.";
+                ctx.body = err_5.message || "Sorry, an error has occurred.";
                 return [3 /*break*/, 3];
             case 3: return [2 /*return*/];
         }

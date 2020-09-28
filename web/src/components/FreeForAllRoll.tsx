@@ -1,9 +1,9 @@
 // eslint-disable-next-line
 import React, { useState, useEffect } from "react";
-import { PlayerObject } from "./Interfaces";
-import { FFARoll, inCheck } from "./GroupRollLogic";
-import RenderGroup from "../RenderGroup";
-import { usePlayerData } from "../providers/PlayerProvider";
+import { PlayerObject } from "./utils/Interfaces";
+import { FFARoll, inCheck } from "./utils/GroupRollLogic";
+import RenderGroup from "./RenderGroup";
+import { usePlayerData } from "./providers/PlayerProvider";
 
 const FreeForAllRoll = () => {
   const [players, setPlayers] = useState<Array<PlayerObject>>();

@@ -1,6 +1,5 @@
 // eslint-disable-next-line
 import React, { createContext, useState, useEffect, useContext } from "react";
-import { createInGroup } from "../utils/BaseAppLogic";
 import {
   PlayerObject,
   PlayerContextType,
@@ -28,24 +27,20 @@ function PlayerProvider({ children }: any) {
   );
 
   const removePlayer = (id: number) => {
-    DeletePlayer(id, players!).then((res) => setPlayers(res));
+    DeletePlayer(id, players!, setPlayers);
   };
 
   const updatePlayer = (player: PlayerObject) => {
-    PlayerUpdate(player, players!).then((res) => setPlayers(res));
+    PlayerUpdate(player, players!, setPlayers);
   };
 
   const addPlayer = (newPlayer: PlayerFormObject) => {
-    NewPlayer(newPlayer, players!, user!.id).then((res) => setPlayers(res));
+    NewPlayer(newPlayer, players!, user!.id, setPlayers);
   };
   const inGroupCount = inGroup ? inGroup.length : 0;
-
   useEffect(() => {
     if (authenticated) {
-      GetPlayers(user!.id).then((res) => {
-        setPlayers(res);
-        setInGroup(createInGroup(res));
-      });
+      GetPlayers(user!.id, setPlayers, setInGroup);
     }
   }, [authenticated, user]);
 

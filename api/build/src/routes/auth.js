@@ -63,11 +63,11 @@ router.get("/status", function (ctx) { return __awaiter(void 0, void 0, void 0, 
         if (ctx.isAuthenticated()) {
             ctx.type = "html";
             user = ctx.state.user;
-            ctx.body = { user: user, success: true };
+            ctx.body = user;
         }
         else {
-            ctx.body = { user: {}, success: false };
-            ctx.redirect("/login");
+            ctx.body = "user is not authenticated";
+            ctx.status = 401;
         }
         return [2 /*return*/];
     });
@@ -98,7 +98,7 @@ router.post("/register", function (ctx, next) { return __awaiter(void 0, void 0,
                             });
                         }
                         if (err) {
-                            ctx.body = { error: info };
+                            ctx.error = err;
                             return next();
                         }
                         else {

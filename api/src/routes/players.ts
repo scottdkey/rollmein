@@ -7,12 +7,9 @@ const router = new Router();
 const BASE_URL = `${keys.BASE_URL}/players`
 
 router.get(`${BASE_URL}/:uid`, async (ctx) => {
-  try {
-    const players = await queries.getAllPlayers(ctx.params.uid);
-    ctx.body = players
-  } catch (err) {
-    console.log(err);
-  }
+  const players = await queries.getAllPlayers(ctx.params.uid);
+  ctx.body = players
+  console.log(ctx)
 });
 
 router.get(`${BASE_URL}/:uid/:id`, async (ctx) => {
@@ -22,7 +19,7 @@ router.get(`${BASE_URL}/:uid/:id`, async (ctx) => {
       ctx.body = player
     } else {
       ctx.status = 404;
-      ctx.body = "That player was not found."
+      ctx.body = { error: { error: true, message: "That player was not found." } };
     }
   } catch (err) {
     console.log(err);

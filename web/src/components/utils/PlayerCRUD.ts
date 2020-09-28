@@ -1,10 +1,14 @@
 import { PlayerFormObject, PlayerObject } from "./Interfaces"
+import { createInGroup } from "./BaseAppLogic"
 import axios from "axios"
+import env from "../../config"
 
 
-export const PlayerUpdate = async (updatedPlayer: PlayerObject, players: Array<PlayerObject>): Promise<PlayerObject[]> => {
+const BASE_URL = `${env.API_URL}/players`
+
+export const PlayerUpdate = async (updatedPlayer: PlayerObject, players: Array<PlayerObject>, stateCallBack: Function) => {
   let updatedPlayers: Array<PlayerObject> | undefined
-  const res = await axios.put(`/api/players/${updatedPlayer.id}`, updatedPlayer)
+  const res = await axios.put(`${BASE_URL}/${updatedPlayer.id}`, updatedPlayer)
   if (res.status === 200) {
     updatedPlayers = players.map((p) => {
       if (p.id === updatedPlayer.id) {
@@ -16,31 +20,34 @@ export const PlayerUpdate = async (updatedPlayer: PlayerObject, players: Array<P
     });
   }
 
-  return updatedPlayers!;
+  stateCallBack(updatedPlayers);
 };
 
-export const NewPlayer = async (newPlayer: PlayerFormObject, players: Array<PlayerObject>, id: number) => {
-  const res = await axios.post(`/api/players/${id}`, newPlayer)
+export const NewPlayer = async (newPlayer: PlayerFormObject, players: Array<PlayerObject>, id: number, setPlayers: Function) => {
+  const res = await axios.post(`${BASE_URL}/${id}`, newPlayer)
   const newPlayers: Array<PlayerObject> = [...players, ...res.data];
   return newPlayers
 }
-export const DeletePlayer = async (id: number, players: Array<PlayerObject>): Promise<PlayerObject[]> => {
+export const DeletePlayer = async (id: number, players: Array<PlayerObject>, setPlayers: Function) => {
 
   const res = await axios.delete(`/api/players/${id}`)
   let newPlayers: Array<PlayerObject> | undefined = []
-  console.log(res)
   if (res.status === 200) {
     newPlayers = players.filter(
       (player: PlayerObject) => player.id !== res.data[0].id
     );
   }
-  return newPlayers
+  setPlayers(newPlayers)
 }
 
-export const GetPlayers = async (id: number) => {
-  const res = await axios.get(`/api/players/${id}`);
-  const playerResponse: Array<PlayerObject> = res.data.map((player: PlayerObject) => {
-    return player;
-  });
-  return playerResponse
+export const GetPlayers = async (id: number, setPlayers: Function, setInGroup: Function) => {
+  const res = await axios.get(`${BASE_URL}/${id}`);
+  let playerResponse: Array<PlayerObject> = []
+  if (res.status === 200) {
+    playerResponse = res.data.map((player: PlayerObject) => {
+      return player;
+    });
+  }
+  setInGroup(createInGroup(playerResponse))
+  setPlayers(playerResponse)
 }
