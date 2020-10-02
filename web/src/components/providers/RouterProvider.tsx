@@ -2,7 +2,7 @@
 import React, { useEffect } from "react";
 import { Route, Switch } from "react-router-dom";
 import { BrowserRouter as Router } from "react-router-dom";
-import Login from "../Authenticate";
+import Login from "../Content/Authenticate";
 import Register from "../Register";
 import RenderPlayers from "../RenderPlayers";
 import GroupRoll from "../GroupRoll";

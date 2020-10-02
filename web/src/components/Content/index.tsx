@@ -5,7 +5,7 @@ import RenderPlayers from "./RenderPlayers";
 import GroupRoll from "./GroupRoll";
 import ProtectedRoute from "./ProtectedRoute";
 import Logout from "./Logout";
-import { useAuth } from "./providers/AuthProvider";
+import { useAuth } from "../providers/AuthProvider";
 import Authenticate from "./Authenticate";
 
 export default function ReactRouter() {

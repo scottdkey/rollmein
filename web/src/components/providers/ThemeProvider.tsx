@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { ThemeObject, ThemeContextInterface } from "../utils/Interfaces";
 
-import { themes, ProvisionTheme } from "../styles/Themes";
+import { themes, ProvisionTheme } from "../utils/Themes";
 
 const ThemeContext = createContext<ThemeContextInterface | undefined>(
   undefined

@@ -1,5 +1,5 @@
 .Nav-Bar {
-  background-color: red;
+  background-color: $headerBackgroundColor;
   position: relative;
   height: 100%;
   width: 100%;
@@ -23,11 +23,11 @@
       font-size: 20px;
       text-decoration: none;
       &:hover {
-        background-color: white;
+        background-color: $textAccent;
       }
     }
     .Nav-Item-Active {
-      background-color: white;
+      background-color: $accent;
     }
   }
   .Left {

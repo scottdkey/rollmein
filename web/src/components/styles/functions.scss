@@ -1,5 +1,0 @@
-@import "./Themes.scss";
-
-@function theme($themeName) {
-  @return map-get($themes, $themeName);
-}

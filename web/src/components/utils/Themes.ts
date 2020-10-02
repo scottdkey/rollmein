@@ -1,4 +1,4 @@
-import { ThemesInterface, ThemeObject } from "../utils/Interfaces"
+import { ThemesInterface, ThemeObject } from "./Interfaces"
 
 const themes: ThemesInterface = {
   dark: {
