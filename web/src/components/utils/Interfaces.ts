@@ -48,3 +48,29 @@ export type PlayerContextType = {
   addPlayer: (value: PlayerFormObject) => void;
   inGroupCount: number;
 };
+
+
+export interface ThemeObject {
+  primary: string;
+  secondary: string;
+  accent: string;
+  textColor: string;
+  textAccent: string;
+  backgroundColor: string;
+  headerBackgroundColor: string;
+  blockquoteColor: string;
+}
+
+export interface ThemeContextInterface {
+  themeName: string;
+  setThemeName: (value: string) => void;
+  theme: ThemeObject;
+}
+
+export interface ThemesInterface {
+  [key: string]: any;
+  dark: ThemeObject;
+  light: ThemeObject;
+  horde: ThemeObject;
+  allience: ThemeObject;
+}

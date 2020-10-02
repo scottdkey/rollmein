@@ -14,7 +14,8 @@ router.get(`${BASE_URL}`, async (ctx) => {
       data: users,
     };
   } catch (err) {
-    console.log(err);
+    ctx.status = 404
+    ctx.body = "Error: Request not found"
   }
 });
 

@@ -24,3 +24,8 @@ export type AuthContextType = {
   authenticated: boolean;
   error: string
 };
+
+export type NavItemType = {
+  route: string;
+  name: string;
+};

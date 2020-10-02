@@ -9,7 +9,6 @@ const BASE_URL = `${keys.BASE_URL}/players`
 router.get(`${BASE_URL}/:uid`, async (ctx) => {
   const players = await queries.getAllPlayers(ctx.params.uid);
   ctx.body = players
-  console.log(ctx)
 });
 
 router.get(`${BASE_URL}/:uid/:id`, async (ctx) => {

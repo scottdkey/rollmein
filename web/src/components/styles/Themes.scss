@@ -1,21 +1,18 @@
-$themes: (
-  allience: (
-    primary: #1c3661,
-    secondary: #ad9c00,
-    text: #303030,
-    textDark: #000,
-    textLight: #dedede,
-    contentColor: #b9baba,  
-    iconColor: #000,
-    
-  ),
-  horde: (
-    primary: #781414,
-    secondary: #a2c6c9,
-    text: #303030,
-    textDark: #000,
-    textLight: #dedede,
-    contentColor: #b9baba,  
-    iconColor: #000,
-  ),
-);
+:root {
+  --primary: grey;
+  --secondary: lightgrey;
+  --accent: blue;
+  --textColor: orange;
+  --textAccent: pink;
+  --backgroundColor: purple;
+  --headerBackgroundColor: red;
+  --blockQuoteColor: darkgrey;
+}
+$primary: var(--primary);
+$secondary: var(--secondary);
+$accent: var(--accent);
+$textColor: var(--textColor);
+$textAccent: var(--textAccent);
+$backgroundColor: var(--backgroundColor);
+$headerBackgroundColor: var(--headerBackgroundColor);
+$blockQuoteColor: var(--blockQuoteColor);

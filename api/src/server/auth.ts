@@ -59,13 +59,9 @@ const fbStratOptions = {
 }
 
 passport.use(new FacebookStrategy(fbStratOptions, (token, tokenSecret, profile, done) => {
-  console.log(`About to create a user w/ profile data: ${profile}`)
-  console.log(`Got TOKEN: ${token}`)
   knex("users").where({ id: profile.id }).then(results => {
-    if (results.length < 1) {
-      console.log(`About to create user: ${results}`)
+    if (!results) {
       return knex('users').insert({ ...profile }).returning("*").then(user => {
-        console.log(`Created user: ${user}`)
         return done(null, user)
       })
     } else {

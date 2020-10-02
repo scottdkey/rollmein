@@ -34,57 +34,59 @@ const PlayerCard = ({ player, style }: PlayerCardInterface) => {
 
   useEffect(() => {}, [player]);
   return (
-    <div style={style}>
-      <h2>{player.name}</h2>
+    <>
+      <div style={style}>
+        <h2>{player.name}</h2>
 
-      <img
-        className={player.locked ? "image locked" : "image unlocked"}
-        src={player.locked ? images.closedLock : images.openLock}
-        alt="padlock logo"
-        onClick={handleLocked}
-      />
-      <img
-        className={player.in ? "image inTheRoll" : "image outOfTheRoll"}
-        src={images.dice}
-        alt="padlock logo"
-        onClick={handleIn}
-      />
-      <img
-        className="image deleteIcon"
-        src={images.trash}
-        alt="padlock logo"
-        onClick={() => removePlayer(player.id)}
-      />
-      <div>
         <img
-          className={tank ? "image roles_active" : "image roles_inactive"}
-          src={player.tank ? images.tank : images.tankUnselected}
-          alt="tank logo"
-          onClick={() => {
-            setTank(!tank);
-            updateRoles("tank", !tank);
-          }}
+          className={player.locked ? "image locked" : "image unlocked"}
+          src={player.locked ? images.closedLock : images.openLock}
+          alt="padlock logo"
+          onClick={handleLocked}
         />
         <img
-          className={healer ? "image roles_active" : "image roles_inactive"}
-          src={healer ? images.healer : images.healerUnselected}
-          alt="healer logo"
-          onClick={() => {
-            setHealer(!healer);
-            updateRoles("healer", !healer);
-          }}
+          className={player.in ? "image inTheRoll" : "image outOfTheRoll"}
+          src={images.dice}
+          alt="padlock logo"
+          onClick={handleIn}
         />
         <img
-          className={dps ? "image roles_active" : "image roles_inactive"}
-          src={dps ? images.dps : images.dpsUnselected}
-          alt="dps logo"
-          onClick={() => {
-            setDps(!dps);
-            updateRoles("dps", !dps);
-          }}
+          className="image deleteIcon"
+          src={images.trash}
+          alt="padlock logo"
+          onClick={() => removePlayer(player.id)}
         />
+        <div>
+          <img
+            className={tank ? "image roles_active" : "image roles_inactive"}
+            src={player.tank ? images.tank : images.tankUnselected}
+            alt="tank logo"
+            onClick={() => {
+              setTank(!tank);
+              updateRoles("tank", !tank);
+            }}
+          />
+          <img
+            className={healer ? "image roles_active" : "image roles_inactive"}
+            src={healer ? images.healer : images.healerUnselected}
+            alt="healer logo"
+            onClick={() => {
+              setHealer(!healer);
+              updateRoles("healer", !healer);
+            }}
+          />
+          <img
+            className={dps ? "image roles_active" : "image roles_inactive"}
+            src={dps ? images.dps : images.dpsUnselected}
+            alt="dps logo"
+            onClick={() => {
+              setDps(!dps);
+              updateRoles("dps", !dps);
+            }}
+          />
+        </div>
       </div>
-    </div>
+    </>
   );
 };
 

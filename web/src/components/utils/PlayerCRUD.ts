@@ -6,7 +6,7 @@ import env from "../../config"
 
 const BASE_URL = `${env.API_URL}/players`
 
-export const PlayerUpdate = async (updatedPlayer: PlayerObject, players: Array<PlayerObject>, stateCallBack: Function) => {
+const PlayerUpdate = async (updatedPlayer: PlayerObject, players: Array<PlayerObject>, stateCallBack: Function) => {
   let updatedPlayers: Array<PlayerObject> | undefined
   const res = await axios.put(`${BASE_URL}/${updatedPlayer.id}`, updatedPlayer)
   if (res.status === 200) {
@@ -23,12 +23,12 @@ export const PlayerUpdate = async (updatedPlayer: PlayerObject, players: Array<P
   stateCallBack(updatedPlayers);
 };
 
-export const NewPlayer = async (newPlayer: PlayerFormObject, players: Array<PlayerObject>, id: number, setPlayers: Function) => {
+const NewPlayer = async (newPlayer: PlayerFormObject, players: Array<PlayerObject>, id: number, setPlayers: Function) => {
   const res = await axios.post(`${BASE_URL}/${id}`, newPlayer)
   const newPlayers: Array<PlayerObject> = [...players, ...res.data];
   return newPlayers
 }
-export const DeletePlayer = async (id: number, players: Array<PlayerObject>, setPlayers: Function) => {
+const DeletePlayer = async (id: number, players: Array<PlayerObject>, setPlayers: Function) => {
 
   const res = await axios.delete(`/api/players/${id}`)
   let newPlayers: Array<PlayerObject> | undefined = []
@@ -40,7 +40,7 @@ export const DeletePlayer = async (id: number, players: Array<PlayerObject>, set
   setPlayers(newPlayers)
 }
 
-export const GetPlayers = async (id: number, setPlayers: Function, setInGroup: Function) => {
+const GetPlayers = async (id: number, setPlayers: Function, setInGroup: Function) => {
   const res = await axios.get(`${BASE_URL}/${id}`);
   let playerResponse: Array<PlayerObject> = []
   if (res.status === 200) {
@@ -51,3 +51,5 @@ export const GetPlayers = async (id: number, setPlayers: Function, setInGroup: F
   setInGroup(createInGroup(playerResponse))
   setPlayers(playerResponse)
 }
+
+export { GetPlayers, DeletePlayer, NewPlayer, PlayerUpdate }

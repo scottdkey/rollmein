@@ -60,7 +60,8 @@ router.get("" + BASE_URL, function (ctx) { return __awaiter(void 0, void 0, void
                 return [3 /*break*/, 3];
             case 2:
                 err_1 = _a.sent();
-                console.log(err_1);
+                ctx.status = 404;
+                ctx.body = "Error: Request not found";
                 return [3 /*break*/, 3];
             case 3: return [2 /*return*/];
         }

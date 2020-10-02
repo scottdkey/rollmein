@@ -16,15 +16,12 @@ export default function ReactRouter() {
   }, [authenticated]);
   return (
     <Switch>
-      <Route path="/login" component={() => <Authenticate type="login" />} />
-      <Route
-        path="/register"
-        component={() => <Authenticate type="register" />}
-      />
-      <ProtectedRoute path="/profile" component={GroupRoll} />
-      <Route path="/logout" component={Logout} />
       <ProtectedRoute path="/players" component={RenderPlayers} />
-      <Route exact-path="/" component={GroupRoll} />
+      <Route path="/login" component={Authenticate} />
+      <ProtectedRoute path="/logout" component={Logout} />
+      <Route path="/register" component={Authenticate} />
+      <ProtectedRoute path="/grouproll" component={GroupRoll} />
+
       <Route path="/friends" component={GroupRoll} />
     </Switch>
   );

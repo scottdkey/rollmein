@@ -103,13 +103,9 @@ var fbStratOptions = {
     callbackURL: "/auth/facebook/callback"
 };
 koa_passport_1.default.use(new FacebookStrategy(fbStratOptions, function (token, tokenSecret, profile, done) {
-    console.log("About to create a user w/ profile data: " + profile);
-    console.log("Got TOKEN: " + token);
     connection_js_1.default("users").where({ id: profile.id }).then(function (results) {
-        if (results.length < 1) {
-            console.log("About to create user: " + results);
+        if (!results) {
             return connection_js_1.default('users').insert(__assign({}, profile)).returning("*").then(function (user) {
-                console.log("Created user: " + user);
                 return done(null, user);
             });
         }

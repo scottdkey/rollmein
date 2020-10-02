@@ -1,6 +1,6 @@
 import { PlayerObject } from "./Interfaces";
 
-export const validCheck = (playersArray: Array<PlayerObject>) => {
+const validCheck = (playersArray: Array<PlayerObject>) => {
   const roleCount = countRoles(playersArray);
   const tanks = roleCount.tanks > 0;
   const dps = roleCount.dps >= 3;
@@ -13,7 +13,7 @@ export const validCheck = (playersArray: Array<PlayerObject>) => {
   return isValid;
 };
 
-export const countRoles = (playersArray: Array<PlayerObject>) => {
+const countRoles = (playersArray: Array<PlayerObject>) => {
   const players = playersArray ? playersArray : blankPlayer;
 
   const tanks = players.reduce((n, player) => {
@@ -31,12 +31,12 @@ export const countRoles = (playersArray: Array<PlayerObject>) => {
   return { tanks, healers, dps };
 };
 
-export function createInGroup(playersArray: Array<PlayerObject>) {
+function createInGroup(playersArray: Array<PlayerObject>) {
   return playersArray.filter((player) => player.in === true);
 }
 
 
-export const blankPlayer: Array<PlayerObject> = [
+const blankPlayer: Array<PlayerObject> = [
   {
     name: "",
     tank: false,
@@ -47,3 +47,5 @@ export const blankPlayer: Array<PlayerObject> = [
     id: 0,
   },
 ];
+
+export { createInGroup, blankPlayer, countRoles, validCheck }

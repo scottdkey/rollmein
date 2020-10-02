@@ -47,7 +47,7 @@ const rollForDps = (currentGroup: Array<PlayerObject>) => {
 };
 
 
-export const FFARoll = (currentGroup: Array<PlayerObject>) => {
+const FFARoll = (currentGroup: Array<PlayerObject>) => {
   let remaining = currentGroup
   const players: Array<PlayerObject> = []
   for (let i = 1; i <= 5; i++) {
@@ -58,7 +58,7 @@ export const FFARoll = (currentGroup: Array<PlayerObject>) => {
   return { players, remaining }
 }
 
-export const rollByRole = (arrayOfPlayers: Array<PlayerObject>) => {
+const rollByRole = (arrayOfPlayers: Array<PlayerObject>) => {
   let remaining = arrayOfPlayers;
   const tank: PlayerObject = rollForRole("tank", remaining);
   remaining = removeFromGroup(tank, remaining);
@@ -70,10 +70,12 @@ export const rollByRole = (arrayOfPlayers: Array<PlayerObject>) => {
   return { tank, healer, dps, remainder };
 };
 
-export const inCheck = (playerCount: number) => {
+const inCheck = (playerCount: number) => {
   if (playerCount >= 6) {
     return true;
   } else {
     return false;
   }
 };
+
+export { inCheck, rollByRole, FFARoll }

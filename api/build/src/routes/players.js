@@ -63,7 +63,6 @@ router.get(BASE_URL + "/:uid", function (ctx) { return __awaiter(void 0, void 0,
             case 1:
                 players = _a.sent();
                 ctx.body = players;
-                console.log(ctx);
                 return [2 /*return*/];
         }
     });
