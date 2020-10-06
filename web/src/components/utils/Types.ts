@@ -15,7 +15,6 @@ export type AuthContextType = {
   login: (value: AuthObject) => void;
   logout(): any;
   register: (value: AuthObject) => void;
-  checkStatus: () => void;
   appleLogin: (value: Object) => void;
   googleLogin: (value: Object) => void;
   updateUser: (value: UserObject) => void;

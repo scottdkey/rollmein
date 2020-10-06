@@ -131,7 +131,7 @@ router.post("/login", function (ctx, next) { return __awaiter(void 0, void 0, vo
                             return next();
                         }
                     });
-                    return ctx.body = { authenticated: true, user: { email: user.email, id: user.id, username: user.username } };
+                    return ctx.body = user;
                 }
                 else if (err) {
                     ctx.body = __assign({}, info);

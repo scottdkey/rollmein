@@ -1,5 +1,5 @@
 // eslint-disable-next-line
-import React, { createContext, useState, useContext } from "react";
+import React, { createContext, useState, useContext, useEffect } from "react";
 import { Redirect } from "react-router";
 import {
   Login,
@@ -20,18 +20,31 @@ const AuthProvider = ({ children }: any) => {
 
   function updateAuth(res: AuthReturn) {
     setUser(res.data);
-    setAuthenticated(res.status === 200);
   }
 
   const login = (authObject: AuthObject) => {
     Login(authObject!)
-      .then((res) => updateAuth(res))
+      .then((res) => {
+        updateAuth(res);
+        if (res.status === 200) {
+          setAuthenticated(true);
+        } else {
+          setAuthenticated(false);
+        }
+      })
       .catch((err) => console.log(err));
   };
 
   const checkStatus = () => {
     CheckStatus()
-      .then((res) => updateAuth(res))
+      .then((res) => {
+        updateAuth(res);
+        if (res.status === 200) {
+          setAuthenticated(true);
+        } else {
+          setAuthenticated(false);
+        }
+      })
       .catch((err) => {
         if (err.status === 401) {
           setError("Unauthorized");
@@ -40,14 +53,24 @@ const AuthProvider = ({ children }: any) => {
   };
   const logout = () => {
     Logout()
-      .then((res) => updateAuth(res))
+      .then((res) => {
+        updateAuth(res);
+        setAuthenticated(false);
+      })
       .catch((err) => console.log(err.status));
     setAuthenticated(false);
     return <Redirect to="login" />;
   };
   const register = async (user: AuthObject) => {
     Register(user)
-      .then((res) => updateAuth(res))
+      .then((res) => {
+        updateAuth(res);
+        if (res.status === 200) {
+          setAuthenticated(true);
+        } else {
+          setAuthenticated(false);
+        }
+      })
       .catch((err) => console.log(err));
   };
   const appleLogin = () => {};
@@ -59,6 +82,11 @@ const AuthProvider = ({ children }: any) => {
   };
   const deleteUser = () => {};
 
+  useEffect(() => {
+    checkStatus();
+    // eslint-disable-next-line
+  }, [authenticated]);
+
   return (
     <UserContext.Provider
       value={{
@@ -69,7 +97,6 @@ const AuthProvider = ({ children }: any) => {
         googleLogin,
         updateUser,
         deleteUser,
-        checkStatus,
         user,
         authenticated,
         error,

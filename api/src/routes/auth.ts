@@ -68,7 +68,7 @@ router.post("/login", async (ctx, next) => {
           return next();
         }
       });
-      return ctx.body = { authenticated: true, user: { email: user.email, id: user.id, username: user.username } };
+      return ctx.body = user;
     } else if (err) {
       ctx.body = { ...info }
     }
