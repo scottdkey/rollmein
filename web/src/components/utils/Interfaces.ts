@@ -51,6 +51,7 @@ export type PlayerContextType = {
 
 
 export interface ThemeObject {
+  [key: string]: string;
   primary: string;
   secondary: string;
   accent: string;

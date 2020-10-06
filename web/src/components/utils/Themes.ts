@@ -45,7 +45,7 @@ const themes: ThemesInterface = {
 
 const setCSSVariables = (theme: ThemeObject): void => {
   for (const value in theme) {
-    document.documentElement.style.setProperty(`--${value}`, themes[value]);
+    document.documentElement.style.setProperty(`--${value}`, theme[value]);
   }
 };
 

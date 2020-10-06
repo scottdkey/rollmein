@@ -31,8 +31,9 @@ const AuthProvider = ({ children }: any) => {
     CheckStatus()
       .then((res) => updateAuth(res))
       .catch((err) => {
-        console.log(err.message);
-        setError(err.message);
+        if (err.status === 401) {
+          setError("Not Authorized");
+        }
       });
   };
   const logout = () => {
