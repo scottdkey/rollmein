@@ -3,11 +3,11 @@ import axios from "axios";
 import env from "../../config"
 
 const BASE_URL = `${env.API_URL}/auth`
-const Login = async (authObject: AuthObject, stateCallBack: Function) => {
-  const res = await axios.post(`${BASE_URL}/login`, authObject);
-  stateCallBack(res)
-};
 
+const Login = async (authObject: AuthObject) => {
+  const res = await axios.post(`${BASE_URL}/login`, authObject);
+  return res
+};
 
 const CheckStatus = async () => {
   const res = await axios.get(`${BASE_URL}/status`)

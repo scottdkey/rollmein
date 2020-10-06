@@ -5,14 +5,15 @@ import {
   PlayerContextType,
   PlayerFormObject,
 } from "../utils/Interfaces";
-// import { playersPlaceHolder } from "./databasePlaceholder";
 import {
   PlayerUpdate,
   NewPlayer,
   DeletePlayer,
   GetPlayers,
 } from "../utils/PlayerCRUD";
-// import { createInGroup, blankPlayer } from "../utils/BaseAppLogic";
+
+import { createInGroup } from "../utils/BaseAppLogic";
+
 import { useAuth } from "./AuthProvider";
 
 const PlayerContext = createContext<PlayerContextType | undefined>(undefined);
@@ -27,20 +28,31 @@ function PlayerProvider({ children }: any) {
   );
 
   const removePlayer = (id: number) => {
-    DeletePlayer(id, players!, setPlayers);
+    DeletePlayer(id, players!)
+      .then((res) => setPlayers(res))
+      .catch((err) => console.log(err));
   };
 
   const updatePlayer = (player: PlayerObject) => {
-    PlayerUpdate(player, players!, setPlayers);
+    PlayerUpdate(player, players!)
+      .then((res) => setPlayers(res))
+      .catch((err) => console.log(err));
   };
 
   const addPlayer = (newPlayer: PlayerFormObject) => {
-    NewPlayer(newPlayer, players!, user!.id, setPlayers);
+    NewPlayer(newPlayer, players!, user!.id)
+      .then((res) => setPlayers(res))
+      .catch((err) => console.log(err));
   };
   const inGroupCount = inGroup ? inGroup.length : 0;
   useEffect(() => {
     if (authenticated) {
-      GetPlayers(user!.id, setPlayers, setInGroup);
+      GetPlayers(user!.id)
+        .then((res) => {
+          setInGroup(createInGroup(res));
+          setPlayers(res);
+        })
+        .catch((err) => console.log(err));
     }
   }, [authenticated, user]);
 

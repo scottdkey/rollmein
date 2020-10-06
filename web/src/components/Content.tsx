@@ -7,11 +7,12 @@ import ProtectedRoute from "./ProtectedRoute";
 import Logout from "./Logout";
 import { useAuth } from "./providers/AuthProvider";
 import Authenticate from "./Authenticate";
+import NotFound from "./NotFound";
 
 export default function ReactRouter() {
-  const { authenticated, checkStatus } = useAuth()!;
+  const { authenticated } = useAuth()!;
   useEffect(() => {
-    checkStatus();
+    // checkStatus();
     // eslint-disable-next-line
   }, [authenticated]);
   return (
@@ -20,6 +21,7 @@ export default function ReactRouter() {
       <Route path="/login" component={Authenticate} />
       <ProtectedRoute path="/logout" component={Logout} />
       <ProtectedRoute path="/grouproll" component={GroupRoll} />
+      <Route component={NotFound} />
     </Switch>
   );
 }

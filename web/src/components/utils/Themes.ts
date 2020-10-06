@@ -2,14 +2,14 @@ import { ThemesInterface, ThemeObject } from "./Interfaces"
 
 const themes: ThemesInterface = {
   dark: {
-    primary: "#1ca086",
-    secondary: "rgba(255,255,255,0.20)",
-    accent: "rgba(255,255,255,0.20)",
+    primary: "#1a1a2e",
+    secondary: "#16213e",
+    accent: "#0f3460",
     textColor: "white",
     textAccent: "white",
-    backgroundColor: "#121212",
-    headerBackgroundColor: "rgba(255,255,255,0.05)",
-    blockquoteColor: "rgba(255,255,255,0.20)",
+    backgroundColor: "#e94560",
+    headerBackgroundColor: "#16213e",
+    blockquoteColor: "#aaa",
   },
   light: {
     primary: "#1ca086",

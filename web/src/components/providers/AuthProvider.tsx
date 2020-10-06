@@ -1,5 +1,6 @@
 // eslint-disable-next-line
 import React, { createContext, useState, useContext } from "react";
+import { Redirect } from "react-router";
 import {
   Login,
   CheckStatus,
@@ -23,8 +24,9 @@ const AuthProvider = ({ children }: any) => {
   }
 
   const login = (authObject: AuthObject) => {
-    checkStatus();
-    Login(authObject!, updateAuth);
+    Login(authObject!)
+      .then((res) => updateAuth(res))
+      .catch((err) => console.log(err));
   };
 
   const checkStatus = () => {
@@ -32,7 +34,7 @@ const AuthProvider = ({ children }: any) => {
       .then((res) => updateAuth(res))
       .catch((err) => {
         if (err.status === 401) {
-          setError("Not Authorized");
+          setError("Unauthorized");
         }
       });
   };
@@ -41,6 +43,7 @@ const AuthProvider = ({ children }: any) => {
       .then((res) => updateAuth(res))
       .catch((err) => console.log(err.status));
     setAuthenticated(false);
+    return <Redirect to="login" />;
   };
   const register = async (user: AuthObject) => {
     Register(user)
