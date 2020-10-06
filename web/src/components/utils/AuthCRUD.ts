@@ -7,31 +7,24 @@ const Login = async (authObject: AuthObject, stateCallBack: Function) => {
   const res = await axios.post(`${BASE_URL}/login`, authObject);
   stateCallBack(res)
 };
-const checkError = (errorObject: any): string => {
-  let message: string = ""
-  console.log(errorObject)
-  if (errorObject.message === "Request failed with status code 401") {
-    message = "Current user is not Authorized to view this content"
-  }
-  return message
-}
 
 
-const CheckStatus = async (updateAuth: Function, setError: Function) => {
-  await axios.get(`${BASE_URL}/status`).then(res => updateAuth(res)).catch(err => { setError(checkError(err)) })
+const CheckStatus = async () => {
+  const res = await axios.get(`${BASE_URL}/status`)
+  return res
 };
 
-const Logout = async (stateCallBack: Function) => {
+const Logout = async () => {
   const res = await axios.get(`${BASE_URL}/logout`, { withCredentials: true });
-  stateCallBack(res)
+  return res
 };
-const Register = async (user: AuthObject, stateCallBack: Function) => {
+const Register = async (user: AuthObject) => {
   const res = await axios.post(`${BASE_URL}/register`, user);
-  stateCallBack(res);
+  return res
 };
-const Update = async (user: UserObject, stateCallBack: Function) => {
+const Update = async (user: UserObject) => {
   const res = await axios.patch(`${BASE_URL}/update`, user)
-  stateCallBack(res)
+  return res
 }
 
-export { Login, Logout, Register, Update, checkError, CheckStatus }
+export { Login, Logout, Register, Update, CheckStatus }

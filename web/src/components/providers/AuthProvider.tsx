@@ -28,18 +28,30 @@ const AuthProvider = ({ children }: any) => {
   };
 
   const checkStatus = () => {
-    CheckStatus(updateAuth, setError);
+    CheckStatus()
+      .then((res) => updateAuth(res))
+      .catch((err) => {
+        console.log(err.message);
+        setError(err.message);
+      });
   };
   const logout = () => {
-    Logout(updateAuth);
+    Logout()
+      .then((res) => updateAuth(res))
+      .catch((err) => console.log(err.status));
+    setAuthenticated(false);
   };
   const register = async (user: AuthObject) => {
-    Register(user, updateAuth);
+    Register(user)
+      .then((res) => updateAuth(res))
+      .catch((err) => console.log(err));
   };
   const appleLogin = () => {};
   const googleLogin = () => {};
   const updateUser = (updatedUser: UserObject) => {
-    Update(updatedUser, updateAuth);
+    Update(updatedUser)
+      .then((res) => updateAuth(res))
+      .catch((err) => console.log(err));
   };
   const deleteUser = () => {};
 

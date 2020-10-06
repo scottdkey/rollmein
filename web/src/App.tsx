@@ -7,7 +7,7 @@ import { PlayerProvider } from "./components/providers/PlayerProvider";
 import { ThemeProvider } from "./components/providers/ThemeProvider";
 
 import Content from "./components/Content";
-import Header from "./components/Header";
+import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 
 function App() {
@@ -17,7 +17,7 @@ function App() {
         <Router>
           <AuthProvider>
             <PlayerProvider>
-              <Header />
+              <Navbar />
               <Content />
               <Footer />
             </PlayerProvider>

@@ -5,7 +5,7 @@ import RenderPlayers from "./RenderPlayers";
 import GroupRoll from "./GroupRoll";
 import ProtectedRoute from "./ProtectedRoute";
 import Logout from "./Logout";
-import { useAuth } from "../providers/AuthProvider";
+import { useAuth } from "./providers/AuthProvider";
 import Authenticate from "./Authenticate";
 
 export default function ReactRouter() {
@@ -19,10 +19,7 @@ export default function ReactRouter() {
       <ProtectedRoute path="/players" component={RenderPlayers} />
       <Route path="/login" component={Authenticate} />
       <ProtectedRoute path="/logout" component={Logout} />
-      <Route path="/register" component={Authenticate} />
       <ProtectedRoute path="/grouproll" component={GroupRoll} />
-
-      <Route path="/friends" component={GroupRoll} />
     </Switch>
   );
 }
