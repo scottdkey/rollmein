@@ -78,7 +78,7 @@ const PlayerCard = ({ player }: PlayerCardInterface) => {
             }}
           />
           <svgs.Dice
-            className={`image ${player.in ? "inTheRoll" : "outOfTheRoll"}`}
+            className={`image ${player.in ? "in-the-roll-active" : "in-the-roll"}`}
             onClick={handleIn}
           />
         </div>

@@ -99,19 +99,25 @@
   }
 }
 
-.inTheRoll {
-  opacity: 100%;
+.in-the-roll {
+  opacity: 30%;
+  color: white;
   &:hover {
     opacity: 60%;
-    // outline: 4px solid red;
+    color: $accent;
   }
 }
-.outOfTheRoll {
-  opacity: 50%;
+
+.in-the-roll-active {
+  @extend .in-the-roll;
+  opacity: 100%;
+  color: peachpuff;
   &:hover {
     opacity: 70%;
+    color: $secondary;
   }
 }
+
 .delete-icon {
   opacity: 30%;
   &:hover {
@@ -131,5 +137,21 @@
   opacity: 40%;
   &:hover {
     opacity: 80%;
+  }
+}
+.add-player {
+  @extend .card;
+  .add-player-button {
+    width: 100%;
+    background-color: aquamarine;
+    border-radius: 15px;
+    text-align: center;
+    position: relative;
+    top: 40%;
+  }
+  &:hover {
+    .add-player-button {
+      background-color: orange;
+    }
   }
 }
