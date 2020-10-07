@@ -75,6 +75,7 @@ router.patch(`${BASE_URL}/:id`, async (ctx) => {
 });
 
 router.delete(`${BASE_URL}/:id`, async (ctx) => {
+  console.log(ctx)
   try {
     const player = await queries.deletePlayer(ctx.params.id);
     if (player.length) {

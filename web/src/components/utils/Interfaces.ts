@@ -47,6 +47,8 @@ export type PlayerContextType = {
   updatePlayer: (value: PlayerObject) => void;
   addPlayer: (value: PlayerFormObject) => void;
   inGroupCount: number;
+  showPlayers: boolean;
+  toggleShowPlayers(): void;
 };
 
 

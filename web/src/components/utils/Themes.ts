@@ -6,7 +6,7 @@ const themes: ThemesInterface = {
     secondary: "#16213e",
     accent: "#0f3460",
     textColor: "white",
-    textAccent: "white",
+    textAccent: "orange",
     backgroundColor: "#e94560",
     headerBackgroundColor: "#16213e",
     blockquoteColor: "#aaa",

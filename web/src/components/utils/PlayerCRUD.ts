@@ -30,12 +30,12 @@ const NewPlayer = async (newPlayer: PlayerFormObject, players: Array<PlayerObjec
 }
 const DeletePlayer = async (id: number, players: Array<PlayerObject>) => {
 
-  const res = await axios.delete(`/api/players/${id}`)
-  let newPlayers: Array<PlayerObject> | undefined = players.filter(
+  const res = await axios.delete(`${BASE_URL}/${id}`)
+  const newPlayers: Array<PlayerObject> | undefined = players.filter(
     (player: PlayerObject) => player.id !== res.data[0].id
   );
 
-  return (newPlayers)
+  return newPlayers
 }
 
 const GetPlayers = async (id: number) => {

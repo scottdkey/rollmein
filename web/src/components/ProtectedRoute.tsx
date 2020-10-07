@@ -14,7 +14,7 @@ const ProtectedRoute = ({ component: Component, path }: ProtectedRouteType) => {
   if (!authenticated) {
     return <Redirect to={"/login"} />;
   } else {
-    return <Route path={path} component={Component} />;
+    return <Route exact path={path} component={Component} />;
   }
 };
 

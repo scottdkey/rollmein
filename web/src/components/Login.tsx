@@ -1,6 +1,6 @@
 // eslint-disable-next-line
 import React, { useEffect, useState } from "react";
-import { Redirect, useHistory } from "react-router-dom";
+import { Redirect } from "react-router-dom";
 
 import { useAuth } from "./providers/AuthProvider";
 
@@ -13,7 +13,6 @@ const Authenticate = () => {
   const [passwordsMatch, setPasswordsMatch] = useState(false);
   const [loginForm, setLoginForm] = useState(true);
   const { login, register, error, authenticated } = useAuth()!;
-  const history = useHistory();
 
   function showError() {
     if (!loginForm && passwordsMatch) {
@@ -32,19 +31,19 @@ const Authenticate = () => {
     if (loginForm) {
       const loggingInUser: AuthObject = { email, password };
       login(loggingInUser);
-      history.push("/");
+      return <Redirect to="index" />;
     } else {
       const newUser: AuthObject = { email, password };
       register(newUser);
+      return <Redirect to="index" />;
     }
   };
 
   useEffect(() => {
     setPasswordsMatch(password === passwordConfirm);
   }, [password, passwordConfirm]);
-
   if (authenticated) {
-    return <Redirect to="players" />;
+    return <Redirect to="/" />;
   } else {
     return (
       <form className="authenticate-form">
@@ -111,4 +110,5 @@ const Authenticate = () => {
     );
   }
 };
+
 export default Authenticate;

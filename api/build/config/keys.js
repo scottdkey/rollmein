@@ -22,4 +22,5 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var dotenv = __importStar(require("dotenv"));
 var config = dotenv.config().parsed;
 var keys = config;
+console.log(keys);
 exports.default = keys;

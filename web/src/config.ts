@@ -1,10 +1,15 @@
-import { config } from "dotenv"
+import dotenv from "dotenv"
 
-config()
+
+dotenv.config()
+
+
 
 
 const Config = {
   API_URL: "/api/v1"
 }
+
+
 
 export default Config

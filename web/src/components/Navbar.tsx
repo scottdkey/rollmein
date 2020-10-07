@@ -3,22 +3,20 @@ import React from "react";
 
 import NavItem from "./NavItem";
 import { useAuth } from "./providers/AuthProvider";
+import { usePlayerData } from "./providers/PlayerProvider";
 
 const Navbar = () => {
   const { authenticated } = useAuth()!;
+  const { toggleShowPlayers } = usePlayerData()!;
 
-  const Left = () => {
-    if (authenticated) {
-      return (
-        <>
-          <NavItem route="/players" name="Players" />
-          <NavItem route="/grouproll" name="Roll" />
-        </>
-      );
-    } else {
-      return <></>;
-    }
-  };
+  const Left = () => (
+    <>
+      <h1 className="Title">
+        {authenticated ? <NavItem route="/" name="Roll Me In" /> : "Roll Me In"}
+      </h1>
+      <div className="players-button" onClick={toggleShowPlayers}>Players</div>
+    </>
+  );
 
   const Right = () => {
     if (authenticated) {
@@ -36,12 +34,15 @@ const Navbar = () => {
       );
     }
   };
-
   return (
     <div className="Nav-Bar">
-      <h1 className="Nav-Header">Roll Me in</h1>
-      <Left />
-      <Right />
+      <div className="Left">
+        <Left />
+      </div>
+
+      <div className="Right">
+        <Right />
+      </div>
     </div>
   );
 };

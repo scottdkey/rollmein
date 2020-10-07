@@ -26,6 +26,7 @@ function PlayerProvider({ children }: any) {
   const [inGroup, setInGroup] = useState<Array<PlayerObject> | undefined>(
     undefined
   );
+  const [showPlayers, setShowPlayers] = useState(true);
 
   const removePlayer = (id: number) => {
     DeletePlayer(id, players!)
@@ -45,6 +46,11 @@ function PlayerProvider({ children }: any) {
       .catch((err) => console.log(err));
   };
   const inGroupCount = inGroup ? inGroup.length : 0;
+
+  function toggleShowPlayers(){
+    setShowPlayers(!showPlayers)
+  }
+
   useEffect(() => {
     if (authenticated) {
       GetPlayers(user!.id)
@@ -67,6 +73,8 @@ function PlayerProvider({ children }: any) {
         updatePlayer,
         addPlayer,
         inGroupCount,
+        showPlayers,
+        toggleShowPlayers,
       }}
     >
       {children}

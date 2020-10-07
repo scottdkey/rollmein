@@ -1,27 +1,24 @@
 // eslint-disable-next-line
-import React, { useEffect } from "react";
+import React from "react";
 import { Route, Switch } from "react-router-dom";
-import RenderPlayers from "./RenderPlayers";
-import GroupRoll from "./GroupRoll";
+
 import ProtectedRoute from "./ProtectedRoute";
 import Logout from "./Logout";
-import { useAuth } from "./providers/AuthProvider";
-import Authenticate from "./Authenticate";
+
+import Login from "./Login";
 import NotFound from "./NotFound";
+import Index from ".";
 
 export default function ReactRouter() {
-  const { authenticated } = useAuth()!;
-  useEffect(() => {
-    // checkStatus();
-    // eslint-disable-next-line
-  }, [authenticated]);
   return (
-    <Switch>
-      <ProtectedRoute path="/players" component={RenderPlayers} />
-      <Route path="/login" component={Authenticate} />
-      <ProtectedRoute path="/logout" component={Logout} />
-      <ProtectedRoute path="/grouproll" component={GroupRoll} />
-      <Route component={NotFound} />
-    </Switch>
+    <div className="content">
+      <Switch>
+        <ProtectedRoute path="/logout" component={Logout} />
+        <Route path="/login" component={Login} />
+        <ProtectedRoute path="/" component={Index} />
+        <Route path="/options" />
+        <Route component={NotFound} />
+      </Switch>
+    </div>
   );
 }
