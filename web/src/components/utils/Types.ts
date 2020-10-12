@@ -1,4 +1,4 @@
-import { UserObject, AuthObject } from "./Interfaces"
+import { UserObject, AuthObject, PlayerObject } from "./Interfaces"
 
 export type AuthReturn = {
   data: UserObject
@@ -27,4 +27,26 @@ export type AuthContextType = {
 export type NavItemType = {
   route: string;
   name: string;
+};
+
+export type ProtectedRouteType = {
+  component: any;
+  path: string;
+};
+
+export type RenderDPSType = {
+  players: Array<PlayerObject>
+  header: string
+}
+
+export type RenderSingleProps = {
+  player: PlayerObject,
+  header: string
+}
+
+export type SVGImage = {
+  src: string;
+  className: string;
+  onClick(): any;
+  fill?: string;
 };

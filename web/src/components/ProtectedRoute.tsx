@@ -1,12 +1,9 @@
 // eslint-disable-next-line
 import React from "react";
 import { Route, Redirect } from "react-router-dom";
-import { useAuth } from "./providers/AuthProvider";
 
-type ProtectedRouteType = {
-  component: any;
-  path: string;
-};
+import { ProtectedRouteType } from "./utils/Types";
+import { useAuth } from "./providers/AuthProvider";
 
 const ProtectedRoute = ({ component: Component, path }: ProtectedRouteType) => {
   const { authenticated } = useAuth()!;

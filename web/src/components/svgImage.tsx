@@ -1,11 +1,6 @@
 import React from "react";
 
-type SVGImage = {
-  src: string;
-  className: string;
-  onClick(): any;
-  fill?: string;
-};
+import { SVGImage } from "./utils/Types";
 
 const SVGImage = ({ src, className, onClick, fill }: SVGImage) => {
   return (
@@ -15,5 +10,4 @@ const SVGImage = ({ src, className, onClick, fill }: SVGImage) => {
   );
 };
 
-
-export default SVGImage
+export default SVGImage;

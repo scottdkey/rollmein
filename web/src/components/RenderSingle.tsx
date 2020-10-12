@@ -1,19 +1,17 @@
-import React from 'react'
-import { PlayerObject } from './utils/Interfaces'
-
-type RenderSingleProps = {
-  player: PlayerObject,
-  header: string
-}
+import React from "react";
+import { RenderSingleProps } from "./utils/Types";
 
 const RenderSingle = ({ player, header }: RenderSingleProps) => {
   if (player === undefined) {
-    return null
+    return null;
   } else {
     return (
-      <><h3>{header}: </h3>{player.name}</>
-    )
+      <>
+        <h3>{header}: </h3>
+        {player.name}
+      </>
+    );
   }
-}
+};
 
-export default RenderSingle
+export default RenderSingle;

@@ -1,14 +1,10 @@
-import React from 'react';
-import { PlayerObject } from "./utils/Interfaces"
-
-type RenderDPSType = {
-  players: Array<PlayerObject>
-  header: string
-}
+import React from "react";
+import { PlayerObject } from "./utils/Interfaces";
+import { RenderDPSType } from "./utils/Types";
 
 const RenderRemaining = ({ players, header }: RenderDPSType) => {
   if (players === undefined) {
-    return null
+    return null;
   } else {
     return (
       <>
@@ -17,10 +13,8 @@ const RenderRemaining = ({ players, header }: RenderDPSType) => {
           <div key={player.name + 10 + player.id}>{player.name}, </div>
         ))}
       </>
-    )
+    );
   }
-}
+};
 
-
-
-export default RenderRemaining
+export default RenderRemaining;

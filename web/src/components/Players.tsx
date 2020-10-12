@@ -1,7 +1,7 @@
 // eslint-disable-next-line
 import React, { useState } from "react";
+
 import PlayerCard from "./PlayerCard";
-import PlayerFormModal from "./PlayerFormModal";
 import { usePlayerData } from "./providers/PlayerProvider";
 
 const RenderPlayers = () => {
@@ -30,11 +30,6 @@ const RenderPlayers = () => {
           <div className="add-player-button">Add Player</div>
         </div>
       </div>
-      {/* <PlayerFormModal
-        visible={modalOpen}
-        close={() => setModalOpen(false)}
-        player={null}
-      /> */}
     </div>
   );
 };

@@ -77,3 +77,7 @@ export interface ThemesInterface {
   horde: ThemeObject;
   allience: ThemeObject;
 }
+
+export interface PlayerCardInterface {
+  player: PlayerObject;
+}

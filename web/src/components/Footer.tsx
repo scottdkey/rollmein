@@ -2,5 +2,5 @@
 import React from "react";
 
 export default function Footer() {
-  return <>Footer</>;
+  return <p>Footer</p>;
 }
