@@ -7,9 +7,10 @@ import Logout from "./Logout";
 
 import Login from "./Login";
 import NotFound from "./NotFound";
-import Index from ".";
+import Index from "./index";
 
 export default function ReactRouter() {
+
   return (
     <div className="content">
       <Switch>

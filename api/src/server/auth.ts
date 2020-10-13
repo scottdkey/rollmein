@@ -10,12 +10,6 @@ import knex from "../db/connection.js";
 const LocalStrategy = passportLocal.Strategy;
 const FacebookStrategy = passportFB.Strategy;
 
-
-
-// const { FB_CLINET_ID, FB_CLIENT_SECRET } = process.env;
-
-
-
 passport.serializeUser((user: UserInfo, done) => {
   done(null, user.id);
 });

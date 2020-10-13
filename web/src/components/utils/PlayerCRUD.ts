@@ -23,23 +23,22 @@ const PlayerUpdate = async (updatedPlayer: PlayerObject, players: Array<PlayerOb
   return updatedPlayers
 };
 
-const NewPlayer = async (newPlayer: PlayerFormObject, players: Array<PlayerObject>, id: number) => {
-  const res = await axios.post(`${BASE_URL}/${id}`, newPlayer)
-  const newPlayers: Array<PlayerObject> = [...players, res.data];
+const NewPlayer = async (newPlayer: PlayerFormObject, players: Array<PlayerObject>, uuid: number) => {
+  const res = await axios.post(`${BASE_URL}/${uuid}`, newPlayer)
+  const newPlayers: Array<PlayerObject> = [...players, res.data[0]];
   return newPlayers
 }
-const DeletePlayer = async (id: number, players: Array<PlayerObject>) => {
 
-  const res = await axios.delete(`${BASE_URL}/${id}`)
+const DeletePlayer = async (uuid: number, players: Array<PlayerObject>) => {
+  const res = await axios.delete(`${BASE_URL}/${uuid}`)
   const newPlayers: Array<PlayerObject> | undefined = players.filter(
     (player: PlayerObject) => player.id !== res.data[0].id
   );
-
   return newPlayers
 }
 
-const GetPlayers = async (id: number) => {
-  const res = await axios.get(`${BASE_URL}/${id}`);
+const GetPlayers = async (uuid: number) => {
+  const res = await axios.get(`${BASE_URL}/${uuid}`);
   let playerResponse: Array<PlayerObject> = res.data.map((player: PlayerObject) => {
     return player;
   });

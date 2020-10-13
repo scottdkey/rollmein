@@ -36,6 +36,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+// import Confirm from "prompt-confirm";
 var child_process_1 = require("child_process");
 var dbName = process.env[NODE_ENV];
 function sh(cmd) {

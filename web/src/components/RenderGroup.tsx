@@ -1,3 +1,4 @@
+// eslint-disable-next-line
 import React from "react";
 import { PlayerObject } from "./utils/Interfaces";
 import { RenderDPSType } from "./utils/Types";

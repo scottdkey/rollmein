@@ -1,10 +1,13 @@
 // eslint-disable-next-line
 import React, { createContext, useState, useEffect, useContext } from "react";
+
 import {
   PlayerObject,
   PlayerContextType,
   PlayerFormObject,
+  BlankPlayerObject,
 } from "../utils/Interfaces";
+
 import {
   PlayerUpdate,
   NewPlayer,
@@ -13,7 +16,6 @@ import {
 } from "../utils/PlayerCRUD";
 
 import { createInGroup } from "../utils/BaseAppLogic";
-
 import { useAuth } from "./AuthProvider";
 
 const PlayerContext = createContext<PlayerContextType | undefined>(undefined);
@@ -47,9 +49,17 @@ function PlayerProvider({ children }: any) {
   };
   const inGroupCount = inGroup ? inGroup.length : 0;
 
-  function toggleShowPlayers(){
-    setShowPlayers(!showPlayers)
+  function toggleShowPlayers() {
+    setShowPlayers(!showPlayers);
   }
+  const blankPlayer: BlankPlayerObject = {
+    name: "",
+    tank: false,
+    healer: false,
+    dps: false,
+    locked: false,
+    in: false,
+  };
 
   useEffect(() => {
     if (authenticated) {
@@ -67,6 +77,7 @@ function PlayerProvider({ children }: any) {
       value={{
         players,
         setPlayers,
+        blankPlayer,
         inGroup,
         setInGroup,
         removePlayer,

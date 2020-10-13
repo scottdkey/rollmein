@@ -3,7 +3,7 @@ import bodyParser from "koa-bodyparser";
 import session from "koa-session";
 import passport from "koa-passport";
 import redisStore from "koa-redis";
-import cors from "@koa/cors"
+
 
 import keys from "../../config"
 

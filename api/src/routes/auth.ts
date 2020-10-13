@@ -11,7 +11,6 @@ router.prefix(`${keys.BASE_URL}/auth`)
 
 router.get(`/status`, async (ctx) => {
   if (ctx.isAuthenticated()) {
-
     ctx.type = "html";
     const { user } = ctx.state
     ctx.body = user

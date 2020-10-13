@@ -1,12 +1,15 @@
 export type roleType = { [key: string]: boolean };
 
-export interface PlayerObject {
+export interface BlankPlayerObject {
   name: string;
   tank: boolean;
   healer: boolean;
   dps: boolean;
   locked: boolean;
   in: boolean;
+}
+
+export interface PlayerObject extends BlankPlayerObject {
   id: number;
 }
 
@@ -49,6 +52,7 @@ export type PlayerContextType = {
   inGroupCount: number;
   showPlayers: boolean;
   toggleShowPlayers(): void;
+  blankPlayer: BlankPlayerObject
 };
 
 
@@ -79,5 +83,11 @@ export interface ThemesInterface {
 }
 
 export interface PlayerCardInterface {
-  player: PlayerObject;
+  player?: PlayerObject;
+}
+
+export type RoleLogoImage = {
+  active: boolean;
+  source: string;
+  type: string;
 }
