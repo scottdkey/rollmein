@@ -17,10 +17,10 @@
     "axios": "^0.20.0",
     "dotenv": "^8.2.0",
     "formik": "^2.1.5",
+    "ncp": "^2.0.0",
     "node-sass": "^4.14.1",
     "npm-run-all": "^4.1.5",
     "react": "^16.13.1",
-    "react-animated-css": "^1.2.1",
     "react-awesome-modal": "^2.0.5",
     "react-dom": "^16.13.1",
     "react-dropdown-select": "^4.5.1",
@@ -35,7 +35,7 @@
   "scripts": {
     "start": "run-p watch-typescript start-dev",
     "start-dev": "react-scripts start",
-    "build": "react-scripts build",
+    "build": "react-scripts build && node file-copy.mjs",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "watch-typescript": "tsc -w"

@@ -1,12 +1,11 @@
 import Router from "koa-router";
+import serve from "koa-static"
+
 
 const router = new Router();
 
-router.get("/", async (ctx) => {
-  ctx.body = {
-    status: "success",
-    message: "hello, world!",
-  };
-});
+
+
+// router.get("/*", serve("../../public/index.html"));
 
 export default router;

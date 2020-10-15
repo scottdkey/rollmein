@@ -2,8 +2,8 @@ import passport from "koa-passport";
 import passportLocal from "passport-local";
 import passportFB from "passport-facebook";
 import bcrypt from "bcryptjs";
-import keys from "../../config"
-import { UserInfo } from "../../config/interfaces"
+import keys from "../config"
+import { UserInfo } from "../config/interfaces"
 
 import knex from "../db/connection.js";
 

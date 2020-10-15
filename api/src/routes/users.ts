@@ -1,6 +1,6 @@
 import Router from "koa-router";
 import queries from "../db/queries/users.js";
-import keys from "../../config"
+import keys from "../config"
 
 const router = new Router();
 

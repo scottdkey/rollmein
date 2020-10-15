@@ -1,6 +1,6 @@
 import bcrypt from "bcryptjs";
 import knex from "../connection.js";
-import { UserObject } from "../../../config/interfaces"
+import { UserObject } from "../../config/interfaces"
 
 
 function addUser(user: UserObject) {

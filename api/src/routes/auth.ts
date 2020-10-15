@@ -3,7 +3,7 @@ import passport from "koa-passport";
 import fs from "fs";
 import queries from "../db/queries/users.js";
 import { Context, DefaultState } from "koa";
-import keys from "../../config"
+import keys from "../config"
 
 const router = new Router<DefaultState, Context>();
 

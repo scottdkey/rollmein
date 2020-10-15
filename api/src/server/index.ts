@@ -3,9 +3,11 @@ import bodyParser from "koa-bodyparser";
 import session from "koa-session";
 import passport from "koa-passport";
 import redisStore from "koa-redis";
+import serve from "koa-static"
+import mount from "koa-mount"
 
 
-import keys from "../../config"
+import keys from "../config"
 
 import indexRoutes from "../routes/index.js";
 import playerRoutes from "../routes/players.js";
@@ -16,6 +18,11 @@ import authRoutes from "../routes/auth.js";
 const PORT: number = parseInt(keys.PORT) || 1337;
 const app = new Koa();
 
+//serve static site
+const StaticSite = "../public"
+const staticPages = new Koa();
+staticPages.use(serve(StaticSite))
+app.use(mount('/', staticPages))
 
 //sessions
 app.keys = [keys.SECRETKEY];
@@ -29,8 +36,10 @@ import "./auth";
 app.use(passport.initialize());
 app.use(passport.session());
 
-//routes
-app.use(indexRoutes.routes());
+
+
+// //routes
+// app.use(indexRoutes.routes());
 app.use(playerRoutes.routes());
 app.use(userRoutes.routes());
 app.use(authRoutes.routes())
