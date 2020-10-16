@@ -1,5 +1,5 @@
 import React from 'react'
-import { PlayerObject } from "./utils/Interfaces"
+import { PlayerObject } from "../types/Interfaces"
 
 type OutOfGroupProps = {
   group: Array<PlayerObject>

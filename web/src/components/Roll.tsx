@@ -1,24 +1,14 @@
 // eslint-disable-next-line
 import React from "react";
-import { Tab, Tabs, TabList, TabPanel } from "react-tabs";
 import RollByRole from "./RollByRole";
 import FreeForAllRoll from "./FreeForAllRoll";
-import "react-tabs/style/react-tabs.scss";
+import ValidGroup from "./ValidGroup";
 
 const GroupRoll = () => (
   <>
-    <Tabs>
-      <TabList>
-        <Tab>Roll by Role</Tab>
-        <Tab>Free for all Roll</Tab>
-      </TabList>
-      <TabPanel>
-        <RollByRole />
-      </TabPanel>
-      <TabPanel>
-        <FreeForAllRoll />
-      </TabPanel>
-    </Tabs>
+    <ValidGroup />
+    <RollByRole />
+    <FreeForAllRoll />
   </>
 );
 

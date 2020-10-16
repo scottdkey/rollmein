@@ -1,11 +1,10 @@
-import Router from "koa-router";
+import Koa from "koa"
 import serve from "koa-static"
 
 
-const router = new Router();
+const staticPages = new Koa()
 
 
+staticPages.use(serve("../server/public"))
 
-// router.get("/*", serve("../../public/index.html"));
-
-export default router;
+export default staticPages;

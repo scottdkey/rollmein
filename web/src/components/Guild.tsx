@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import Select from "react-dropdown-select";
 
 const Guild = ({}) => {
   const [guildName, setGuildName] = useState("");

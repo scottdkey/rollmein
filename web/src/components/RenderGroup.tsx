@@ -1,7 +1,7 @@
 // eslint-disable-next-line
 import React from "react";
-import { PlayerObject } from "./utils/Interfaces";
-import { RenderDPSType } from "./utils/Types";
+import { PlayerObject } from "../types/Interfaces";
+import { RenderDPSType } from "../types/Types";
 
 const RenderRemaining = ({ players, header }: RenderDPSType) => {
   if (players === undefined) {

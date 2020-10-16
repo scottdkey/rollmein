@@ -2,7 +2,7 @@
 import React from "react";
 import { Route, Redirect } from "react-router-dom";
 
-import { ProtectedRouteType } from "./utils/Types";
+import { ProtectedRouteType } from "../types/Types";
 import { useAuth } from "./providers/AuthProvider";
 
 const ProtectedRoute = ({ component: Component, path }: ProtectedRouteType) => {

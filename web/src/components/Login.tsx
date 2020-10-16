@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import { Redirect } from "react-router-dom";
 
 import { useAuth } from "./providers/AuthProvider";
-import { AuthObject } from "./utils/Interfaces";
+import { AuthObject } from "../types/Interfaces";
 
 const Authenticate = () => {
   const [email, setEmail] = useState("");

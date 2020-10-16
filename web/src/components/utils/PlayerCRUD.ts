@@ -1,4 +1,4 @@
-import { PlayerFormObject, PlayerObject } from "./Interfaces"
+import { PlayerFormObject, PlayerObject } from "../../types/Interfaces"
 
 import axios from "axios"
 import env from "../../config"

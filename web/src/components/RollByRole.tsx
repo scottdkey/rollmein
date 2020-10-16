@@ -1,11 +1,10 @@
 // eslint-disable-next-line
 import React, { useState, useEffect } from "react";
 import { rollByRole } from "./utils/GroupRollLogic";
-import { PlayerObject } from "./utils/Interfaces";
+import { PlayerObject } from "../types/Interfaces";
 import RenderGroup from "./RenderGroup";
 import { usePlayerData } from "./providers/PlayerProvider";
 import { validCheck } from "./utils/BaseAppLogic";
-import ValidGroup from "./ValidGroup";
 
 const RollByRole = () => {
   const [tank, setTank] = useState<PlayerObject>();
@@ -32,9 +31,8 @@ const RollByRole = () => {
     return (
       <>
         <button disabled={!valid} onClick={rollForGroup}>
-          Roll!
+          Roll by Role!
         </button>
-        <ValidGroup />
       </>
     );
   } else {

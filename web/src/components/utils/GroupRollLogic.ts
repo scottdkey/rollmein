@@ -1,4 +1,4 @@
-import { PlayerObject, DPSObject } from "./Interfaces";
+import { PlayerObject, DPSObject } from "../../types/Interfaces";
 
 const rollForRole = (role: string, players: Array<PlayerObject>): PlayerObject => {
   const group: Array<PlayerObject> = players.filter(

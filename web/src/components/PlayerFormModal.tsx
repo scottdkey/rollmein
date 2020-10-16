@@ -7,7 +7,7 @@ import {
   PlayerObject,
   PlayerFormModalInterface,
   PlayerFormObject,
-} from "./utils/Interfaces";
+} from "../types/Interfaces";
 
 const PlayerFormModal = ({
   visible,

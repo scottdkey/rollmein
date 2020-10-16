@@ -1,6 +1,6 @@
 // eslint-disable-next-line
 import React, { createContext, useContext, useEffect, useState } from "react";
-import { ThemeObject, ThemeContextInterface } from "../utils/Interfaces";
+import { ThemeObject, ThemeContextInterface } from "../../types/Interfaces";
 
 import { themes, ProvisionTheme } from "../utils/Themes";
 

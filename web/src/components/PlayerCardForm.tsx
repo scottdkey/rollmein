@@ -1,9 +1,15 @@
+// eslint-disable-next-line
 import React, { useState } from "react";
-import { Form, Input, Button, Checkbox } from "antd";
+import { Form, Input } from "antd";
 
-import IMAGE from "../assets/Images";
-import SVG from "../assets/SVG";
-import { BlankPlayerObject, RoleLogoImage } from "./utils/Interfaces";
+import { ReactComponent as ClosedLock } from "../assets/svgs/Lock.svg";
+import { ReactComponent as OpenLock } from "../assets/svgs/OpenLock.svg";
+import { ReactComponent as Dice } from "../assets/svgs/Dice.svg";
+import Tank from "../assets/images/TANK.png";
+import Dps from "../assets/images/DPS.png";
+import Healer from "../assets/images/HEALER.png";
+
+import { BlankPlayerObject, RoleLogoImage } from "../types/Interfaces";
 import { usePlayerData } from "./providers/PlayerProvider";
 
 const PlayerCardForm = () => {
@@ -51,9 +57,9 @@ const PlayerCardForm = () => {
           onClick={() => updateBoolean("locked", !BlankPlayer.locked)}
         >
           {BlankPlayer.locked ? (
-            <SVG.ClosedLock className="image locked" />
+            <ClosedLock className="image locked" />
           ) : (
-            <SVG.OpenLock className="image unlocked" />
+            <OpenLock className="image unlocked" />
           )}
         </div>
         <div className="card-head">
@@ -75,23 +81,15 @@ const PlayerCardForm = () => {
           </Form>
         </div>
         <div className="card-body">
-          <RoleLogoImage
-            active={BlankPlayer.tank}
-            source={IMAGE.tank}
-            type="tank"
-          />
+          <RoleLogoImage active={BlankPlayer.tank} source={Tank} type="tank" />
           <RoleLogoImage
             active={BlankPlayer.healer}
-            source={IMAGE.healer}
+            source={Healer}
             type="healer"
           />
-          <RoleLogoImage
-            active={BlankPlayer.dps}
-            source={IMAGE.dps}
-            type="dps"
-          />
+          <RoleLogoImage active={BlankPlayer.dps} source={Dps} type="dps" />
 
-          <SVG.Dice
+          <Dice
             className={`image ${
               BlankPlayer.in ? "in-the-roll-active" : "in-the-roll"
             }`}

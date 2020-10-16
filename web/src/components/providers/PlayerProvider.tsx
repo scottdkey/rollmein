@@ -6,7 +6,7 @@ import {
   PlayerContextType,
   PlayerFormObject,
   BlankPlayerObject,
-} from "../utils/Interfaces";
+} from "../../types/Interfaces";
 
 import {
   PlayerUpdate,

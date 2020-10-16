@@ -3,7 +3,7 @@ import ncp from "ncp";
 ncp.limit = 16;
 
 var srcPath = "./build";
-var destPath = "../api/build/public";
+var destPath = "../api/build/server/public";
 
 console.log("Copying files to Koa Server");
 ncp(srcPath, destPath, (err) => {

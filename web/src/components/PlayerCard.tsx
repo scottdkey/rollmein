@@ -1,13 +1,21 @@
 // eslint-disable-next-line
 import React, { useState, useEffect } from "react";
 
-import IMAGE from "../assets/Images";
-import SVG from "../assets/SVG";
+// import IMAGE from "../assets/Images";
+// import SVG from "../assets/SVG";
+
+import { ReactComponent as ClosedLock } from "../assets/svgs/Lock.svg";
+import { ReactComponent as OpenLock } from "../assets/svgs/OpenLock.svg";
+import { ReactComponent as Dice } from "../assets/svgs/Dice.svg";
+import { ReactComponent as Trash } from "../assets/svgs/Trash.svg";
+import Tank from "../assets/images/TANK.png";
+import Dps from "../assets/images/DPS.png";
+import Healer from "../assets/images/HEALER.png";
 import {
   PlayerObject,
   PlayerCardInterface,
   RoleLogoImage,
-} from "./utils/Interfaces";
+} from "../types/Interfaces";
 import { usePlayerData } from "./providers/PlayerProvider";
 
 const PlayerCard = ({ player }: PlayerCardInterface) => {
@@ -44,14 +52,14 @@ const PlayerCard = ({ player }: PlayerCardInterface) => {
         onClick={() => updateBoolean("locked", !cardPlayer.locked)}
       >
         {cardPlayer.locked ? (
-          <SVG.ClosedLock className="image locked" />
+          <ClosedLock className="image locked" />
         ) : (
-          <SVG.OpenLock className="image unlocked" />
+          <OpenLock className="image unlocked" />
         )}
       </div>
       <div className="card-head">
         <div className="name">{cardPlayer.name}</div>
-        <SVG.Trash
+        <Trash
           className="image delete-icon"
           onClick={() => removePlayer(cardPlayer.id)}
         />
@@ -59,17 +67,17 @@ const PlayerCard = ({ player }: PlayerCardInterface) => {
       <div className="card-body">
         <RoleLogoImage
           active={cardPlayer.tank}
-          source={IMAGE.tank}
+          source={Tank}
           type="tank"
         />
         <RoleLogoImage
           active={cardPlayer.healer}
-          source={IMAGE.healer}
+          source={Healer}
           type="healer"
         />
-        <RoleLogoImage active={cardPlayer.dps} source={IMAGE.dps} type="dps" />
+        <RoleLogoImage active={cardPlayer.dps} source={Dps} type="dps" />
 
-        <SVG.Dice
+        <Dice
           className={`image ${
             cardPlayer.in ? "in-the-roll-active" : "in-the-roll"
           }`}

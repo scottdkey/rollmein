@@ -8,8 +8,8 @@ import {
   Register,
   Update,
 } from "../utils/AuthCRUD";
-import { UserObject, AuthObject } from "../utils/Interfaces";
-import { AuthReturn, AuthContextType } from "../utils/Types";
+import { UserObject, AuthObject } from "../../types/Interfaces";
+import { AuthReturn, AuthContextType } from "../../types/Types";
 
 const UserContext = createContext<AuthContextType | undefined>(undefined);
 

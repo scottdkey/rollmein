@@ -1,5 +1,5 @@
 import React from "react";
-import { RenderSingleProps } from "./utils/Types";
+import { RenderSingleProps } from "../types/Types";
 
 const RenderSingle = ({ player, header }: RenderSingleProps) => {
   if (player === undefined) {

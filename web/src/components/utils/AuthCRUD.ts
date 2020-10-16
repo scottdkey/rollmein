@@ -1,4 +1,4 @@
-import { AuthObject, UserObject } from "./Interfaces"
+import { AuthObject, UserObject } from "../../types/Interfaces"
 import axios from "axios";
 import env from "../../config"
 

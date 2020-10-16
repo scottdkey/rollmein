@@ -1,5 +1,5 @@
 // eslint-disable-next-line
-import React, { useState } from "react";
+import React from "react";
 
 import PlayerCard from "./PlayerCard";
 import PlayerCardForm from "./PlayerCardForm";

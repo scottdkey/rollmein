@@ -1,6 +1,6 @@
 // eslint-disable-next-line
 import React, { useState, useEffect } from "react";
-import { PlayerObject } from "./utils/Interfaces";
+import { PlayerObject } from "../types/Interfaces";
 import { FFARoll, inCheck } from "./utils/GroupRollLogic";
 import RenderGroup from "./RenderGroup";
 import { usePlayerData } from "./providers/PlayerProvider";
@@ -25,7 +25,7 @@ const FreeForAllRoll = () => {
   return (
     <>
       <button disabled={valid === false} onClick={rollForGroup}>
-        Roll!
+        FFA Roll!
       </button>
       <RenderGroup players={players!} header={"Players"} />
       <RenderGroup players={outGroup!} header={"Not in the roll"} />
