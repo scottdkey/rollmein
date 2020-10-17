@@ -17,7 +17,7 @@ export default function ReactRouter() {
         <ProtectedRoute path="/logout" component={Logout} />
         <Route path="/login" component={Login} />
         <ProtectedRoute path="/" component={Index} />
-        <Route path="/options" />
+        <Route path="/options"/>
         <Route component={NotFound} />
       </Switch>
     </div>

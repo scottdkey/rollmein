@@ -1,49 +1,58 @@
 // eslint-disable-next-line
-import React, { useState, useEffect } from "react";
+import React from "react";
+
 import { usePlayerData } from "./providers/PlayerProvider";
-import { countRoles, validCheck } from "./utils/BaseAppLogic";
 
-const GetAGroup = () => {
-  const { inGroup, players } = usePlayerData()!;
+import Tank from "./assets/images/TANK.png";
+import Dps from "./assets/images/DPS.png";
+import Healer from "./assets/images/HEALER.png";
 
-  const [tanks, setTanks] = useState(0);
-  const [dps, setDps] = useState(0);
-  const [healers, setHealers] = useState(0);
-  const [valid, setValid] = useState<boolean>(false);
+import ValidRole from "./ValidRole";
 
-  const LongEnough = () =>
-    inGroup ? (
-      <>
-        {inGroup.length >= 6 ? null : (
-          <li>You must have at least 6 players or rolling is pointless</li>
-        )}
-      </>
-    ) : null;
+const ValidGroup = () => {
+  const { roleCounts, inGroup } = usePlayerData()!;
 
-  useEffect(() => {
-    const roleCounts = countRoles(players!);
-    setTanks(roleCounts.tanks);
-    setDps(roleCounts.dps);
-    setHealers(roleCounts.healers);
-  }, [players]);
-
-  useEffect(() => {
-    setValid(validCheck(inGroup!));
-  }, [inGroup]);
   return (
-    <>
-      <div>Number of Tanks: {tanks}</div>
-      <div>Number of DPS: {dps}</div>
-      <div>Number of Healers: {healers}</div>
-      <div>This group is {valid ? "valid" : "invalid"}</div>
-      <div>
-        <LongEnough />
-        {tanks > 0 ? null : <li>You must have at least 1 tank</li>}
-        {healers > 0 ? null : <li>You must have at least 1 healer</li>}
-        {dps > 2 ? null : <li>You must have at least 3 DPS</li>}
-      </div>
-    </>
+    <div className="valid-group">
+      <ValidRole
+        roleCount={roleCounts.tanks}
+        image={Tank}
+        miniumNumber={1}
+        toolTipText={TankText}
+        altImageText="tank logo"
+      />
+      <ValidRole
+        roleCount={roleCounts.dps}
+        image={Dps}
+        miniumNumber={3}
+        toolTipText={DPSText}
+        altImageText="dps logo"
+      />
+      <ValidRole
+        roleCount={roleCounts.healers}
+        image={Healer}
+        miniumNumber={1}
+        toolTipText={HealerText}
+        altImageText="healer logo"
+      />
+
+      {inGroup ? (
+        <ValidRole
+          roleCount={roleCounts.inGroupCount}
+          image={Healer}
+          miniumNumber={6}
+          toolTipText={EnoughPlayersText}
+          altImageText="people logo"
+        />
+      ) : null}
+    </div>
   );
 };
 
-export default GetAGroup;
+export default ValidGroup;
+
+const TankText = "You must have at least 1 tank";
+const HealerText = "You must have at least 1 healer";
+const DPSText = "You must have at least 3 DPS";
+const EnoughPlayersText =
+  "You must have at least 6 players or rolling is pointless";

@@ -25,17 +25,17 @@
     max-width: 300px;
     height: 100%;
     max-height: 150px;
-    background-color: #2e2e2e;
+    background-color: $secondary;
     border-radius: 10px;
     margin: 15px;
     margin-top: 25px;
     padding: 10px;
-    box-shadow: 0px 0px 10px 2px darkgrey;
+    box-shadow: 0px 0px 10px 2px $white;
     .card-locked-area {
       position: relative;
       left: -30px;
       bottom: -90px;
-      background-color: grey;
+      background-color: $black;
       border-radius: 50px;
       width: 66px;
       height: 66px;
@@ -70,7 +70,7 @@
 
   .card-locked {
     @extend .card;
-    box-shadow: 0px 0px 10px 2px red;
+    box-shadow: 0px 0px 10px 2px $red;
   }
 }
 
@@ -101,7 +101,7 @@
 
 .in-the-roll {
   opacity: 30%;
-  color: white;
+  color: $white;
   &:hover {
     opacity: 60%;
     color: $accent;
@@ -111,10 +111,10 @@
 .in-the-roll-active {
   @extend .in-the-roll;
   opacity: 100%;
-  color: peachpuff;
+  color: $buttonColor;
   &:hover {
     opacity: 70%;
-    color: $secondary;
+    color: $buttonHover;
   }
 }
 
@@ -122,7 +122,7 @@
   opacity: 30%;
   &:hover {
     opacity: 100%;
-    color: red;
+    color: $red;
   }
 }
 
@@ -143,7 +143,7 @@
   @extend .card;
   .add-player-button {
     width: 100%;
-    background-color: aquamarine;
+    background-color: $buttonColor;
     border-radius: 15px;
     text-align: center;
     position: relative;
@@ -151,7 +151,7 @@
   }
   &:hover {
     .add-player-button {
-      background-color: orange;
+      background-color: $buttonHover;
     }
   }
 }

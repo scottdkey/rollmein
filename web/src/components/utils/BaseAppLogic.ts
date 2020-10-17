@@ -5,8 +5,7 @@ const validCheck = (playersArray: Array<PlayerObject>) => {
   const tanks = roleCount.tanks > 0;
   const dps = roleCount.dps >= 3;
   const healers = roleCount.healers > 0;
-
-  const rolesValid = tanks && dps && healers;
+  const rolesValid = tanks === true && dps === true && healers === true
   const groupValid = playersArray ? playersArray.length >= 6 : 0;
 
   const isValid = groupValid === true && rolesValid === true;
@@ -28,7 +27,11 @@ const countRoles = (playersArray: Array<PlayerObject>) => {
     let increment = player.dps === true && player.in === true ? 1 : 0;
     return n + increment;
   }, 0);
-  return { tanks, healers, dps };
+  const inGroupCount = players.reduce((n, player) => {
+    let increment = player.in === true ? 1 : 0;
+    return n + increment;
+  }, 0);
+  return { tanks, healers, dps, inGroupCount };
 };
 
 function createInGroup(playersArray: Array<PlayerObject>) {

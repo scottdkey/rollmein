@@ -24,7 +24,8 @@ const RollByRole = () => {
   };
 
   useEffect(() => {
-    setValid(validCheck(inGroup!));
+    const CurrentValid = validCheck(inGroup!);
+    setValid(CurrentValid);
   }, [inGroup]);
 
   if (outOfGroup === undefined) {

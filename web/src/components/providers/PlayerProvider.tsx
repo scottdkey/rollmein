@@ -6,6 +6,7 @@ import {
   PlayerContextType,
   PlayerFormObject,
   BlankPlayerObject,
+  roleCountInterface,
 } from "../../types/Interfaces";
 
 import {
@@ -15,7 +16,7 @@ import {
   GetPlayers,
 } from "../utils/PlayerCRUD";
 
-import { createInGroup } from "../utils/BaseAppLogic";
+import { createInGroup, countRoles, validCheck } from "../utils/BaseAppLogic";
 import { useAuth } from "./AuthProvider";
 
 const PlayerContext = createContext<PlayerContextType | undefined>(undefined);
@@ -25,10 +26,22 @@ function PlayerProvider({ children }: any) {
   const [players, setPlayers] = useState<Array<PlayerObject> | undefined>(
     undefined
   );
+  const [roleCounts, setRoleCounts] = useState<roleCountInterface>({
+    tanks: 0,
+    healers: 0,
+    dps: 0,
+    inGroupCount: 0,
+  });
   const [inGroup, setInGroup] = useState<Array<PlayerObject> | undefined>(
     undefined
   );
+  const [currentRoll, setCurrentRoll] = useState<
+    Array<PlayerObject> | undefined
+  >(undefined);
+
+  
   const [showPlayers, setShowPlayers] = useState(true);
+  const [valid, setValid] = useState<boolean>(false);
 
   const removePlayer = (id: number) => {
     DeletePlayer(id, players!)
@@ -38,7 +51,12 @@ function PlayerProvider({ children }: any) {
 
   const updatePlayer = (player: PlayerObject) => {
     PlayerUpdate(player, players!)
-      .then((res) => setPlayers(res))
+      .then((res) => {
+        setPlayers(res);
+        const newGroup = createInGroup(res!);
+        console.log(newGroup);
+        setInGroup(newGroup);
+      })
       .catch((err) => console.log(err));
   };
 
@@ -47,7 +65,6 @@ function PlayerProvider({ children }: any) {
       .then((res) => setPlayers(res))
       .catch((err) => console.log(err));
   };
-  const inGroupCount = inGroup ? inGroup.length : 0;
 
   function toggleShowPlayers() {
     setShowPlayers(!showPlayers);
@@ -72,6 +89,11 @@ function PlayerProvider({ children }: any) {
     }
   }, [authenticated, user]);
 
+  useEffect(() => {
+    setValid(validCheck(players!));
+    setRoleCounts(countRoles(players!));
+  }, [players]);
+
   return (
     <PlayerContext.Provider
       value={{
@@ -83,9 +105,10 @@ function PlayerProvider({ children }: any) {
         removePlayer,
         updatePlayer,
         addPlayer,
-        inGroupCount,
         showPlayers,
+        roleCounts,
         toggleShowPlayers,
+        valid,
       }}
     >
       {children}

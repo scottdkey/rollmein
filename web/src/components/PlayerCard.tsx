@@ -4,13 +4,13 @@ import React, { useState, useEffect } from "react";
 // import IMAGE from "../assets/Images";
 // import SVG from "../assets/SVG";
 
-import { ReactComponent as ClosedLock } from "../assets/svgs/Lock.svg";
-import { ReactComponent as OpenLock } from "../assets/svgs/OpenLock.svg";
-import { ReactComponent as Dice } from "../assets/svgs/Dice.svg";
-import { ReactComponent as Trash } from "../assets/svgs/Trash.svg";
-import Tank from "../assets/images/TANK.png";
-import Dps from "../assets/images/DPS.png";
-import Healer from "../assets/images/HEALER.png";
+import { ReactComponent as ClosedLock } from "./assets/svgs/Lock.svg";
+import { ReactComponent as OpenLock } from "./assets/svgs/OpenLock.svg";
+import { ReactComponent as Dice } from "./assets/svgs/Dice.svg";
+import { ReactComponent as Trash } from "./assets/svgs/Trash.svg";
+import Tank from "./assets/images/TANK.png";
+import Dps from "./assets/images/DPS.png";
+import Healer from "./assets/images/HEALER.png";
 import {
   PlayerObject,
   PlayerCardInterface,
@@ -20,7 +20,7 @@ import { usePlayerData } from "./providers/PlayerProvider";
 
 const PlayerCard = ({ player }: PlayerCardInterface) => {
   const { updatePlayer, removePlayer } = usePlayerData()!;
- const [cardPlayer, setCardPlayer] = useState<PlayerObject>(player!);
+  const [cardPlayer, setCardPlayer] = useState<PlayerObject>(player!);
 
   const updateBoolean = (type: string, newBoolean: boolean) => {
     const updatedPlayer = { ...cardPlayer, [type]: newBoolean };
@@ -65,11 +65,7 @@ const PlayerCard = ({ player }: PlayerCardInterface) => {
         />
       </div>
       <div className="card-body">
-        <RoleLogoImage
-          active={cardPlayer.tank}
-          source={Tank}
-          type="tank"
-        />
+        <RoleLogoImage active={cardPlayer.tank} source={Tank} type="tank" />
         <RoleLogoImage
           active={cardPlayer.healer}
           source={Healer}

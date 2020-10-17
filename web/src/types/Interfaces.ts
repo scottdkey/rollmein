@@ -41,6 +41,13 @@ export interface AuthObject {
   email: string;
   password: string;
 }
+
+export interface roleCountInterface {
+  tanks: number;
+  healers: number;
+  dps: number;
+  inGroupCount: number;
+}
 export type PlayerContextType = {
   players: Array<PlayerObject> | undefined;
   setPlayers: (value: Array<PlayerObject>) => void;
@@ -49,10 +56,11 @@ export type PlayerContextType = {
   removePlayer: (value: number) => void;
   updatePlayer: (value: PlayerObject) => void;
   addPlayer: (value: PlayerFormObject) => void;
-  inGroupCount: number;
+  roleCounts: roleCountInterface
   showPlayers: boolean;
   toggleShowPlayers(): void;
   blankPlayer: BlankPlayerObject
+  valid: boolean
 };
 
 
@@ -65,7 +73,11 @@ export interface ThemeObject {
   textAccent: string;
   backgroundColor: string;
   headerBackgroundColor: string;
-  blockquoteColor: string;
+  white: string,
+  red: string,
+  black: string,
+  buttonColor: string,
+  buttonHover: string
 }
 
 export interface ThemeContextInterface {

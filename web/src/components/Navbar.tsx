@@ -1,6 +1,7 @@
 // eslint-disable-next-line
 import React from "react";
 
+import ValidGroup from "./ValidGroup";
 import NavItem from "./NavItem";
 import { useAuth } from "./providers/AuthProvider";
 import { usePlayerData } from "./providers/PlayerProvider";
@@ -14,7 +15,9 @@ const Navbar = () => {
       <h1 className="Title">
         {authenticated ? <NavItem route="/" name="Roll Me In" /> : "Roll Me In"}
       </h1>
-      <div className="players-button" onClick={toggleShowPlayers}>Players</div>
+      <div className="players-button" onClick={toggleShowPlayers}>
+        Players
+      </div>
     </>
   );
 
@@ -39,7 +42,7 @@ const Navbar = () => {
       <div className="Left">
         <Left />
       </div>
-
+      <ValidGroup />
       <div className="Right">
         <Right />
       </div>

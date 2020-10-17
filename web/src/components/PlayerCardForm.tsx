@@ -2,12 +2,12 @@
 import React, { useState } from "react";
 import { Form, Input } from "antd";
 
-import { ReactComponent as ClosedLock } from "../assets/svgs/Lock.svg";
-import { ReactComponent as OpenLock } from "../assets/svgs/OpenLock.svg";
-import { ReactComponent as Dice } from "../assets/svgs/Dice.svg";
-import Tank from "../assets/images/TANK.png";
-import Dps from "../assets/images/DPS.png";
-import Healer from "../assets/images/HEALER.png";
+import { ReactComponent as ClosedLock } from "./assets/svgs/Lock.svg";
+import { ReactComponent as OpenLock } from "./assets/svgs/OpenLock.svg";
+import { ReactComponent as Dice } from "./assets/svgs/Dice.svg";
+import Tank from "./assets/images/TANK.png";
+import Dps from "./assets/images/DPS.png";
+import Healer from "./assets/images/HEALER.png";
 
 import { BlankPlayerObject, RoleLogoImage } from "../types/Interfaces";
 import { usePlayerData } from "./providers/PlayerProvider";

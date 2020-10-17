@@ -2,14 +2,18 @@ import { ThemesInterface, ThemeObject } from "../../types/Interfaces"
 
 const themes: ThemesInterface = {
   dark: {
-    primary: "#1a1a2e",
-    secondary: "#16213e",
+    primary: "#081124",
+    secondary: "#060a12",
     accent: "#0f3460",
-    textColor: "white",
-    textAccent: "orange",
-    backgroundColor: "#e94560",
-    headerBackgroundColor: "#16213e",
-    blockquoteColor: "#aaa",
+    textColor: "#b3b6bd",
+    textAccent: "#47494d",
+    backgroundColor: "#3f4759",
+    headerBackgroundColor: "#081124",
+    white: "#e3e3e3",
+    red: "#b51f1f",
+    black: "#01040a",
+    buttonColor: "#461075",
+    buttonHover: "#692f0c"
   },
   light: {
     primary: "#1ca086",
@@ -19,7 +23,11 @@ const themes: ThemesInterface = {
     textAccent: "black",
     backgroundColor: "white",
     headerBackgroundColor: "#f6f6f6",
-    blockquoteColor: "rgba(0,0,0,0.80)",
+    white: "#e3e3e3",
+    red: "#b51f1f",
+    black: "#01040a",
+    buttonColor: "#461075",
+    buttonHover: "#692f0c"
   },
   horde: {
     primary: "#781414",
@@ -29,7 +37,11 @@ const themes: ThemesInterface = {
     textAccent: "#303030",
     backgroundColor: "maroon",
     headerBackgroundColor: "#f6f6f6",
-    blockquoteColor: "rgba(0,0,0,0.80)",
+    white: "#e3e3e3",
+    red: "#b51f1f",
+    black: "#01040a",
+    buttonColor: "#461075",
+    buttonHover: "#692f0c"
   },
   allience: {
     primary: "#1c3661",
@@ -39,7 +51,11 @@ const themes: ThemesInterface = {
     textAccent: "#303030",
     backgroundColor: "maroon",
     headerBackgroundColor: "#f6f6f6",
-    blockquoteColor: "rgba(0,0,0,0.80)",
+    white: "#e3e3e3",
+    red: "#b51f1f",
+    black: "#01040a",
+    buttonColor: "#461075",
+    buttonHover: "#692f0c"
   },
 };
 
