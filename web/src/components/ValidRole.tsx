@@ -22,14 +22,23 @@ const ValidRole = ({
   const isRoleValid = roleCount >= miniumNumber;
 
   return (
-    <Tooltip placement="top" title={toolTipText}>
+    <Tooltip
+      placement="top"
+      title={
+        isRoleValid
+          ? `There are ${roleCount} ${altImageText}${
+              roleCount > 1 && altImageText !== "DPS" ? "s" : ""
+            } in the roll`
+          : toolTipText
+      }
+    >
       <div className="role">
         <img
           src={image}
           className={isRoleValid ? "valid-image" : "image"}
-          alt={altImageText}
+          alt={`${altImageText} logo`}
         />
-        <div className="role-count">{isRoleValid ? null : roleCount}</div>
+        <div className="role-count">{roleCount}</div>
         {children}
       </div>
     </Tooltip>

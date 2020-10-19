@@ -13,7 +13,7 @@ const validCheck = (playersArray: Array<PlayerObject>) => {
 };
 
 const countRoles = (playersArray: Array<PlayerObject>) => {
-  const players = playersArray ? playersArray : blankPlayer;
+  const players = playersArray ? playersArray : placeHolderArray;
 
   const tanks = players.reduce((n, player) => {
     let increment = player.tank === true && player.in === true ? 1 : 0;
@@ -39,7 +39,7 @@ function createInGroup(playersArray: Array<PlayerObject>) {
 }
 
 
-const blankPlayer: Array<PlayerObject> = [
+const placeHolderArray: Array<PlayerObject> = [
   {
     name: "",
     tank: false,
@@ -47,8 +47,11 @@ const blankPlayer: Array<PlayerObject> = [
     healer: false,
     locked: false,
     in: false,
-    id: 0,
+    id: 999999,
+    user_id: "placeHolder",
+    createdAt: "placeHolder",
+    updatedAt: "placeHolder",
   },
 ];
 
-export { createInGroup, blankPlayer, countRoles, validCheck }
+export { createInGroup, countRoles, validCheck }

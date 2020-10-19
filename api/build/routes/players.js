@@ -109,12 +109,14 @@ router.post(BASE_URL + "/:uid", function (ctx) { return __awaiter(void 0, void 0
                     ctx.body = player;
                 }
                 else {
-                    ctx.status = 400;
-                    ctx.body = "Something went wrong";
+                    ctx.status = 406;
+                    ctx.body = "Player Query Error";
+                    console.log("query error");
                 }
                 return [3 /*break*/, 4];
             case 3:
                 err_2 = _a.sent();
+                console.log("in the catch");
                 ctx.status = 400;
                 ctx.body = err_2.message || "Sorry, an error has occurred.";
                 return [3 /*break*/, 4];

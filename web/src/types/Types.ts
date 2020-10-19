@@ -1,15 +1,9 @@
-import { UserObject, AuthObject, PlayerObject } from "./Interfaces"
+import { UserObject, AuthObject, PlayerObject, PlayerFormObject, roleCountInterface } from "./Interfaces"
 
 export type AuthReturn = {
   data: UserObject
   status: number;
 };
-
-type returnObjectWithError = {
-  user: UserObject
-  error?: boolean;
-  errorMessage?: string
-}
 
 export type AuthContextType = {
   login: (value: AuthObject) => void;
@@ -49,4 +43,18 @@ export type SVGImage = {
   className: string;
   onClick(): any;
   fill?: string;
+};
+export type PlayerContextType = {
+  players: Array<PlayerObject> | undefined;
+  setPlayers: (value: Array<PlayerObject>) => void;
+  inGroup: Array<PlayerObject> | undefined;
+  setInGroup: (value: Array<PlayerObject>) => void;
+  removePlayer: (value: number) => void;
+  updatePlayer: (value: PlayerObject) => void;
+  addPlayer: (value: PlayerFormObject) => PlayerObject;
+  roleCounts: roleCountInterface
+  showPlayers: boolean;
+  toggleShowPlayers(): void;
+  blankPlayer: PlayerFormObject
+  valid: boolean
 };

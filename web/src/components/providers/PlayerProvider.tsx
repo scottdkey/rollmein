@@ -3,12 +3,11 @@ import React, { createContext, useState, useEffect, useContext } from "react";
 
 import {
   PlayerObject,
-  PlayerContextType,
   PlayerFormObject,
-  BlankPlayerObject,
   roleCountInterface,
 } from "../../types/Interfaces";
 
+import { PlayerContextType } from "../../types/Types";
 import {
   PlayerUpdate,
   NewPlayer,
@@ -35,11 +34,10 @@ function PlayerProvider({ children }: any) {
   const [inGroup, setInGroup] = useState<Array<PlayerObject> | undefined>(
     undefined
   );
-  const [currentRoll, setCurrentRoll] = useState<
-    Array<PlayerObject> | undefined
-  >(undefined);
+  // const [currentRoll, setCurrentRoll] = useState<
+  //   Array<PlayerObject> | undefined
+  // >(undefined);
 
-  
   const [showPlayers, setShowPlayers] = useState(true);
   const [valid, setValid] = useState<boolean>(false);
 
@@ -54,22 +52,33 @@ function PlayerProvider({ children }: any) {
       .then((res) => {
         setPlayers(res);
         const newGroup = createInGroup(res!);
-        console.log(newGroup);
         setInGroup(newGroup);
       })
       .catch((err) => console.log(err));
   };
 
-  const addPlayer = (newPlayer: PlayerFormObject) => {
+  const addPlayer = (newPlayer: PlayerFormObject): PlayerObject => {
+    let responsePlayer = {
+      ...blankPlayer,
+      id: 99999,
+      user_id: "placeHolder",
+      createdAt: "placeHolder",
+      updatedAt: "placeHolder",
+    };
+
     NewPlayer(newPlayer, players!, user!.id)
-      .then((res) => setPlayers(res))
+      .then((res) => {
+        setPlayers(res.players);
+        responsePlayer = res.newPlayer;
+      })
       .catch((err) => console.log(err));
+    return responsePlayer;
   };
 
   function toggleShowPlayers() {
     setShowPlayers(!showPlayers);
   }
-  const blankPlayer: BlankPlayerObject = {
+  const blankPlayer: PlayerFormObject = {
     name: "",
     tank: false,
     healer: false,

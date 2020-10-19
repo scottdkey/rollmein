@@ -2,16 +2,17 @@
 @import "./NavBar.scss";
 @import "./AuthForm.scss";
 @import "./imageStyles.scss";
-@import "./PlayerCard.scss";
 @import "./ValidGroup.scss";
+
 
 body {
   padding: 0px;
   margin: 0px;
   background-color: $backgroundColor;
   color: $textColor;
+  .content {
+  margin: 10px;
+  }
 }
 
-.content {
-  margin: 10px;
-}
+

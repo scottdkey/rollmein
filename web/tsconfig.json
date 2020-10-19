@@ -2,7 +2,7 @@
   "compilerOptions": {
     "target": "es5",
     "module": "esnext",
-    "outDir": "./build/",
+    "outDir": "./build",
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
     "strict": true,
@@ -25,6 +25,6 @@
     "skipLibCheck": true
   },
   "include": [
-    "./src/"
+    "./src"
   ]
 }

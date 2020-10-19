@@ -19,21 +19,21 @@ const ValidGroup = () => {
         image={Tank}
         miniumNumber={1}
         toolTipText={TankText}
-        altImageText="tank logo"
+        altImageText="Tank"
       />
       <ValidRole
         roleCount={roleCounts.dps}
         image={Dps}
         miniumNumber={3}
         toolTipText={DPSText}
-        altImageText="dps logo"
+        altImageText="DPS"
       />
       <ValidRole
         roleCount={roleCounts.healers}
         image={Healer}
         miniumNumber={1}
         toolTipText={HealerText}
-        altImageText="healer logo"
+        altImageText="Healer"
       />
 
       {inGroup ? (
@@ -42,7 +42,7 @@ const ValidGroup = () => {
           image={Healer}
           miniumNumber={6}
           toolTipText={EnoughPlayersText}
-          altImageText="people logo"
+          altImageText="Player"
         />
       ) : null}
     </div>

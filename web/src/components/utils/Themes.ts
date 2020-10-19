@@ -11,9 +11,9 @@ const themes: ThemesInterface = {
     headerBackgroundColor: "#081124",
     white: "#e3e3e3",
     red: "#b51f1f",
-    black: "#01040a",
-    buttonColor: "#461075",
-    buttonHover: "#692f0c"
+    black: "#0f1624",
+    buttonColor: "#692f0c",
+    buttonHover: "#461075"
   },
   light: {
     primary: "#1ca086",

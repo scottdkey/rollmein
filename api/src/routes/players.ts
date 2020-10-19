@@ -33,10 +33,12 @@ router.post(`${BASE_URL}/:uid`, async (ctx) => {
       ctx.status = 201;
       ctx.body = player
     } else {
-      ctx.status = 400;
-      ctx.body = "Something went wrong"
+      ctx.status = 406;
+      ctx.body = "Player Query Error"
+      console.log("query error")
     }
   } catch (err) {
+    console.log("in the catch")
     ctx.status = 400;
     ctx.body = err.message || "Sorry, an error has occurred."
   }

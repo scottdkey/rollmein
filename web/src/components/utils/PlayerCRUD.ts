@@ -26,7 +26,8 @@ const PlayerUpdate = async (updatedPlayer: PlayerObject, players: Array<PlayerOb
 const NewPlayer = async (newPlayer: PlayerFormObject, players: Array<PlayerObject>, uuid: number) => {
   const res = await axios.post(`${BASE_URL}/${uuid}`, newPlayer)
   const newPlayers: Array<PlayerObject> = [...players, res.data[0]];
-  return newPlayers
+  const returnObject = { players: newPlayers, newPlayer: res.data[0] }
+  return returnObject
 }
 
 const DeletePlayer = async (uuid: number, players: Array<PlayerObject>) => {

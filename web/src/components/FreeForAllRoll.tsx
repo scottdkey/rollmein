@@ -9,7 +9,7 @@ const FreeForAllRoll = () => {
   const [players, setPlayers] = useState<Array<PlayerObject>>();
   const [outGroup, setOutGroup] = useState<Array<PlayerObject>>();
 
-  const { inGroup, roleCounts, valid } = usePlayerData()!;
+  const { inGroup, valid } = usePlayerData()!;
 
   const rollForGroup = async () => {
     const res = await FFARoll(inGroup!);

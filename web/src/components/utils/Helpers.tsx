@@ -1,7 +1,7 @@
 import { usePlayerData } from "../providers/PlayerProvider";
 const { updatePlayer, removePlayer } = usePlayerData()!;
 
-import { PlayerObject, RoleLogoImage } from "../../types/Interfaces";
+import { PlayerObject, RoleLogoImageInterface } from "../../types/Interfaces";
 
 export const apiRequest = async (
   url: string,
@@ -17,4 +17,3 @@ export const apiRequest = async (
   });
   return await response.json();
 };
-

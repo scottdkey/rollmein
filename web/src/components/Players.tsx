@@ -2,7 +2,6 @@
 import React from "react";
 
 import PlayerCard from "./PlayerCard";
-import PlayerCardForm from "./PlayerCardForm";
 import { usePlayerData } from "./providers/PlayerProvider";
 
 const RenderPlayers = () => {
@@ -20,7 +19,7 @@ const RenderPlayers = () => {
   return (
     <div className={showPlayers ? "player-cards-open" : "player-cards"}>
       <Players />
-      <PlayerCardForm />
+      <PlayerCard />
     </div>
   );
 };

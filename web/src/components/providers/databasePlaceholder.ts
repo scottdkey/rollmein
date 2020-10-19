@@ -9,6 +9,9 @@ export const playersPlaceHolder: Array<PlayerObject> = [
     locked: false,
     in: true,
     id: 1,
+    user_id: "placeHolder",
+    createdAt: "placeHolder",
+    updatedAt: "placeHolder",
   },
   {
     name: "Tyler",
@@ -18,6 +21,9 @@ export const playersPlaceHolder: Array<PlayerObject> = [
     locked: false,
     in: true,
     id: 2,
+    user_id: "placeHolder",
+    createdAt: "placeHolder",
+    updatedAt: "placeHolder",
   },
   {
     name: "Kevin",
@@ -27,6 +33,9 @@ export const playersPlaceHolder: Array<PlayerObject> = [
     locked: false,
     in: true,
     id: 3,
+    user_id: "placeHolder",
+    createdAt: "placeHolder",
+    updatedAt: "placeHolder",
   },
   {
     name: "Jill",
@@ -36,6 +45,9 @@ export const playersPlaceHolder: Array<PlayerObject> = [
     locked: false,
     in: true,
     id: 4,
+    user_id: "placeHolder",
+    createdAt: "placeHolder",
+    updatedAt: "placeHolder",
   },
   {
     name: "Scott",
@@ -45,6 +57,9 @@ export const playersPlaceHolder: Array<PlayerObject> = [
     locked: false,
     in: true,
     id: 5,
+    user_id: "placeHolder",
+    createdAt: "placeHolder",
+    updatedAt: "placeHolder",
   },
   {
     name: "Jordan",
@@ -54,6 +69,9 @@ export const playersPlaceHolder: Array<PlayerObject> = [
     locked: false,
     in: true,
     id: 6,
+    user_id: "placeHolder",
+    createdAt: "placeHolder",
+    updatedAt: "placeHolder",
   },
   {
     name: "Jason",
@@ -63,5 +81,8 @@ export const playersPlaceHolder: Array<PlayerObject> = [
     locked: false,
     in: true,
     id: 7,
+    user_id: "placeHolder",
+    createdAt: "placeHolder",
+    updatedAt: "placeHolder",
   },
 ];

@@ -11,6 +11,9 @@ export interface BlankPlayerObject {
 
 export interface PlayerObject extends BlankPlayerObject {
   id: number;
+  user_id: string;
+  createdAt: string;
+  updatedAt: string;
 }
 
 export interface PlayerFormObject {
@@ -25,11 +28,7 @@ export interface DPSObject {
   newDPS: Array<PlayerObject>;
   players: Array<PlayerObject>;
 }
-export interface PlayerFormModalInterface {
-  visible: boolean;
-  player: PlayerObject | null;
-  close(): void;
-}
+
 
 export interface UserObject {
   id: number,
@@ -48,20 +47,6 @@ export interface roleCountInterface {
   dps: number;
   inGroupCount: number;
 }
-export type PlayerContextType = {
-  players: Array<PlayerObject> | undefined;
-  setPlayers: (value: Array<PlayerObject>) => void;
-  inGroup: Array<PlayerObject> | undefined;
-  setInGroup: (value: Array<PlayerObject>) => void;
-  removePlayer: (value: number) => void;
-  updatePlayer: (value: PlayerObject) => void;
-  addPlayer: (value: PlayerFormObject) => void;
-  roleCounts: roleCountInterface
-  showPlayers: boolean;
-  toggleShowPlayers(): void;
-  blankPlayer: BlankPlayerObject
-  valid: boolean
-};
 
 
 export interface ThemeObject {
@@ -97,9 +82,15 @@ export interface ThemesInterface {
 export interface PlayerCardInterface {
   player?: PlayerObject;
 }
+export interface PlayerFormModalInterface {
+  visible: boolean;
+  player: PlayerObject | null;
+  close(): void;
+}
 
-export type RoleLogoImage = {
+export interface RoleLogoImageInterface {
   active: boolean;
   source: string;
   type: string;
+  updateBoolean: (type: string, active: boolean) => void
 }

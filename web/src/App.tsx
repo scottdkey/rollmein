@@ -6,6 +6,7 @@ import { AuthProvider } from "./components/providers/AuthProvider";
 import { PlayerProvider } from "./components/providers/PlayerProvider";
 import { ThemeProvider } from "./components/providers/ThemeProvider";
 
+
 import Content from "./components/Content";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
