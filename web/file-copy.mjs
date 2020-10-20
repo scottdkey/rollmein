@@ -10,6 +10,6 @@ ncp(srcPath, destPath, (err) => {
   if (err) {
     return console.error(err);
   } else {
-    console.log("Copying files complete.");
+    console.log("Complete");
   }
 });
