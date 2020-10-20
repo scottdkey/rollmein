@@ -86,58 +86,58 @@
 }
 
 .roles_inactive {
-  opacity: 50%;
+  opacity: .5;
   filter: grayscale(100%);
   &:hover {
-    opacity: 100%;
+    opacity: 1;
     border-radius: 20px;
   }
 }
 .roles_active {
-  opacity: 100%;
+  opacity: 1;
   &:hover {
-    opacity: 50%;
+    opacity: .5;
   }
 }
 
 .in-the-roll {
-  opacity: 30%;
+  opacity: .3;
   color: $white;
   &:hover {
-    opacity: 60%;
+    opacity: .6;
     color: $accent;
   }
 }
 
 .in-the-roll-active {
   @extend .in-the-roll;
-  opacity: 100%;
+  opacity: 1;
   color: $buttonColor;
   &:hover {
-    opacity: 70%;
+    opacity: .7;
     color: $buttonHover;
   }
 }
 
 .delete-icon {
-  opacity: 30%;
+  opacity: .3;
   &:hover {
-    opacity: 100%;
+    opacity: 1;
     color: $red;
   }
 }
 
 .locked {
-  opacity: 100%;
+  opacity: 1;
   &:hover {
-    opacity: 80%;
+    opacity: .8;
   }
 }
 .unlocked {
   @extend .locked;
-  opacity: 40%;
+  opacity: .4;
   &:hover {
-    opacity: 80%;
+    opacity: .8;
   }
 }
 .add-player {

@@ -16,7 +16,7 @@ import {
 } from "../types/Interfaces";
 import { usePlayerData } from "./providers/PlayerProvider";
 import RoleLogoImage from "./RoleLogoImage";
-import "./styles/PlayerCard.scss";
+import "../styles/PlayerCard.scss";
 
 const PlayerCard = ({ player }: PlayerCardInterface) => {
   const {
