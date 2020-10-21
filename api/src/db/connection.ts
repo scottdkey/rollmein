@@ -1,4 +1,5 @@
 import knex from "knex";
+// @ts-ignore
 import Config from "../../knexfile.js";
 import keys from "../config"
 import { KnexConfigObject } from "../config/interfaces"

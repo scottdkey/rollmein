@@ -1,6 +1,4 @@
-
-
-\echo 'deleting development database if it exists'
+\echo 'deleting test database if it exists'
 DROP DATABASE IF EXISTS rollmein_dev;
-\echo 'creating development database'
+\echo 'creating test database'
 CREATE DATABASE rollmein_dev;
