@@ -1,9 +1,4 @@
 @import "./Themes.scss";
-@import "./NavBar.scss";
-@import "./AuthForm.scss";
-@import "./imageStyles.scss";
-@import "./ValidGroup.scss";
-
 
 body {
   padding: 0px;
@@ -11,8 +6,11 @@ body {
   background-color: $backgroundColor;
   color: $textColor;
   .content {
-  margin: 10px;
+    margin: 10px;
   }
 }
 
-
+@import "./NavBar.scss";
+@import "./AuthForm.scss";
+@import "./imageStyles.scss";
+@import "./ValidGroup.scss";
