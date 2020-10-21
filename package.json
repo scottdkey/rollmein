@@ -4,7 +4,7 @@
   "description": "Web and React native app to choose who is going on the mythic + dungeon from a guild or custom list",
   "main": "index.js",
   "scripts": {
-    "start": "start_api",
+    "start": "cd api && npm start",
     "start-dev": "run-p start_web start_api watch-typescript",
     "build-react": "cd web && npm run build",
     "watch-typescript": "run-p watch_web watch_api",
