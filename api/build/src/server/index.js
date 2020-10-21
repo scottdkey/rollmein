@@ -26,6 +26,7 @@ app.use(koa_bodyparser_1.default({}));
 require("./auth");
 app.use(koa_passport_1.default.initialize());
 app.use(koa_passport_1.default.session());
+console.log(StaticSiteBuild);
 //routes
 app.use(koa_static_1.default(StaticSiteBuild));
 app.use(players_js_1.default.routes());

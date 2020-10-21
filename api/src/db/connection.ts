@@ -1,5 +1,5 @@
 import knex from "knex";
-import Config from "../knexfile.js";
+import Config from "../../knexfile.js";
 import keys from "../config"
 import { KnexConfigObject } from "../config/interfaces"
 

@@ -2,6 +2,7 @@ import Router from "koa-router";
 import passport from "koa-passport";
 import fs from "fs";
 import queries from "../db/queries/users.js";
+import OptionQueries from "../db/queries/options"
 import { Context, DefaultState } from "koa";
 import keys from "../config"
 
@@ -36,6 +37,7 @@ router.post("/register", async (ctx, next) => {
         if (err) {
           return next();
         }
+        OptionQueries.addUserOptions(user.id)
         return ctx.redirect("/status");
       });
     }

@@ -50,3 +50,34 @@
   float: right;
   position: relative;
   top: -50px; }
+
+.Nav-Bar .Center {
+  margin: auto;
+  width: 25%;
+  position: relative;
+  display: flex;
+  flex-wrap: wrap; }
+
+.Nav-Bar .button, .Nav-Bar .button-active, .Nav-Bar .players-button-active, .Nav-Bar .options-area .options-button-open, .Nav-Bar .players-button, .Nav-Bar .options-area .options-button-closed {
+  width: 150px;
+  border-radius: 10px;
+  text-align: center;
+  vertical-align: center;
+  justify-content: center;
+  border: 3px black;
+  border-style: solid;
+  font-weight: 700;
+  height: 50px;
+  margin-top: auto;
+  margin-bottom: auto;
+  border-radius: 10px;
+  background-color: var(--buttonColor); }
+
+.Nav-Bar .button:hover, .Nav-Bar .button-active:hover, .Nav-Bar .players-button-active:hover, .Nav-Bar .options-area .options-button-open:hover, .Nav-Bar .players-button:hover, .Nav-Bar .options-area .options-button-closed:hover {
+  background-color: var(--buttonHover); }
+
+.Nav-Bar .button-active, .Nav-Bar .players-button-active, .Nav-Bar .options-area .options-button-open {
+  background-color: var(--buttonHover); }
+
+.Nav-Bar .button-active:hover, .Nav-Bar .players-button-active:hover, .Nav-Bar .options-area .options-button-open:hover {
+  background: var(--buttonColor); }

@@ -38,4 +38,50 @@
     position: relative;
     top: -50px;
   }
+  .Center {
+    margin: auto;
+    width: 25%;
+    position: relative;
+    display: flex;
+    flex-wrap: wrap;
+  }
+  .button {
+    width: 150px;
+    border-radius: 10px;
+    text-align: center;
+    vertical-align: center;
+    justify-content: center;
+    border: 3px black;
+    border-style: solid;
+    font-weight: 700;
+    height: 50px;
+    margin-top: auto;
+    margin-bottom: auto;
+    border-radius: 10px;
+    background-color: $buttonColor;
+    &:hover {
+      background-color: $buttonHover;
+    }
+  }
+  .button-active {
+    @extend .button;
+    background-color: $buttonHover;
+    &:hover {
+      background: $buttonColor;
+    }
+  }
+  .players-button {
+    @extend .button;
+  }
+  .players-button-active {
+    @extend .button-active;
+  }
+  .options-area {
+    .options-button-open {
+      @extend .button-active;
+    }
+    .options-button-closed {
+      @extend .button;
+    }
+  }
 }
