@@ -34,6 +34,7 @@
     "typescript": "^4.0.3"
   },
   "scripts": {
+    
     "start": "run-p watch:css start:js",
     "build": "run-s build:*",
     "test": "react-scripts test",
