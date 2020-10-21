@@ -4,8 +4,7 @@
   "description": "",
   "main": "./build/server/index.js",
   "scripts": {
-    "start": "run-p watch-ts start-dev ",
-    "watch-ts": "tsc -w",
+    "start": "run-p start-dev",
     "start-dev": "nodemon ./build/server/index.js",
     "test": "./node_modules/mocha/bin/_mocha --exit",
     "reset_db": "run-s reset_test reset_dev migrate",
