@@ -54,7 +54,6 @@ var koa_router_1 = __importDefault(require("koa-router"));
 var koa_passport_1 = __importDefault(require("koa-passport"));
 var fs_1 = __importDefault(require("fs"));
 var users_js_1 = __importDefault(require("../db/queries/users.js"));
-var options_1 = __importDefault(require("../db/queries/options"));
 var config_1 = __importDefault(require("../config"));
 var router = new koa_router_1.default();
 router.prefix(config_1.default.BASE_URL + "/auth");
@@ -95,7 +94,6 @@ router.post("/register", function (ctx, next) { return __awaiter(void 0, void 0,
                                 if (err) {
                                     return next();
                                 }
-                                options_1.default.addUserOptions(user.id);
                                 return ctx.redirect("/status");
                             });
                         }

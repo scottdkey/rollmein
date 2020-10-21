@@ -1,4 +1,4 @@
-\echo 'deleting production database if it exists';
+\echo 'deleting test database if it exists'
 DROP DATABASE IF EXISTS rollmein_prod;
-\echo 'creating production database'
+\echo 'creating test database'
 CREATE DATABASE rollmein_prod;
