@@ -23,18 +23,17 @@
     "dotenv": "^8.2.0",
     "node-sass": "^4.14.1",
     "npm-run-all": "^4.1.5",
-    "react": "^16.13.1",
+    "react": "^17.0.0",
     "react-awesome-modal": "^2.0.5",
-    "react-dom": "^16.13.1",
+    "react-dom": "^17.0.0",
     "react-modal": "^3.11.2",
     "react-router": "^5.2.0",
     "react-router-dom": "^5.2.0",
-    "react-scripts": "3.4.3",
+    "react-scripts": "^3.4.4",
     "scss": "^0.2.4",
     "typescript": "^4.0.3"
   },
   "scripts": {
-    
     "start": "run-p watch:css start:js",
     "build": "run-s build:*",
     "test": "react-scripts test",
