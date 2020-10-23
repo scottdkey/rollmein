@@ -6,7 +6,7 @@
   "scripts": {
     "start": "node ./build/src/server/index.js",
     "dev": "run-p watch:*",
-    "watch:tsc": "tsc -w",
+    "watch:tsc": "npx tsc -w",
     "watch:node": "nodemon ./build/src/server/index.js",
     "test": "./node_modules/mocha/bin/_mocha --exit",
     "reset:db": "run-s db:*",
