@@ -1,14 +1,4 @@
-require("dotenv").config();
-
-const {
-  PGPORT,
-  PGHOST,
-  PGPASS,
-  PGUSER,
-  DEV_DB,
-  TEST_DB,
-  PROD_DB,
-} = process.env;
+const keys = require("./src/config/keys");
 
 function BaseConfig(environemntDB) {
   return {
@@ -20,22 +10,22 @@ function BaseConfig(environemntDB) {
       directory: `./src/db/seeds`,
     },
     connection: {
-      host: PGHOST,
-      user: PGUSER,
-      password: PGPASS,
+      host: keys.PGHOST,
+      user: keys.PGUSER,
+      password: keys.PGPASS,
       database: environemntDB,
-      port: PGPORT,
+      port: keys.PGPORT,
     },
   };
 }
 const knex = (env) => {
   if (env === "production") {
-    return BaseConfig(PROD_DB);
+    return BaseConfig(keys.PROD_DB);
   }
   if (env === "test") {
-    return BaseConfig(TEST_DB);
+    return BaseConfig(keys.TEST_DB);
   } else {
-    return BaseConfig(DEV_DB);
+    return BaseConfig(keys.DEV_DB);
   }
 };
 

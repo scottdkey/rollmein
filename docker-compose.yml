@@ -1,0 +1,67 @@
+version: '3'
+services: 
+  db:
+    image: postgres
+    volumes: 
+      - ./tmp/db:/var/lib/postgresql/data
+    env_file:
+      - .env
+    environment: 
+      POSTGRES_USER: ${PGUSER}
+      POSTGRES_PASSWORD: ${PGPASS}
+      POSTGRES_DB: ${PGDB}
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${PGUSER} ${PGPASS}"]
+      interval: 30s
+      timeout: 30s
+      retries: 5
+    ports: 
+      - 5432:5432
+    expose:
+      - 5432
+    restart: always
+  redis:
+    image: redis:alpine
+  api:
+    build: ./api
+    image: scottdkey/rollmein_api:latest
+    volumes:
+      - ./:/usr/src/app
+    env_file:
+      - .env
+    ports:
+      - ${API_SERVER_PORT}:${API_SERVER_PORT}
+    environment:
+      NODE_ENV: ${NODE_ENV}
+      PGUSER: ${PGUSER}
+      PGPASS: ${PGPASS}
+      PGPORT: ${PGPORT}
+      PGHOST: db
+      DEV_DB: ${DEVELOPMENT_DATABASE}
+      TEST_DB: ${TEST_DATABASE}
+      PROD_DB: ${PRODUCTION_DATABASE}
+      BASE_URL: ${API_BASE_URL}
+      SECRETKEY: ${SECRETKEY}
+      PORT: ${API_SERVER_PORT}
+    command: bash -c "rm -f tmp/pids/server/pid && npm start"
+
+    depends_on:
+      - db
+      - redis
+    links:
+      - db:database
+      - redis
+  # web:
+  #   build: ./web
+  #   env_file:
+  #     - .env
+  #   ports:
+  #     - ${WEB_APP_PORT}:${WEB_APP_ORIGIN}
+  #   image: scottdkey/rollmein_web:1.0.0
+  #   volumes:
+  #     - .:/whiskeynight
+  #   links:
+  #     - api
+  #   depends_on:
+  #     - api 
+  #   restart: always

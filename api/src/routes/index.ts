@@ -1,10 +1,16 @@
-import Koa from "koa"
-import serve from "koa-static"
+import Router from 'koa-router'
+
+const router = new Router()
+
+router.get('/', async (ctx) => {
+  ctx.body = "This works!"
+})
+router.get('/test', async (ctx) => {
+  ctx.body = "This test page is returning correctly"
+})
+// const staticPages = new Koa()
 
 
-const staticPages = new Koa()
+// staticPages.use(serve("../server/public"))
 
-
-staticPages.use(serve("../server/public"))
-
-export default staticPages;
+export default router;
