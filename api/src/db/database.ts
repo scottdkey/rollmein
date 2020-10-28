@@ -17,7 +17,7 @@ const sequelize = new Sequelize(database(keys.NODE_ENV), keys.PGUSER, keys.PGPAS
 })
 
 
-const connection = async () => {
+const connect = async () => {
   try {
     await sequelize.authenticate();
     console.log("Connection to Postgres has been established")
@@ -33,4 +33,4 @@ const disconnect = async () => {
   }
 }
 
-export default { sequelize, connection }
+export default { disconnect, connect, sequelize }

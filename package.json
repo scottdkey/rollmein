@@ -22,6 +22,7 @@
   "author": "Scott Key <scottdkey@gmail.com> (www.github.com/scottdkey)",
   "license": "MIT",
   "dependencies": {
+    "@types/validator": "^13.1.0",
     "knex": "^0.21.6",
     "ncp": "^2.0.0",
     "npm-run-all": "^4.1.5",
