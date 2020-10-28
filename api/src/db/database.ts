@@ -11,10 +11,15 @@ const database = (env: string) => {
   }
 }
 
-const sequelize = new Sequelize(database(keys.NODE_ENV), keys.PGUSER, keys.PGPASS, {
-  host: keys.PGHOST,
-  dialect: 'postgres'
-})
+const sequelize = new Sequelize(
+  database(keys.NODE_ENV),
+  keys.PGUSER,
+  keys.PGPASS,
+  {
+    host: keys.PGHOST,
+    dialect: 'postgres'
+  }
+)
 
 
 const connect = async () => {
