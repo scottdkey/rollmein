@@ -6,11 +6,11 @@
   "type": "commonjs",
   "scripts": {
     "start": "node ./build/src/server/index.js",
-    "dev": "run-p watch:*",
+    "dev": "nodemon --watch src -e ts,tsx --exec ts-node ./src/server/index.ts",
     "build": "tsc",
     "watch:tsc": "npx tsc -w",
     "watch:node": "nodemon ./build/src/server/index.js",
-    "typescript-dev": "nodemon --watch src -e ts,tsx --exec ts-node ./src/server/index.ts"
+    "watch": "run-p watch:*"
   },
   "author": "Scott Key",
   "license": "ISC",

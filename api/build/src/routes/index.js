@@ -1,0 +1,16 @@
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const koa_router_1 = __importDefault(require("koa-router"));
+const router = new koa_router_1.default();
+router.get('/', async (ctx) => {
+    ctx.body = "This works!";
+});
+router.get('/test', async (ctx) => {
+    ctx.body = "This test page is returning correctly";
+});
+// const staticPages = new Koa()
+// staticPages.use(serve("../server/public"))
+exports.default = router;

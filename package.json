@@ -12,9 +12,10 @@
     "start:api": "cd api && npm start",
     "start:api-dev": "cd api && npm run dev",
     "start:web": "cd web && npm start",
-    "install:top_level": "npm i",
-    "install:api_dependencies": "cd api && npm i",
-    "install:web_dependencies": "cd web && npm i",
+    "setup": "run-p install:*",
+    "install:top_level": "yarn",
+    "install:api_dependencies": "cd api && yarn",
+    "install:web_dependencies": "cd web && yarn",
     "setup:db-migrate": "cd api && npm run db:migrate",
     "setup:db-development": "cd api && npm run reset_db",
     "copy-to-api": "node file-copy.mjs"
