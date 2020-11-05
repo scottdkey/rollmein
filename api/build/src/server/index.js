@@ -9,9 +9,9 @@ const koa_session_1 = __importDefault(require("koa-session"));
 const koa_passport_1 = __importDefault(require("koa-passport"));
 const koa_redis_1 = __importDefault(require("koa-redis"));
 const keys_1 = __importDefault(require("../config/keys"));
-const players_js_1 = __importDefault(require("../routes/players.js"));
-const users_js_1 = __importDefault(require("../routes/users.js"));
-const auth_js_1 = __importDefault(require("../routes/auth.js"));
+const players_1 = __importDefault(require("../routes/players"));
+const users_1 = __importDefault(require("../routes/users"));
+const auth_1 = __importDefault(require("../routes/auth"));
 const index_1 = __importDefault(require("../routes/index"));
 const database_1 = __importDefault(require("../db/database"));
 const PORT = parseInt(keys_1.default.PORT) || 1337;
@@ -30,9 +30,9 @@ app.use(koa_passport_1.default.session());
 //routes
 // app.use(serve(StaticSiteBuild));
 app.use(index_1.default.routes());
-app.use(players_js_1.default.routes());
-app.use(users_js_1.default.routes());
-app.use(auth_js_1.default.routes());
+app.use(players_1.default.routes());
+app.use(users_1.default.routes());
+app.use(auth_1.default.routes());
 // server
 const server = app.listen(PORT, () => {
     console.log(`Server listening on port: ${PORT}`);

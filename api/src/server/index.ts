@@ -5,9 +5,9 @@ import passport from "koa-passport";
 import redisStore from "koa-redis";
 
 import keys from "../config/keys"
-import playerRoutes from "../routes/players.js";
-import userRoutes from "../routes/users.js";
-import authRoutes from "../routes/auth.js";
+import playerRoutes from "../routes/players";
+import userRoutes from "../routes/users";
+import authRoutes from "../routes/auth";
 import indexRoutes from "../routes/index"
 import db from "../db/database"
 

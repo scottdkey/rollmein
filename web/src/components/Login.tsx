@@ -13,16 +13,12 @@ const Authenticate = () => {
   const [loginForm, setLoginForm] = useState(true);
   const { login, register, error, authenticated } = useAuth()!;
 
-  function showError() {
-    if (!loginForm && passwordsMatch) {
-      return true;
-    } else return false;
-  }
-
   const Errors = () => (
     <div className="form-errors">
       <div>{error}</div>
-      <div>{showError() ? "Passwords don't match" : null}</div>
+      {loginForm ? null : (
+        <div>{passwordsMatch ? null : "Passwords don't match"}</div>
+      )}
     </div>
   );
   const handleSubmit = (e: any) => {
