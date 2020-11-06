@@ -1,7 +1,7 @@
 import { Sequelize } from 'sequelize'
 import keys from "../config/index"
 
-const database = (env: string) => {
+const envdb = (env: string) => {
   if (env === "production") {
     return keys.PROD_DB
   } else if (env === "test") {
@@ -11,8 +11,8 @@ const database = (env: string) => {
   }
 }
 
-const sequelize = new Sequelize(
-  database(keys.NODE_ENV),
+export const sequelize = new Sequelize(
+  envdb(keys.NODE_ENV),
   keys.PGUSER,
   keys.PGPASS,
   {
@@ -22,7 +22,7 @@ const sequelize = new Sequelize(
 )
 
 
-const connect = async () => {
+export const connect = async () => {
   try {
     await sequelize.authenticate();
     console.log("Connection to Postgres has been established")
@@ -30,12 +30,10 @@ const connect = async () => {
     console.error("Unable to connect:", error)
   }
 }
-const disconnect = async () => {
+export const disconnect = async () => {
   try {
     await sequelize.close();
   } catch (error) {
     console.error("Error on disconnect:", error)
   }
 }
-
-export default { disconnect, connect, sequelize }

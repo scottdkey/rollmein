@@ -9,13 +9,13 @@ import playerRoutes from "../routes/players.js";
 import userRoutes from "../routes/users.js";
 import authRoutes from "../routes/auth.js";
 import indexRoutes from "../routes/index"
-import db from "../db/database"
+import { connect } from "../db/database"
 
 const PORT: number = parseInt(keys.PORT) || 1337;
 const app = new Koa();
 
 //database
-app.context.db = db.connect()
+app.context.db = connect()
 
 //sessions
 // app.keys = [keys!.SECRETKEY];

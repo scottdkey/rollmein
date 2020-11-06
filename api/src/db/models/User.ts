@@ -1,33 +1,64 @@
-import { DataTypes, UUIDV4 } from "sequelize"
-import db from "../database"
+import { DataTypes, UUIDV4, Model } from "sequelize"
+import { sequelize } from "../database"
+import { Player } from "./Player";
 
-const User = db.sequelize.define("User", {
-  uuid: {
+
+export class User extends Model {
+  public id!: string;
+  public email!: string;
+  public username!: string;
+  public password!: string;
+  public appleAuth!: string;
+  public googleAuth!: string;
+  public readonly createdAt!: Date;
+  public readonly updatedAt!: Date;
+}
+export interface UserInterface {
+  id: string;
+  email: string;
+  username: string;
+  password: string;
+  appleAuth: string;
+  googleAuth: string;
+}
+
+User.init({
+  id: {
     type: DataTypes.UUID,
     defaultValue: UUIDV4,
+    primaryKey: true,
     allowNull: false,
-    primaryKey: true
   },
   email: {
-    type: DataTypes.STRING,
-    unique: true,
+    type: new DataTypes.STRING(128),
+    allowNull: true,
   },
   username: {
-    type: DataTypes.STRING,
-    unique: true
+    type: new DataTypes.STRING(128),
+    allowNull: true,
   },
   password: {
-    type: DataTypes.STRING,
+    type: new DataTypes.STRING(128),
+    allowNull: true,
   },
   appleAuth: {
-    type: DataTypes.STRING,
+    type: new DataTypes.STRING(128),
+    allowNull: true,
   },
   googleAuth: {
-    type: DataTypes.STRING,
+    type: new DataTypes.STRING(128),
+    allowNull: true,
   },
-})
 
 
-export default User
+}, {
+  tableName: "users",
+  sequelize
+}
 
-console.log(User === db.sequelize.models.User)
+)
+
+User.hasMany(Player, { foreignKey: "user_id", })
+
+
+console.log(`User Model Matches sequelize Migration: ${User === sequelize.models.User}`)
