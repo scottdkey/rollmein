@@ -1,92 +1,34 @@
-import Router from "koa-router";
-import passport from "koa-passport";
-import fs from "fs";
-import queries from "../db/queries/users.js";
 import { Context, DefaultState } from "koa";
+import Router from "koa-router";
+import {
+  AuthStatus,
+  RegisterHTMLStream,
+  RegisterUser,
+  LoginUserHTMLStream,
+  LoginUser,
+  LogoutUser
+} from "../db/controllers/Auth"
 import keys from "../config"
+import { addUser } from "../db/controllers/Users";
 
 const router = new Router<DefaultState, Context>();
 
 router.prefix(`${keys.BASE_URL}/auth`)
 
-router.get(`/status`, async (ctx) => {
-  if (ctx.isAuthenticated()) {
-    ctx.type = "html";
-    const { user } = ctx.state
-    ctx.body = user
-  } else {
-    ctx.body = "user is not authenticated"
-    ctx.status = 401
-  }
-});
+router.get(`/status`, async (ctx) => { await AuthStatus(ctx) });
 
-router.get("/register", async (ctx) => {
-  ctx.type = "html";
-  ctx.body = fs.createReadStream("./src/views/register.html");
-  if (ctx.isAuthenticated()) {
-    ctx.redirect("/status");
-  }
-});
+router.get("/register", async (ctx) => { await RegisterHTMLStream(ctx) });
 
 router.post("/register", async (ctx, next) => {
-  await queries.addUser(ctx.request.body);
-  return passport.authenticate("local", (err: any, user, info) => {
-    if (user) {
-      ctx.login(user, (err: any) => {
-        if (err) {
-          return next();
-        }
-        return ctx.redirect("/status");
-      });
-    }
-    if (err) {
-      ctx.error = err;
-      return next();
-    } else {
-      return ctx.redirect("/login");
-    }
-  })(ctx, next);
+  console.log("register hit")
+  await addUser(ctx)
+  // await RegisterUser(ctx, next)
 });
 
-router.get("/login", async (ctx) => {
-  if (!ctx.isAuthenticated()) {
-    ctx.type = "html";
-    ctx.body = fs.createReadStream("./src/views/login.html");
-  } else {
-    ctx.redirect("/status");
-  }
-});
+router.get("/login", async (ctx) => { await LoginUserHTMLStream(ctx) });
 
-router.post("/login", async (ctx, next) => {
-  return passport.authenticate("local", (err: any, user, info) => {
-    failureFlash: "Invalid username or password."
-    if (user) {
-      ctx.login(user, (err: any) => {
-        if (err) {
-          ctx.body = { info };
-          return next();
-        }
-      });
-      return ctx.body = user;
-    } else if (err) {
-      ctx.body = { ...info }
-    }
-    else {
-      return ctx.logout();
-    }
-  })(ctx, next);
-});
+router.post("/login", async (ctx, next) => { await LoginUser(ctx, next) });
 
-router.get("/logout", async (ctx) => {
-  if (ctx.isAuthenticated()) {
-    ctx.logout();
-    // ctx.redirect("/login");
-    ctx.body = { success: true }
-    ctx.throw(200)
-  } else {
-    ctx.body = { success: false };
-    ctx.throw(401);
-  }
-});
+router.get("/logout", async (ctx) => { await LogoutUser(ctx) });
 
 export default router;

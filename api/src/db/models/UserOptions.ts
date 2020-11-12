@@ -1,6 +1,6 @@
 import { DataTypes, Model } from "sequelize"
 import { sequelize } from "../database"
-import { User } from "./User"
+import { User } from "./user"
 
 class UserOptions extends Model {
   public id!: number;
@@ -9,7 +9,12 @@ class UserOptions extends Model {
   public theme!: string;
 
 }
-
+interface UserOptionsInterface {
+  id: number;
+  rollType: string;
+  lockAfterOut: boolean;
+  theme: string;
+}
 
 UserOptions.init(
   {
@@ -38,11 +43,5 @@ UserOptions.init(
 
 UserOptions.belongsTo(User, { foreignKey: "user_id", targetKey: "id" })
 
-export default UserOptions
+export { UserOptions, UserOptionsInterface }
 
-export interface UserOptionsInterface {
-  id: number;
-  rollType: string;
-  lockAfterOut: boolean;
-  theme: string;
-}

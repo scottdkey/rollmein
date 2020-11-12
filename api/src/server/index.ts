@@ -9,16 +9,18 @@ import playerRoutes from "../routes/players.js";
 import userRoutes from "../routes/users.js";
 import authRoutes from "../routes/auth.js";
 import indexRoutes from "../routes/index"
-import { connect } from "../db/database"
+import { connect, sequelize } from "../db/database"
 
 const PORT: number = parseInt(keys.PORT) || 1337;
 const app = new Koa();
 
 //database
-app.context.db = connect()
+connect()
+app.context.db = sequelize
+
 
 //sessions
-// app.keys = [keys!.SECRETKEY];
+app.keys = [keys!.SECRETKEY];
 app.use(session({ store: redisStore({}) }, app));
 
 //body parser
@@ -30,6 +32,7 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 //routes
+
 // app.use(serve(StaticSiteBuild));
 app.use(indexRoutes.routes())
 app.use(playerRoutes.routes());

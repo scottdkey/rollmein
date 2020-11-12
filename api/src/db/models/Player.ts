@@ -1,8 +1,8 @@
 import { DataTypes, Model } from "sequelize"
-import { User } from "./User"
+import { User } from "./user"
 import { sequelize } from "../database"
 
-export class Player extends Model {
+class Player extends Model {
   public id!: number;
   public playerName!: string;
   public tank!: boolean;
@@ -12,7 +12,7 @@ export class Player extends Model {
   public in!: boolean;
   public user_id!: string;
 }
-export interface PlayerInterface {
+interface PlayerInterface {
   id: number;
   playerName: string;
   tank: boolean;
@@ -54,7 +54,7 @@ Player.init(
       type: DataTypes.BOOLEAN,
       defaultValue: false
     },
-    user_id: {
+    userId: {
       type: new DataTypes.STRING(128),
       allowNull: false
     }
@@ -63,8 +63,9 @@ Player.init(
   sequelize
 })
 
-Player.belongsTo(User, { foreignKey: "user_id", targetKey: "uuid" })
+Player.belongsTo(User, { foreignKey: "userId", targetKey: "id" })
 
 
+// Player.sync()
 
-console.log(`Player Model Matches Migration: ${Player === sequelize.models.Player}`)
+export { Player, PlayerInterface }

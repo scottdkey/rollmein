@@ -1,7 +1,7 @@
 import { DefaultContext } from "koa";
 
 
-import { Player, PlayerInterface } from "../models/Player"
+import { Player, PlayerInterface } from "../models/player"
 
 const getAllPlayers = async (ctx: DefaultContext) => {
   await Player.findAll<Player>({

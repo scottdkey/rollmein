@@ -1,13 +1,13 @@
 import { Sequelize } from 'sequelize'
 import keys from "../config/index"
 
-const envdb = (env: string) => {
+export const envdb = (env: string) => {
   if (env === "production") {
     return keys.PROD_DB
   } else if (env === "test") {
     return keys.TEST_DB
   } else {
-    return keys.PROD_DB
+    return keys.DEV_DB
   }
 }
 
@@ -17,15 +17,18 @@ export const sequelize = new Sequelize(
   keys.PGPASS,
   {
     host: keys.PGHOST,
-    dialect: 'postgres'
+    dialect: 'postgres',
+    logging: false
   }
 )
 
 
+
 export const connect = async () => {
   try {
-    await sequelize.authenticate();
-    console.log("Connection to Postgres has been established")
+    await sequelize.authenticate().then(res => console.log("--Sequelize Connected--")).catch(err => console.log(err))
+    await sequelize.sync()
+    // console.log(`Connected to database: ${envdb(keys.NODE_ENV)}`)
   } catch (error) {
     console.error("Unable to connect:", error)
   }

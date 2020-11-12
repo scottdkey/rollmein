@@ -1,9 +1,8 @@
 import { DataTypes, UUIDV4, Model } from "sequelize"
 import { sequelize } from "../database"
-import { Player } from "./Player";
 
 
-export class User extends Model {
+class User extends Model {
   public id!: string;
   public email!: string;
   public username!: string;
@@ -12,14 +11,6 @@ export class User extends Model {
   public googleAuth!: string;
   public readonly createdAt!: Date;
   public readonly updatedAt!: Date;
-}
-export interface UserInterface {
-  id: string;
-  email: string;
-  username: string;
-  password: string;
-  appleAuth: string;
-  googleAuth: string;
 }
 
 User.init({
@@ -30,7 +21,7 @@ User.init({
     allowNull: false,
   },
   email: {
-    type: new DataTypes.STRING(128),
+    type: new DataTypes.STRING(64),
     allowNull: true,
   },
   username: {
@@ -49,16 +40,16 @@ User.init({
     type: new DataTypes.STRING(128),
     allowNull: true,
   },
+}, { sequelize, tableName: "users" })
 
-
-}, {
-  tableName: "users",
-  sequelize
+interface UserInterface {
+  id: string;
+  email: string;
+  username: string;
+  password: string;
+  appleAuth: string;
+  googleAuth: string;
 }
+// User.sync()
 
-)
-
-User.hasMany(Player, { foreignKey: "user_id", })
-
-
-console.log(`User Model Matches sequelize Migration: ${User === sequelize.models.User}`)
+export { User, UserInterface }
