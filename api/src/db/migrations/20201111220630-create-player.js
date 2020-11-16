@@ -33,7 +33,7 @@ module.exports = {
         defaultValue: false
       },
       userId: {
-        type: Sequelize.UUID,
+        type: Sequelize.STRING,
         model: "Users",
         key: "id",
         allowNull: false,

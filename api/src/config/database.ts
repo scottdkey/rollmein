@@ -1,6 +1,6 @@
 import fs from 'fs'
 import keys from "./keys"
-import { envdb } from "../db/database"
+import { envdb } from "../db"
 
 const getDBEnvVariables = (env: string) => {
   const db = envdb(env)

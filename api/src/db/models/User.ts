@@ -1,5 +1,5 @@
 import { DataTypes, UUIDV4, Model } from "sequelize"
-import { sequelize } from "../database"
+import { sequelize } from ".."
 
 
 class User extends Model {
@@ -11,6 +11,14 @@ class User extends Model {
   public googleAuth!: string;
   public readonly createdAt!: Date;
   public readonly updatedAt!: Date;
+}
+interface UserInterface {
+  id: string;
+  email: string;
+  username: string;
+  password: string;
+  appleAuth: string;
+  googleAuth: string;
 }
 
 User.init({
@@ -40,16 +48,7 @@ User.init({
     type: new DataTypes.STRING(128),
     allowNull: true,
   },
-}, { sequelize, tableName: "users" })
+}, { sequelize, tableName: "Users" })
 
-interface UserInterface {
-  id: string;
-  email: string;
-  username: string;
-  password: string;
-  appleAuth: string;
-  googleAuth: string;
-}
-// User.sync()
 
 export { User, UserInterface }

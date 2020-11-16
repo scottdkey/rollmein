@@ -43,7 +43,7 @@ services:
       BASE_URL: ${API_BASE_URL}
       SECRETKEY: ${SECRETKEY}
       PORT: ${API_SERVER_PORT}
-    command: bash -c "rm -f tmp/pids/server/pid && npm start"
+    command: bash -c "rm -f tmp/pids/server/pid && npm start && npm run db:migrate"
 
     depends_on:
       - db

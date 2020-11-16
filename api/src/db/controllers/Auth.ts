@@ -21,23 +21,24 @@ const RegisterHTMLStream = async (ctx: DefaultContext) => {
   }
 }
 const RegisterUser = async (ctx: ParameterizedContext, next: Next) => {
-  await addUser(ctx)
+  const res: ParameterizedContext = await addUser(ctx)
   return passport.authenticate("local", (err: any, user, info) => {
     if (user) {
-      ctx.login(user, (err: any) => {
+      res.login(user, (err: any) => {
         if (err) {
           return next();
+        } else {
+          return res.redirect("/api/v1/auth/status");
         }
-        return ctx.redirect("/status");
       });
     }
-    if (err) {
-      ctx.error = err;
+    if (ctx.err) {
+      res.error = err;
       return next();
     } else {
-      return ctx.redirect("/login");
+      return res.redirect("/login");
     }
-  })(ctx, next);
+  })(res, next);
 }
 const LoginUserHTMLStream = async (ctx: DefaultContext) => {
   if (!ctx.isAuthenticated()) {
@@ -49,7 +50,6 @@ const LoginUserHTMLStream = async (ctx: DefaultContext) => {
 }
 const LoginUser = async (ctx: ParameterizedContext, next: Next) => {
   return passport.authenticate("local", (err: any, user, info) => {
-    failureFlash: "Invalid username or password."
     if (user) {
       ctx.login(user, (err: any) => {
         if (err) {

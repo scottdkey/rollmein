@@ -1,4 +1,4 @@
-import { DefaultContext } from "koa";
+import { DefaultContext, ParameterizedContext } from "koa";
 
 
 import { Player, PlayerInterface } from "../models/player"
@@ -32,16 +32,18 @@ const getSinglePlayer = async (ctx: DefaultContext) => {
   })
   return ctx
 }
-const addPlayer = async (ctx: DefaultContext) => {
-  const newPlayer: PlayerInterface = { ...ctx.request.body, user_id: ctx.params.uid }
-  await Player.create<Player>(newPlayer)
+const addPlayer = async (ctx: ParameterizedContext) => {
+  const newPlayer: PlayerInterface = { ...ctx.request.body, userId: ctx.params.uid }
+  console.log(newPlayer)
+  await Player
+    .create<Player>(newPlayer)
     .then((player: Player) => {
       ctx.status = 201;
       ctx.body = player
-    }).catch((err: Error) => {
-      ctx.throw(500, "Unable to create new Player");
+    })
+    .catch((err: Error) => {
+      ctx.throw(424, "Unable to create new Player");
       ctx.error = err
-
     })
   return ctx
 }

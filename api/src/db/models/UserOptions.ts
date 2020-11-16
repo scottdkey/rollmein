@@ -1,5 +1,5 @@
 import { DataTypes, Model } from "sequelize"
-import { sequelize } from "../database"
+import { sequelize } from ".."
 import { User } from "./user"
 
 class UserOptions extends Model {
@@ -7,6 +7,7 @@ class UserOptions extends Model {
   public rollType!: string;
   public lockAfterOut!: boolean;
   public theme!: string;
+  public userID!: string;
 
 }
 interface UserOptionsInterface {
@@ -14,6 +15,7 @@ interface UserOptionsInterface {
   rollType: string;
   lockAfterOut: boolean;
   theme: string;
+  userID: string;
 }
 
 UserOptions.init(
@@ -35,13 +37,17 @@ UserOptions.init(
     theme: {
       type: DataTypes.STRING,
       defaultValue: "dark",
+    },
+    userId: {
+      type: DataTypes.STRING,
+      allowNull: false
     }
   }, {
   tableName: "UserOptions",
   sequelize
 })
 
-UserOptions.belongsTo(User, { foreignKey: "user_id", targetKey: "id" })
+UserOptions.belongsTo(User, { foreignKey: "userId", targetKey: "id" })
 
 export { UserOptions, UserOptionsInterface }
 

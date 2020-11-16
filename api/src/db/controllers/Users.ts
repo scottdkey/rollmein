@@ -1,8 +1,8 @@
-import { DefaultContext } from "koa"
+import { DefaultContext, ParameterizedContext } from "koa"
 import { User, UserInterface } from "../models/user"
 import bcrypt from "bcryptjs";
 
-const addUser = async (ctx: DefaultContext) => {
+const addUser = async (ctx: ParameterizedContext) => {
   const { password } = ctx.request.body
   const salt = bcrypt.genSaltSync();
   const hash: string = bcrypt.hashSync(password, salt)

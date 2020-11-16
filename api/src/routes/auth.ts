@@ -20,9 +20,7 @@ router.get(`/status`, async (ctx) => { await AuthStatus(ctx) });
 router.get("/register", async (ctx) => { await RegisterHTMLStream(ctx) });
 
 router.post("/register", async (ctx, next) => {
-  console.log("register hit")
-  await addUser(ctx)
-  // await RegisterUser(ctx, next)
+  await RegisterUser(ctx, next)
 });
 
 router.get("/login", async (ctx) => { await LoginUserHTMLStream(ctx) });

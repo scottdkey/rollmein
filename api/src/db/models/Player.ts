@@ -1,6 +1,6 @@
 import { DataTypes, Model } from "sequelize"
 import { User } from "./user"
-import { sequelize } from "../database"
+import { sequelize } from ".."
 
 class Player extends Model {
   public id!: number;
@@ -10,7 +10,7 @@ class Player extends Model {
   public healer!: boolean;
   public locked!: boolean;
   public in!: boolean;
-  public user_id!: string;
+  public userId!: string;
 }
 interface PlayerInterface {
   id: number;
@@ -20,7 +20,7 @@ interface PlayerInterface {
   dps: boolean;
   locked: boolean;
   in: boolean;
-  user_id: string;
+  userId: string;
 }
 
 Player.init(
@@ -55,17 +55,14 @@ Player.init(
       defaultValue: false
     },
     userId: {
-      type: new DataTypes.STRING(128),
+      type: DataTypes.STRING,
       allowNull: false
     }
   }, {
-  tableName: "players",
+  tableName: "Players",
   sequelize
 })
 
 Player.belongsTo(User, { foreignKey: "userId", targetKey: "id" })
-
-
-// Player.sync()
 
 export { Player, PlayerInterface }

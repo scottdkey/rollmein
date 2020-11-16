@@ -9,7 +9,7 @@ import playerRoutes from "../routes/players.js";
 import userRoutes from "../routes/users.js";
 import authRoutes from "../routes/auth.js";
 import indexRoutes from "../routes/index"
-import { connect, sequelize } from "../db/database"
+import { connect, sequelize } from "../db"
 
 const PORT: number = parseInt(keys.PORT) || 1337;
 const app = new Koa();
