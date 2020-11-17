@@ -3,7 +3,7 @@ import keys from "./keys"
 import { envdb } from "../db"
 
 const getDBEnvVariables = (env: string) => {
-  const db = envdb(env)
+  const db = envdb
   return {
     username: keys.PGUSER,
     password: keys.PGPASS,

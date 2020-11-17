@@ -21,24 +21,26 @@ const RegisterHTMLStream = async (ctx: DefaultContext) => {
   }
 }
 const RegisterUser = async (ctx: ParameterizedContext, next: Next) => {
-  const res: ParameterizedContext = await addUser(ctx)
-  return passport.authenticate("local", (err: any, user, info) => {
-    if (user) {
-      res.login(user, (err: any) => {
-        if (err) {
-          return next();
-        } else {
-          return res.redirect("/api/v1/auth/status");
-        }
-      });
-    }
-    if (ctx.err) {
-      res.error = err;
-      return next();
-    } else {
-      return res.redirect("/login");
-    }
-  })(res, next);
+  const user = await addUser(ctx)
+  ctx.body = user
+  console.log(user)
+  // return passport.authenticate("local", (err: any, user, info) => {
+  //   if (user) {
+  //     res.login(user, (err: any) => {
+  //       if (err) {
+  //         return next();
+  //       } else {
+  //         return res.redirect("/api/v1/auth/status");
+  //       }
+  //     });
+  //   }
+  //   if (ctx.err) {
+  //     res.error = err;
+  //     return next();
+  //   } else {
+  //     return res.redirect("/login");
+  //   }
+  // })(res, next);
 }
 const LoginUserHTMLStream = async (ctx: DefaultContext) => {
   if (!ctx.isAuthenticated()) {

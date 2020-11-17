@@ -1,5 +1,5 @@
 
-const userOptionsTable = "user-options"
+const userOptionsTable = "useroptions"
 
 class UserOptions {
   public id!: number;

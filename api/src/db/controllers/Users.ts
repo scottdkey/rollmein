@@ -3,39 +3,43 @@ import { User, UserInterface, userTable } from "../models/user"
 import bcrypt from "bcryptjs";
 import { query } from "..";
 
-const addUser = async (ctx: ParameterizedContext) => {
-  const { password } = ctx.request.body
+const saltAndHashPass = (password: string) => {
   const salt = bcrypt.genSaltSync();
   const hash: string = bcrypt.hashSync(password, salt)
-  const newUser: UserInterface = new User({ ...ctx.request.body, password: hash })
-  await query(`INSERT INTO ${userTable} (email, username, password, apple_auth, google_auth RETURNING *)`, [newUser.email, newUser.username, newUser.password, newUser.apple_auth, newUser.google_auth])
-    .then(res => {
-      const user = new User(res.rows[0])
-      ctx.status = 201;
-      ctx.body = user;
-    }).catch((err: Error) => {
-      console.log(err)
-      ctx.error = err
-    })
-  return ctx
+  return hash
+}
+
+const addUser = async (ctx: ParameterizedContext) => {
+  const password = saltAndHashPass(ctx.request.body.password)
+  const newUser = { ...ctx.request.body, password }
+  const text = `INSERT INTO ${userTable}(email, username, password, apple_auth, google_auth)`
+  const values = [newUser.email, newUser.username, newUser.password, newUser.apple_auth, newUser.google_auth]
+  const result = await query(text, values).then(res => {
+    console.log(res)
+    return res.rows
+  }).catch(e => {
+    console.error(e)
+  })
+  console.log(result)
 }
 
 const getUser = async (uuid: string, done: any) => {
-  await query(`SELECT * FROM ${userTable} WHERE id=$1`, [uuid]).then((res) => {
-    const user: UserInterface = new User(res.rows[0])
-    done(null, user);
-  })
+  await query(`SELECT * FROM ${userTable} WHERE id = $1`, [uuid])
+    .then((res) => {
+      done(null, res.rows);
+    }
+    )
     .catch((err: any) => {
       done(err, null);
     });
 }
 
 const checkUserPassword = async (email: string, password: string, done: any) => {
-  return await query(`SELECT * FROM ${userTable} WHERE email=$1`, [email])
+  return await query(`SELECT * FROM ${userTable} WHERE email = $1`, [email])
     .then((res) => {
-      const user = new User(res.rows[0])
+      const user = res.rows[0]
       if (!user) return done(null, false);
-      if (!comparePass(password, user.password!)) {
+      if (!comparePass(password, user.password)) {
         return done(null, false);
       } else {
         return done(null, user);

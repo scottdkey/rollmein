@@ -2,14 +2,15 @@ import passport from "koa-passport";
 import passportLocal from "passport-local";
 import passportFB from "passport-facebook";
 import { checkUserPassword, getUser } from "../db/controllers/Users";
-import { UserInterface } from "../db/models/user";
+import { UserInterface, userTable, User } from "../db/models/user";
+import { query } from "../db"
 
 const LocalStrategy = passportLocal.Strategy;
 const FacebookStrategy = passportFB.Strategy;
 
 passport.serializeUser((user: UserInterface, done) => { done(null, user.id); });
 
-passport.deserializeUser(async (id: string, done) => { await getUser(id, done) });
+passport.deserializeUser(async (uuid: string, done) => { getUser(uuid, done) });
 
 const localStratOptions = { usernameField: "email" };
 
