@@ -9,7 +9,6 @@ import {
   LogoutUser
 } from "../db/controllers/Auth"
 import keys from "../config"
-import { addUser } from "../db/controllers/Users";
 
 const router = new Router<DefaultState, Context>();
 

@@ -1,54 +1,33 @@
-import { DataTypes, UUIDV4, Model } from "sequelize"
-import { sequelize } from ".."
+const userTable = "users"
 
-
-class User extends Model {
+class User implements UserInterface {
   public id!: string;
-  public email!: string;
-  public username!: string;
-  public password!: string;
-  public appleAuth!: string;
-  public googleAuth!: string;
-  public readonly createdAt!: Date;
-  public readonly updatedAt!: Date;
+  public email?: string;
+  public username?: string;
+  public password?: string;
+  public apple_auth?: string;
+  public google_auth?: string;
+  public readonly created_at!: Date;
+  public readonly last_login!: Date;
+
+  constructor(params: UserInterface) {
+    this.id = params.id
+    this.email = params.email
+    this.username = params.username
+    this.password = params.password
+    this.apple_auth = params.apple_auth
+    this.google_auth = params.google_auth
+  }
 }
 interface UserInterface {
   id: string;
-  email: string;
-  username: string;
-  password: string;
-  appleAuth: string;
-  googleAuth: string;
+  email?: string;
+  username?: string;
+  password?: string;
+  apple_auth?: string;
+  google_auth?: string;
 }
 
-User.init({
-  id: {
-    type: DataTypes.UUID,
-    defaultValue: UUIDV4,
-    primaryKey: true,
-    allowNull: false,
-  },
-  email: {
-    type: new DataTypes.STRING(64),
-    allowNull: true,
-  },
-  username: {
-    type: new DataTypes.STRING(128),
-    allowNull: true,
-  },
-  password: {
-    type: new DataTypes.STRING(128),
-    allowNull: true,
-  },
-  appleAuth: {
-    type: new DataTypes.STRING(128),
-    allowNull: true,
-  },
-  googleAuth: {
-    type: new DataTypes.STRING(128),
-    allowNull: true,
-  },
-}, { sequelize, tableName: "Users" })
 
 
-export { User, UserInterface }
+export { User, UserInterface, userTable }

@@ -1,8 +1,7 @@
-import { DataTypes, Model } from "sequelize"
-import { sequelize } from ".."
-import { User } from "./user"
 
-class UserOptions extends Model {
+const userOptionsTable = "user-options"
+
+class UserOptions {
   public id!: number;
   public rollType!: string;
   public lockAfterOut!: boolean;
@@ -18,36 +17,7 @@ interface UserOptionsInterface {
   userID: string;
 }
 
-UserOptions.init(
-  {
-    id: {
-      type: DataTypes.INTEGER,
-      autoIncrement: true,
-      primaryKey: true,
-    },
-    rollType: {
-      type: DataTypes.STRING,
-      allowNull: false,
-      defaultValue: "FFA"
-    },
-    lockAfterOut: {
-      type: DataTypes.BOOLEAN,
-      defaultValue: false,
-    },
-    theme: {
-      type: DataTypes.STRING,
-      defaultValue: "dark",
-    },
-    userId: {
-      type: DataTypes.STRING,
-      allowNull: false
-    }
-  }, {
-  tableName: "UserOptions",
-  sequelize
-})
 
-UserOptions.belongsTo(User, { foreignKey: "userId", targetKey: "id" })
 
-export { UserOptions, UserOptionsInterface }
+export { UserOptions, UserOptionsInterface, userOptionsTable }
 

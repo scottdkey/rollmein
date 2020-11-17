@@ -1,68 +1,37 @@
-import { DataTypes, Model } from "sequelize"
-import { User } from "./user"
-import { sequelize } from ".."
+const playerTable = "players"
 
-class Player extends Model {
+class Player implements playerInterface {
   public id!: number;
-  public playerName!: string;
+  public player_name!: string;
   public tank!: boolean;
-  public dps!: boolean;
   public healer!: boolean;
+  public dps!: boolean;
   public locked!: boolean;
-  public in!: boolean;
-  public userId!: string;
+  public in_the_roll!: boolean;
+  public user_id!: string;
+
+  constructor(params: playerInterface) {
+    this.id = params.id
+    this.player_name = params.player_name
+    this.tank = params.tank
+    this.healer = params.healer
+    this.dps = params.dps
+    this.locked = params.locked
+    this.in_the_roll = params.in_the_roll
+    this.user_id = params.user_id
+  }
 }
-interface PlayerInterface {
+
+interface playerInterface {
   id: number;
-  playerName: string;
+  player_name: string;
   tank: boolean;
   healer: boolean;
   dps: boolean;
   locked: boolean;
-  in: boolean;
-  userId: string;
+  in_the_roll: boolean;
+  user_id: string;
 }
 
-Player.init(
-  {
-    id: {
-      type: new DataTypes.INTEGER,
-      autoIncrement: true,
-      primaryKey: true,
-    },
-    playerName: {
-      type: new DataTypes.STRING(128),
-      allowNull: false,
-    },
-    tank: {
-      type: DataTypes.BOOLEAN,
-      defaultValue: false
-    },
-    dps: {
-      type: DataTypes.BOOLEAN,
-      defaultValue: false
-    },
-    healer: {
-      type: DataTypes.BOOLEAN,
-      defaultValue: false
-    },
-    locked: {
-      type: DataTypes.BOOLEAN,
-      defaultValue: false
-    },
-    in: {
-      type: DataTypes.BOOLEAN,
-      defaultValue: false
-    },
-    userId: {
-      type: DataTypes.STRING,
-      allowNull: false
-    }
-  }, {
-  tableName: "Players",
-  sequelize
-})
 
-Player.belongsTo(User, { foreignKey: "userId", targetKey: "id" })
-
-export { Player, PlayerInterface }
+export { Player, playerInterface, playerTable }

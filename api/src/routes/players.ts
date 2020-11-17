@@ -12,11 +12,11 @@ const router = new Router();
 
 const BASE_URL = `${keys.BASE_URL}/players`
 
-router.get(`${BASE_URL}/:uid`, async (ctx) => await getAllPlayers(ctx));
+router.get(`${BASE_URL}/:uuid`, async (ctx) => await getAllPlayers(ctx));
 
 router.get(`${BASE_URL}/:id`, async (ctx) => await getSinglePlayer(ctx));
 
-router.post(`${BASE_URL}/:uid`, async (ctx) => await addPlayer(ctx));
+router.post(`${BASE_URL}/:uuid`, async (ctx) => await addPlayer(ctx));
 
 router.put(`${BASE_URL}/:id`, async (ctx) => await updatePlayer(ctx))
 

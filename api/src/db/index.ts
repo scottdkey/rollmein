@@ -1,7 +1,20 @@
-import { Sequelize } from 'sequelize'
+import { Pool } from "pg"
 import keys from "../config/index"
 
-export const envdb = (env: string) => {
+const pool = new Pool();
+
+
+const query = async (text: string, params: any[]) => {
+  const start = Date.now()
+  const res = await pool.query(text, params)
+  const duration = Date.now() - start
+  console.log('executed query', { text, duration, rows: res.rowCount })
+  return res
+}
+
+
+
+const envdb = (env: string) => {
   if (env === "production") {
     return keys.PROD_DB
   } else if (env === "test") {
@@ -11,32 +24,8 @@ export const envdb = (env: string) => {
   }
 }
 
-export const sequelize = new Sequelize(
-  envdb(keys.NODE_ENV),
-  keys.PGUSER,
-  keys.PGPASS,
-  {
-    host: keys.PGHOST,
-    dialect: 'postgres',
-    logging: false
-  }
-)
-
-
-
-export const connect = async () => {
-  try {
-    await sequelize.authenticate().then(res => console.log("--Sequelize Connected--")).catch(err => console.log(err))
-    await sequelize.sync()
-    // console.log(`Connected to database: ${envdb(keys.NODE_ENV)}`)
-  } catch (error) {
-    console.error("Unable to connect:", error)
-  }
-}
-export const disconnect = async () => {
-  try {
-    await sequelize.close();
-  } catch (error) {
-    console.error("Error on disconnect:", error)
-  }
+export {
+  pool,
+  query,
+  envdb,
 }
