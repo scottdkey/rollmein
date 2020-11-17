@@ -1,4 +1,8 @@
-CREATE TABLE IF NOT EXISTS users (
+import { userTable } from "../models/user"
+
+module.exports.generateSql = () => {
+  `
+CREATE TABLE IF NOT EXISTS ${userTable} (
   id uuid DEFAULT uuid_generate_v4() PRIMARY KEY,
   email VARCHAR (255),
   username VARCHAR (50) UNIQUE,
@@ -7,4 +11,4 @@ CREATE TABLE IF NOT EXISTS users (
   apple_auth VARCHAR (255),
   created_at TIMESTAMP DEFAULT now() NOT NULL,
   last_login TIMESTAMP DEFAULT null
-);
+);`}

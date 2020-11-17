@@ -8,9 +8,5 @@ router.get('/', async (ctx) => {
 router.get('/test', async (ctx) => {
   ctx.body = "This test page is returning correctly"
 })
-// const staticPages = new Koa()
-
-
-// staticPages.use(serve("../server/public"))
 
 export default router;

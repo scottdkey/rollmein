@@ -9,7 +9,7 @@ const FacebookStrategy = passportFB.Strategy;
 
 passport.serializeUser((user: UserInterface, done) => { done(null, user.id); });
 
-passport.deserializeUser(async (id: number, done) => { await getUser(id, done) });
+passport.deserializeUser(async (id: string, done) => { await getUser(id, done) });
 
 const localStratOptions = { usernameField: "email" };
 
