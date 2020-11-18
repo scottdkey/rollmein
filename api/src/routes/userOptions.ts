@@ -1,6 +1,6 @@
 import Router from "koa-router";
 // import queries from "../db/queries/options"
-import keys from "../config"
+import keys from "../config/keys"
 import { userOptionsTable, } from "../db/models/userOptions";
 import { addUserOptions, checkIfOptionsExist, getOptionsByUUID } from "../db/controllers/UserOptions"
 import { ParameterizedContext } from "koa";

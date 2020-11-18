@@ -5,7 +5,7 @@ import {
   LoginUser,
   LogoutUser
 } from "../db/controllers/Auth"
-import keys from "../config"
+import keys from "../config/keys"
 import { addUser } from "../db/controllers/Users";
 
 const router = new Router<DefaultState, Context>();
@@ -17,7 +17,7 @@ router.get(`/status`, async (ctx: ParameterizedContext) => { await AuthStatus(ct
 
 router.post("/register", async (ctx: ParameterizedContext, next) => {
   ctx = await addUser(ctx)
-  
+
   await LoginUser(ctx, next)
 });
 

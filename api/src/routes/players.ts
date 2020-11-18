@@ -6,7 +6,7 @@ import {
   updatePlayer,
   deletePlayer
 } from "../db/controllers/Players";
-import keys from "../config"
+import keys from "../config/keys"
 import { playerTable } from "../db/models/player";
 import { DefaultContext, ParameterizedContext } from "koa";
 

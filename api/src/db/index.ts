@@ -1,6 +1,6 @@
 import { Pool, Client } from "pg"
 import { createDb, migrate } from "postgres-migrations"
-import keys from "../config/index"
+import keys from "../config/keys"
 
 
 const envdb = (env: string): string => {
