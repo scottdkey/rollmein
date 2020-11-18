@@ -1,27 +1,24 @@
-import { Context, DefaultState } from "koa";
+import { Context, DefaultState, ParameterizedContext } from "koa";
 import Router from "koa-router";
 import {
   AuthStatus,
-  RegisterHTMLStream,
-  RegisterUser,
-  LoginUserHTMLStream,
   LoginUser,
   LogoutUser
 } from "../db/controllers/Auth"
 import keys from "../config"
+import { addUser } from "../db/controllers/Users";
 
 const router = new Router<DefaultState, Context>();
 
+// current prefix is /api/v1/auth
 router.prefix(`${keys.BASE_URL}/auth`)
 
-router.get(`/status`, async (ctx) => { await AuthStatus(ctx) });
+router.get(`/status`, async (ctx: ParameterizedContext) => { await AuthStatus(ctx) });
 
-router.get("/register", async (ctx) => { await RegisterHTMLStream(ctx) });
-
-router.post("/register", async (ctx, next) => {await RegisterUser(ctx, next)
+router.post("/register", async (ctx: ParameterizedContext, next) => {
+  ctx = await addUser(ctx)
+  await LoginUser(ctx, next)
 });
-
-router.get("/login", async (ctx) => { await LoginUserHTMLStream(ctx) });
 
 router.post("/login", async (ctx, next) => { await LoginUser(ctx, next) });
 

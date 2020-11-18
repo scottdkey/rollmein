@@ -3,7 +3,7 @@ import { userTable } from "../models/user"
 const CreateUsers = `
 CREATE TABLE IF NOT EXISTS ${userTable} (
     id uuid DEFAULT uuid_generate_v4() PRIMARY KEY,
-    email VARCHAR (255),
+    email VARCHAR (255) UNIQUE,
     username VARCHAR (50) UNIQUE,
     password VARCHAR,
     google_auth VARCHAR (255),

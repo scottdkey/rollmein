@@ -1,7 +1,29 @@
-import { ParameterizedContext } from "koa"
+import { DefaultContext, ParameterizedContext } from "koa"
 import { User, UserInterface, userTable } from "../models/user"
 import bcrypt from "bcryptjs";
 import { query } from "..";
+
+const getAllUsers = async () => {
+  const { rows } = await query(`SELECT * FROM ${userTable};`, []
+  )
+  const Users = rows.map(user => {
+    return new User(user)
+  })
+  return Users
+}
+
+const getUserByUUID = async (uuid: string) => {
+  const values = [uuid]
+  const text = `SELECT * FROM ${userTable} WHERE id=$1;`
+  const { rows } = await query(text, values)
+  return new User({ ...rows[0] })
+}
+const getUserByEmail = async (email: string) => {
+  const values = [email]
+  const text = `SELECT * FROM ${userTable} WHERE email=$1;`
+  const { rows } = await query(text, values)
+  return new User({ ...rows[0] })
+}
 
 const saltAndHashPass = (password: string) => {
   const salt = bcrypt.genSaltSync();
@@ -9,50 +31,34 @@ const saltAndHashPass = (password: string) => {
   return hash
 }
 
+const checkIfExistingUserByEmail = async (email: string) => {
+  const res = await getUserByEmail(email)
+  const booleanResponse = res.email! === email
+  console.log(booleanResponse)
+  return booleanResponse
+}
 const addUser = async (ctx: ParameterizedContext) => {
   const password = saltAndHashPass(ctx.request.body.password)
-  const newUser = { ...ctx.request.body, password }
-  const text = `INSERT INTO ${userTable}(email, username, password, apple_auth, google_auth)`
-  const values = [newUser.email, newUser.username, newUser.password, newUser.apple_auth, newUser.google_auth]
-  const result = await query(text, values).then(res => {
-    console.log(res)
-    return res.rows
-  }).catch(e => {
-    console.error(e)
-  })
-  console.log(result)
+  const newUser = new User({ ...ctx.request.body, password })
+  const text =
+    `INSERT INTO ${userTable}(email, password) VALUES($1, $2) RETURNING *;`
+  const values = [newUser.email, newUser.password]
+  const emailCheck = await checkIfExistingUserByEmail(newUser.email!)
+  if (emailCheck) {
+    ctx.throw(422, "Error, a user with this email address already exists")
+  } else {
+    const { rows } = await query(text, values)
+    const currentUser = new User({ ...rows[0] })
+    ctx.body = { ...currentUser }
+    ctx.status = 200
+  }
+  return ctx
 }
 
-const getUser = async (uuid: string, done: any) => {
-  await query(`SELECT * FROM ${userTable} WHERE id = $1`, [uuid])
-    .then((res) => {
-      done(null, res.rows);
-    }
-    )
-    .catch((err: any) => {
-      done(err, null);
-    });
-}
-
-const checkUserPassword = async (email: string, password: string, done: any) => {
-  return await query(`SELECT * FROM ${userTable} WHERE email = $1`, [email])
-    .then((res) => {
-      const user = res.rows[0]
-      if (!user) return done(null, false);
-      if (!comparePass(password, user.password)) {
-        return done(null, false);
-      } else {
-        return done(null, user);
-      }
-    })
-    .catch((err: any) => {
-      return done(err);
-    });
-}
 
 function comparePass(userPassword: string, databasePassword: string) {
   return bcrypt.compareSync(userPassword, databasePassword);
 }
 
 
-export { addUser, getUser, checkUserPassword }
+export { addUser, getUserByUUID, getAllUsers, getUserByEmail, comparePass }

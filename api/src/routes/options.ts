@@ -4,7 +4,9 @@ import keys from "../config"
 
 
 const router = new Router();
-const BASE_URL = `${keys.BASE_URL}/options`
+
+//current route is /api/v1/options
+router.prefix(`${keys.BASE_URL}/options`)
 
 
 // router.get(`${BASE_URL}/:uid/:id`, async (ctx) => {

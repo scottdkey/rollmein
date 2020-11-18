@@ -1,7 +1,7 @@
 import passport from "koa-passport";
 import passportLocal from "passport-local";
 import passportFB from "passport-facebook";
-import { checkUserPassword, getUser } from "../db/controllers/Users";
+import { getUserByUUID, getUserByEmail, comparePass } from "../db/controllers/Users";
 import { UserInterface, userTable, User } from "../db/models/user";
 import { query } from "../db"
 
@@ -10,13 +10,27 @@ const FacebookStrategy = passportFB.Strategy;
 
 passport.serializeUser((user: UserInterface, done) => { done(null, user.id); });
 
-passport.deserializeUser(async (uuid: string, done) => { getUser(uuid, done) });
+passport.deserializeUser(async (uuid: string, done) => {
+  await getUserByUUID(uuid).then(user => done(null, user)).catch(e => done(e, null))
+
+});
 
 const localStratOptions = { usernameField: "email" };
 
 passport.use(
-  new LocalStrategy(localStratOptions, (username: string, password: string, done) => {
-    checkUserPassword(username, password, done)
+  new LocalStrategy(localStratOptions, async (username: string, password: string, done) => {
+    await getUserByEmail(username).then(user => {
+      if (!user) {
+        return done(null, false, { message: 'Incorrect username.' });
+      }
+      if (!comparePass(password, user.password!)) {
+        return done(null, false, { message: "Incorrect password." });
+      } else {
+        return done(null, user);
+      }
+    }).catch(e => {
+      return done(e);
+    })
   }))
 // const fbStratOptions = {
 //   clientID: keys.FACEBOOK_CID,

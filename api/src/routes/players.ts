@@ -7,21 +7,30 @@ import {
   deletePlayer
 } from "../db/controllers/Players";
 import keys from "../config"
+import { playerTable } from "../db/models/player";
+import { DefaultContext, ParameterizedContext } from "koa";
 
 const router = new Router();
 
-const BASE_URL = `${keys.BASE_URL}/players`
+//current route is /api/v1/players
+router.prefix(`${keys.BASE_URL}/${playerTable}`)
 
-router.get(`${BASE_URL}/:uuid`, async (ctx) => await getAllPlayers(ctx));
+router.get(`/:uuid`, async (ctx: ParameterizedContext) =>
+  ctx = await getAllPlayers(ctx));
 
-router.get(`${BASE_URL}/:id`, async (ctx) => await getSinglePlayer(ctx));
+router.get(`/`, async (ctx: ParameterizedContext) =>
+  ctx = await getSinglePlayer(ctx));
 
-router.post(`${BASE_URL}/:uuid`, async (ctx) => await addPlayer(ctx));
+router.post(`/`, async (ctx: ParameterizedContext) =>
+  ctx = await addPlayer(ctx));
 
-router.put(`${BASE_URL}/:id`, async (ctx) => await updatePlayer(ctx))
+router.put(`/`, async (ctx: ParameterizedContext) =>
+  ctx = await updatePlayer(ctx))
 
-router.patch(`${BASE_URL}/:id`, async (ctx) => await updatePlayer(ctx))
+router.patch(`/`, async (ctx: ParameterizedContext) =>
+  ctx = await updatePlayer(ctx))
 
-router.delete(`${BASE_URL}/:id`, async (ctx) => await deletePlayer(ctx));
+router.delete(`/`, async (ctx: DefaultContext) =>
+  ctx = await deletePlayer(ctx));
 
 export default router;

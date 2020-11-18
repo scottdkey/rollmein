@@ -3,7 +3,6 @@ import bodyParser from "koa-bodyparser";
 import session from "koa-session";
 import passport from "koa-passport";
 import redisStore from "koa-redis";
-import reflectMetadata from "reflect-metadata"
 
 import keys from "../config/keys"
 import playerRoutes from "../routes/players";
@@ -13,17 +12,16 @@ import indexRoutes from "../routes/index"
 import { connect } from "../db"
 
 const PORT: number = parseInt(keys.PORT) || 1337;
-const app = new Koa();
+const app: Koa = new Koa();
+
+//body parser
 app.use(bodyParser({}));
 //database
 connect()
-
-
 //sessions
 app.keys = [keys.SECRETKEY];
 app.use(session({ store: redisStore({}) }, app));
 
-//body parser
 
 
 //authentication

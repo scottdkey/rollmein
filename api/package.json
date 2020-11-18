@@ -6,7 +6,7 @@
   "type": "commonjs",
   "scripts": {
     "start": "node ./build/src/server/index.js",
-    "dev": "ts-node src/server/index.ts",
+    "dev": "run-p watch:*",
     "build": "tsc",
     "watch:tsc": "npx tsc -w",
     "watch:node": "nodemon ./build/src/server/index.js",
@@ -17,12 +17,14 @@
   "dependencies": {
     "@koa/cors": "^3.1.0",
     "@types/pg": "^7.14.6",
+    "@types/superagent": "^4.1.10",
     "@types/uuid": "^8.3.0",
     "babel-node": "0.0.1-security",
     "bcryptjs": "^2.4.3",
     "db-migrate": "^0.11.11",
     "dotenv": "^8.2.0",
     "eslint": "^7.13.0",
+    "http-status-codes": "^2.1.4",
     "http-terminator": "^2.0.3",
     "koa": "^2.13.0",
     "koa-bodyparser": "^4.3.0",

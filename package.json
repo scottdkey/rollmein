@@ -22,6 +22,7 @@
   "author": "Scott Key <scottdkey@gmail.com> (www.github.com/scottdkey)",
   "license": "MIT",
   "dependencies": {
+    "@types/superagent": "^4.1.10",
     "npm-run-all": "^4.1.5"
   }
 }

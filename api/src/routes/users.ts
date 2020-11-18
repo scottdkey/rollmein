@@ -1,10 +1,32 @@
 import Router from "koa-router";
+import { DefaultContext, ParameterizedContext } from "koa"
 import keys from "../config"
+import { userTable } from "../db/models/user";
+import { addUser, getAllUsers, getUserByUUID } from "../db/controllers/Users";
+
 
 const router = new Router();
 
-const BASE_URL = `${keys.BASE_URL}/users`;
+//current prefix is /api/v1/users
+router.prefix(`${keys.BASE_URL}/${userTable}`)
 
-// router.get(`${BASE_URL}`, async (ctx) => { await getAllUsers() });
+router.get(`/`, async (ctx: DefaultContext) => {
+  ctx.body = await getAllUsers()
+});
+
+router.get(`/:uuid`, async (ctx: ParameterizedContext) => {
+  const { uuid } = ctx.params
+  ctx.body = await getUserByUUID(uuid)
+});
+
+router.post(`/`, async (ctx: ParameterizedContext) => {
+  await addUser(ctx).then(res => ctx = res).catch(e => ctx.throw(401, "Error unable to create user", e))
+});
+
+router.delete(`/:uuid`, async (ctx: ParameterizedContext) => {
+  const { uuid } = ctx.params
+  ctx.body = `Delete User ${uuid}`
+});
+router.patch(`/:uuid`, async (ctx: ParameterizedContext) => { ctx.body = `Patch user ${ctx.params.uuid}` })
 
 export default router;
