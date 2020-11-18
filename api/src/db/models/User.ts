@@ -17,6 +17,8 @@ class User implements UserInterface {
     this.password = params.password
     this.apple_auth = params.apple_auth
     this.google_auth = params.google_auth
+    this.created_at = params.created_at
+    this.last_login = params.last_login
   }
 }
 interface UserInterface {
@@ -26,6 +28,8 @@ interface UserInterface {
   password?: string;
   apple_auth?: string;
   google_auth?: string;
+  created_at: Date;
+  last_login: Date;
 }
 
 

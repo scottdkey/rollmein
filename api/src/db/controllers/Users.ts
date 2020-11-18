@@ -1,4 +1,4 @@
-import { DefaultContext, ParameterizedContext } from "koa"
+import { ParameterizedContext } from "koa"
 import { User, UserInterface, userTable } from "../models/user"
 import bcrypt from "bcryptjs";
 import { query } from "..";
@@ -10,6 +10,14 @@ const getAllUsers = async () => {
     return new User(user)
   })
   return Users
+}
+
+const addLastLoginTimeStamp = async (id: string) => {
+  const currentTime = new Date().toISOString()
+  const values = [id, currentTime]
+  const text = `UPDATE ${userTable} SET last_login = $2 WHERE id = $1 RETURNING *;`
+  const { rows } = await query(text, values)
+  return new User({ ...rows[0] })
 }
 
 const getUserByUUID = async (uuid: string) => {
@@ -61,4 +69,4 @@ function comparePass(userPassword: string, databasePassword: string) {
 }
 
 
-export { addUser, getUserByUUID, getAllUsers, getUserByEmail, comparePass }
+export { addUser, getUserByUUID, getAllUsers, getUserByEmail, comparePass, addLastLoginTimeStamp }
