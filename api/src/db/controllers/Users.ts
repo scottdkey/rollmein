@@ -1,7 +1,8 @@
 import { ParameterizedContext } from "koa"
-import { User, UserInterface, userTable } from "../models/user"
+import { User, userTable } from "../models/user"
 import bcrypt from "bcryptjs";
 import { query } from "..";
+import { addUserOptions } from "./UserOptions";
 
 const getAllUsers = async () => {
   const { rows } = await query(`SELECT * FROM ${userTable};`, []
@@ -57,6 +58,7 @@ const addUser = async (ctx: ParameterizedContext) => {
   } else {
     const { rows } = await query(text, values)
     const currentUser = new User({ ...rows[0] })
+    await addUserOptions(currentUser.id)
     ctx.body = { ...currentUser }
     ctx.status = 200
   }

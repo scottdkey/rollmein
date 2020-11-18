@@ -9,6 +9,7 @@ import playerRoutes from "../routes/players";
 import userRoutes from "../routes/users";
 import authRoutes from "../routes/auth";
 import indexRoutes from "../routes/index"
+import userOptionsRoutes from "../routes/userOptions"
 import { connect } from "../db"
 
 const PORT: number = parseInt(keys.PORT) || 1337;
@@ -33,8 +34,9 @@ app.use(passport.session());
 
 // app.use(serve(StaticSiteBuild));
 app.use(indexRoutes.routes())
-app.use(playerRoutes.routes());
 app.use(userRoutes.routes());
+app.use(playerRoutes.routes());
+app.use(userOptionsRoutes.routes())
 app.use(authRoutes.routes())
 
 // server

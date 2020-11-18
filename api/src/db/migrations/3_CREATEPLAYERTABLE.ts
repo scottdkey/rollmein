@@ -1,7 +1,5 @@
-
-import { playerTable } from "../models/player"
 const CreatePlayers = `
-CREATE TABLE IF NOT EXISTS ${playerTable}(
+CREATE TABLE IF NOT EXISTS players(
     id SERIAL PRIMARY KEY,
     player_name VARCHAR(255) NOT NULL,
     tank BOOLEAN DEFAULT false NOT NULL,

@@ -1,7 +1,5 @@
-import { userTable } from "../models/user"
-
 const CreateUsers = `
-CREATE TABLE IF NOT EXISTS ${userTable} (
+CREATE TABLE IF NOT EXISTS users (
     id uuid DEFAULT uuid_generate_v4() PRIMARY KEY,
     email VARCHAR (255) UNIQUE,
     username VARCHAR (50) UNIQUE,

@@ -1,12 +1,20 @@
 
-const userOptionsTable = "useroptions"
+const userOptionsTable = "options"
 
-class UserOptions {
+class UserOptions implements UserOptionsInterface {
   public id!: number;
   public rollType!: string;
   public lockAfterOut!: boolean;
   public theme!: string;
-  public userID!: string;
+  public userId!: string;
+
+  constructor(params: UserOptionsInterface) {
+    this.id = params.id
+    this.rollType = params.rollType
+    this.lockAfterOut = params.lockAfterOut
+    this.theme = params.theme
+    this.userId = params.userId
+  }
 
 }
 interface UserOptionsInterface {
@@ -14,7 +22,7 @@ interface UserOptionsInterface {
   rollType: string;
   lockAfterOut: boolean;
   theme: string;
-  userID: string;
+  userId: string;
 }
 
 
