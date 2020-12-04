@@ -1,5 +1,5 @@
-
 node_modules
-*/build
 .env
-rollmein/api/.env 
+.css
+api/build
+web/build

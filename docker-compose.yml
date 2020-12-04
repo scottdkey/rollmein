@@ -1,7 +1,10 @@
 version: '3'
 services: 
-  db:
+
+
+  database:
     image: postgres
+    restart: always
     volumes: 
       - ./tmp/db:/var/lib/postgresql/data
     env_file:
@@ -10,18 +13,16 @@ services:
       POSTGRES_USER: ${PGUSER}
       POSTGRES_PASSWORD: ${PGPASS}
       POSTGRES_DB: ${PGDB}
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${PGUSER} ${PGPASS}"]
-      interval: 30s
-      timeout: 30s
-      retries: 5
     ports: 
-      - 5432:5432
+      - "5432:5432"
     expose:
-      - 5432
-    restart: always
+      - "5432"
   redis:
     image: redis:alpine
+    ports: 
+      - "6379:6379"
+    expose:
+      - "6379"
   api:
     build: ./api
     image: scottdkey/rollmein_api:latest
@@ -43,7 +44,7 @@ services:
       BASE_URL: ${API_BASE_URL}
       SECRETKEY: ${SECRETKEY}
       PORT: ${API_SERVER_PORT}
-    command: bash -c "rm -f tmp/pids/server/pid && npm start"
+    command: bash -c "rm -f tmp/pids/server/pid && npm start && npm run db:migrate"
 
     depends_on:
       - db

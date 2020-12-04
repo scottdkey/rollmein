@@ -1,28 +1,31 @@
-import { DataTypes } from "sequelize"
-import db from "../database"
-import User from "./User"
 
-const UserOptions = db.sequelize.define("UserOptions", {
-  id: {
-    type: DataTypes.INTEGER,
-    autoIncrement: true,
-    primaryKey: true,
-  },
-  rollType: {
-    type: DataTypes.STRING,
-    allowNull: false,
-    defaultValue: "FFA"
-  },
-  lockAfterOut: {
-    type: DataTypes.BOOLEAN,
-    defaultValue: false,
-  },
-  theme: {
-    type: DataTypes.STRING,
-    defaultValue: "dark",
+const userOptionsTable = "options"
+
+class UserOptions implements UserOptionsInterface {
+  public id!: number;
+  public rollType!: string;
+  public lockAfterOut!: boolean;
+  public theme!: string;
+  public userId!: string;
+
+  constructor(params: UserOptionsInterface) {
+    this.id = params.id
+    this.rollType = params.rollType
+    this.lockAfterOut = params.lockAfterOut
+    this.theme = params.theme
+    this.userId = params.userId
   }
-})
 
-UserOptions.belongsTo(User, { foreignKey: "user_id", targetKey: "uuid" })
+}
+interface UserOptionsInterface {
+  id: number;
+  rollType: string;
+  lockAfterOut: boolean;
+  theme: string;
+  userId: string;
+}
 
-export default UserOptions
+
+
+export { UserOptions, UserOptionsInterface, userOptionsTable }
+

@@ -1,69 +1,51 @@
 import passport from "koa-passport";
 import passportLocal from "passport-local";
 import passportFB from "passport-facebook";
-import bcrypt from "bcryptjs";
-import keys from "../config"
-import { UserInfo } from "../config/interfaces"
-
-import knex from "../db/connection.js";
+import { getUserByUUID, getUserByEmail, comparePass } from "../db/controllers/Users";
+import { UserInterface, userTable, User } from "../db/models/user";
+import { query } from "../db"
 
 const LocalStrategy = passportLocal.Strategy;
 const FacebookStrategy = passportFB.Strategy;
 
-passport.serializeUser((user: UserInfo, done) => {
-  done(null, user.id);
-});
+passport.serializeUser((user: UserInterface, done) => { done(null, user.id); });
 
-passport.deserializeUser(async (id: number, done) => {
-  return await knex("users")
-    .where({ id })
-    .first()
-    .then((user: UserInfo) => {
-      done(null, user);
-    })
-    .catch((err: any) => {
-      done(err, null);
-    });
+passport.deserializeUser(async (uuid: string, done) => {
+  await getUserByUUID(uuid).then(user => done(null, user)).catch(e => done(e, null))
+
 });
 
 const localStratOptions = { usernameField: "email" };
 
 passport.use(
-  new LocalStrategy(localStratOptions, (username: string, password: string, done) => {
-    knex("users")
-      .where({ email: username })
-      .first()
-      .then((user: UserInfo) => {
-        if (!user) return done(null, false);
-        if (!comparePass(password, user.password)) {
-          return done(null, false);
-        } else {
-          return done(null, user);
-        }
-      })
-      .catch((err: any) => {
-        return done(err);
-      });
-  })
-);
-const fbStratOptions = {
-  clientID: keys.FACEBOOK_CID,
-  clientSecret: keys.FACEBOOK_CS,
-  callbackURL: "/auth/facebook/callback"
-}
+  new LocalStrategy(localStratOptions, async (username: string, password: string, done) => {
+    await getUserByEmail(username).then(user => {
+      if (!user) {
+        return done(null, false, { message: 'Incorrect username.' });
+      }
+      if (!comparePass(password, user.password!)) {
+        return done(null, false, { message: "Incorrect password." });
+      } else {
+        return done(null, user);
+      }
+    }).catch(e => {
+      return done(e);
+    })
+  }))
+// const fbStratOptions = {
+//   clientID: keys.FACEBOOK_CID,
+//   clientSecret: keys.FACEBOOK_CS,
+//   callbackURL: "/auth/facebook/callback"
+// }
 
-passport.use(new FacebookStrategy(fbStratOptions, (token, tokenSecret, profile, done) => {
-  knex("users").where({ id: profile.id }).then(results => {
-    if (!results) {
-      return knex('users').insert({ ...profile }).returning("*").then(user => {
-        return done(null, user)
-      })
-    } else {
-      return done(null, results[0])
-    }
-  })
-}))
-
-function comparePass(userPassword: string, databasePassword: string) {
-  return bcrypt.compareSync(userPassword, databasePassword);
-}
+// passport.use(new FacebookStrategy(fbStratOptions, (token, tokenSecret, profile, done) => {
+//   knex("users").where({ id: profile.id }).then(results => {
+//     if (!results) {
+//       return knex('users').insert({ ...profile }).returning("*").then(user => {
+//         return done(null, user)
+//       })
+//     } else {
+//       return done(null, results[0])
+//     }
+//   })
+// }))

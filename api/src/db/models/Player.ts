@@ -1,39 +1,37 @@
-import { DataTypes } from "sequelize"
-import User from "./User"
-import db from "../database"
+const playerTable = "players"
 
-const Player = db.sequelize.define("Player", {
-  id: {
-    type: DataTypes.INTEGER,
-    autoIncrement: true,
-    primaryKey: true,
-  },
-  name: {
-    type: DataTypes.STRING,
-    allowNull: false,
-  },
-  tank: {
-    type: DataTypes.BOOLEAN,
-    defaultValue: false
-  },
-  dps: {
-    type: DataTypes.BOOLEAN,
-    defaultValue: false
-  },
-  healer: {
-    type: DataTypes.BOOLEAN,
-    defaultValue: false
-  },
-  locked: {
-    type: DataTypes.BOOLEAN,
-    defaultValue: false
-  },
-  in: {
-    type: DataTypes.BOOLEAN,
-    defaultValue: false
-  },
-})
+class Player implements playerInterface {
+  public id!: number;
+  public player_name!: string;
+  public tank!: boolean;
+  public healer!: boolean;
+  public dps!: boolean;
+  public locked!: boolean;
+  public in_the_roll!: boolean;
+  public user_id!: string;
 
-Player.belongsTo(User, { foreignKey: "user_id", targetKey: "uuid" })
+  constructor(params: playerInterface) {
+    this.id = params.id
+    this.player_name = params.player_name
+    this.tank = params.tank
+    this.healer = params.healer
+    this.dps = params.dps
+    this.locked = params.locked
+    this.in_the_roll = params.in_the_roll
+    this.user_id = params.user_id
+  }
+}
 
-export default Player
+interface playerInterface {
+  id: number;
+  player_name: string;
+  tank: boolean;
+  healer: boolean;
+  dps: boolean;
+  locked: boolean;
+  in_the_roll: boolean;
+  user_id: string;
+}
+
+
+export { Player, playerInterface, playerTable }
