@@ -33,7 +33,10 @@ const migration = async () => {
     await client.connect()
     try {
       await createDb(db, { client })
-    } finally {
+    } catch {
+      console.log("Error: no database connection")
+    }
+    finally {
       await client.end()
     }
   }
@@ -43,6 +46,8 @@ const migration = async () => {
     await client.connect()
     try {
       await migrate({ client }, "build/src/db/migrations")
+    } catch {
+      console.log("Error: no database connection")
     } finally {
       await client.end()
     }

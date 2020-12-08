@@ -1,11 +1,11 @@
-FROM node:14
+FROM node:14-slim
 
 WORKDIR /usr/src/app
 COPY package*.json ./
-RUN npm install
+RUN yarn --production
 
 COPY build .
 COPY .env .
 
 EXPOSE 5000
-CMD ["nodemon", "src/server/index.js"]
+CMD ["node", "src/server/index.js"]

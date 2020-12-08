@@ -16,4 +16,4 @@ spec:
     spec:
       containers:
         - name: koa
-          image: scottdkey/rollmein_api:v1.0.0
+          image: scottdkey/rollmein_api:v1
