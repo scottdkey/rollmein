@@ -6,61 +6,42 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const koa_passport_1 = __importDefault(require("koa-passport"));
 const passport_local_1 = __importDefault(require("passport-local"));
 const passport_facebook_1 = __importDefault(require("passport-facebook"));
-const bcryptjs_1 = __importDefault(require("bcryptjs"));
-const config_1 = __importDefault(require("../config"));
-const connection_js_1 = __importDefault(require("../db/connection.js"));
+const Users_1 = require("../db/controllers/Users");
 const LocalStrategy = passport_local_1.default.Strategy;
 const FacebookStrategy = passport_facebook_1.default.Strategy;
-koa_passport_1.default.serializeUser((user, done) => {
-    done(null, user.id);
-});
-koa_passport_1.default.deserializeUser(async (id, done) => {
-    return await connection_js_1.default("users")
-        .where({ id })
-        .first()
-        .then((user) => {
-        done(null, user);
-    })
-        .catch((err) => {
-        done(err, null);
-    });
+koa_passport_1.default.serializeUser((user, done) => { done(null, user.id); });
+koa_passport_1.default.deserializeUser(async (uuid, done) => {
+    await Users_1.getUserByUUID(uuid).then(user => done(null, user)).catch(e => done(e, null));
 });
 const localStratOptions = { usernameField: "email" };
-koa_passport_1.default.use(new LocalStrategy(localStratOptions, (username, password, done) => {
-    connection_js_1.default("users")
-        .where({ email: username })
-        .first()
-        .then((user) => {
-        if (!user)
-            return done(null, false);
-        if (!comparePass(password, user.password)) {
-            return done(null, false);
+koa_passport_1.default.use(new LocalStrategy(localStratOptions, async (username, password, done) => {
+    await Users_1.getUserByEmail(username).then(user => {
+        if (!user) {
+            return done(null, false, { message: 'Incorrect username.' });
+        }
+        if (!Users_1.comparePass(password, user.password)) {
+            return done(null, false, { message: "Incorrect password." });
         }
         else {
             return done(null, user);
         }
-    })
-        .catch((err) => {
-        return done(err);
+    }).catch(e => {
+        return done(e);
     });
 }));
-const fbStratOptions = {
-    clientID: config_1.default.FACEBOOK_CID,
-    clientSecret: config_1.default.FACEBOOK_CS,
-    callbackURL: "/auth/facebook/callback"
-};
-koa_passport_1.default.use(new FacebookStrategy(fbStratOptions, (token, tokenSecret, profile, done) => {
-    connection_js_1.default("users").where({ id: profile.id }).then(results => {
-        if (!results) {
-            return connection_js_1.default('users').insert({ ...profile }).returning("*").then(user => {
-                return done(null, user);
-            });
-        }
-        else {
-            return done(null, results[0]);
-        }
-    });
-}));
-function comparePass(userPassword, databasePassword) {
-    return bcryptjs_1.default.compareSync(userPassword, databasePassword);
-}
+// const fbStratOptions = {
+//   clientID: keys.FACEBOOK_CID,
+//   clientSecret: keys.FACEBOOK_CS,
+//   callbackURL: "/auth/facebook/callback"
+// }
+// passport.use(new FacebookStrategy(fbStratOptions, (token, tokenSecret, profile, done) => {
+//   knex("users").where({ id: profile.id }).then(results => {
+//     if (!results) {
+//       return knex('users').insert({ ...profile }).returning("*").then(user => {
+//         return done(null, user)
+//       })
+//     } else {
+//       return done(null, results[0])
+//     }
+//   })
+// }))

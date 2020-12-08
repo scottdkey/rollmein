@@ -4,9 +4,8 @@ WORKDIR /usr/src/app
 COPY package*.json ./
 RUN npm install
 
-COPY . .
-RUN npx tsc
-
+COPY build .
+COPY .env .
 
 EXPOSE 5000
-CMD ["node", "./build/src/server/index.js"]
+CMD ["nodemon", "src/server/index.js"]
