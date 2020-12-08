@@ -1,5 +1,7 @@
-node_modules
+
 .env
 .css
-build
-tmp
+build/
+tmp/
+node_modules/
+
