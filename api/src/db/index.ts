@@ -28,7 +28,6 @@ const migration = async () => {
   {
     const client = new Client({
       ...dbConfig,
-      database: "postgres",
     })
     await client.connect()
     try {

@@ -1,48 +1,49 @@
-version: '3'
-services: 
+version: "3"
+services:
   database:
     image: postgres
     restart: always
-    volumes: 
+    volumes:
       - ./tmp/db:/var/lib/postgresql/data
     env_file:
       - .env
-    environment: 
-      POSTGRES_USER: ${PGUSER}
-      POSTGRES_PASSWORD: ${PGPASS}
-    ports: 
-      - "5432:5432"
+    environment:
+      - POSTGRES_USER=${PGUSER}
+      - POSTGRES_PASSWORD=${PGPASS}
+    ports:
+      - 5432:5432
     expose:
-      - "5432"
+      - 5432
   redis:
     image: redis:alpine
-    ports: 
+    ports:
       - "6379:6379"
     expose:
       - "6379"
   api:
-    build: ./api
-    image: scottdkey/rollmein_api:latest
+    build:
+      context: ./api
+      dockerfile: Dockerfile.dev
     volumes:
-      - ./:/usr/src/app
+      - ./:/app
     env_file:
       - .env
+
+    environment:
+      - NODE_ENV=${NODE_ENV}
+      - PGUSER=${PGUSER}
+      - PGPASS=${PGPASS}
+      - PGPORT=${PGPORT}
+      - PGHOST=database
+      - REDISHOST=redis
+      - DEV_DB=${DEVELOPMENT_DATABASE}
+      - TEST_DB=${TEST_DATABASE}
+      - PROD_DB=${PRODUCTION_DATABASE}
+      - BASE_URL=${API_BASE_URL}
+      - SECRETKEY=${SECRETKEY}
+      - PORT=${API_SERVER_PORT}
     ports:
       - ${API_SERVER_PORT}:${API_SERVER_PORT}
-    environment:
-      NODE_ENV: ${NODE_ENV}
-      PGUSER: ${PGUSER}
-      PGPASS: ${PGPASS}
-      PGPORT: ${PGPORT}
-      PGHOST: db
-      DEV_DB: ${DEVELOPMENT_DATABASE}
-      TEST_DB: ${TEST_DATABASE}
-      PROD_DB: ${PRODUCTION_DATABASE}
-      BASE_URL: ${API_BASE_URL}
-      SECRETKEY: ${SECRETKEY}
-      PORT: ${API_SERVER_PORT}
-    command: bash -c "rm -f tmp/pids/server/pid && npm start && npm run db:migrate"
-
     depends_on:
       - database
       - redis
@@ -61,5 +62,5 @@ services:
   #   links:
   #     - api
   #   depends_on:
-  #     - api 
+  #     - api
   #   restart: always

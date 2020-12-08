@@ -6,11 +6,10 @@
   "type": "commonjs",
   "scripts": {
     "start": "node ./build/src/server/index.js",
-    "dev": "nodemon --watch src -e ts,tsx --exec ts-node ./src/server/index.ts",
+    "dev": "run-p watch:*",
     "build": "tsc",
     "watch:tsc": "npx tsc -w",
-    "watch:node": "nodemon ./build/src/server/index.js",
-    "migrate": "node node_modules/db-migrate/bin/db-migrate"
+    "watch:node": "nodemon ./build/src/server/index.js"
   },
   "author": "Scott Key",
   "license": "ISC",
