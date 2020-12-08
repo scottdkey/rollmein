@@ -1,7 +1,7 @@
 import Router from "koa-router";
 import { DefaultContext, ParameterizedContext } from "koa"
 import keys from "../config/keys"
-import { userTable } from "../db/models/user";
+import { userTable } from "../db/models/User";
 import { addUser, getAllUsers, getUserByUUID } from "../db/controllers/Users";
 
 

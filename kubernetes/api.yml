@@ -1,0 +1,19 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: koa
+  labels:
+    koa
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: koa
+  template:
+    metadata:
+      labels:
+        app: koa
+    spec:
+      containers:
+        - name: koa
+          image: scottdkey/rollmein_api:v1.0.0

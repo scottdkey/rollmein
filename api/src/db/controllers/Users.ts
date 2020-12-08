@@ -1,5 +1,5 @@
 import { ParameterizedContext } from "koa"
-import { User, userTable } from "../models/user"
+import { User, userTable } from "../models/User"
 import bcrypt from "bcryptjs";
 import { query } from "..";
 import { addUserOptions } from "./UserOptions";

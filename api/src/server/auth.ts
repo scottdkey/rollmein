@@ -2,7 +2,7 @@ import passport from "koa-passport";
 import passportLocal from "passport-local";
 import passportFB from "passport-facebook";
 import { getUserByUUID, getUserByEmail, comparePass } from "../db/controllers/Users";
-import { UserInterface, userTable, User } from "../db/models/user";
+import { UserInterface, userTable, User } from "../db/models/User";
 import { query } from "../db"
 
 const LocalStrategy = passportLocal.Strategy;
