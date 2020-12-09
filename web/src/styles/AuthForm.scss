@@ -56,8 +56,13 @@
       width: 100%;
       border-radius: 10px;
     }
-    .form-button {
-      width: 10%;
+    
+    }
+  }
+
+.form-button {
+      width: 100%;
+      max-width: 150px;
       min-width: 40px;
       margin-left: auto;
       margin-right: auto;
@@ -67,11 +72,8 @@
       padding: 5px;
       border-radius: 10px;
       &:hover {
-        background-color: $secondary;
-      }
-      &:active {
         background-color: $accent;
       }
-    }
-  }
-}
+      &:active {
+        background-color: $secondary;
+      }}

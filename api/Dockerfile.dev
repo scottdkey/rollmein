@@ -1,12 +1,12 @@
 FROM node:14-slim
 
-WORKDIR /app
+WORKDIR /usr/src/app
 COPY package*.json ./
 RUN yarn
 
 COPY . .
-RUN pwd
-RUN npm run dev
+RUN yarn build:ts
+
 
 EXPOSE 5000
-CMD ["node", "app/server/index.js"]
+CMD ["yarn", "start"]

@@ -99,20 +99,22 @@ body {
     .authenticate-form .form-item .form-input {
       width: 100%;
       border-radius: 10px; }
-    .authenticate-form .form-item .form-button {
-      width: 10%;
-      min-width: 40px;
-      margin-left: auto;
-      margin-right: auto;
-      margin-top: 50px;
-      background-color: var(--primary);
-      text-align: center;
-      padding: 5px;
-      border-radius: 10px; }
-      .authenticate-form .form-item .form-button:hover {
-        background-color: var(--secondary); }
-      .authenticate-form .form-item .form-button:active {
-        background-color: var(--accent); }
+
+.form-button {
+  width: 100%;
+  max-width: 150px;
+  min-width: 40px;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 50px;
+  background-color: var(--primary);
+  text-align: center;
+  padding: 5px;
+  border-radius: 10px; }
+  .form-button:hover {
+    background-color: var(--accent); }
+  .form-button:active {
+    background-color: var(--secondary); }
 
 .valid-group {
   border-radius: 10px;

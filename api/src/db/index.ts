@@ -12,44 +12,32 @@ const envdb = (env: string): string => {
     return keys.DEV_DB
   }
 }
+console.log(keys)
 
 let pool: Pool
-
+const db = envdb(keys.NODE_ENV)
+const createDatabase = async () => {
+  const client = new Client({
+    database: "postgres",
+  })
+  await client.connect()
+  try {
+    await createDb(db, { client })
+    console.log("Database Created")
+  }catch {
+    console.log("error, database not found")
+  }
+  finally {
+    await client.end()
+  }
+}
 const migration = async () => {
-  const db = envdb(keys.NODE_ENV)
-  const dbConfig = {
-    database: db,
-    user: keys.PGUSER,
-    password: keys.PGPASS,
-    host: keys.PGHOST,
-    port: parseInt(keys.PGPORT),
-  }
-
-  {
-    const client = new Client({
-      ...dbConfig,
-    })
-    await client.connect()
-    try {
-      await createDb(db, { client })
-    } catch {
-      console.log("Error: no database connection")
-    }
-    finally {
-      await client.end()
-    }
-  }
-
-  {
-    const client = new Client(dbConfig) // or a Pool, or a PoolClient
-    await client.connect()
-    try {
-      await migrate({ client }, "build/src/db/migrations")
-    } catch {
-      console.log("Error: no database connection")
-    } finally {
-      await client.end()
-    }
+  const client = new Client()
+  await client.connect()
+  try {
+    await migrate({ client }, "build/src/db/migrations")
+  } finally {
+    await client.end()
   }
 }
 const query = async (text: string, params: any[]) => {
@@ -61,6 +49,7 @@ const query = async (text: string, params: any[]) => {
 }
 
 const connect = async () => {
+  await createDatabase
   await migration()
   pool = await new Pool()
 }

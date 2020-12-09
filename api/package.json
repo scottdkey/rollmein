@@ -7,9 +7,9 @@
   "scripts": {
     "start": "node ./build/src/server/index.js",
     "dev": "run-p watch:*",
-    "build": "tsc",
-    "watch:tsc": "npx tsc -w",
-    "watch:node": "nodemon ./build/src/server/index.js"
+    "watch:ts": "tsc -w",
+    "watch:node": "nodemon ./build/src/server/index.js",
+    "build:ts": "tsc"
   },
   "author": "Scott Key",
   "license": "ISC",

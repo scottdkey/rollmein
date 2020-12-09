@@ -28,7 +28,6 @@ services:
       - ./:/app
     env_file:
       - .env
-
     environment:
       - NODE_ENV=${NODE_ENV}
       - PGUSER=${PGUSER}
