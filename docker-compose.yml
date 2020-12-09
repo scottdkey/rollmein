@@ -3,36 +3,29 @@ services:
   database:
     image: postgres
     restart: always
-    volumes:
-      - ./tmp/db:/var/lib/postgresql/data
-    env_file:
-      - .env
     environment:
-      - POSTGRES_USER=${PGUSER}
-      - POSTGRES_PASSWORD=${PGPASS}
+      - POSTGRES_PASSWORD=postgres
     ports:
-      - 5432:5432
-    expose:
-      - 5432
+      - "5432:5432"
+    volumes:
+      - ./postgresql/data:/var/lib/postgresql/data
   redis:
     image: redis:alpine
     ports:
       - "6379:6379"
-    expose:
-      - "6379"
   api:
     build:
       context: ./api
       dockerfile: Dockerfile.dev
     volumes:
-      - ./:/app
+      - /
     env_file:
       - .env
     environment:
-      - NODE_ENV=${NODE_ENV}
-      - PGUSER=${PGUSER}
-      - PGPASS=${PGPASS}
-      - PGPORT=${PGPORT}
+      - NODE_ENV=development
+      - PGUSER=postgres
+      - PGPASSWORD=postgres
+      - PGPORT=5432
       - PGHOST=database
       - REDISHOST=redis
       - DEV_DB=${DEVELOPMENT_DATABASE}

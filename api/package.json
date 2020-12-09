@@ -2,14 +2,16 @@
   "name": "rollmein_api",
   "version": "1.0.0",
   "description": "",
-  "main": "./build/src/server",
+  "main": "./build/server",
   "type": "commonjs",
   "scripts": {
-    "start": "node ./build/src/server/index.js",
+    "start": "node ./build/server/index.js",
     "dev": "run-p watch:*",
     "watch:ts": "tsc -w",
-    "watch:node": "nodemon ./build/src/server/index.js",
-    "build:ts": "tsc"
+    "watch:node": "nodemon ./build/server/index.js",
+    "build": "run-s build:*",
+    "build:ts": "tsc",
+    "build:docker": "docker build -t rollmein_api ."
   },
   "author": "Scott Key",
   "license": "ISC",

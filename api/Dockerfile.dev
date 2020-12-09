@@ -1,12 +1,8 @@
-FROM node:14-slim
-
-WORKDIR /usr/src/app
-COPY package*.json ./
+FROM node:10.16.0-alpine
+RUN mkdir -p /app/config /app/src
+WORKDIR /app
+COPY tsconfig.json /app/tslint.json
+COPY package.json /app.package.json
+COPY yarn.lock /app/yarn.lock
 RUN yarn
-
-COPY . .
-RUN yarn build:ts
-
-
-EXPOSE 5000
-CMD ["yarn", "start"]
+CMD yarn dev

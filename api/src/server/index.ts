@@ -10,18 +10,25 @@ import userRoutes from "../routes/users";
 import authRoutes from "../routes/auth";
 import indexRoutes from "../routes/index"
 import userOptionsRoutes from "../routes/userOptions"
-import { connect } from "../db"
+import * as db from "../db"
 
 const PORT: number = parseInt(keys.PORT) || 1337;
 const app: Koa = new Koa();
 
+
+
 //body parser
 app.use(bodyParser({}));
 //database
-connect()
+db.connect()
 //sessions
-app.keys = [keys.SECRETKEY];
-app.use(session({ store: redisStore({}) }, app));
+console.log(process.env.REDIS_HOST)
+app.keys = [process.env.SECRETKEY!];
+app.use(session({
+  store: redisStore({
+    host: process.env.REDIS_HOST
+  })
+}, app));
 
 
 
@@ -38,6 +45,8 @@ app.use(userRoutes.routes());
 app.use(playerRoutes.routes());
 app.use(userOptionsRoutes.routes())
 app.use(authRoutes.routes())
+
+
 
 // server
 const server = app.listen(PORT, () => {
