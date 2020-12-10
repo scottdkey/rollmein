@@ -8,7 +8,7 @@ const RenderSingle = ({ player, header }: RenderSingleProps) => {
     return (
       <>
         <h3>{header}: </h3>
-        {player.name}
+        {player.player_name}
       </>
     );
   }

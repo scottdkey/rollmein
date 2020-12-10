@@ -85,7 +85,7 @@ const PlayerCard = ({ player }: PlayerCardInterface) => {
         </div>
 
         <div className="card-head">
-          <div className="name">{cardPlayer.name}</div>
+          <div className="name">{cardPlayer.player_name}</div>
           <Trash
             className="image delete-icon"
             onClick={() => removePlayer(cardPlayer.id)}
@@ -155,9 +155,9 @@ const PlayerCard = ({ player }: PlayerCardInterface) => {
               ]}
             >
               <Input
-                value={newCardPlayer.name}
+                value={newCardPlayer.player_name}
                 onChange={(e) =>
-                  setNewCardPlayer({ ...newCardPlayer, name: e.target.value })
+                  setNewCardPlayer({ ...newCardPlayer, player_name: e.target.value })
                 }
               />
             </Form.Item>

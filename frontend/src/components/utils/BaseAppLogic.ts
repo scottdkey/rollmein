@@ -41,7 +41,7 @@ function createInGroup(playersArray: Array<PlayerObject>) {
 
 const placeHolderArray: Array<PlayerObject> = [
   {
-    name: "",
+    player_name: "",
     tank: false,
     dps: false,
     healer: false,

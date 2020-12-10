@@ -22,8 +22,6 @@ const Authenticate = () => {
     </div>
   );
   const handleSubmit = async(e: any) => {
-    console.log(loginForm)
-    e.preventDefault();
     if (loginForm) {
       const loggingInUser: AuthObject = { email, password };
       await login(loggingInUser);

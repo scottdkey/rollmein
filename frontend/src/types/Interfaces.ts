@@ -1,7 +1,7 @@
 export type roleType = { [key: string]: boolean };
 
 export interface BlankPlayerObject {
-  name: string;
+  player_name: string;
   tank: boolean;
   healer: boolean;
   dps: boolean;
@@ -17,7 +17,7 @@ export interface PlayerObject extends BlankPlayerObject {
 }
 
 export interface PlayerFormObject {
-  name: string;
+  player_name: string;
   tank: boolean;
   healer: boolean;
   dps: boolean;

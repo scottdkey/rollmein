@@ -2,7 +2,7 @@ import { PlayerObject } from "../../types/Interfaces"
 
 export const playersPlaceHolder: Array<PlayerObject> = [
   {
-    name: "Emily",
+    player_name: "Emily",
     tank: false,
     dps: true,
     healer: true,
@@ -14,7 +14,7 @@ export const playersPlaceHolder: Array<PlayerObject> = [
     updatedAt: "placeHolder",
   },
   {
-    name: "Tyler",
+    player_name: "Tyler",
     tank: true,
     dps: true,
     healer: true,
@@ -26,7 +26,7 @@ export const playersPlaceHolder: Array<PlayerObject> = [
     updatedAt: "placeHolder",
   },
   {
-    name: "Kevin",
+    player_name: "Kevin",
     tank: true,
     dps: true,
     healer: false,
@@ -38,7 +38,7 @@ export const playersPlaceHolder: Array<PlayerObject> = [
     updatedAt: "placeHolder",
   },
   {
-    name: "Jill",
+    player_name: "Jill",
     tank: false,
     dps: true,
     healer: true,
@@ -50,7 +50,7 @@ export const playersPlaceHolder: Array<PlayerObject> = [
     updatedAt: "placeHolder",
   },
   {
-    name: "Scott",
+    player_name: "Scott",
     tank: false,
     dps: true,
     healer: true,
@@ -62,7 +62,7 @@ export const playersPlaceHolder: Array<PlayerObject> = [
     updatedAt: "placeHolder",
   },
   {
-    name: "Jordan",
+    player_name: "Jordan",
     tank: false,
     dps: true,
     healer: false,
@@ -74,7 +74,7 @@ export const playersPlaceHolder: Array<PlayerObject> = [
     updatedAt: "placeHolder",
   },
   {
-    name: "Jason",
+    player_name: "Jason",
     tank: true,
     dps: true,
     healer: true,

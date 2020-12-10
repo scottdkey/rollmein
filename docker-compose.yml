@@ -52,8 +52,8 @@ services:
     build: 
       context: ./web
       dockerfile: Dockerfile.dev
-    volumes:
-      - ./web:/usr/src/app
+    # volumes:
+    #   - ./web:/usr/src/app
     env_file:
       - .env
     ports:
@@ -63,8 +63,5 @@ services:
     image: scottdkey/rollmein_web
     volumes:
       - .:/whiskeynight
-    links:
-      - api
     depends_on:
       - api
-    restart: always

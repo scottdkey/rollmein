@@ -80,7 +80,7 @@ function PlayerProvider({ children }: any) {
     setShowPlayers(!showPlayers);
   }
   const blankPlayer: PlayerFormObject = {
-    name: "",
+    player_name: "",
     tank: false,
     healer: false,
     dps: false,

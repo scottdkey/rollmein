@@ -11,7 +11,7 @@ const RenderRemaining = ({ players, header }: RenderDPSType) => {
       <>
         <h3>{header}</h3>
         {players.map((player: PlayerObject) => (
-          <div key={player.name + 10 + player.id}>{player.name}, </div>
+          <div key={player.player_name + 10 + player.id}>{player.player_name}, </div>
         ))}
       </>
     );

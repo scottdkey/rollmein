@@ -11,10 +11,10 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "noEmit": true,
-    "jsx": "react",
+    "jsx": "react-jsx",
     "typeRoots": [
       "node_modules/@types",
-      "src/types"
+      "../frontend/src/typesnd/src/src/types"
     ],
     "lib": [
       "dom",
@@ -22,9 +22,10 @@
       "esnext"
     ],
     "allowJs": true,
-    "skipLibCheck": true
+    "skipLibCheck": true,
+    "noFallthroughCasesInSwitch": true
   },
   "include": [
-    "./src"
+    "src"
   ]
 }

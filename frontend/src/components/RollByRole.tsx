@@ -46,13 +46,13 @@ const RollByRole = () => {
           {tank === undefined ? null : (
             <>
               <h3>Tank: </h3>
-              {tank.name}
+              {tank.player_name}
             </>
           )}
           {healer === undefined ? null : (
             <>
               <h3>Healer:</h3>
-              {healer.name}
+              {healer.player_name}
             </>
           )}
           <RenderGroup players={dps!} header={"Dps"} />

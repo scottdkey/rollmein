@@ -1,8 +1,8 @@
 FROM node:14-alpine
 WORKDIR /usr/app
 COPY package.json .
-COPY yarn.lock .
-RUN yarn
+COPY package-lock.json .
+RUN npm i
 COPY . .
 
 CMD yarn dev
