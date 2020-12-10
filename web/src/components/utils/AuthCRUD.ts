@@ -1,29 +1,28 @@
 import { AuthObject, UserObject } from "../../types/Interfaces"
 import axios from "axios";
-import env from "../../config"
-
-const BASE_URL = `${env.API_URL}/auth`
 
 const Login = async (authObject: AuthObject) => {
-  const res = await axios.post(`${BASE_URL}/login`, authObject);
+  const res = await axios.post(`/api/v1/auth/login`, authObject)
+  console.log(res)
   return res
 };
 
 const CheckStatus = async () => {
-  const res = await axios.get(`${BASE_URL}/status`)
+  const res = await axios.get(`/api/v1/auth/status`)
   return res
 };
 
 const Logout = async () => {
-  const res = await axios.get(`${BASE_URL}/logout`, { withCredentials: true });
+  const res = await axios.get(`/api/v1/auth/logout`, { withCredentials: true });
   return res
 };
 const Register = async (user: AuthObject) => {
-  const res = await axios.post(`${BASE_URL}/register`, user);
+  const res = await axios.post(`api/v1/auth/register`, user);
+  console.log(res)
   return res
 };
 const Update = async (user: UserObject) => {
-  const res = await axios.patch(`${BASE_URL}/update`, user)
+  const res = await axios.patch(`api/v1/auth/update`, user)
   return res
 }
 

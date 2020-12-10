@@ -25,10 +25,12 @@ const AuthProvider = ({ children }: any) => {
   const login = (authObject: AuthObject) => {
     Login(authObject!)
       .then((res) => {
+        console.log(res)
         updateAuth(res);
         if (res.status === 200) {
           setAuthenticated(true);
         } else {
+          console.log(res, "unable to autheticate")
           setAuthenticated(false);
         }
       })

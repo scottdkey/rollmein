@@ -1,9 +1,10 @@
-FROM node:10.16.0-alpine
-RUN mkdir -p /app/public /app/src
-WORKDIR /app
+FROM node:14-slim
+WORKDIR /usr/src/app/
 
-COPY tsconfig.json /app/tsconfig.json
-COPY yarn.lock /app/yarn.lock
-
+COPY package.json .
+COPY yarn.lock .
 RUN yarn
+COPY . .
+
 CMD yarn start
+EXPOse 3000

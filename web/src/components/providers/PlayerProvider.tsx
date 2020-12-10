@@ -58,6 +58,7 @@ function PlayerProvider({ children }: any) {
   };
 
   const addPlayer = (newPlayer: PlayerFormObject): PlayerObject => {
+    console.log(newPlayer)
     let responsePlayer = {
       ...blankPlayer,
       id: 99999,

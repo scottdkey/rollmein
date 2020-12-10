@@ -21,11 +21,12 @@ const Authenticate = () => {
       )}
     </div>
   );
-  const handleSubmit = (e: any) => {
+  const handleSubmit = async(e: any) => {
+    console.log(loginForm)
     e.preventDefault();
     if (loginForm) {
       const loggingInUser: AuthObject = { email, password };
-      login(loggingInUser);
+      await login(loggingInUser);
       return <Redirect to="index" />;
     } else {
       const newUser: AuthObject = { email, password };
@@ -38,6 +39,7 @@ const Authenticate = () => {
     setPasswordsMatch(password === passwordConfirm);
   }, [password, passwordConfirm]);
   if (authenticated) {
+    console.log(authenticated)
     return <Redirect to="/" />;
   } else {
     return (

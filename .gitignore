@@ -1,6 +1,8 @@
-
+node_modules/
+postgresql/
 .env
 .css
 build/
 tmp/
-node_modules/
+api/node_modules/
+web/node_modules/

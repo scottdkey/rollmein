@@ -15,7 +15,7 @@
     "build:css": "node-sass ./src/styles/App.scss -o ./src/styles",
     "build:js": "react-scripts build"
   },
-  "proxy": "http://localhost:5000",
+  "proxy": "http://localhost:5000/",
   "eslintConfig": {
     "extends": "react-app"
   },
