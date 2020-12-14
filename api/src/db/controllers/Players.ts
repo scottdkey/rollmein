@@ -1,6 +1,6 @@
 import { DefaultContext, ParameterizedContext } from "koa";
 import { query } from "..";
-import { playerInterface, playerTable, Player } from "../models/Player"
+import { playerInterface, playerTable, Player } from "../models/player"
 
 const getAllPlayers = async (ctx: ParameterizedContext) => {
   const { uuid } = ctx.params

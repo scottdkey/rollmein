@@ -7,7 +7,7 @@ import {
   deletePlayer
 } from "../db/controllers/Players";
 import keys from "../config/keys"
-import { playerTable } from "../db/models/Player";
+import { playerTable } from "../db/models/player";
 import { DefaultContext, ParameterizedContext } from "koa";
 
 const router = new Router();

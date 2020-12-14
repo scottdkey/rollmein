@@ -1,6 +1,6 @@
 import { query } from "..";
-import { userTable } from "../models/User";
-import { UserOptions, UserOptionsInterface, userOptionsTable } from "../models/UserOptions";
+import { userTable } from "../models/user";
+import { UserOptions, UserOptionsInterface, userOptionsTable } from "../models/userOptions";
 
 interface UserOptionsDatabaseInterface {
   id: number,
