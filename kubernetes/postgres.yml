@@ -1,4 +1,3 @@
----
 kind: PersistentVolume
 apiVersion: v1
 metadata:
@@ -61,16 +60,16 @@ spec:
           imagePullPolicy: "Always"
           ports:
             - containerPort: 5432
-              name: postgredb
+              name: postgres
           envFrom:
             - configMapRef:
                 name: postgres-config
           volumeMounts:
             - mountPath: /var/lib/postgresql/data
               subPath: postgres
-              name: postgredb
+              name: postgres
       volumes:
-        - name: postgredb
+        - name: postgres-config
           persistentVolumeClaim:
             claimName: postgres-pvc
 ---
