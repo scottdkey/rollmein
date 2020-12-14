@@ -9,7 +9,7 @@ import { ParameterizedContext } from "koa";
 const router = new Router();
 
 //current route is /api/v1/options
-router.prefix(`${keys.BASE_URL}/${userOptionsTable}`)
+router.prefix(`/api/v1/${userOptionsTable}`)
 
 
 router.get(`/:uuid`, async (ctx: ParameterizedContext) => {

@@ -13,7 +13,7 @@ import { DefaultContext, ParameterizedContext } from "koa";
 const router = new Router();
 
 //current route is /api/v1/players
-router.prefix(`${keys.BASE_URL}/${playerTable}`)
+router.prefix(`/api/v1/${playerTable}`)
 
 router.get(`/:uuid`, async (ctx: ParameterizedContext) =>
   ctx = await getAllPlayers(ctx));

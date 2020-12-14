@@ -1,73 +1,74 @@
+import { TIMEOUT } from "dns"
+import { create } from "domain"
 import { Pool, Client } from "pg"
 import { createDb, migrate } from "postgres-migrations"
 import keys from "../config/keys"
 
 
-const envdb = (env: string): string => {
+const envdb = (env: string) => {
+  let working_database = "placeholder"
   if (env === "production") {
-    return keys.PROD_DB
+    working_database = keys.PRODUCTION_DATABASE
   } else if (env === "test") {
-    return keys.TEST_DB
+    working_database = keys.TEST_DATABASE
   } else {
-    return keys.DEV_DB
+    working_database = keys.DEVELOPMENT_DATABASE
   }
+  process.env.PGDATABASE = working_database
+  return working_database
 }
 
 let pool: Pool
-
+const db = envdb(keys.NODE_ENV)
+const createDatabase = async () => {
+  const client = new Client({
+    database: keys.PGUSER,
+  })
+  await client.connect().then(res =>
+    createDb(db, { client })
+  ).catch((err) => {
+    console.log("Error: Database connection could not be established", err)
+  }).finally(async () =>
+    await client.end()
+  )
+}
 const migration = async () => {
-  const db = envdb(keys.NODE_ENV)
-  const dbConfig = {
-    database: db,
-    user: keys.PGUSER,
-    password: keys.PGPASS,
-    host: keys.PGHOST,
-    port: parseInt(keys.PGPORT),
+  const client = await new Client({})
+  await client.connect()
+  try {
+    await migrate({ client }, "build/db/migrations")
+  } catch {
+    console.log("Migration Error")
   }
-
-  {
-    const client = new Client({
-      ...dbConfig,
-    })
-    await client.connect()
-    try {
-      await createDb(db, { client })
-    } catch {
-      console.log("Error: no database connection")
-    }
-    finally {
-      await client.end()
-    }
-  }
-
-  {
-    const client = new Client(dbConfig) // or a Pool, or a PoolClient
-    await client.connect()
-    try {
-      await migrate({ client }, "build/src/db/migrations")
-    } catch {
-      console.log("Error: no database connection")
-    } finally {
-      await client.end()
-    }
+  finally {
+    console.log(`Migration complete`)
+    await client.end()
   }
 }
 const query = async (text: string, params: any[]) => {
   const start = Date.now()
-  const res = await pool.query(text, params)
+  const db = await pool.connect()
+  const res = await db.query(text, params)
   const duration = Date.now() - start
   console.log('executed query', { text, params, duration, rows: res.rowCount })
+  await db.release()
   return res
 }
 
+
+
 const connect = async () => {
-  await migration()
+  await createDatabase()
   pool = await new Pool()
+  console.log(`Connected to database ${process.env.PGDATABASE}`)
+  await migration()
+
 }
+
 
 export {
   pool,
   query,
   envdb,
-  connect
+  connect,
 }

@@ -10,8 +10,7 @@ import { addUser } from "../db/controllers/Users";
 
 const router = new Router<DefaultState, Context>();
 
-// current prefix is /api/v1/auth
-router.prefix(`${keys.BASE_URL}/auth`)
+router.prefix(`/api/v1/auth`)
 
 router.get(`/status`, async (ctx: ParameterizedContext) => { await AuthStatus(ctx) });
 

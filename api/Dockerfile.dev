@@ -1,12 +1,8 @@
-FROM node:14-slim
-
-WORKDIR /app
-COPY package*.json ./
-RUN yarn
-
+FROM node:14-alpine
+WORKDIR /usr/app
+COPY package.json .
+COPY package-lock.json .
+RUN npm i
 COPY . .
-RUN pwd
-RUN npm run dev
 
-EXPOSE 5000
-CMD ["node", "app/server/index.js"]
+CMD yarn dev

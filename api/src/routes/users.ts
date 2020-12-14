@@ -8,7 +8,7 @@ import { addUser, getAllUsers, getUserByUUID } from "../db/controllers/Users";
 const router = new Router();
 
 //current prefix is /api/v1/users
-router.prefix(`${keys.BASE_URL}/${userTable}`)
+router.prefix(`/api/v1/${userTable}`)
 
 router.get(`/`, async (ctx: DefaultContext) => {
   ctx.body = await getAllUsers()
