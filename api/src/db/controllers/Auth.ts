@@ -2,7 +2,7 @@ import { DefaultContext, Next, ParameterizedContext } from "koa"
 import passport from "koa-passport";
 import { addLastLoginTimeStamp } from "./Users";
 
-const AuthStatus = async (ctx: DefaultContext) => {
+const Status = async (ctx: DefaultContext) => {
   if (ctx.isAuthenticated()) {
     ctx.type = "html";
     const { user } = ctx.state
@@ -13,7 +13,7 @@ const AuthStatus = async (ctx: DefaultContext) => {
   }
 }
 
-const LoginUser = async (ctx: ParameterizedContext, next: Next) => {
+const Login = async (ctx: ParameterizedContext, next: Next) => {
   return passport.authenticate("local", async (err: any, user, info) => {
     if (user) {
       ctx.login(user, (err: any) => {
@@ -32,7 +32,7 @@ const LoginUser = async (ctx: ParameterizedContext, next: Next) => {
     }
   })(ctx, next);
 }
-const LogoutUser = async (ctx: ParameterizedContext) => {
+const Logout = async (ctx: ParameterizedContext) => {
   if (ctx.isAuthenticated()) {
     ctx.logout();
     ctx.redirect("/login");
@@ -44,8 +44,8 @@ const LogoutUser = async (ctx: ParameterizedContext) => {
   }
 }
 
-export {
-  AuthStatus,
-  LoginUser,
-  LogoutUser
+export default {
+  Status,
+  Login,
+  Logout
 }

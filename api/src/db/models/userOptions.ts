@@ -1,5 +1,5 @@
 
-const userOptionsTable = "options"
+export const userOptionsTable = "options"
 
 class UserOptions implements UserOptionsInterface {
   public id!: number;
@@ -17,7 +17,7 @@ class UserOptions implements UserOptionsInterface {
   }
 
 }
-interface UserOptionsInterface {
+export interface UserOptionsInterface {
   id: number;
   rollType: string;
   lockAfterOut: boolean;
@@ -27,5 +27,5 @@ interface UserOptionsInterface {
 
 
 
-export { UserOptions, UserOptionsInterface, userOptionsTable }
+export default UserOptions
 

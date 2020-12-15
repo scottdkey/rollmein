@@ -1,6 +1,7 @@
-import { query } from "..";
+import db from "../index";
 import { userTable } from "../models/user";
-import { UserOptions, UserOptionsInterface, userOptionsTable } from "../models/userOptions";
+import UserOptions, { UserOptionsInterface, userOptionsTable } from "../models/userOptions"
+
 
 interface UserOptionsDatabaseInterface {
   id: number,
@@ -31,7 +32,7 @@ const conformToDatabaseOptions = (options: UserOptionsInterface) => {
 }
 
 export const checkIfOptionsExist = async (uuid: string) => {
-  const { rows } = await query(`SELECT user_id FROM ${userOptionsTable} WHERE user_id = $1`, [uuid])
+  const { rows } = await db.query(`SELECT user_id FROM ${userOptionsTable} WHERE user_id = $1`, [uuid])
   if (rows.length === 0) {
     return false
   } else if (rows[0].user_id === uuid) {
@@ -43,14 +44,14 @@ export const checkIfOptionsExist = async (uuid: string) => {
 
 
 export const getOptionsByUUID = async (uuid: string) => {
-  const { rows } = await query(`SELECT * FROM ${userOptionsTable} WHERE user_id = $1;`, [uuid])
+  const { rows } = await db.query(`SELECT * FROM ${userOptionsTable} WHERE user_id = $1;`, [uuid])
   const userOptions = conformToUserOptions(rows[0])
   return userOptions
 }
 
 export const addUserOptions = async (uuid: string) => {
   const text = `INSERT INTO ${userOptionsTable}(user_id) VALUES($1) RETURNING *;`
-  return await query(text, [uuid]).then(res => {
+  return await db.query(text, [uuid]).then(res => {
     const { rows } = res
     return conformToUserOptions(rows[0])
   }).catch(e => console.log(e))
@@ -60,6 +61,6 @@ export const updateUserOptions = async (o: UserOptionsInterface) => {
   const options = conformToDatabaseOptions(o)
   const text = `UPDATE ${userTable} SET roll_type = $1 lock_after_out = $2 theme = $3 WHERE id = $4`
   const values = [options.roll_type, options.lock_after_out, options.theme, options.id]
-  const { rows } = await query(text, values)
+  const { rows } = await db.query(text, values)
   return conformToUserOptions(rows[0])
 }

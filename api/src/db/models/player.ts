@@ -1,4 +1,4 @@
-const playerTable = "players"
+export const playerTable = "players"
 
 class Player implements playerInterface {
   public id!: number;
@@ -22,7 +22,7 @@ class Player implements playerInterface {
   }
 }
 
-interface playerInterface {
+export interface playerInterface {
   id: number;
   player_name: string;
   tank: boolean;
@@ -34,4 +34,4 @@ interface playerInterface {
 }
 
 
-export { Player, playerInterface, playerTable }
+export default Player

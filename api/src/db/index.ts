@@ -1,49 +1,59 @@
-import { TIMEOUT } from "dns"
-import { create } from "domain"
 import { Pool, Client } from "pg"
 import { createDb, migrate } from "postgres-migrations"
-import keys from "../config/keys"
+import controllers from "./controllers"
+import models from "./models"
+import dotenv from "dotenv"
+
+dotenv.config()
 
 
 const envdb = (env: string) => {
   let working_database = "placeholder"
   if (env === "production") {
-    working_database = keys.PRODUCTION_DATABASE
+    working_database = process.env.PRODUCTION_DATABASE!
   } else if (env === "test") {
-    working_database = keys.TEST_DATABASE
+    working_database = process.env.TEST_DATABASE!
   } else {
-    working_database = keys.DEVELOPMENT_DATABASE
+    working_database = process.env.DEVELOPMENT_DATABASE!
   }
   process.env.PGDATABASE = working_database
   return working_database
 }
 
-let pool: Pool
-const db = envdb(keys.NODE_ENV)
+let pool: Pool = new Pool()
+
+const db = envdb(process.env.NODE_ENV!)
+
+
 const createDatabase = async () => {
-  const client = new Client({
-    database: keys.PGUSER,
+  const client = await new Client({
+    database: process.env.PGUSER,
   })
-  await client.connect().then(res =>
+  await client.connect().then(() =>
     createDb(db, { client })
-  ).catch((err) => {
-    console.log("Error: Database connection could not be established", err)
-  }).finally(async () =>
-    await client.end()
+  ).catch((e) => {
+    setTimeout(() => {
+      console.log(e.stack)
+      console.log("Retrying Connection in 3 seconds")
+      migration()
+    }, 3000)
+  }).finally(() =>
+    client.end()
   )
 }
 const migration = async () => {
-  const client = await new Client({})
-  await client.connect()
-  try {
+  const client = new Client({})
+  await client.connect().then(async () => {
     await migrate({ client }, "build/db/migrations")
-  } catch {
-    console.log("Migration Error")
-  }
-  finally {
-    console.log(`Migration complete`)
-    await client.end()
-  }
+  }).catch((e) => {
+    setTimeout(() => {
+      console.log(e.stack)
+      console.log("Retrying Connection in 3 seconds")
+      migration()
+    }, 3000)
+  }).finally(() =>
+    client.end()
+  )
 }
 const query = async (text: string, params: any[]) => {
   const start = Date.now()
@@ -56,19 +66,11 @@ const query = async (text: string, params: any[]) => {
 }
 
 
-
-const connect = async () => {
-  await createDatabase()
-  pool = await new Pool()
-  console.log(`Connected to database ${process.env.PGDATABASE}`)
-  await migration()
-
-}
-
-
-export {
-  pool,
+export default {
   query,
   envdb,
-  connect,
+  migration,
+  createDatabase,
+  controllers,
+  models
 }

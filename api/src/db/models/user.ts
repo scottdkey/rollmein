@@ -1,4 +1,4 @@
-const userTable = "users"
+export const userTable = "users"
 
 class User implements UserInterface {
   public id!: string;
@@ -34,4 +34,4 @@ interface UserInterface {
 
 
 
-export { User, UserInterface, userTable }
+export default User

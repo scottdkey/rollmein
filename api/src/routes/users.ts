@@ -1,10 +1,10 @@
 import Router from "koa-router";
 import { DefaultContext, ParameterizedContext } from "koa"
-import keys from "../config/keys"
+
 import { userTable } from "../db/models/user";
-import { addUser, getAllUsers, getUserByUUID } from "../db/controllers/Users";
+import db from "../db";
 
-
+const { addUser, getAllUsers, getUserByUUID } = db.controllers.Users
 const router = new Router();
 
 //current prefix is /api/v1/users

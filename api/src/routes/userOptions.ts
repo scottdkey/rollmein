@@ -1,11 +1,11 @@
 import Router from "koa-router";
 // import queries from "../db/queries/options"
-import keys from "../config/keys"
-import { userOptionsTable, } from "../db/models/userOptions";
+
+import db from "../db";
 import { addUserOptions, checkIfOptionsExist, getOptionsByUUID } from "../db/controllers/UserOptions"
 import { ParameterizedContext } from "koa";
 
-
+const { userOptionsTable } = db.models.userOptions
 const router = new Router();
 
 //current route is /api/v1/options
