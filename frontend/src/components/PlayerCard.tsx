@@ -16,6 +16,7 @@ import {
 } from "../types/Interfaces";
 import { usePlayerData } from "./providers/PlayerProvider";
 import RoleLogoImage from "./RoleLogoImage";
+import {useAuth} from "./providers/AuthProvider"
 
 const PlayerCard = ({ player }: PlayerCardInterface) => {
   const {
@@ -24,6 +25,9 @@ const PlayerCard = ({ player }: PlayerCardInterface) => {
     addPlayer,
     blankPlayer,
   } = usePlayerData()!;
+  const {
+    user
+  } = useAuth()!
 
   const [cardPlayer, setCardPlayer] = useState<PlayerObject>(player!);
   const [newCardPlayer, setNewCardPlayer] = useState<PlayerFormObject>(
@@ -46,7 +50,9 @@ const PlayerCard = ({ player }: PlayerCardInterface) => {
 
   const handleSubmit = () => {
     toggleForm();
-    const res = addPlayer(newCardPlayer);
+    const user_id  = user!.id
+    const conformedPlayer: PlayerFormObject = {...newCardPlayer, user_id: user_id.toString()}
+    const res = addPlayer(conformedPlayer);
     setCardPlayer(res);
 
     clearForm();
@@ -74,7 +80,7 @@ const PlayerCard = ({ player }: PlayerCardInterface) => {
     return (
       <div className={"card"}>
         <div
-          className="card-locked-area"
+          className="card-locked-area image"
           onClick={() => updateCardPlayer("locked", !cardPlayer.locked)}
         >
           {cardPlayer.locked ? (
@@ -113,9 +119,9 @@ const PlayerCard = ({ player }: PlayerCardInterface) => {
 
           <Dice
             className={`image ${
-              cardPlayer.in ? "in-the-roll-active" : "in-the-roll"
+              cardPlayer.in_the_roll ? "in-the-roll-active" : "in-the-roll"
             }`}
-            onClick={() => updateCardPlayer("in", !cardPlayer.in)}
+            onClick={() => updateCardPlayer("in_the_roll", !cardPlayer.in_the_roll)}
           />
         </div>
       </div>
@@ -186,9 +192,9 @@ const PlayerCard = ({ player }: PlayerCardInterface) => {
 
           <Dice
             className={`image ${
-              newCardPlayer.in ? "in-the-roll-active" : "in-the-roll"
+              newCardPlayer.in_the_roll ? "in-the-roll-active" : "in-the-roll"
             }`}
-            onClick={() => updateNewPlayer("in", !newCardPlayer.in)}
+            onClick={() => updateNewPlayer("in_the_roll", !newCardPlayer.in_the_roll)}
           />
         </div>
       </div>

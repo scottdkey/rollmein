@@ -3,6 +3,7 @@ import { createDb, migrate } from "postgres-migrations"
 import controllers from "./controllers"
 import models from "./models"
 import dotenv from "dotenv"
+import { Console } from "console"
 
 dotenv.config()
 
@@ -26,7 +27,7 @@ const createDatabase = async () => {
   const client = await new Client({
     database: process.env.PGUSER,
   })
-  await client.connect().then(() => 
+  await client.connect().then(() =>
     createDb(db, { client })
   ).catch((e) => {
     setTimeout(() => {

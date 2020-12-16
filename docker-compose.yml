@@ -6,8 +6,9 @@ services:
     env_file:
       - .env
     environment:
-      - PGUSER=${PGUSER}
+      - POSTGRES_USER=${PGUSER}
       - POSTGRES_PASSWORD=${PGPASSWORD}
+      - POSTGRES_DB=${PGDATABASE}
     ports:
       - "5432:5432"
     expose:
@@ -21,17 +22,12 @@ services:
     expose:
       - 6379
   api:
-    depends_on:
-      - database
-      - redis
     image: scottdkey/rollmein_api
     build: 
       context: ./api
       dockerfile: Dockerfile.dev
     volumes:
-      - ./api:/usr/app
-    ports:
-      - 5000:5000
+      - ./api/src:/usr/api/src
     command: bash -c 'while !/dev/tcp/database/5432; do sleep 1; done; yarn dev'
     env_file:
       - .env
@@ -39,29 +35,36 @@ services:
       - NODE_ENV=${NODE_ENV}
       - PGPASSWORD=${PGPASSWORD}
       - PGUSER=${PGUSER}
+      - PGPORT=${PGPORT}
+      - PORT=${API_SERVER_PORT}
+      - PGDATABASE=${PGDATABASE}
       - REDIS_HOST=redis
       - PGHOST=database
-      - DEVELOPMENT_DATABASE=${DEVELOPMENT_DATABASE}
-      - TEST_DATABASE=${TEST_DATABASE}
-      - PRODUCTION_DATABASE=${PRODUCTION_DATABASE}
+      - DEVELOPMENT_DATABASE=${DEVELOPMENT_DB}
+      - TEST_DATABASE=${TEST_DB}
+      - PRODUCTION_DATABASE=${PRODUCTION_DB}
+    ports:
+      - 5000:5000
     expose:
       - 5000
-  web:
     depends_on:
-      - api
+      - database
+      - redis
+  frontend:
+    image: scottdkey/rollmein_frontend
     build: 
-      context: ./web
+      context: ./frontend
       dockerfile: Dockerfile.dev
-    # volumes:
-    #   - ./web:/usr/src/app
+    volumes:
+      - ./frontend/src:/usr/app/src
     env_file:
       - .env
+    environment: 
+      - REACT_APP_API_HOST=${API_BASE_URL}
     ports:
       - 3000:3000
     expose:
       - 3000
-    image: scottdkey/rollmein_web
-    volumes:
-      - .:/whiskeynight
     depends_on:
       - api
+

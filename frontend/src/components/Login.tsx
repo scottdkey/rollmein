@@ -37,7 +37,6 @@ const Authenticate = () => {
     setPasswordsMatch(password === passwordConfirm);
   }, [password, passwordConfirm]);
   if (authenticated) {
-    console.log(authenticated)
     return <Redirect to="/" />;
   } else {
     return (

@@ -43,7 +43,7 @@ function PlayerProvider({ children }: any) {
 
   const removePlayer = (id: number) => {
     DeletePlayer(id, players!)
-      .then((res) => setPlayers(res))
+      .then((res) => {setPlayers(res)})
       .catch((err) => console.log(err));
   };
 
@@ -56,9 +56,7 @@ function PlayerProvider({ children }: any) {
       })
       .catch((err) => console.log(err));
   };
-
-  const addPlayer = (newPlayer: PlayerFormObject): PlayerObject => {
-    console.log(newPlayer)
+  const addPlayer = (newPlayer: PlayerFormObject):PlayerObject => {
     let responsePlayer = {
       ...blankPlayer,
       id: 99999,
@@ -66,8 +64,7 @@ function PlayerProvider({ children }: any) {
       createdAt: "placeHolder",
       updatedAt: "placeHolder",
     };
-
-    NewPlayer(newPlayer, players!, user!.id)
+  NewPlayer(newPlayer, players!)
       .then((res) => {
         setPlayers(res.players);
         responsePlayer = res.newPlayer;
@@ -85,7 +82,8 @@ function PlayerProvider({ children }: any) {
     healer: false,
     dps: false,
     locked: false,
-    in: false,
+    in_the_roll: false,
+    user_id: ""
   };
 
   useEffect(() => {

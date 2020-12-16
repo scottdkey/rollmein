@@ -16,26 +16,26 @@ const countRoles = (playersArray: Array<PlayerObject>) => {
   const players = playersArray ? playersArray : placeHolderArray;
 
   const tanks = players.reduce((n, player) => {
-    let increment = player.tank === true && player.in === true ? 1 : 0;
+    let increment = player.tank === true && player.in_the_roll === true ? 1 : 0;
     return n + increment;
   }, 0);
   const healers = players.reduce((n, player) => {
-    let increment = player.healer === true && player.in === true ? 1 : 0;
+    let increment = player.healer === true && player.in_the_roll === true ? 1 : 0;
     return n + increment;
   }, 0);
   const dps = players.reduce((n, player) => {
-    let increment = player.dps === true && player.in === true ? 1 : 0;
+    let increment = player.dps === true && player.in_the_roll === true ? 1 : 0;
     return n + increment;
   }, 0);
   const inGroupCount = players.reduce((n, player) => {
-    let increment = player.in === true ? 1 : 0;
+    let increment = player.in_the_roll === true ? 1 : 0;
     return n + increment;
   }, 0);
   return { tanks, healers, dps, inGroupCount };
 };
 
 function createInGroup(playersArray: Array<PlayerObject>) {
-  return playersArray.filter((player) => player.in === true);
+  return playersArray.filter((player) => player.in_the_roll === true);
 }
 
 
@@ -46,7 +46,7 @@ const placeHolderArray: Array<PlayerObject> = [
     dps: false,
     healer: false,
     locked: false,
-    in: false,
+    in_the_roll: false,
     id: 999999,
     user_id: "placeHolder",
     createdAt: "placeHolder",

@@ -19,17 +19,18 @@ const PlayerUpdate = async (updatedPlayer: PlayerObject, players: Array<PlayerOb
   return updatedPlayers
 };
 
-const NewPlayer = async (newPlayer: PlayerFormObject, players: Array<PlayerObject>, uuid: number) => {
-  const res = await axios.post(`api/v1/players/`, newPlayer)
-  const newPlayers: Array<PlayerObject> = [...players, res.data[0]];
-  const returnObject = { players: newPlayers, newPlayer: res.data[0] }
+const NewPlayer = async (newPlayer: PlayerFormObject, players: Array<PlayerObject>) => {
+  const res = await axios.post(`/api/v1/players/`, newPlayer)
+  const newPlayers: Array<PlayerObject> = [...players, res.data];
+  const returnObject = { players: newPlayers, newPlayer: res.data }
   return returnObject
 }
 
-const DeletePlayer = async (uuid: number, players: Array<PlayerObject>) => {
-  const res = await axios.delete(`api/v1/players/${uuid}`)
+const DeletePlayer = async (id: number, players: Array<PlayerObject>) => {
+  const payload = { data: { id } }
+  const res = await axios.delete(`api/v1/players/`, payload)
   const newPlayers: Array<PlayerObject> | undefined = players.filter(
-    (player: PlayerObject) => player.id !== res.data[0].id
+    (player: PlayerObject) => player.id !== res.data
   );
   return newPlayers
 }

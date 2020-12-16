@@ -32,6 +32,7 @@
     margin-top: 25px;
     padding: 10px;
     box-shadow: 0px 0px 10px 2px $white;
+
     .card-locked-area {
       position: relative;
       left: -30px;
@@ -43,7 +44,12 @@
       display: flex;
       justify-content: center;
       align-items: center;
+
     }
+    .image {
+        height: 50px;
+        width: 50px;
+      }
     .card-head {
       display: flex;
       height: 100%;
@@ -80,10 +86,8 @@
   max-height: 100rem;
 }
 
-.image {
-  height: 50px;
-  width: 50px;
-}
+
+
 
 .roles_inactive {
   opacity: .5;

@@ -1,28 +1,19 @@
 export type roleType = { [key: string]: boolean };
 
-export interface BlankPlayerObject {
-  player_name: string;
-  tank: boolean;
-  healer: boolean;
-  dps: boolean;
-  locked: boolean;
-  in: boolean;
-}
-
-export interface PlayerObject extends BlankPlayerObject {
-  id: number;
-  user_id: string;
-  createdAt: string;
-  updatedAt: string;
-}
-
 export interface PlayerFormObject {
   player_name: string;
   tank: boolean;
   healer: boolean;
   dps: boolean;
   locked: boolean;
-  in: boolean;
+  in_the_roll: boolean;
+  user_id: string;
+}
+
+export interface PlayerObject extends PlayerFormObject {
+  id: number;
+  createdAt: string;
+  updatedAt: string;
 }
 export interface DPSObject {
   newDPS: Array<PlayerObject>;

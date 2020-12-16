@@ -30,10 +30,11 @@ const getSinglePlayer = async (ctx: ParameterizedContext) => {
 }
 const addPlayer = async (ctx: ParameterizedContext) => {
   const p: playerInterface = ctx.request.body
+  console.log(p)
   const text = `INSERT INTO ${playerTable} (player_name, tank, dps, healer, locked, in_the_roll, user_id) VALUES($1,$2,$3,$4,$5,$6,$7) RETURNING *;`
   const values = [p.player_name, p.tank, p.dps, p.healer, p.locked, p.in_the_roll, p.user_id]
   await db.query(text, values)
-    .then(res => {
+    .then((res) => {
       const { rows } = res
       const player = new Player({ ...rows[0] })
       ctx.status = 201;
@@ -41,7 +42,7 @@ const addPlayer = async (ctx: ParameterizedContext) => {
     })
     .catch((err: Error) => {
       ctx.error = err
-      ctx.throw(424, "Unable to create new Player");
+      ctx.throw(404, "Unable to create new Player");
 
     })
   return ctx
@@ -64,13 +65,14 @@ const updatePlayer = async (ctx: ParameterizedContext) => {
   return ctx
 }
 const deletePlayer = async (ctx: DefaultContext) => {
+  console.log(ctx.request.body)
   const { id } = ctx.request.body
   const text = `DELETE FROM ${playerTable} WHERE id = $1;`
   const values = [id]
   await db.query(text, values)
     .then(() => {
       ctx.status = 202
-      ctx.body = `Player ${id} has been deleted.`
+      ctx.body = id
     }
     ).catch((err: Error) => {
       ctx.status = 404
