@@ -7,6 +7,8 @@ import dotenv from "dotenv"
 dotenv.config()
 
 
+const pool: Pool = new Pool()
+
 const envdb = (env: string) => {
   let working_database = "placeholder"
   if (env === "production") {
@@ -19,17 +21,12 @@ const envdb = (env: string) => {
   process.env.PGDATABASE = working_database
   return working_database
 }
-
-let pool: Pool = new Pool()
-
 const db = envdb(process.env.NODE_ENV!)
-
-
 const createDatabase = async () => {
   const client = await new Client({
     database: process.env.PGUSER,
   })
-  await client.connect().then(() =>
+  await client.connect().then(() => 
     createDb(db, { client })
   ).catch((e) => {
     setTimeout(() => {

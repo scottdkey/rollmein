@@ -18,8 +18,8 @@ const app: Koa = new Koa();
 //body parser
 app.use(bodyParser({}));
 //database
-db.createDatabase()
-db.migration()
+db.createDatabase();
+db.migration();
 //sessions
 
 app.keys = [process.env.SECRETKEY!];
