@@ -11,6 +11,9 @@ const rollForRole = (role: string, players: Array<Player>): Player => {
   );
   return rollWithLocked(group)
 };
+function createInGroup(playersArray: Array<Player>) {
+  return playersArray.filter((player) => player.in_the_roll === true);
+}
 
 const rollWithLocked = (players: Array<Player>): Player => {
   const locked = players.filter((p: Player) => p.locked === true);
@@ -80,4 +83,4 @@ const inCheck = (playerCount: number) => {
   }
 };
 
-export default { inCheck, rollByRole, FFARoll }
+export default { inCheck, rollByRole, FFARoll, createInGroup }

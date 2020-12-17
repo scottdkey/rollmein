@@ -22,8 +22,11 @@ class Player implements playerInterface {
   }
 }
 
-export interface playerInterface {
+export interface playerInterface extends newPlayerInterface {
   id: number;
+
+}
+export interface newPlayerInterface {
   player_name: string;
   tank: boolean;
   healer: boolean;

@@ -35,12 +35,19 @@ const DeletePlayer = async (id: number, players: Array<PlayerObject>) => {
   return newPlayers
 }
 
-const GetPlayers = async (uuid: number) => {
+const GetPlayers = async (uuid: string) => {
   const res = await axios.get(`api/v1/players/${uuid}`);
   let playerResponse: Array<PlayerObject> = res.data.map((player: PlayerObject) => {
     return player;
   });
   return playerResponse
 }
+const GetOnePlayer = async (id: number) => {
+  const payload = { data: { id } }
+  const res = await axios.get('api/v1/players', payload)
+  const player: PlayerObject = res.data[0]
+  return player
+}
 
-export { GetPlayers, DeletePlayer, NewPlayer, PlayerUpdate }
+
+export { GetPlayers, DeletePlayer, NewPlayer, PlayerUpdate, GetOnePlayer }

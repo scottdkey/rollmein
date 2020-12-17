@@ -10,6 +10,7 @@ import userRoutes from "../routes/users";
 import authRoutes from "../routes/auth";
 import indexRoutes from "../routes/index"
 import userOptionsRoutes from "../routes/userOptions"
+import rollRoutes from "../routes/rolls"
 import db from "../db"
 
 dotenv.config()
@@ -31,7 +32,6 @@ app.use(session({
 
 //authentication
 import "./auth";
-import { decodeBase64 } from "bcryptjs";
 app.use(passport.initialize());
 app.use(passport.session());
 
@@ -42,6 +42,7 @@ app.use(indexRoutes.routes())
 app.use(userRoutes.routes());
 app.use(playerRoutes.routes());
 app.use(userOptionsRoutes.routes())
+app.use(rollRoutes.routes())
 app.use(authRoutes.routes())
 
 

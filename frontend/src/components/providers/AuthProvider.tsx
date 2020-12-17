@@ -14,18 +14,17 @@ import { AuthReturn, AuthContextType } from "../../types/Types";
 const UserContext = createContext<AuthContextType | undefined>(undefined);
 
 const AuthProvider = ({ children }: any) => {
-  const [user, setUser] = useState<UserObject | undefined>(undefined);
+  const [user_id, setUser_id] = useState<string | undefined>();
   const [authenticated, setAuthenticated] = useState<boolean>(false);
   const [error, setError] = useState<string>("");
 
   function updateAuth(res: AuthReturn) {
-    setUser(res.data);
+    setUser_id(res.data);
   }
 
   const login = (authObject: AuthObject) => {
     Login(authObject!)
       .then((res) => {
-        console.log(res)
         updateAuth(res);
         if (res.status === 200) {
           setAuthenticated(true);
@@ -99,7 +98,7 @@ const AuthProvider = ({ children }: any) => {
         googleLogin,
         updateUser,
         deleteUser,
-        user,
+        user_id,
         authenticated,
         error,
       }}

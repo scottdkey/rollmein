@@ -26,7 +26,7 @@ const PlayerCard = ({ player }: PlayerCardInterface) => {
     blankPlayer,
   } = usePlayerData()!;
   const {
-    user
+    user_id
   } = useAuth()!
 
   const [cardPlayer, setCardPlayer] = useState<PlayerObject>(player!);
@@ -50,8 +50,7 @@ const PlayerCard = ({ player }: PlayerCardInterface) => {
 
   const handleSubmit = () => {
     toggleForm();
-    const user_id  = user!.id
-    const conformedPlayer: PlayerFormObject = {...newCardPlayer, user_id: user_id.toString()}
+    const conformedPlayer: PlayerFormObject = {...newCardPlayer, user_id: user_id!}
     const res = addPlayer(conformedPlayer);
     setCardPlayer(res);
 

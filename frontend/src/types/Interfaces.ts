@@ -22,7 +22,7 @@ export interface DPSObject {
 
 
 export interface UserObject {
-  id: number,
+  id: string,
   email: string,
   username: string,
   password: string,

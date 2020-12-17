@@ -21,23 +21,17 @@ import { useAuth } from "./AuthProvider";
 const PlayerContext = createContext<PlayerContextType | undefined>(undefined);
 
 function PlayerProvider({ children }: any) {
-  const { authenticated, user } = useAuth()!;
-  const [players, setPlayers] = useState<Array<PlayerObject> | undefined>(
-    undefined
-  );
+  const { authenticated, user_id } = useAuth()!;
+  const [players, setPlayers] = useState<Array<PlayerObject> | undefined>(undefined);
   const [roleCounts, setRoleCounts] = useState<roleCountInterface>({
     tanks: 0,
     healers: 0,
     dps: 0,
     inGroupCount: 0,
   });
-  const [inGroup, setInGroup] = useState<Array<PlayerObject> | undefined>(
-    undefined
-  );
-  // const [currentRoll, setCurrentRoll] = useState<
-  //   Array<PlayerObject> | undefined
-  // >(undefined);
-
+  const [inGroup, setInGroup] = useState<Array<PlayerObject> | undefined>(undefined);
+  const [outGroup, setOutGroup] = useState<Array<PlayerObject> | undefined>();
+  const [currentRoll, setCurrentRoll] = useState<Array<PlayerObject> | undefined>()
   const [showPlayers, setShowPlayers] = useState(true);
   const [valid, setValid] = useState<boolean>(false);
 
@@ -88,14 +82,14 @@ function PlayerProvider({ children }: any) {
 
   useEffect(() => {
     if (authenticated) {
-      GetPlayers(user!.id)
+      GetPlayers(user_id!)
         .then((res) => {
           setInGroup(createInGroup(res));
           setPlayers(res);
         })
         .catch((err) => console.log(err));
     }
-  }, [authenticated, user]);
+  }, [authenticated, user_id]);
 
   useEffect(() => {
     setValid(validCheck(players!));
@@ -117,6 +111,11 @@ function PlayerProvider({ children }: any) {
         roleCounts,
         toggleShowPlayers,
         valid,
+        setValid,
+        outGroup,
+        setOutGroup,
+        currentRoll,
+        setCurrentRoll
       }}
     >
       {children}
