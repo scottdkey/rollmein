@@ -14,12 +14,12 @@ import { AuthReturn, AuthContextType } from "../../types/Types";
 const UserContext = createContext<AuthContextType | undefined>(undefined);
 
 const AuthProvider = ({ children }: any) => {
-  const [user_id, setUser_id] = useState<string | undefined>();
+  const [uuid, setUuid] = useState<string | undefined>();
   const [authenticated, setAuthenticated] = useState<boolean>(false);
   const [error, setError] = useState<string>("");
 
   function updateAuth(res: AuthReturn) {
-    setUser_id(res.data);
+    setUuid(res.data);
   }
 
   const login = (authObject: AuthObject) => {
@@ -98,7 +98,7 @@ const AuthProvider = ({ children }: any) => {
         googleLogin,
         updateUser,
         deleteUser,
-        user_id,
+        uuid,
         authenticated,
         error,
       }}

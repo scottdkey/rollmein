@@ -6,7 +6,7 @@ const RoleLogoImage = ({
   active,
   source,
   type,
-  updateBoolean,
+  onClick,
 }: RoleLogoImageInterface) => (
   <>
     <img
@@ -14,7 +14,7 @@ const RoleLogoImage = ({
       src={source}
       alt={`${type} logo`}
       onClick={() => {
-        updateBoolean(type, !active);
+        onClick();
       }}
     />
   </>

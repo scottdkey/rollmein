@@ -1,4 +1,5 @@
 import Player from "../models/player";
+import Players from "./Players"
 
 export interface DPSObject {
   newDPS: Array<Player>;
@@ -12,7 +13,7 @@ const rollForRole = (role: string, players: Array<Player>): Player => {
   return rollWithLocked(group)
 };
 function createInGroup(playersArray: Array<Player>) {
-  return playersArray.filter((player) => player.in_the_roll === true);
+  return playersArray.filter((player) => player.inTheRoll === true);
 }
 
 const rollWithLocked = (players: Array<Player>): Player => {
@@ -83,4 +84,26 @@ const inCheck = (playerCount: number) => {
   }
 };
 
-export default { inCheck, rollByRole, FFARoll, createInGroup }
+const countRoles = async (uuid: string) => {
+  const players = await Players.getAllPlayers(uuid)
+
+  const tanks = players.reduce((n, player) => {
+    let increment = player.tank === true && player.inTheRoll === true ? 1 : 0;
+    return n + increment;
+  }, 0);
+  const healers = players.reduce((n, player) => {
+    let increment = player.healer === true && player.inTheRoll === true ? 1 : 0;
+    return n + increment;
+  }, 0);
+  const dps = players.reduce((n, player) => {
+    let increment = player.dps === true && player.inTheRoll === true ? 1 : 0;
+    return n + increment;
+  }, 0);
+  const inGroupCount = players.reduce((n, player) => {
+    let increment = player.inTheRoll === true ? 1 : 0;
+    return n + increment;
+  }, 0);
+  return { tanks, healers, dps, inGroupCount };
+};
+
+export default { inCheck, rollByRole, FFARoll, createInGroup, countRoles }

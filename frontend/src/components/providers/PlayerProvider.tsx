@@ -15,86 +15,84 @@ import {
   GetPlayers,
 } from "../utils/PlayerCRUD";
 
-import { createInGroup, countRoles, validCheck } from "../utils/BaseAppLogic";
 import { useAuth } from "./AuthProvider";
+import Axios from "axios";
+import { validCheck } from "../utils/BaseAppLogic";
 
 const PlayerContext = createContext<PlayerContextType | undefined>(undefined);
 
 function PlayerProvider({ children }: any) {
-  const { authenticated, user_id } = useAuth()!;
-  const [players, setPlayers] = useState<Array<PlayerObject> | undefined>(undefined);
+  const { authenticated, uuid } = useAuth()!;
+  const [players, setPlayers] = useState<Array<PlayerObject> | undefined>(
+    undefined
+  );
   const [roleCounts, setRoleCounts] = useState<roleCountInterface>({
     tanks: 0,
     healers: 0,
     dps: 0,
     inGroupCount: 0,
   });
-  const [inGroup, setInGroup] = useState<Array<PlayerObject> | undefined>(undefined);
+  const [inGroup, setInGroup] = useState<Array<PlayerObject> | undefined>(
+    undefined
+  );
   const [outGroup, setOutGroup] = useState<Array<PlayerObject> | undefined>();
-  const [currentRoll, setCurrentRoll] = useState<Array<PlayerObject> | undefined>()
+  const [currentRoll, setCurrentRoll] = useState<
+    Array<PlayerObject> | undefined
+  >();
   const [showPlayers, setShowPlayers] = useState(true);
   const [valid, setValid] = useState<boolean>(false);
 
-  const removePlayer = (id: number) => {
-    DeletePlayer(id, players!)
-      .then((res) => {setPlayers(res)})
-      .catch((err) => console.log(err));
+  const removePlayer = async (id: number) => {
+    const newPlayers: Array<PlayerObject> = players!.filter(
+      (player: PlayerObject) => player.id !== id
+    );
+    const res = await DeletePlayer(id);
+    setPlayers(newPlayers);
   };
 
-  const updatePlayer = (player: PlayerObject) => {
-    PlayerUpdate(player, players!)
-      .then((res) => {
-        setPlayers(res);
-        const newGroup = createInGroup(res!);
-        setInGroup(newGroup);
-      })
-      .catch((err) => console.log(err));
+  const updatePlayer = async (player: PlayerObject): Promise<PlayerObject> => {
+    const res = await PlayerUpdate(player);
+    return res;
   };
-  const addPlayer = (newPlayer: PlayerFormObject):PlayerObject => {
-    let responsePlayer = {
-      ...blankPlayer,
-      id: 99999,
-      user_id: "placeHolder",
-      createdAt: "placeHolder",
-      updatedAt: "placeHolder",
-    };
-  NewPlayer(newPlayer, players!)
-      .then((res) => {
-        setPlayers(res.players);
-        responsePlayer = res.newPlayer;
-      })
-      .catch((err) => console.log(err));
-    return responsePlayer;
+  const addPlayer = async (
+    newPlayer: PlayerFormObject
+  ): Promise<PlayerObject> => {
+    const res = await NewPlayer(newPlayer);
+    const newPlayers = players?.concat(res);
+    console.log(newPlayers);
+    setPlayers(newPlayers);
+    return res;
   };
 
   function toggleShowPlayers() {
     setShowPlayers(!showPlayers);
   }
   const blankPlayer: PlayerFormObject = {
-    player_name: "",
+    playerName: "",
     tank: false,
     healer: false,
     dps: false,
     locked: false,
-    in_the_roll: false,
-    user_id: ""
+    inTheRoll: false,
+    userId: "",
+  };
+  const pullCountFromDB = async () => {
+    const res = await Axios.get("/api/v1/rolls/count");
+    setRoleCounts(res.data);
+    validCheck(res.data);
+  };
+
+  const pullPlayersFromDb = async () => {
+    const res = await GetPlayers(uuid!);
+    setPlayers(res);
   };
 
   useEffect(() => {
     if (authenticated) {
-      GetPlayers(user_id!)
-        .then((res) => {
-          setInGroup(createInGroup(res));
-          setPlayers(res);
-        })
-        .catch((err) => console.log(err));
+      pullPlayersFromDb();
+      pullCountFromDB();
     }
-  }, [authenticated, user_id]);
-
-  useEffect(() => {
-    setValid(validCheck(players!));
-    setRoleCounts(countRoles(players!));
-  }, [players]);
+  }, [authenticated]);
 
   return (
     <PlayerContext.Provider
@@ -115,7 +113,7 @@ function PlayerProvider({ children }: any) {
         outGroup,
         setOutGroup,
         currentRoll,
-        setCurrentRoll
+        setCurrentRoll,
       }}
     >
       {children}

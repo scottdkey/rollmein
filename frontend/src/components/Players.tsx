@@ -6,12 +6,11 @@ import { usePlayerData } from "./providers/PlayerProvider";
 
 const RenderPlayers = () => {
   const { players, showPlayers } = usePlayerData()!;
-
   const Players = () =>
     players ? (
       <>
         {players.map((player) => (
-          <PlayerCard key={player.id.toString()} player={player} />
+          <PlayerCard key={player.id.toString()} cardId={player.id} />
         ))}
       </>
     ) : null;

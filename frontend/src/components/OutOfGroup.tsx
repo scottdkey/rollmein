@@ -11,7 +11,7 @@ const OutOfGroup = ({ group }: OutOfGroupProps) => {
       <>
         <h3>Not in Current Roll:</h3>
         {group.map((player: PlayerObject) => (
-          <div key={player.player_name + 10 + player.id}>{player.player_name}, </div>
+          <div key={player.playerName + 10 + player.id}>{player.playerName}, </div>
         ))}
       </>
 

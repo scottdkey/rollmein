@@ -43,4 +43,18 @@ router.get('/rbr', async (ctx: DefaultContext) => {
   }
 })
 
+router.get('/count', async (ctx: DefaultContext) => {
+  const res = await checkAuthStatus(ctx)
+  if (res.error) {
+    ctx.body = res.error
+    ctx.throw(401)
+  } else if (res.verified === true) {
+    ctx.body = await Rolls.countRoles(res.id!)
+    ctx.status = 200
+  } else {
+    ctx.error = "An unknown error has occurred."
+    ctx.status = 404
+  }
+})
+
 export default router

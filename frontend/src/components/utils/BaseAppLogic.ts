@@ -1,57 +1,35 @@
 import { PlayerObject } from "../../types/Interfaces";
 
-const validCheck = (playersArray: Array<PlayerObject>) => {
-  const roleCount = countRoles(playersArray);
-  const tanks = roleCount.tanks > 0;
-  const dps = roleCount.dps >= 3;
-  const healers = roleCount.healers > 0;
+type rollCountObject = {
+  Tanks: number,
+  Dps: number,
+  Healers: number,
+  inCount: number
+}
+
+const validCheck = ({ Tanks, Dps, Healers, inCount }: rollCountObject) => {
+  const tanks = Tanks > 0;
+  const dps = Dps >= 3;
+  const healers = Healers > 0;
   const rolesValid = tanks === true && dps === true && healers === true
-  const groupValid = playersArray ? playersArray.length >= 6 : 0;
+  const groupValid = inCount >= 6 ? true : false
 
   const isValid = groupValid === true && rolesValid === true;
   return isValid;
 };
 
-const countRoles = (playersArray: Array<PlayerObject>) => {
-  const players = playersArray ? playersArray : placeHolderArray;
-
-  const tanks = players.reduce((n, player) => {
-    let increment = player.tank === true && player.in_the_roll === true ? 1 : 0;
-    return n + increment;
-  }, 0);
-  const healers = players.reduce((n, player) => {
-    let increment = player.healer === true && player.in_the_roll === true ? 1 : 0;
-    return n + increment;
-  }, 0);
-  const dps = players.reduce((n, player) => {
-    let increment = player.dps === true && player.in_the_roll === true ? 1 : 0;
-    return n + increment;
-  }, 0);
-  const inGroupCount = players.reduce((n, player) => {
-    let increment = player.in_the_roll === true ? 1 : 0;
-    return n + increment;
-  }, 0);
-  return { tanks, healers, dps, inGroupCount };
-};
-
-function createInGroup(playersArray: Array<PlayerObject>) {
-  return playersArray.filter((player) => player.in_the_roll === true);
-}
-
 
 const placeHolderArray: Array<PlayerObject> = [
   {
-    player_name: "",
+    playerName: "",
     tank: false,
     dps: false,
     healer: false,
     locked: false,
-    in_the_roll: false,
+    inTheRoll: false,
     id: 999999,
-    user_id: "placeHolder",
-    createdAt: "placeHolder",
-    updatedAt: "placeHolder",
+    userId: "placeHolder",
   },
 ];
 
-export { createInGroup, countRoles, validCheck }
+export { validCheck }

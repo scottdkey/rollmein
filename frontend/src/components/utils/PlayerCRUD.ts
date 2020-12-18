@@ -2,37 +2,20 @@ import { PlayerFormObject, PlayerObject } from "../../types/Interfaces"
 
 import axios from "axios"
 
-const PlayerUpdate = async (updatedPlayer: PlayerObject, players: Array<PlayerObject>) => {
-  let updatedPlayers: Array<PlayerObject> | undefined
+const PlayerUpdate = async (updatedPlayer: PlayerObject) => {
   const res = await axios.put(`api/v1/players/`, updatedPlayer)
-  if (res.status === 200) {
-    updatedPlayers = players.map((p) => {
-      if (p.id === updatedPlayer.id) {
-        const player = updatedPlayer;
-        return player;
-      } else {
-        return p;
-      }
-    });
-  }
-
-  return updatedPlayers
-};
-
-const NewPlayer = async (newPlayer: PlayerFormObject, players: Array<PlayerObject>) => {
-  const res = await axios.post(`/api/v1/players/`, newPlayer)
-  const newPlayers: Array<PlayerObject> = [...players, res.data];
-  const returnObject = { players: newPlayers, newPlayer: res.data }
-  return returnObject
+  return res.data
 }
 
-const DeletePlayer = async (id: number, players: Array<PlayerObject>) => {
+const NewPlayer = async (newPlayer: PlayerFormObject): Promise<PlayerObject> => {
+  const res = await axios.post(`/api/v1/players/`, newPlayer)
+  return res.data
+}
+
+const DeletePlayer = async (id: number) => {
   const payload = { data: { id } }
   const res = await axios.delete(`api/v1/players/`, payload)
-  const newPlayers: Array<PlayerObject> | undefined = players.filter(
-    (player: PlayerObject) => player.id !== res.data
-  );
-  return newPlayers
+  return res.data
 }
 
 const GetPlayers = async (uuid: string) => {
@@ -43,9 +26,8 @@ const GetPlayers = async (uuid: string) => {
   return playerResponse
 }
 const GetOnePlayer = async (id: number) => {
-  const payload = { data: { id } }
-  const res = await axios.get('api/v1/players', payload)
-  const player: PlayerObject = res.data[0]
+  const res = await axios.get(`/api/v1/players/getOne/${id}`)
+  let player: PlayerObject = res.data
   return player
 }
 

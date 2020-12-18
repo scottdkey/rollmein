@@ -22,8 +22,8 @@ const RollByRole = () => {
   };
 
   useEffect(() => {
-    const CurrentValid = validCheck(inGroup!);
-    setValid(CurrentValid);
+    // const CurrentValid = validCheck(inGroup!);
+    // setValid(CurrentValid);
   }, [inGroup, setValid]);
 
   if (outGroup === undefined) {
@@ -44,13 +44,13 @@ const RollByRole = () => {
           {tank === undefined ? null : (
             <>
               <h3>Tank: </h3>
-              {tank.player_name}
+              {tank.playerName}
             </>
           )}
           {healer === undefined ? null : (
             <>
               <h3>Healer:</h3>
-              {healer.player_name}
+              {healer.playerName}
             </>
           )}
           <RenderGroup players={dps!} header={"Dps"} />
