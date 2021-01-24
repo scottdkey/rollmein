@@ -2,19 +2,7 @@
   "name": "rollmein",
   "version": "1.0.0",
   "description": "Web and React native app to choose who is going on the mythic + dungeon from a guild or custom list",
-<<<<<<< HEAD
   "main": "dist/index.js",
-=======
-  "main": "index.js",
-  "scripts": {
-    "start": "run-p start:*",
-    "start:api": "cd api && yarn dev",
-    "start:frontend": "cd frontend && yarn start",
-    "dep_install": "run-s install:*",
-    "install:api_deps": "cd api && yarn",
-    "install:frontend_deps": "cd frontend && yarn"
-  },
->>>>>>> f5e0dfd7c6c96bddcd095febdd48a361ea5b5cfc
   "author": "Scott Key <scottdkey@gmail.com> (www.github.com/scottdkey)",
   "license": "MIT",
   "workspaces": [
