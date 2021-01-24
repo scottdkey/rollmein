@@ -1,28 +1,20 @@
 export type roleType = { [key: string]: boolean };
 
-export interface BlankPlayerObject {
-  player_name: string;
+export interface newPlayerFormObject {
+  playerName: string;
   tank: boolean;
   healer: boolean;
   dps: boolean;
   locked: boolean;
-  in: boolean;
+  inTheRoll: boolean;
 }
 
-export interface PlayerObject extends BlankPlayerObject {
+export interface PlayerFormObject extends newPlayerFormObject {
+  userId: string;
+}
+
+export interface PlayerObject extends PlayerFormObject {
   id: number;
-  user_id: string;
-  createdAt: string;
-  updatedAt: string;
-}
-
-export interface PlayerFormObject {
-  player_name: string;
-  tank: boolean;
-  healer: boolean;
-  dps: boolean;
-  locked: boolean;
-  in: boolean;
 }
 export interface DPSObject {
   newDPS: Array<PlayerObject>;
@@ -31,7 +23,7 @@ export interface DPSObject {
 
 
 export interface UserObject {
-  id: number,
+  id: string,
   email: string,
   username: string,
   password: string,
@@ -92,5 +84,5 @@ export interface RoleLogoImageInterface {
   active: boolean;
   source: string;
   type: string;
-  updateBoolean: (type: string, active: boolean) => void
+  onClick: Function
 }

@@ -3,9 +3,12 @@ import { createDb, migrate } from "postgres-migrations"
 import controllers from "./controllers"
 import models from "./models"
 import dotenv from "dotenv"
+import { Console } from "console"
 
 dotenv.config()
 
+
+const pool: Pool = new Pool()
 
 const envdb = (env: string) => {
   let working_database = "placeholder"
@@ -19,6 +22,7 @@ const envdb = (env: string) => {
   process.env.PGDATABASE = working_database
   return working_database
 }
+<<<<<<< HEAD:packages/api/src/db/index.ts
 
 const pool: Pool = new Pool()
 
@@ -26,6 +30,10 @@ const db = envdb(process.env.NODE_ENV!)
 
 
 const createDatabase = async (): Promise<void> => {
+=======
+const db = envdb(process.env.NODE_ENV!)
+const createDatabase = async () => {
+>>>>>>> f5e0dfd7c6c96bddcd095febdd48a361ea5b5cfc:api/src/db/index.ts
   const client = await new Client({
     database: process.env.PGUSER,
   })
@@ -60,7 +68,7 @@ const query = async (text: string, params: any[]): Promise<QueryResult<any>> => 
   const db = await pool.connect()
   const res = await db.query(text, params)
   const duration = Date.now() - start
-  console.log('executed query', { text, params, duration, rows: res.rowCount })
+  console.log('executed query', { text, duration, params, rows: res.rowCount })
   await db.release()
   return res
 }

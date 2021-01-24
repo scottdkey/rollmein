@@ -10,6 +10,7 @@ import userRoutes from "../routes/users";
 import authRoutes from "../routes/auth";
 import indexRoutes from "../routes/index"
 import userOptionsRoutes from "../routes/userOptions"
+import rollRoutes from "../routes/rolls"
 import db from "../db"
 import './auth';
 
@@ -21,8 +22,14 @@ const app: Koa = new Koa();
 app.use(bodyParser({}));
 
 //database
+<<<<<<< HEAD:packages/api/src/server/index.ts
 db.createDatabase()
 db.migration()
+=======
+db.createDatabase();
+db.migration();
+//sessions
+>>>>>>> f5e0dfd7c6c96bddcd095febdd48a361ea5b5cfc:api/src/server/index.ts
 
 //sessions
 app.keys = [process.env.SECRETKEY!];
@@ -33,7 +40,11 @@ app.use(session({
 }, app));
 
 //authentication
+<<<<<<< HEAD:packages/api/src/server/index.ts
 
+=======
+import "./auth";
+>>>>>>> f5e0dfd7c6c96bddcd095febdd48a361ea5b5cfc:api/src/server/index.ts
 app.use(passport.initialize());
 app.use(passport.session());
 
@@ -44,6 +55,7 @@ app.use(indexRoutes.routes())
 app.use(userRoutes.routes());
 app.use(playerRoutes.routes());
 app.use(userOptionsRoutes.routes())
+app.use(rollRoutes.routes())
 app.use(authRoutes.routes())
 
 

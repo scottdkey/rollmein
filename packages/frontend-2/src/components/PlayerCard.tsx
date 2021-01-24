@@ -1,6 +1,5 @@
 // eslint-disable-next-line
 import React, { useState, useEffect } from "react";
-import { Form, Input } from "antd";
 
 import { ReactComponent as ClosedLock } from "./assets/svgs/Lock.svg";
 import { ReactComponent as OpenLock } from "./assets/svgs/OpenLock.svg";
@@ -9,55 +8,102 @@ import { ReactComponent as Trash } from "./assets/svgs/Trash.svg";
 import Tank from "./assets/images/TANK.png";
 import Dps from "./assets/images/DPS.png";
 import Healer from "./assets/images/HEALER.png";
-import {
-  PlayerObject,
-  PlayerCardInterface,
-  PlayerFormObject,
-} from "../types/Interfaces";
+import { PlayerObject, PlayerFormObject } from "../types/Interfaces";
 import { usePlayerData } from "./providers/PlayerProvider";
 import RoleLogoImage from "./RoleLogoImage";
+import { useAuth } from "./providers/AuthProvider";
+import { GetOnePlayer } from "./utils/PlayerCRUD";
 
-const PlayerCard = ({ player }: PlayerCardInterface) => {
+type PlayerCardType = {
+  cardId?: number;
+};
+
+const PlayerCard = ({ cardId }: PlayerCardType) => {
   const {
     updatePlayer,
     removePlayer,
     addPlayer,
     blankPlayer,
   } = usePlayerData()!;
+  const { uuid } = useAuth()!;
+  const [id, setId] = useState(cardId);
+  const [playerName, setPlayerName] = useState("");
+  const [tank, setTank] = useState(false);
+  const [dps, setDps] = useState(false);
+  const [healer, setHealer] = useState(false);
+  const [locked, setLocked] = useState(false);
+  const [inTheRoll, setInTheRoll] = useState(false);
+  const [editOrCreate, setEditOrCreate] = useState(false);
 
-  const [cardPlayer, setCardPlayer] = useState<PlayerObject>(player!);
-  const [newCardPlayer, setNewCardPlayer] = useState<PlayerFormObject>(
-    blankPlayer
-  );
-  const [newPlayerFormOpen, setNewPlayerFormOpen] = useState(false);
-
-  const updateCardPlayer = (type: string, newBoolean: boolean) => {
-    const updatedPlayer = { ...cardPlayer, [type]: newBoolean };
-    setCardPlayer(updatedPlayer);
-    updatePlayer(updatedPlayer);
-  };
-  const updateNewPlayer = (type: string, newBoolean: boolean) => {
-    const updatedPlayer = { ...cardPlayer, [type]: newBoolean };
-    setNewCardPlayer(updatedPlayer);
-  };
-  function clearForm() {
-    setNewCardPlayer(blankPlayer);
-  }
-
-  const handleSubmit = () => {
+  const handleSubmit = async (e: any) => {
+    console.log("handle submit hit");
+    e.preventDefault();
+    const conformedPlayer: PlayerFormObject = {
+      playerName,
+      tank,
+      dps,
+      healer,
+      locked,
+      inTheRoll,
+      userId: uuid!,
+    };
+    const res = await addPlayer(conformedPlayer);
+    updateAllValues(res);
     toggleForm();
-    const res = addPlayer(newCardPlayer);
-    setCardPlayer(res);
-
     clearForm();
   };
 
-  function toggleForm() {
-    setNewPlayerFormOpen(!newPlayerFormOpen);
+  function clearForm() {
+    updateAllValues(blankPlayer);
   }
+
+  function toggleForm() {
+    setEditOrCreate(!editOrCreate);
+  }
+
+  const updateAllValues = (playerObject: PlayerFormObject) => {
+    setPlayerName(playerObject.playerName);
+    setTank(playerObject.tank);
+    setDps(playerObject.dps);
+    setHealer(playerObject.healer);
+    setLocked(playerObject.locked);
+    setInTheRoll(playerObject.inTheRoll);
+  };
+
+  const handleBooleanUpdate = async (
+    type: string,
+    booleanToChange: boolean,
+    callBack: Function
+  ) => {
+    callBack(!booleanToChange);
+    const idCheck = cardId!;
+    const conformedPlayer: PlayerObject = {
+      id: idCheck,
+      playerName,
+      tank,
+      dps,
+      healer,
+      locked,
+      inTheRoll,
+      userId: uuid!,
+    };
+    const updatedPlayer = { ...conformedPlayer, [type]: !booleanToChange };
+    const res = await updatePlayer(updatedPlayer);
+    updateAllValues(res);
+  };
+  const getPlayerFromDatabase = async () => {
+    const res = await GetOnePlayer(cardId!);
+    updateAllValues(res);
+  };
+
   useEffect(() => {
-    setCardPlayer(player!);
-  }, [player]);
+    if (cardId) {
+      getPlayerFromDatabase();
+    } else {
+      setEditOrCreate(false);
+      updateAllValues(blankPlayer);
+    }
+  }, [cardId]);
 
   function AddPlayerArea() {
     return (
@@ -70,125 +116,88 @@ const PlayerCard = ({ player }: PlayerCardInterface) => {
       </div>
     );
   }
-  function CurrentPlayerCard() {
-    return (
-      <div className={"card"}>
-        <div
-          className="card-locked-area"
-          onClick={() => updateCardPlayer("locked", !cardPlayer.locked)}
-        >
-          {cardPlayer.locked ? (
-            <ClosedLock className="image locked" />
-          ) : (
-            <OpenLock className="image unlocked" />
-          )}
-        </div>
 
-        <div className="card-head">
-          <div className="name">{cardPlayer.player_name}</div>
-          <Trash
-            className="image delete-icon"
-            onClick={() => removePlayer(cardPlayer.id)}
-          />
-        </div>
-        <div className="card-body">
-          <RoleLogoImage
-            active={cardPlayer.tank}
-            source={Tank}
-            type="tank"
-            updateBoolean={updateCardPlayer}
-          />
-          <RoleLogoImage
-            active={cardPlayer.healer}
-            source={Healer}
-            type="healer"
-            updateBoolean={updateCardPlayer}
-          />
-          <RoleLogoImage
-            active={cardPlayer.dps}
-            source={Dps}
-            type="dps"
-            updateBoolean={updateCardPlayer}
-          />
-
-          <Dice
-            className={`image ${
-              cardPlayer.in ? "in-the-roll-active" : "in-the-roll"
-            }`}
-            onClick={() => updateCardPlayer("in", !cardPlayer.in)}
-          />
-        </div>
-      </div>
-    );
-  }
-
-  if (player === undefined && !newPlayerFormOpen) {
+  const TrashButton = () => {
+    if (cardId) {
+      return (
+        <Trash
+          className="image delete-icon"
+          onClick={() => removePlayer(cardId)}
+        />
+      );
+    } else {
+      return null;
+    }
+  };
+  const CurrentCardHead = () => (
+    <div>
+      <div className="name">{playerName}</div>
+      <TrashButton />
+    </div>
+  );
+  if (cardId === undefined && !editOrCreate) {
     return <AddPlayerArea />;
-  } else if (player) {
-    return <CurrentPlayerCard />;
   } else {
     return (
-      <div className={"card"}>
+      <div className={locked ? "card-locked" : "card"}>
         <div
           className="card-locked-area"
-          onClick={() => updateNewPlayer("locked", !newCardPlayer.locked)}
+          onClick={() => {
+            handleBooleanUpdate("locked", locked, setLocked);
+          }}
         >
-          {newCardPlayer.locked ? (
+          {locked ? (
             <ClosedLock className="image locked" />
           ) : (
             <OpenLock className="image unlocked" />
           )}
         </div>
-        <div className="card-head">
-          New Player
-          <button onClick={() => toggleForm()}>Cancel</button>
-          <button onClick={handleSubmit}>Save</button>
-          <Form>
-            <Form.Item
-              label="name"
-              name="name"
-              rules={[
-                {
-                  required: true,
-                  message: "Please input this player's name.",
-                },
-              ]}
-            >
-              <Input
-                value={newCardPlayer.player_name}
-                onChange={(e) =>
-                  setNewCardPlayer({ ...newCardPlayer, player_name: e.target.value })
-                }
-              />
-            </Form.Item>
-          </Form>
-        </div>
 
+        <div className="card-head">
+          {editOrCreate ? (
+            <form>
+              <label>
+                Player Name
+                <input
+                  type="text"
+                  value={playerName}
+                  onChange={(e) => setPlayerName(e.target.value)}
+                />
+                <button onClick={handleSubmit}>Save</button>
+                <button onClick={() => toggleForm()}>Cancel</button>
+              </label>
+            </form>
+          ) : (
+            <CurrentCardHead />
+          )}
+        </div>
         <div className="card-body">
           <RoleLogoImage
-            active={newCardPlayer.tank}
+            active={tank}
             source={Tank}
             type="tank"
-            updateBoolean={updateNewPlayer}
+            onClick={() => handleBooleanUpdate("tank", tank, setTank)}
           />
           <RoleLogoImage
-            active={newCardPlayer.healer}
+            active={healer}
             source={Healer}
             type="healer"
-            updateBoolean={updateNewPlayer}
+            onClick={() => handleBooleanUpdate("healer", healer, setHealer)}
           />
           <RoleLogoImage
-            active={newCardPlayer.dps}
+            active={dps}
             source={Dps}
             type="dps"
-            updateBoolean={updateNewPlayer}
+            onClick={() => handleBooleanUpdate("dps", dps, setDps)}
           />
 
           <Dice
             className={`image ${
-              newCardPlayer.in ? "in-the-roll-active" : "in-the-roll"
+              inTheRoll ? "in-the-roll-active" : "in-the-roll"
             }`}
-            onClick={() => updateNewPlayer("in", !newCardPlayer.in)}
+            onClick={() =>
+              handleBooleanUpdate("inTheRoll", inTheRoll, setInTheRoll)
+            }
           />
         </div>
       </div>

@@ -1,7 +1,7 @@
 import { UserObject, AuthObject, PlayerObject, PlayerFormObject, roleCountInterface } from "./Interfaces"
 
 export type AuthReturn = {
-  data: UserObject
+  data: string
   status: number;
 };
 
@@ -13,7 +13,7 @@ export type AuthContextType = {
   googleLogin: (value: Object) => void;
   updateUser: (value: UserObject) => void;
   deleteUser: (value: Object) => void;
-  user: UserObject | undefined;
+  uuid: string | undefined;
   authenticated: boolean;
   error: string
 };
@@ -50,11 +50,16 @@ export type PlayerContextType = {
   inGroup: Array<PlayerObject> | undefined;
   setInGroup: (value: Array<PlayerObject>) => void;
   removePlayer: (value: number) => void;
-  updatePlayer: (value: PlayerObject) => void;
-  addPlayer: (value: PlayerFormObject) => PlayerObject;
+  updatePlayer: (value: PlayerObject) => Promise<PlayerObject>;
+  addPlayer: (value: PlayerFormObject) => Promise<PlayerObject>;
   roleCounts: roleCountInterface
   showPlayers: boolean;
   toggleShowPlayers(): void;
-  blankPlayer: PlayerFormObject
-  valid: boolean
+  blankPlayer: PlayerFormObject;
+  valid: boolean;
+  setValid: (value: boolean) => void;
+  outGroup: Array<PlayerObject> | undefined;
+  setOutGroup: (value: Array<PlayerObject>) => void;
+  currentRoll: Array<PlayerObject> | undefined;
+  setCurrentRoll: (value: Array<PlayerObject>) => void;
 };

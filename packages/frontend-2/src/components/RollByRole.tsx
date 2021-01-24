@@ -1,34 +1,32 @@
 // eslint-disable-next-line
 import React, { useState, useEffect } from "react";
-import { rollByRole } from "./utils/GroupRollLogic";
 import { PlayerObject } from "../types/Interfaces";
 import RenderGroup from "./RenderGroup";
 import { usePlayerData } from "./providers/PlayerProvider";
 import { validCheck } from "./utils/BaseAppLogic";
+import axios from "axios"
 
 const RollByRole = () => {
   const [tank, setTank] = useState<PlayerObject>();
   const [healer, setHealer] = useState<PlayerObject>();
-  const [outOfGroup, setOutOfGroup] = useState<Array<PlayerObject>>();
   const [dps, setDps] = useState<Array<PlayerObject>>();
-  const [valid, setValid] = useState<boolean>(false);
 
-  const { inGroup } = usePlayerData()!;
+  const { inGroup, setOutGroup, outGroup, valid, setValid } = usePlayerData()!;
 
-  const rollForGroup = () => {
-    const players = rollByRole(inGroup!);
-    setTank(players.tank);
-    setHealer(players.healer);
-    setDps(players.dps);
-    setOutOfGroup(players.remainder);
+  const rollForGroup = async() => {
+    const {data} = await axios.get('/api/v1/rolls/rbr')
+    setTank(data.tank);
+    setHealer(data.healer);
+    setDps(data.dps);
+    setOutGroup(data.remainder);
   };
 
   useEffect(() => {
-    const CurrentValid = validCheck(inGroup!);
-    setValid(CurrentValid);
-  }, [inGroup]);
+    // const CurrentValid = validCheck(inGroup!);
+    // setValid(CurrentValid);
+  }, [inGroup, setValid]);
 
-  if (outOfGroup === undefined) {
+  if (outGroup === undefined) {
     return (
       <>
         <button disabled={!valid} onClick={rollForGroup}>
@@ -46,17 +44,17 @@ const RollByRole = () => {
           {tank === undefined ? null : (
             <>
               <h3>Tank: </h3>
-              {tank.player_name}
+              {tank.playerName}
             </>
           )}
           {healer === undefined ? null : (
             <>
               <h3>Healer:</h3>
-              {healer.player_name}
+              {healer.playerName}
             </>
           )}
           <RenderGroup players={dps!} header={"Dps"} />
-          <RenderGroup players={outOfGroup!} header={"Out of Current Roll"} />
+          <RenderGroup players={outGroup!} header={"Out of Current Roll"} />
         </div>
       </>
     );

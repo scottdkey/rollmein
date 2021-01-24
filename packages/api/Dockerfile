@@ -1,8 +1,20 @@
-FROM node:14-slim
-WORKDIR /app
-COPY package.json /app
-COPY yarn.lock /app
+FROM node:14.15.1-alpine3.10 as build
+
+WORKDIR /usr/app
+COPY package.json .
+
 RUN yarn
+
 COPY . .
-CMD yarn start
+
+RUN yarn build
+
+FROM node:14-slim
+WORKDIR /usr/app
+COPY package.json .
+RUN yarn install --production
+COPY --from=build /usr/app/build .
+
 EXPOSE 5000
+
+CMD "yarn start"

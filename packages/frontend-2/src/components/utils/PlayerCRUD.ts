@@ -2,44 +2,34 @@ import { PlayerFormObject, PlayerObject } from "../../types/Interfaces"
 
 import axios from "axios"
 
-const PlayerUpdate = async (updatedPlayer: PlayerObject, players: Array<PlayerObject>) => {
-  let updatedPlayers: Array<PlayerObject> | undefined
+const PlayerUpdate = async (updatedPlayer: PlayerObject) => {
   const res = await axios.put(`api/v1/players/`, updatedPlayer)
-  if (res.status === 200) {
-    updatedPlayers = players.map((p) => {
-      if (p.id === updatedPlayer.id) {
-        const player = updatedPlayer;
-        return player;
-      } else {
-        return p;
-      }
-    });
-  }
-
-  return updatedPlayers
-};
-
-const NewPlayer = async (newPlayer: PlayerFormObject, players: Array<PlayerObject>, uuid: number) => {
-  const res = await axios.post(`api/v1/players/`, newPlayer)
-  const newPlayers: Array<PlayerObject> = [...players, res.data[0]];
-  const returnObject = { players: newPlayers, newPlayer: res.data[0] }
-  return returnObject
+  return res.data
 }
 
-const DeletePlayer = async (uuid: number, players: Array<PlayerObject>) => {
-  const res = await axios.delete(`api/v1/players/${uuid}`)
-  const newPlayers: Array<PlayerObject> | undefined = players.filter(
-    (player: PlayerObject) => player.id !== res.data[0].id
-  );
-  return newPlayers
+const NewPlayer = async (newPlayer: PlayerFormObject): Promise<PlayerObject> => {
+  const res = await axios.post(`/api/v1/players/`, newPlayer)
+  return res.data
 }
 
-const GetPlayers = async (uuid: number) => {
+const DeletePlayer = async (id: number) => {
+  const payload = { data: { id } }
+  const res = await axios.delete(`api/v1/players/`, payload)
+  return res.data
+}
+
+const GetPlayers = async (uuid: string) => {
   const res = await axios.get(`api/v1/players/${uuid}`);
   let playerResponse: Array<PlayerObject> = res.data.map((player: PlayerObject) => {
     return player;
   });
   return playerResponse
 }
+const GetOnePlayer = async (id: number) => {
+  const res = await axios.get(`/api/v1/players/getOne/${id}`)
+  let player: PlayerObject = res.data
+  return player
+}
 
-export { GetPlayers, DeletePlayer, NewPlayer, PlayerUpdate }
+
+export { GetPlayers, DeletePlayer, NewPlayer, PlayerUpdate, GetOnePlayer }
