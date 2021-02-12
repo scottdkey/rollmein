@@ -26,7 +26,6 @@ const PlayerCard = ({ cardId }: PlayerCardType) => {
     blankPlayer,
   } = usePlayerData()!;
   const { uuid } = useAuth()!;
-  const [id, setId] = useState(cardId);
   const [playerName, setPlayerName] = useState("");
   const [tank, setTank] = useState(false);
   const [dps, setDps] = useState(false);
@@ -130,7 +129,7 @@ const PlayerCard = ({ cardId }: PlayerCardType) => {
     }
   };
   const CurrentCardHead = () => (
-    <div>
+    <div className="card-head">
       <div className="name">{playerName}</div>
       <TrashButton />
     </div>

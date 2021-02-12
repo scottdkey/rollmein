@@ -184,7 +184,7 @@ body {
       height: 100%;
       justify-content: center;
       position: relative;
-      top: -60px; }
+      bottom: 20px; }
       .player-cards .card .card-head .name, .player-cards-open .card .card-head .name, .player-cards .card-locked .card-head .name, .player-cards-open .card-locked .card-head .name, .player-cards .add-player .card-head .name, .player-cards-open .add-player .card-head .name {
         font-size: xx-large;
         color: grey;
