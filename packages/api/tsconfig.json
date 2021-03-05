@@ -1,9 +1,9 @@
 {
   "compilerOptions": {
-    "target": "ES2017",
+    "target": "es5",
     "moduleResolution": "node",
     "module": "commonjs",
-    "lib": ["ES2017", "dom"],
+    "lib": ["ESNext", "dom"],
     "allowJs": true,
     "outDir": "build",
     "rootDir": "src",
@@ -12,8 +12,9 @@
     "esModuleInterop": true,
     "resolveJsonModule": true,
     "emitDecoratorMetadata": true,
-    "experimentalDecorators": true
+    "experimentalDecorators": true,
+    "types": []
   },
-  "include": ["src/", "src/db/migrations", "src/test"],
+  "include": ["src"],
   "exclude": ["node_modules"]
 }

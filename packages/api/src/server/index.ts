@@ -22,16 +22,10 @@ const app: Koa = new Koa();
 app.use(bodyParser({}));
 
 //database
-<<<<<<< HEAD:packages/api/src/server/index.ts
-db.createDatabase()
-db.migration()
-=======
 db.createDatabase();
 db.migration();
 //sessions
->>>>>>> f5e0dfd7c6c96bddcd095febdd48a361ea5b5cfc:api/src/server/index.ts
 
-//sessions
 app.keys = [process.env.SECRETKEY!];
 app.use(session({
   store: redisStore({
@@ -40,11 +34,7 @@ app.use(session({
 }, app));
 
 //authentication
-<<<<<<< HEAD:packages/api/src/server/index.ts
-
-=======
 import "./auth";
->>>>>>> f5e0dfd7c6c96bddcd095febdd48a361ea5b5cfc:api/src/server/index.ts
 app.use(passport.initialize());
 app.use(passport.session());
 
