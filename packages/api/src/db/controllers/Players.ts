@@ -16,7 +16,7 @@ const conformToPlayerModel = (objectFromDB: any): Player => {
 
 const getAllPlayers = async (uuid: string): Promise<Array<Player>> => {
   const { rows } = await db.query(`SELECT * FROM ${playerTable} where user_id=$1;`, [uuid])
-  const players = rows.map(row => {
+  const players = rows.map((row: any) => {
     return conformToPlayerModel(row)
   })
   return players

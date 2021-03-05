@@ -3,37 +3,27 @@ import { createDb, migrate } from "postgres-migrations"
 import controllers from "./controllers"
 import models from "./models"
 import dotenv from "dotenv"
-import { Console } from "console"
 
 dotenv.config()
 
 
 const pool: Pool = new Pool()
 
-const envdb = (env: string) => {
+const envdb = (env: string):string => {
   let working_database = "placeholder"
+  const {PRODUCTION_DB, TEST_DB, DEVELOPMENT_DB} = process.env
   if (env === "production") {
-    working_database = process.env.PRODUCTION_DB!
+    working_database = PRODUCTION_DB!
   } else if (env === "test") {
-    working_database = process.env.TEST_DB!
+    working_database = TEST_DB!
   } else {
-    working_database = process.env.DEVELOPMENT_DB!
+    working_database = DEVELOPMENT_DB!
   }
   process.env.PGDATABASE = working_database
   return working_database
 }
-<<<<<<< HEAD:packages/api/src/db/index.ts
-
-const pool: Pool = new Pool()
-
-const db = envdb(process.env.NODE_ENV!)
-
-
-const createDatabase = async (): Promise<void> => {
-=======
 const db = envdb(process.env.NODE_ENV!)
 const createDatabase = async () => {
->>>>>>> f5e0dfd7c6c96bddcd095febdd48a361ea5b5cfc:api/src/db/index.ts
   const client = await new Client({
     database: process.env.PGUSER,
   })
