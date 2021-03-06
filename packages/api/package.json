@@ -7,13 +7,13 @@
   "author": "Scott Key",
   "license": "ISC",
   "scripts": {
-    "prod": "node ./build/server/index.js",
-    "start": "run-p watch:*",
+    "start": "node ./build/server/index.js",
+    "dev": "run-p watch:*",
     "test": "./node_modules/mocha/bin/mocha ./build/test/**/*.test.js",
     "watch:ts": "tsc -w",
     "watch:node": "nodemon ./build/server/index.js",
     "build": "tsc",
-    "dockerbuild": "docker build -t rollmein_api .",
+    "dockerbuild": "docker build -t scottdkey/rollmein_api:1.0.0 .",
     "lint": "eslint"
   },
   "dependencies": {
