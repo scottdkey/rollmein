@@ -12,15 +12,13 @@
     "test": "./node_modules/mocha/bin/mocha ./build/test/**/*.test.js",
     "watch:ts": "tsc -w",
     "watch:node": "nodemon ./build/server/index.js",
-    "build": "run-s build:*",
-    "build:ts": "tsc",
-    "build:docker": "docker build -t rollmein_api .",
+    "build": "tsc",
+    "dockerbuild": "docker build -t rollmein_api .",
     "lint": "eslint"
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",
     "dotenv": "^8.2.0",
-    "jest": "^26.6.3",
     "koa": "^2.13.0",
     "koa-bodyparser": "^4.3.0",
     "koa-passport": "^4.1.3",
@@ -34,6 +32,7 @@
     "reflect-metadata": "^0.1.13"
   },
   "devDependencies": {
+    "jest": "^26.6.3",
     "@types/chai": "^4.2.14",
     "@types/mocha": "^8.2.0",
     "@types/bcryptjs": "^2.4.2",
@@ -58,7 +57,6 @@
     "chai": "^4.2.0",
     "chai-http": "^4.3.0",
     "eslint": "^7.18.0",
-    "lerna": "^3.22.1",
     "mocha": "^8.2.1",
     "nodemon": "^2.0.6",
     "npm-run-all": "^4.1.5",

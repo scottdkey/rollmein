@@ -17,4 +17,4 @@ COPY --from=build /usr/app/build .
 
 EXPOSE 5000
 
-CMD "yarn start"
+CMD "yarn prod"
