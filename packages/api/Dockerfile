@@ -1,4 +1,4 @@
-FROM node:15.11.0-buster-slim as build
+FROM node:14-slim as build
 
 WORKDIR /usr/app
 COPY package.json .
@@ -9,7 +9,7 @@ COPY . .
 
 RUN yarn build
 
-FROM node:15.11.0-buster-slim
+FROM node:14-slim
 WORKDIR /usr/app
 COPY package.json .
 RUN npm install --only=production
