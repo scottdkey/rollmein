@@ -32,15 +32,6 @@ export interface newPlayerInterface {
   healer: boolean;
   dps: boolean;
   locked: boolean;
-<<<<<<< HEAD:packages/api/src/db/models/player.ts
-  in_the_roll: boolean;
-  user_id: string;
-}
-=======
   inTheRoll: boolean;
   userId: string;
 }
-
-
-export default Player
->>>>>>> f5e0dfd7c6c96bddcd095febdd48a361ea5b5cfc:api/src/db/models/player.ts

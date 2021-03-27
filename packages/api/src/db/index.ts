@@ -22,18 +22,8 @@ const envdb = (env: string) => {
   process.env.PGDATABASE = working_database
   return working_database
 }
-<<<<<<< HEAD:packages/api/src/db/index.ts
-
-const pool: Pool = new Pool()
-
-const db = envdb(process.env.NODE_ENV!)
-
-
-const createDatabase = async (): Promise<void> => {
-=======
 const db = envdb(process.env.NODE_ENV!)
 const createDatabase = async () => {
->>>>>>> f5e0dfd7c6c96bddcd095febdd48a361ea5b5cfc:api/src/db/index.ts
   const client = await new Client({
     database: process.env.PGUSER,
   })
