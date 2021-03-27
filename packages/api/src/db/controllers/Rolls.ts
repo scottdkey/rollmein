@@ -12,7 +12,7 @@ const rollForRole = (role: string, players: Array<Player>): Player => {
   );
   return rollWithLocked(group)
 };
-function createInGroup(playersArray: Array<Player>) {
+function createInGroup(playersArray: Array<Player>): Array<Player> {
   return playersArray.filter((player) => player.inTheRoll === true);
 }
 
@@ -88,19 +88,19 @@ const countRoles = async (uuid: string) => {
   const players = await Players.getAllPlayers(uuid)
 
   const tanks = players.reduce((n, player) => {
-    let increment = player.tank === true && player.inTheRoll === true ? 1 : 0;
+    const increment = player.tank === true && player.inTheRoll === true ? 1 : 0;
     return n + increment;
   }, 0);
   const healers = players.reduce((n, player) => {
-    let increment = player.healer === true && player.inTheRoll === true ? 1 : 0;
+    const increment = player.healer === true && player.inTheRoll === true ? 1 : 0;
     return n + increment;
   }, 0);
   const dps = players.reduce((n, player) => {
-    let increment = player.dps === true && player.inTheRoll === true ? 1 : 0;
+    const increment = player.dps === true && player.inTheRoll === true ? 1 : 0;
     return n + increment;
   }, 0);
   const inGroupCount = players.reduce((n, player) => {
-    let increment = player.inTheRoll === true ? 1 : 0;
+    const increment = player.inTheRoll === true ? 1 : 0;
     return n + increment;
   }, 0);
   return { tanks, healers, dps, inGroupCount };

@@ -6,3 +6,4 @@ build/
 tmp/
 api/node_modules/
 web/node_modules/
+*.secrets.yml

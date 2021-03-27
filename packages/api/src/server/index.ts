@@ -26,7 +26,6 @@ db.createDatabase();
 db.migration();
 //sessions
 
-//sessions
 app.keys = [process.env.SECRETKEY!];
 app.use(session({
   store: redisStore({

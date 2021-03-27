@@ -8,9 +8,9 @@
     "build": "run-s build:*",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "build:css": "sass src/styles -o src/styles",
+    "build:css": "sass src/styles/App.scss:src/styles/App.css",
     "build:react": "react-scripts build",
-    "watch:css": "sass --watch src/styles/App.scss:src/styles",
+    "watch:css": "sass src/styles/App.scss:src/styles --watch",
     "watch:react-dev": "react-scripts start",
     "lint": "eslint"
   },
