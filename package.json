@@ -10,7 +10,7 @@
   ],
   "private": true,
   "scripts": {
-    "start": "lerna run start",
+    "start": "lerna run dev",
     "production": "lerna prod",
     "build": "lerna build",
     "lint": "lerna, lint",
