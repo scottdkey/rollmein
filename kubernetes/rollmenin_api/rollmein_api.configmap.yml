@@ -1,9 +1,0 @@
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: rollmein_api-config
-data:
-  PGHOST: postgres-postgresql.default.svc.cluster.local
-  PGPORT: "5432"
-  PGDATABASE: rollmein_prod
-  REDIS_HOST: redis-master.default.svc.cluster.local

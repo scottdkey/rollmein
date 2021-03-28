@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: postgres
+  labels:
+    app: rollmein
+    tier: postgres
+spec:
+  ports:
+    - port: 5423
+      name: postgres
+  clusterIP: None
+  selector:
+    app: rollmein
+    tier: postgres
+    component: postgres

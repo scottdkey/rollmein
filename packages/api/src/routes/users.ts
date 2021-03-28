@@ -25,6 +25,7 @@ router.post(`/`, async (ctx: ParameterizedContext) => {
 
 router.delete(`/:uuid`, async (ctx: ParameterizedContext) => {
   const { uuid } = ctx.params
+  
   ctx.body = `Delete User ${uuid}`
 });
 router.patch(`/:uuid`, async (ctx: ParameterizedContext) => { ctx.body = `Patch user ${ctx.params.uuid}` })

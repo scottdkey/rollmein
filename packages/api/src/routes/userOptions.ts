@@ -22,7 +22,7 @@ router.get(`/:uuid`, async (ctx: ParameterizedContext) => {
 })
 router.post(`/:uuid`, async (ctx: ParameterizedContext) => {
   const { uuid } = ctx.params
-  if (checkIfOptionsExist(uuid)) {
+  if (await checkIfOptionsExist(uuid)) {
     ctx.throw(422, "Error - This user Options object already exists")
   } else {
     await addUserOptions(ctx.params.uuid)
