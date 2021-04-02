@@ -1,40 +1,53 @@
-.Nav-Bar {
-  background-color: $headerBackgroundColor;
+@import "./Themes.scss";
+
+.NavBar {
+  background-color: $primary;
   position: relative;
   height: 100%;
   width: 100%;
   margin: 0px;
   padding: 20px;
   height: 100%;
-  max-height: 200px;
+  max-height: 50px;
+}
+
+.Nav-Section {
+  position: absolute;
+  bottom: 25%;
+}
+.Left {
+  @extend .Nav-Section;
   .title {
-    font-size: 50px;
+    font-size: 20px;
     margin: 0px;
     padding: 0px;
+    color: $blockQuoteColor;
   }
-  .Nav-Section {
-    display: inline;
-    position: relative;
-    .Nav-Item {
-      padding: 5px;
-      font-size: 20px;
-      text-decoration: none;
-      &:hover {
-        background-color: $secondary;
-      }
-    }
-    .Nav-Item-Active {
-      background-color: $accent;
-    }
+  &:hover {
+    background-color: $blockQuoteColor;
   }
-  .Left {
-    @extend .Nav-Section;
-    width: 50%;
+}
+.Right {
+  @extend .Nav-Section;
+  right: 50px;
+}
+.Center {
+  @extend .Nav-Section;
+  left: 50%;
+  right: 50%;
+}
+.Nav-Button {
+  background-color: $buttonColor;
+  border-radius: 10px;
+  color: $textColor;
+  outline: none;
+  border: none;
+  &:hover {
+    background-color: $buttonHover;
   }
-  .Right {
-    @extend .Nav-Section;
-    float: right;
-    position: relative;
-    top: -50px;
+  &:active {
+    background-color: $textAccent;
+    outline: none;
+    border: none;
   }
 }

@@ -1,47 +1,48 @@
-// eslint-disable-next-line
-import { AppBar, Toolbar, Typography, Button, IconButton } from "@material-ui/core"
-import MenuIcon from "@material-ui/icons/Menu"
 import { useAuth } from "./providers/AuthProvider";
 import { usePlayerData } from "./providers/PlayerProvider";
+import Drawer from "rsuite"
+import "../styles/NavBar.scss"
 
 const Navbar = () => {
   const { authenticated } = useAuth()!;
   const { toggleShowPlayers } = usePlayerData()!;
 
   const Left = () => (
-    <>
-      <h1 className="Title">
-        {authenticated ? "Roll Me In" : "Roll Me In"}
-      </h1>
-      <div className="players-button" onClick={toggleShowPlayers}>
-        Players
-      </div>
-    </>
+    <div className="Left">
+      <h2 className="title">RollMeIn</h2>
+
+    </div>
   );
+  const Center = () => (
+    <div className="Center">
+      <button onClick={toggleShowPlayers} className="Nav-Button">
+        Players
+      </button>
+    </div>
+  )
 
   const Right = () => {
     if (authenticated) {
       return (
-        <>
-        </>
+        <div className="Right">
+          <button className="Nav-Button">Logout</button>
+        </div>
       );
     } else {
       return (
-        <>
-        </>
+        <div className="Right">
+          <button className="Nav-Button">Options</button>
+          <button className="Nav-Button">Login</button>
+        </div>
       );
     }
   };
   return (
-    <AppBar position="static">
-      <Toolbar>
-        <IconButton edge="start" color="inherit" aria-label="menu">
-          <MenuIcon />
-        </IconButton>
-        <Typography variant="h6">RollMeIn</Typography>
-        <Button color="inherit">Login</Button>
-      </Toolbar>
-    </AppBar>
+    <div className="NavBar">
+      <Left />
+      <Center />
+      <Right />
+    </div>
   );
 };
 
