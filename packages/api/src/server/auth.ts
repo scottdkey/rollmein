@@ -10,17 +10,18 @@ const LocalStrategy = passportLocal.Strategy;
 type User = {
   id?: string;
 }
+const localStratOptions = { usernameField: 'email' };
 passport.serializeUser((user: User, done) => {
   done(null, user.id)
-  passport.deserializeUser(async (uuid: string, done) => {
-    await getUserByUUID(uuid).then((user) => done(null, user)).catch(e => done(e, undefined))
+})
+passport.deserializeUser(async (uuid: string, done) => {
+  await getUserByUUID(uuid).then((user) => done(null, user)).catch(e => done(e, undefined))
 
-  });
-
-  const localStratOptions = { usernameField: 'email' };
-
-  passport.use(
-    new LocalStrategy(localStratOptions, async (username: string, password: string, done) => {
+})
+passport.use(
+  new LocalStrategy(
+    localStratOptions,
+    async (username: string, password: string, done) => {
       await getUserByEmail(username).then((user) => {
         if (!user) {
           return done(null, false, { message: 'Incorrect username.' });
@@ -33,21 +34,3 @@ passport.serializeUser((user: User, done) => {
         return done(e);
       })
     }))
-  // const fbStratOptions = {
-  //   clientID: keys.FACEBOOK_CID,
-  //   clientSecret: keys.FACEBOOK_CS,
-  //   callbackURL: "/auth/facebook/callback"
-  // }
-
-  // passport.use(new FacebookStrategy(fbStratOptions, (token, tokenSecret, profile, done) => {
-  //   knex("users").where({ id: profile.id }).then(results => {
-  //     if (!results) {
-  //       return knex('users').insert({ ...profile }).returning("*").then(user => {
-  //         return done(null, user)
-  //       })
-  //     } else {
-  //       return done(null, results[0])
-  //     }
-  //   })
-  // }))
-})

@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: rollmein
+    tier: backend
+  name: rollmein-api
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: rollmein
+      tier: backend
+  template:
+    metadata:
+      labels:
+        app: rollmein
+        tier: backend
+    spec:
+      containers:
+        - envFrom:
+            - configMapRef:
+                name: rollmein-api-config
+          image: scottdkey/rollmein_api:1.0.0
+          imagePullPolicy: Always
+          name: rollmein-api
+          ports:
+            - containerPort: 5000
+
+          resources:
+            limits:
+              memory: "128Mi"
+              cpu: "500m"

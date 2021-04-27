@@ -35,4 +35,3 @@ export interface newPlayerInterface {
   inTheRoll: boolean;
   userId: string;
 }
-

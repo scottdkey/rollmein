@@ -1,0 +1,18 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: rollmein-api-config
+data:
+  PGPORT: "5432"
+  PGHOST: postgres
+  PGUSER: postgres_bot
+  PGPASSWORD: r0llm3In_admin
+  PGDATABASE: rollmein_prod
+  PORT: "5000"
+  NODE_ENV: production
+  DEVELOPMENT_DB: rollmein_dev
+  TEST_DB: rollmein_test
+  PRODUCTION_DB: rollmein_prod
+  BASE_URL: /api/v1
+  REDIS_HOST: redis
+  SECRETKEY: 213j123d12jio2138d192dj2139d

@@ -4,11 +4,11 @@ services:
     image: postgres
     restart: always
     env_file:
-      - ./.env
+      - .env
     environment:
       - POSTGRES_USER=${PGUSER}
-      - POSTGRES_PASSWORD=${PGPASS}
-      - POSTGRES_DB=${PGDB}
+      - POSTGRES_PASSWORD=${PGPASSWORD}
+      - POSTGRES_DB=${PGDATABASE}
     ports:
       - "5432:5432"
     expose:
@@ -26,21 +26,23 @@ services:
     build:
       context: ./packages/api
       dockerfile: Dockerfile.dev
+    volumes:
+      - ./api/src:/usr/api/src
     command: bash -c 'while !/dev/tcp/database/5432; do sleep 1; done; yarn dev'
     env_file:
       - .env
     environment:
       - NODE_ENV=${NODE_ENV}
-      - PGPASSWORD=${PGPASS}
+      - PGPASSWORD=${PGPASSWORD}
       - PGUSER=${PGUSER}
       - PGPORT=${PGPORT}
       - PORT=${API_SERVER_PORT}
-      - PGDATABASE=${PGDB}
+      - PGDATABASE=${PGDATABASE}
       - REDIS_HOST=redis
       - PGHOST=database
-      - DEVELOPMENT_DATABASE=${DEVELOPMENT_DATABASE}
-      - TEST_DATABASE=${TEST_DATABASE}
-      - PRODUCTION_DATABASE=${PRODUCTION_DATABASE}
+      - DEVELOPMENT_DATABASE=${DEVELOPMENT_DB}
+      - TEST_DATABASE=${TEST_DB}
+      - PRODUCTION_DATABASE=${PRODUCTION_DB}
     ports:
       - 5000:5000
     expose:
@@ -48,3 +50,20 @@ services:
     depends_on:
       - database
       - redis
+  frontend:
+    image: scottdkey/rollmein_frontend
+    build:
+      context: ./packages/frontend
+      dockerfile: Dockerfile.dev
+    volumes:
+      - ./frontend/src:/usr/app/src
+    env_file:
+      - .env
+    environment:
+      - REACT_APP_API_HOST=${API_BASE_URL}
+    ports:
+      - 3000:3000
+    expose:
+      - 3000
+    depends_on:
+      - api

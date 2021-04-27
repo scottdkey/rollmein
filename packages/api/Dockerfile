@@ -12,9 +12,9 @@ RUN yarn build
 FROM node:14-slim
 WORKDIR /usr/app
 COPY package.json .
-RUN npm install --only=production
+RUN yarn install --production
 COPY --from=build /usr/app/build ./build
 
 EXPOSE 5000
 
-CMD ["npm", "run", "start"]
+CMD ["yarn", "start"]

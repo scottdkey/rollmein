@@ -12,7 +12,6 @@ router.get(`/status`, async (ctx: ParameterizedContext) => { await Auth.Status(c
 
 router.post("/register", async (ctx: ParameterizedContext, next) => {
   ctx = await addUser(ctx)
-
   await Auth.Login(ctx, next)
 });
 
