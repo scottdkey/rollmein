@@ -11,10 +11,9 @@
   "private": true,
   "scripts": {
     "start": "lerna run dev",
-    "production": "lerna prod",
-    "build": "lerna build",
-    "lint": "lerna, lint",
-    "start:api-dev": "cd api && npm run dev"
+    "production": "lerna run prod",
+    "build": "lerna run build",
+    "lint": "lerna lint"
   },
   "dependencies": {},
   "devDependencies": {
