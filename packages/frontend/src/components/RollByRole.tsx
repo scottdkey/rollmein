@@ -3,7 +3,6 @@ import React, { useState, useEffect } from "react";
 import { PlayerObject } from "../types/Interfaces";
 import RenderGroup from "./RenderGroup";
 import { usePlayerData } from "./providers/PlayerProvider";
-import { validCheck } from "./utils/BaseAppLogic";
 import axios from "axios"
 
 const RollByRole = () => {

@@ -1,5 +1,3 @@
-import { PlayerObject } from "../../types/Interfaces";
-
 type rollCountObject = {
   Tanks: number,
   Dps: number,
@@ -18,18 +16,5 @@ const validCheck = ({ Tanks, Dps, Healers, inCount }: rollCountObject) => {
   return isValid;
 };
 
-
-const placeHolderArray: Array<PlayerObject> = [
-  {
-    playerName: "",
-    tank: false,
-    dps: false,
-    healer: false,
-    locked: false,
-    inTheRoll: false,
-    id: 999999,
-    userId: "placeHolder",
-  },
-];
 
 export { validCheck }

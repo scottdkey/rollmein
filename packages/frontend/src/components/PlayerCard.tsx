@@ -90,19 +90,20 @@ const PlayerCard = ({ cardId }: PlayerCardType) => {
     const res = await updatePlayer(updatedPlayer);
     updateAllValues(res);
   };
-  const getPlayerFromDatabase = async () => {
-    const res = await GetOnePlayer(cardId!);
-    updateAllValues(res);
-  };
+
 
   useEffect(() => {
+    const getPlayerFromDatabase = async () => {
+      const res = await GetOnePlayer(cardId!);
+      updateAllValues(res);
+    };
     if (cardId) {
       getPlayerFromDatabase();
     } else {
       setEditOrCreate(false);
       updateAllValues(blankPlayer);
     }
-  }, [cardId]);
+  }, [blankPlayer, cardId]);
 
   function AddPlayerArea() {
     return (
@@ -191,9 +192,8 @@ const PlayerCard = ({ cardId }: PlayerCardType) => {
           />
 
           <Dice
-            className={`image ${
-              inTheRoll ? "in-the-roll-active" : "in-the-roll"
-            }`}
+            className={`image ${inTheRoll ? "in-the-roll-active" : "in-the-roll"
+              }`}
             onClick={() =>
               handleBooleanUpdate("inTheRoll", inTheRoll, setInTheRoll)
             }

@@ -2,7 +2,6 @@
 import React from "react";
 import { Route, Switch } from "react-router-dom";
 
-import ProtectedRoute from "./ProtectedRoute";
 import NotFound from "./NotFound";
 
 export default function ReactRouter() {

@@ -11,7 +11,6 @@ import { PlayerContextType } from "../../types/Types";
 import {
   PlayerUpdate,
   NewPlayer,
-  DeletePlayer,
   GetPlayers,
 } from "../utils/PlayerCRUD";
 
@@ -46,7 +45,6 @@ function PlayerProvider({ children }: any) {
     const newPlayers: Array<PlayerObject> = players!.filter(
       (player: PlayerObject) => player.id !== id
     );
-    const res = await DeletePlayer(id);
     setPlayers(newPlayers);
   };
 
@@ -82,17 +80,18 @@ function PlayerProvider({ children }: any) {
     validCheck(res.data);
   };
 
-  const pullPlayersFromDb = async () => {
-    const res = await GetPlayers(uuid!);
-    setPlayers(res);
-  };
+
 
   useEffect(() => {
+    const pullPlayersFromDb = async () => {
+      const res = await GetPlayers(uuid!);
+      setPlayers(res);
+    };
     if (authenticated) {
       pullPlayersFromDb();
       pullCountFromDB();
     }
-  }, [authenticated]);
+  }, [authenticated, uuid]);
 
   return (
     <PlayerContext.Provider
