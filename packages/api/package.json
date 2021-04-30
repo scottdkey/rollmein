@@ -12,7 +12,7 @@
     "test": "./node_modules/mocha/bin/mocha ./build/test/**/*.test.js",
     "watch:ts": "tsc -w",
     "watch:node": "nodemon ./build/server/index.js",
-    "build": "tsc",
+    "deploy": "tsc",
     "dockerbuild": "docker build -t scottdkey/rollmein_api:1.0.0 .",
     "lint": "eslint"
   },
