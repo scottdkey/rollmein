@@ -1,7 +1,7 @@
 import { ParameterizedContext } from "koa"
 import User, { userTable } from "../models/user"
 import bcrypt from "bcryptjs";
-import db from "../";
+import db from "..";
 import { addUserOptions } from "./UserOptions";
 
 const getAllUsers = async () => {

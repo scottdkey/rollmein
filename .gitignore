@@ -1,9 +1,8 @@
-node_modules/
+*/node_modules/
+*/build/
 postgresql/
 .env
 .css
-build/
+
 tmp/
-api/node_modules/
-web/node_modules/
 *.secrets.yml
