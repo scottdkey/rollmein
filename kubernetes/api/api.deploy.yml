@@ -4,7 +4,7 @@ metadata:
   labels:
     app: rollmein
     tier: backend
-  name: rollmein-api
+  name: api
 spec:
   replicas: 2
   selector:
@@ -18,15 +18,14 @@ spec:
         tier: backend
     spec:
       containers:
-        - envFrom:
-            - configMapRef:
-                name: rollmein-api-config
+        - name: api
           image: scottdkey/rollmein_api:1.0.0
           imagePullPolicy: Always
-          name: rollmein-api
           ports:
             - containerPort: 5000
-
+          envFrom:
+            - configMapRef:
+                name: api-config
           resources:
             limits:
               memory: "128Mi"

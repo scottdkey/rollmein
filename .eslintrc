@@ -11,6 +11,6 @@
   },
   "plugins": ["@typescript-eslint"],
   "rules": {
-    "exclude": "build"
+    "exclude": ["frontend/build/", "api/build/", "*/node_modules/"]
   }
 }

@@ -4,9 +4,9 @@ metadata:
   name: postgres-config
   labels:
     app: rollmein
-    tier: postgres
+    tier: backend
 data:
   POSTGRES_DB: rollmein_prod
-  POSTGRES_USER: rollmein_bot
-  POSTGRES_PASSWORD: r0llm3In_admin
+  POSTGRES_USER: postgres
+  POSTGRES_PASSWORD: postgres
   PGDATA: /var/lib/postgresql/data/pgdata

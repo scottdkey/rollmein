@@ -6,11 +6,11 @@ metadata:
     app: rollmein
     tier: postgres
 spec:
-  ports:
-    - port: 5423
-      name: postgres
-  clusterIP: None
+  type: ClusterIP
   selector:
     app: rollmein
     tier: postgres
-    component: postgres
+  ports:
+    - port: 5423
+      name: postgres
+      targetPort: 5432

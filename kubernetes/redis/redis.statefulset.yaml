@@ -1,16 +1,22 @@
 apiVersion: apps/v1
-kind: Deployment
+kind: StatefulSet
 metadata:
   name: redis
+  labels:
+    app: rollmein
+    tier: backend
 spec:
+  serviceName: "redis"
   replicas: 1
   selector:
     matchLabels:
-      app: redis
+      app: rollmein
+      tier: backend
   template:
     metadata:
       labels:
-        app: redis
+        app: rollmein
+        tier: backend
     spec:
       containers:
         - name: redis

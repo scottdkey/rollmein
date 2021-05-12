@@ -4,19 +4,19 @@ metadata:
   name: postgres
   labels:
     app: rollmein
-    tier: postgres
+    tier: backend
 spec:
   serviceName: "postgres"
   replicas: 1
   selector:
     matchLabels:
       app: rollmein
-      tier: postgres
+      tier: backend
   template:
     metadata:
       labels:
         app: rollmein
-        tier: postgres
+        tier: backend
     spec:
       containers:
         - name: postgres
@@ -37,4 +37,4 @@ spec:
         accessModes: ["ReadWriteOnce"]
         resources:
           requests:
-            storage: 1Gi
+            storage: 10Gi

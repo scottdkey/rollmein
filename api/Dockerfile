@@ -1,4 +1,4 @@
-FROM node:14-slim as build
+FROM node:16-alpine3.13 as build
 
 WORKDIR /usr/app
 COPY package.json .
@@ -7,9 +7,9 @@ RUN yarn
 
 COPY . .
 
-RUN yarn build
+RUN yarn ts
 
-FROM node:14-slim
+FROM node:16-alpine3.13
 WORKDIR /usr/app
 COPY package.json .
 RUN yarn install --production

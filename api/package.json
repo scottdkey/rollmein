@@ -10,13 +10,12 @@
     "start": "node ./build/server/index.js",
     "dev": "run-p watch:*",
     "test": "./node_modules/mocha/bin/mocha ./build/test/**/*.test.js",
+    "lint": "eslint",
     "watch:ts": "tsc -w",
     "watch:node": "nodemon ./build/server/index.js",
-    "deploy": "tsc",
-    "build": "run-s deploy dockerBuild",
-    "version": "VERSION=$(npm version)",
-    "dockerBuild": "docker build -t scottdkey/rollmein_api:$VERSION .",
-    "lint": "eslint"
+    "ts": "tsc",
+    "build": "docker build -t scottdkey/rollmein_api:$(echo $npm_package_version) .",
+    "dockerPush": "docker push scottdkey/rollmein_api:$(echo $npm_package_version)"
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",

@@ -4,7 +4,7 @@ metadata:
   labels:
     app: rollmein
     tier: backend
-  name: rollmein-api
+  name: api
 spec:
   type: NodePort
   ports:
@@ -12,5 +12,5 @@ spec:
       port: 5000
       targetPort: 5000
   selector:
-    app: rollmein-api
+    app: rollmein
     tier: backend
