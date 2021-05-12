@@ -25,8 +25,8 @@ services:
     image: scottdkey/rollmein_api
     build:
       context: ./packages/api
-      dockerfile: Dockerfile.dev
-    command: bash -c 'while !/dev/tcp/database/5432; do sleep 1; done; yarn dev'
+      dockerfile: Dockerfile
+    command: bash -c 'while !/dev/tcp/database/5432; do sleep 1; done; yarn start'
     env_file:
       - .env
     environment:
@@ -38,9 +38,6 @@ services:
       - PGDATABASE=${PGDB}
       - REDIS_HOST=redis
       - PGHOST=database
-      - DEVELOPMENT_DATABASE=${DEVELOPMENT_DATABASE}
-      - TEST_DATABASE=${TEST_DATABASE}
-      - PRODUCTION_DATABASE=${PRODUCTION_DATABASE}
     ports:
       - 5000:5000
     expose:
