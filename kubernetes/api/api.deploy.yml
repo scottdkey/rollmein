@@ -1,31 +1,70 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  labels:
-    app: rollmein
-    tier: backend
   name: api
+  labels:
+    app: rollmein_api
+    tier: backend
 spec:
-  replicas: 2
+  replicas: 1
   selector:
     matchLabels:
-      app: rollmein
+      app: rollmein_api
       tier: backend
   template:
     metadata:
       labels:
-        app: rollmein
+        app: rollmein_api
         tier: backend
     spec:
       containers:
         - name: api
-          image: scottdkey/rollmein_api:1.0.0
+          image: scottdkey/rollmein_api:1.0.2
           imagePullPolicy: Always
+          env:
+            - name: PGHOST
+              value: postgres
+            - name: PGPORT
+              valueFrom:
+                configMapKeyRef:
+                  name: postgres-config
+                  key: POSTGRES_PORT
+            - name: PGUSER
+              valueFrom:
+                configMapKeyRef:
+                  name: postgres-config
+                  key: POSTGRES_USER
+            - name: PGPASSWORD
+              valueFrom:
+                configMapKeyRef:
+                  name: postgres-config
+                  key: POSTGRES_PASSWORD
+            - name: PGDATABASE
+              valueFrom:
+                configMapKeyRef:
+                  name: postgres-config
+                  key: POSTGRES_DB
+            - name: PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: api-config
+                  key: PORT
+            - name: NODE_ENV
+              value: production
+            - name: BASE_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: api-config
+                  key: BASE_URL
+            - name: REDIS_HOST
+              value: redis
+            - name: SECRETKEY
+              valueFrom:
+                configMapKeyRef:
+                  name: api-config
+                  key: SECRETKEY
           ports:
             - containerPort: 5000
-          envFrom:
-            - configMapRef:
-                name: api-config
           resources:
             limits:
               memory: "128Mi"

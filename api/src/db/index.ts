@@ -9,26 +9,16 @@ dotenv.config()
 
 const pool: Pool = new Pool()
 
-const envdb = (env: string):string => {
-  let working_database = "placeholder"
-  const {PRODUCTION_DB, TEST_DB, DEVELOPMENT_DB} = process.env
-  if (env === "production") {
-    working_database = PRODUCTION_DB!
-  } else if (env === "test") {
-    working_database = TEST_DB!
-  } else {
-    working_database = DEVELOPMENT_DB!
-  }
-  process.env.PGDATABASE = working_database
-  return working_database
-}
-const db = envdb(process.env.NODE_ENV!)
+const db = process.env?.PGDATABASE || "rollmein_dev"
+console.log(process.env?.pgHost)
+console.log(db)
 const createDatabase = async () => {
   const client = await new Client({
     database: process.env.PGUSER,
   })
   await client.connect().then(() =>
     createDb(db, { client })
+
   ).catch((e) => {
     console.log(e.stack)
     setTimeout(() => {
@@ -66,7 +56,6 @@ const query = async (text: string, params: any[]): Promise<QueryResult<any>> => 
 
 export default {
   query,
-  envdb,
   migration,
   createDatabase,
   controllers,

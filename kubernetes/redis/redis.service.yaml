@@ -3,12 +3,12 @@ kind: Service
 metadata:
   name: redis
   labels:
-    app: rollmein
+    app: redis
     tier: backend
 spec:
   type: ClusterIP
   selector:
-    app: rollmein
+    app: redis
     tier: backend
   ports:
     - port: 6379

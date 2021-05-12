@@ -3,19 +3,19 @@ kind: StatefulSet
 metadata:
   name: redis
   labels:
-    app: rollmein
+    app: redis
     tier: backend
 spec:
   serviceName: "redis"
   replicas: 1
   selector:
     matchLabels:
-      app: rollmein
+      app: redis
       tier: backend
   template:
     metadata:
       labels:
-        app: rollmein
+        app: redis
         tier: backend
     spec:
       containers:
@@ -24,6 +24,7 @@ spec:
           resources:
             limits:
               memory: "128Mi"
-              cpu: "500m"
+              cpu: "200m"
           ports:
             - containerPort: 6379
+              name: redis

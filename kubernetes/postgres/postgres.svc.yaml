@@ -3,14 +3,14 @@ kind: Service
 metadata:
   name: postgres
   labels:
-    app: rollmein
-    tier: postgres
+    app: postgres
+    tier: backend
 spec:
   type: ClusterIP
   selector:
-    app: rollmein
-    tier: postgres
+    app: postgres
+    tier: backend
   ports:
-    - port: 5423
+    - port: 5432
       name: postgres
       targetPort: 5432

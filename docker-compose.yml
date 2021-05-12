@@ -4,11 +4,11 @@ services:
     image: postgres
     restart: always
     env_file:
-      - ./.env
+      - .env
     environment:
       - POSTGRES_USER=${PGUSER}
-      - POSTGRES_PASSWORD=${PGPASS}
-      - POSTGRES_DB=${PGDB}
+      - POSTGRES_PASSWORD=${PGPASSWORD}
+      - POSTGRES_DB=${PGDATABASE}
     ports:
       - "5432:5432"
     expose:
@@ -22,20 +22,17 @@ services:
     expose:
       - 6379
   api:
-    image: scottdkey/rollmein_api
-    build:
-      context: ./packages/api
-      dockerfile: Dockerfile
+    image: scottdkey/rollmein_api:1.0.2
     command: bash -c 'while !/dev/tcp/database/5432; do sleep 1; done; yarn start'
     env_file:
       - .env
     environment:
       - NODE_ENV=${NODE_ENV}
-      - PGPASSWORD=${PGPASS}
+      - PGPASSWORD=${PGPASSWORD}
       - PGUSER=${PGUSER}
       - PGPORT=${PGPORT}
       - PORT=${API_SERVER_PORT}
-      - PGDATABASE=${PGDB}
+      - PGDATABASE=${PGDATABASE}
       - REDIS_HOST=redis
       - PGHOST=database
     ports:

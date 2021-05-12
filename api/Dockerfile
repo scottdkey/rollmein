@@ -1,4 +1,4 @@
-FROM node:16-alpine3.13 as build
+FROM node:16-buster-slim as build
 
 WORKDIR /usr/app
 COPY package.json .
@@ -9,7 +9,7 @@ COPY . .
 
 RUN yarn ts
 
-FROM node:16-alpine3.13
+FROM node:16-buster-slim
 WORKDIR /usr/app
 COPY package.json .
 RUN yarn install --production
