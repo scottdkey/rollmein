@@ -1,20 +1,20 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: api
+  name: rollmein-api
   labels:
-    app: rollmein_api
+    app: rollmein-api
     tier: backend
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: rollmein_api
+      app: rollmein-api
       tier: backend
   template:
     metadata:
       labels:
-        app: rollmein_api
+        app: rollmein-api
         tier: backend
     spec:
       containers:
@@ -61,7 +61,7 @@ spec:
             - name: SECRETKEY
               valueFrom:
                 configMapKeyRef:
-                  name: api-config
+                  name: rollmein-api-config
                   key: SECRETKEY
           ports:
             - containerPort: 5000

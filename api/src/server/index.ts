@@ -17,6 +17,7 @@ import './auth';
 dotenv.config()
 const PORT: number = parseInt(process.env.PORT!) || 1337;
 const app: Koa = new Koa();
+const { REDIS_HOST } = process.env
 
 //body parser
 app.use(bodyParser({}));
@@ -29,7 +30,7 @@ db.migration();
 app.keys = [process.env.SECRETKEY!];
 app.use(session({
   store: redisStore({
-    host: process.env.REDIS_HOST
+    host: REDIS_HOST!
   })
 }, app));
 
