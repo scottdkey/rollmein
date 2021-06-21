@@ -12,7 +12,7 @@ jobs:
     environment: CD
     steps:
       - uses: actions/checkout@v2
-        run: cd api
+      - run: cd api
 
       - uses: benjlevesque/short-sha@v1.2
         id: short-sha

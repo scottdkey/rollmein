@@ -22,7 +22,7 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
-        run: cd api
+      - run: cd api
       - name: Use Node.js ${{ matrix.node }}
         uses: actions/setup-node@v2
         with:
