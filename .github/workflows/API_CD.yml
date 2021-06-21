@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: ./api
+        working-directory: ./api/kubernetes
     steps:
       - uses: actions/checkout@v2
 
@@ -21,35 +21,38 @@ jobs:
           length: 6
 
       - name: Update deployment manifest with current image
-        run: TAG=$(echo ${{steps.short-sha.outputs.sha}}) && sed -i 's|<IMAGE>|scottdkey/rollmein:'${TAG}'|' $GITHUB_WORKSPACE/kubernetes/api.deploy.yaml
+        run: TAG=$(echo ${{steps.short-sha.outputs.sha}}) && sed -i 's|<IMAGE>|scottdkey/rollmein_api:'${TAG}'|' $GITHUB_WORKSPACE/api/kubernetes/api.deploy.yaml
 
       - name: Update Service
         uses: actions-hub/kubectl@master
         env:
           KUBE_CONFIG: ${{ secrets.KUBECONFIG }}
         with:
-          args: apply -f /kubernetes/api.svc.yaml
+          context: ./api/kubernetes
+          args: apply -f api.svc.yaml
 
       - name: Update Configmap
         uses: actions-hub/kubectl@master
         env:
           KUBE_CONFIG: ${{ secrets.KUBECONFIG }}
         with:
-          args: apply -f /kubernetes/api.cm.yaml
+          context: ./api/kubernetes
+          args: apply -f api.cm.yaml
 
       - name: Update Deployment
         uses: actions-hub/kubectl@master
         env:
           KUBE_CONFIG: ${{ secrets.KUBECONFIG }}
         with:
-          args: apply -f /kubernetes/api.deploy.yaml
+          context: ./api/kubernetes
+          args: apply -f api.deploy.yaml
 
       - name: Verify Deployment
         uses: actions-hub/kubectl@master
         env:
           KUBE_CONFIG: ${{ secrets.KUBECONFIG }}
         with:
-          args: rollout status deployment/basic-api
+          args: rollout status deployment/rollmein_api
   on-failure:
     runs-on: ubuntu-latest
     if: ${{ github.event.workflow_run.conclusion == 'failure' }}

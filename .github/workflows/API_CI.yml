@@ -26,6 +26,7 @@ jobs:
 
       - name: Log into Docker Hub
         uses: docker/login-action@v1.9.0
+
         with:
           username: ${{secrets.DOCKERHUB_USERNAME}}
           password: ${{secrets.DOCKERHUB_PASSWORD}}
@@ -33,6 +34,7 @@ jobs:
       - name: Build and Push to Docker Hub
         uses: docker/build-push-action@v2
         with:
+          context: ./api
           push: true
           tags: scottdkey/rollmein_api:latest, scottdkey/rollmein_api:${{ steps.short-sha.outputs.sha }}
   on-failure:
