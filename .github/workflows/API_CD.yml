@@ -1,6 +1,3 @@
-# This workflow will do a clean install of node dependencies, build the source code and run tests across different versions of node
-# For more information see: https://help.github.com/actions/language-and-framework-guides/using-nodejs-with-github-actions
-
 name: API_CD
 
 on:
@@ -12,22 +9,48 @@ jobs:
   on-success:
     name: Deploy
     runs-on: ubuntu-latest
-    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    environment: CD
     steps:
-      - name: Checkout
-        uses: actions/checkout@v2
-      - run: cd api
-      - name: get-npm-version
-        id: package-version
-        uses: martinbeentjes/npm-get-version-action@master
-      - name: deploy to cluster
+      - uses: actions/checkout@v2
+        run: cd api
+
+      - uses: benjlevesque/short-sha@v1.2
+        id: short-sha
+        with:
+          length: 6
+
+      - name: Update deployment manifest with current image
+        run: TAG=$(echo ${{steps.short-sha.outputs.sha}}) && sed -i 's|<IMAGE>|scottdkey/rollmein:'${TAG}'|' $GITHUB_WORKSPACE/kubernetes/api.deploy.yaml
+
+      - name: Update Service
         uses: actions-hub/kubectl@master
         env:
           KUBE_CONFIG: ${{ secrets.KUBECONFIG }}
         with:
-          args: apply -f deployment.yaml
+          args: apply -f /kubernetes/api.svc.yaml
+
+      - name: Update Configmap
+        uses: actions-hub/kubectl@master
+        env:
+          KUBE_CONFIG: ${{ secrets.KUBECONFIG }}
+        with:
+          args: apply -f /kubernetes/api.cm.yaml
+
+      - name: Update Deployment
+        uses: actions-hub/kubectl@master
+        env:
+          KUBE_CONFIG: ${{ secrets.KUBECONFIG }}
+        with:
+          args: apply -f /kubernetes/api.deploy.yaml
+
+      - name: Verify Deployment
+        uses: actions-hub/kubectl@master
+        env:
+          KUBE_CONFIG: ${{ secrets.KUBECONFIG }}
+        with:
+          args: rollout status deployment/basic-api
   on-failure:
     runs-on: ubuntu-latest
     if: ${{ github.event.workflow_run.conclusion == 'failure' }}
     steps:
-      - run: echo "First workflow was a failure"
+      - run: echo "CI has failed"

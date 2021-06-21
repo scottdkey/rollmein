@@ -15,7 +15,7 @@ import db from "../db"
 import './auth';
 
 dotenv.config()
-const PORT: number = parseInt(process.env.PORT!) || 1337;
+const PORT: number = parseInt(process.env.PORT!) || 5000;
 const app: Koa = new Koa();
 const { REDIS_HOST } = process.env
 
