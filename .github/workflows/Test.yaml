@@ -16,7 +16,6 @@ jobs:
     defaults:
       run:
         working-directory: ./api
-
     strategy:
       matrix:
         node: [12.x, 14.x, 16.x]
