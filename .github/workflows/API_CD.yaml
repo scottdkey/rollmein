@@ -9,9 +9,7 @@ jobs:
   on-success:
     name: Deploy
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: ./api/kubernetes
+
     steps:
       - uses: actions/checkout@v2
 
@@ -21,34 +19,18 @@ jobs:
           length: 6
 
       - name: Update deployment manifest with current image
+        working-directory: ./api/kubernetes
         run: sed -i 's|<IMAGE>|scottdkey/rollmein_api:'${SHA}'|' ./api.deploy.yaml
 
       - name: what is happening? why can't I find the files?
         run: ls
 
-      - name: Update Service
+      - name: Update Manifiests
         uses: actions-hub/kubectl@master
         env:
           KUBE_CONFIG: ${{ secrets.KUBECONFIG }}
         with:
-          context: ./api/kubernetes
-          args: apply -f ./api.svc.yaml
-
-      - name: Update Configmap
-        uses: actions-hub/kubectl@master
-        env:
-          KUBE_CONFIG: ${{ secrets.KUBECONFIG }}
-        with:
-          context: ./api/kubernetes
-          args: apply -f ./api.cm.yaml
-
-      - name: Update Deployment
-        uses: actions-hub/kubectl@master
-        env:
-          KUBE_CONFIG: ${{ secrets.KUBECONFIG }}
-        with:
-          context: ./api/kubernetes
-          args: apply -f api.deploy.yaml
+          args: apply -f api/kubernetes/
 
       - name: Verify Deployment
         uses: actions-hub/kubectl@master
