@@ -23,27 +23,31 @@ jobs:
       - name: Update deployment manifest with current image
         run: sed -i 's|<IMAGE>|scottdkey/rollmein_api:'${SHA}'|' ./api.deploy.yaml
 
+      - name: what is happening? why can't I find the files?
+        run: ls
+
       - name: Update Service
         uses: actions-hub/kubectl@master
         env:
           KUBE_CONFIG: ${{ secrets.KUBECONFIG }}
         with:
-          args: apply -f api.svc.yaml
+          context: ./api/kubernetes
+          args: apply -f ./api.svc.yaml
 
       - name: Update Configmap
         uses: actions-hub/kubectl@master
         env:
           KUBE_CONFIG: ${{ secrets.KUBECONFIG }}
         with:
-          # context: ./api/kubernetes
-          args: apply -f api.cm.yaml
+          context: ./api/kubernetes
+          args: apply -f ./api.cm.yaml
 
       - name: Update Deployment
         uses: actions-hub/kubectl@master
         env:
           KUBE_CONFIG: ${{ secrets.KUBECONFIG }}
         with:
-          # context: ./api/kubernetes
+          context: ./api/kubernetes
           args: apply -f api.deploy.yaml
 
       - name: Verify Deployment
