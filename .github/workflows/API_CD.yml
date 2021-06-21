@@ -9,10 +9,11 @@ jobs:
   on-success:
     name: Deploy
     runs-on: ubuntu-latest
-    environment: CD
+    defaults:
+      run:
+        working-directory: ./api
     steps:
       - uses: actions/checkout@v2
-      - run: cd api
 
       - uses: benjlevesque/short-sha@v1.2
         id: short-sha

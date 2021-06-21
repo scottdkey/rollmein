@@ -12,8 +12,10 @@ on:
 jobs:
   test:
     name: Test
-    environment: testing
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./api
 
     strategy:
       matrix:
@@ -22,14 +24,15 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
-      - run: cd api
       - name: Use Node.js ${{ matrix.node }}
         uses: actions/setup-node@v2
         with:
           node-version: ${{ matrix.node }}
 
       - name: Install Dependencies
+        working-directory: ./api
         run: yarn --prefer-offline
 
       - name: Test Suite
+        working-directory: ./api
         run: yarn test
