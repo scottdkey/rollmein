@@ -19,7 +19,8 @@ jobs:
         id: short-sha
         with:
           length: 6
-
+      - run: pwd
+      - run: ls
       - name: Update deployment manifest with current image
         run: TAG=$(echo ${{steps.short-sha.outputs.sha}}) && sed -i 's|<IMAGE>|scottdkey/rollmein_api:'${TAG}'|' $GITHUB_WORKSPACE/api.deploy.yaml
 
