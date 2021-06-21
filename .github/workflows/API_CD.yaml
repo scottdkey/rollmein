@@ -19,9 +19,9 @@ jobs:
         id: short-sha
         with:
           length: 6
-          
+
       - name: Update deployment manifest with current image
-        run:  sed -i 's|<IMAGE>|scottdkey/rollmein_api:'${SHA}'|' api.deploy.yaml
+        run: sed -i 's|<IMAGE>|scottdkey/rollmein_api:'${SHA}'|' ./api.deploy.yaml
 
       - name: Update Service
         uses: actions-hub/kubectl@master
