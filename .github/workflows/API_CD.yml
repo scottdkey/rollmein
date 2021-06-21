@@ -21,14 +21,13 @@ jobs:
           length: 6
 
       - name: Update deployment manifest with current image
-        run: TAG=$(echo ${{steps.short-sha.outputs.sha}}) && sed -i 's|<IMAGE>|scottdkey/rollmein_api:'${TAG}'|' $GITHUB_WORKSPACE/api/kubernetes/api.deploy.yaml
+        run: TAG=$(echo ${{steps.short-sha.outputs.sha}}) && sed -i 's|<IMAGE>|scottdkey/rollmein_api:'${TAG}'|' $GITHUB_WORKSPACE/api.deploy.yaml
 
       - name: Update Service
         uses: actions-hub/kubectl@master
         env:
           KUBE_CONFIG: ${{ secrets.KUBECONFIG }}
         with:
-          context: ./api/kubernetes
           args: apply -f api.svc.yaml
 
       - name: Update Configmap
@@ -36,7 +35,7 @@ jobs:
         env:
           KUBE_CONFIG: ${{ secrets.KUBECONFIG }}
         with:
-          context: ./api/kubernetes
+          # context: ./api/kubernetes
           args: apply -f api.cm.yaml
 
       - name: Update Deployment
@@ -44,7 +43,7 @@ jobs:
         env:
           KUBE_CONFIG: ${{ secrets.KUBECONFIG }}
         with:
-          context: ./api/kubernetes
+          # context: ./api/kubernetes
           args: apply -f api.deploy.yaml
 
       - name: Verify Deployment
