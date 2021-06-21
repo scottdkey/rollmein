@@ -2,7 +2,7 @@ name: API_CD
 
 on:
   workflow_run:
-    workflows: ["CI"]
+    workflows: ["API_CI"]
     types: [completed]
 
 jobs:
