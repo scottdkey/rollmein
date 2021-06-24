@@ -36,6 +36,8 @@ const Login = async (ctx: ParameterizedContext, next: Next): Promise<Parameteriz
         if (err) {
           ctx.body = { info };
           return next();
+        } else {
+          return next()
         }
       });
       user = await addLastLoginTimeStamp(user.id)

@@ -10,4 +10,6 @@ data:
   POSTGRES_USER: postgres
   POSTGRES_PASSWORD: postgres
   POSTGRES_PORT: "5432"
-  PGDATA: /var/lib/postgresql/data/pgdata
+  # this must be a sub directory of the mounted path
+  # reference postgres.ss.yaml in the volumeMounts.mountPath
+  PGDATA: /var/lib/postgresql/data/rollmeinData

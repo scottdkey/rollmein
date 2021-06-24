@@ -3,6 +3,7 @@
 postgresql/
 .env
 .css
+*/dist/
 
 tmp/
 *.secrets.yml

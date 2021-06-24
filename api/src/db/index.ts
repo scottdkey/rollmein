@@ -10,8 +10,7 @@ dotenv.config()
 const pool: Pool = new Pool()
 
 const db = process.env?.PGDATABASE || "rollmein_dev"
-console.log(process.env?.pgHost)
-console.log(db)
+
 const createDatabase = async () => {
   const client = await new Client({
     database: process.env.PGUSER,
@@ -32,7 +31,7 @@ const createDatabase = async () => {
 const migration = async (): Promise<void> => {
   const client = new Client({})
   await client.connect().then(async () => {
-    await migrate({ client }, "build/db/migrations")
+    await migrate({ client }, "dist/db/migrations")
   }).catch((e) => {
     console.log(e.stack)
     setTimeout(() => {

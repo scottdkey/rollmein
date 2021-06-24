@@ -1,25 +1,26 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: api
+  name: rollmein-api
   labels:
-    app: rollmein_api
+    app: rollmein-api
     tier: backend
 spec:
   replicas: 1
+  revisionHistoryLimit: 2
   selector:
     matchLabels:
-      app: rollmein_api
+      app: rollmein-api
       tier: backend
   template:
     metadata:
       labels:
-        app: rollmein_api
+        app: rollmein-api
         tier: backend
     spec:
       containers:
         - name: api
-          image: scottdkey/rollmein_api:1.0.2
+          image: <IMAGE>
           imagePullPolicy: Always
           env:
             - name: PGHOST
@@ -47,25 +48,28 @@ spec:
             - name: PORT
               valueFrom:
                 configMapKeyRef:
-                  name: api-config
+                  name: rollmein-api-config
                   key: PORT
             - name: NODE_ENV
               value: production
             - name: BASE_URL
               valueFrom:
                 configMapKeyRef:
-                  name: api-config
+                  name: rollmein-api-config
                   key: BASE_URL
             - name: REDIS_HOST
               value: redis
             - name: SECRETKEY
               valueFrom:
                 configMapKeyRef:
-                  name: api-config
+                  name: rollmein-api-config
                   key: SECRETKEY
           ports:
             - containerPort: 5000
           resources:
-            limits:
+            requests:
               memory: "128Mi"
-              cpu: "500m"
+              cpu: "0.4m"
+            limits:
+              memory: "256Mi"
+              cpu: "0.5m"
