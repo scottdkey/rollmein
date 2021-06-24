@@ -26,10 +26,12 @@ db.createDatabase();
 db.migration();
 //sessions
 
-app.keys = [process.env.SECRETKEY!];
+const REDIS_HOST = process.env.REDIS_HOST ? process.env.REDIS_HOST : "localhost"
+
+app.keys = [process.env.SECRETKEY!]
 app.use(session({
   store: redisStore({
-    host: process.env.REDIS_HOST
+    host: REDIS_HOST
   })
 }, app));
 
