@@ -6,7 +6,7 @@ metadata:
     tier: backend
   name: rollmein-api
 spec:
-  type: LoadBalancer
+  type: ClusterIP
   selector:
     app: rollmein-api
     tier: backend
@@ -15,4 +15,3 @@ spec:
       name: http
       port: 80
       targetPort: 5000
-      nodePort: 30037
