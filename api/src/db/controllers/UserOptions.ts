@@ -1,6 +1,6 @@
 import db from "../index";
-import { userTable } from "../models/user";
-import UserOptions, { UserOptionsInterface, userOptionsTable } from "../models/userOptions"
+import { userTable } from "../entities/user";
+import UserOptions, { UserOptionsInterface, userOptionsTable } from "../entities/userOptions"
 
 
 interface UserOptionsDatabaseInterface {

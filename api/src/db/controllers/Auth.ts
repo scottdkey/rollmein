@@ -3,23 +3,27 @@ import passport from "koa-passport";
 import { addLastLoginTimeStamp } from "./Users";
 
 type authStatus = {
-  id?: string;
-  verified: boolean;
-  error?: string;
+  id: string | null,
+  error: string | null
 }
 
 export const checkAuthStatus = async (ctx: DefaultContext): Promise<authStatus> => {
   if (ctx.isAuthenticated()) {
-    const { id } = ctx.state.user
-    return { id, verified: true }
+    return {
+      id: ctx.state.user.id,
+      error: null
+    }
   } else {
-    return { error: "Not Authenticated", verified: false }
+    return {
+      id: null,
+      error: "Not Authorized"
+    }
   }
 }
 
-const Status = async (ctx: ParameterizedContext): Promise<ParameterizedContext> => {
+export const Me = async (ctx: ParameterizedContext): Promise<ParameterizedContext> => {
   const status = await checkAuthStatus(ctx)
-  if (status.verified === true) {
+  if (status.id) {
     ctx.type = "html";
     ctx.body = status.id
   } else {
@@ -29,7 +33,7 @@ const Status = async (ctx: ParameterizedContext): Promise<ParameterizedContext> 
   return ctx
 }
 
-const Login = async (ctx: ParameterizedContext, next: Next): Promise<ParameterizedContext> => {
+export const Login = async (ctx: ParameterizedContext, next: Next): Promise<ParameterizedContext> => {
   return passport.authenticate("local", async (err: Error, user, info) => {
     if (user) {
       ctx.login(user, (err: Error) => {
@@ -53,7 +57,7 @@ const Login = async (ctx: ParameterizedContext, next: Next): Promise<Parameteriz
     }
   })(ctx, next);
 }
-const Logout = async (ctx: ParameterizedContext): Promise<ParameterizedContext> => {
+export const Logout = async (ctx: ParameterizedContext): Promise<ParameterizedContext> => {
   if (ctx.isAuthenticated()) {
     ctx.logout();
     ctx.redirect("/login");
@@ -63,10 +67,4 @@ const Logout = async (ctx: ParameterizedContext): Promise<ParameterizedContext> 
     ctx.body = { success: false };
     ctx.throw(401);
   }
-}
-
-export default {
-  Status,
-  Login,
-  Logout
 }

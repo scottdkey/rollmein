@@ -1,5 +1,5 @@
 import db from "../index";
-import Player, { newPlayerInterface, playerInterface, playerTable } from "../models/player"
+import Player, { newPlayerInterface, playerInterface, playerTable } from "../entities/player"
 
 const conformToPlayerModel = (objectFromDB: any): Player => {
   return new Player({

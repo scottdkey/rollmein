@@ -1,6 +1,6 @@
 import Router from "koa-router";
 import Players from "../db/controllers/Players";
-import { playerTable } from "../db/models/player";
+import { playerTable } from "../db/entities/player";
 import { DefaultContext, ParameterizedContext } from "koa";
 import { checkAuthStatus } from "../db/controllers/Auth";
 

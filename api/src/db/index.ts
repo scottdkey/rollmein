@@ -1,34 +1,28 @@
 import { Pool, Client, QueryResult } from "pg"
 import { createDb, migrate } from "postgres-migrations"
 import controllers from "./controllers"
-import models from "./models"
-import dotenv from "dotenv"
+import models from "./entities"
+import { DATABASE_NAME } from "../constants"
 
-dotenv.config()
-
-
-const pool: Pool = new Pool()
-
-const db = process.env?.PGDATABASE || "rollmein_dev"
-
-const createDatabase = async () => {
+export const createDB = async () => {
   const client = await new Client({
     database: process.env.PGUSER,
   })
   await client.connect().then(() =>
-    createDb(db, { client })
+    createDb(DATABASE_NAME, { client })
 
   ).catch((e) => {
     console.log(e.stack)
     setTimeout(() => {
+      //if it cannot connect to postgres loop
       console.error('Retrying Connection in 3 seconds')
-      createDatabase()
+      createDB()
     }, 3000)
   }).finally(() =>
     client.end()
   )
 }
-const migration = async (): Promise<void> => {
+export const dbMigration = async (): Promise<void> => {
   const client = new Client({})
   await client.connect().then(async () => {
     await migrate({ client }, "dist/db/migrations")
@@ -36,13 +30,15 @@ const migration = async (): Promise<void> => {
     console.log(e.stack)
     setTimeout(() => {
       console.log("Retrying Connection in 3 seconds")
-      migration()
+      dbMigration()
     }, 3000)
   }).finally(() =>
     client.end()
   )
 }
-const query = async (text: string, params: any[]): Promise<QueryResult<any>> => {
+
+const pool = new Pool()
+export const query = async (text: string, params: any[]): Promise<QueryResult<any>> => {
   const start = Date.now()
   const db = await pool.connect()
   const res = await db.query(text, params)
@@ -53,10 +49,7 @@ const query = async (text: string, params: any[]): Promise<QueryResult<any>> => 
 }
 
 
-export default {
-  query,
-  migration,
-  createDatabase,
+export {
   controllers,
   models
 }

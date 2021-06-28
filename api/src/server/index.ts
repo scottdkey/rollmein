@@ -1,59 +1,55 @@
 import Koa from 'koa';
 import bodyParser from 'koa-bodyparser';
-import session from "koa-session";
-import passport from "koa-passport";
-import redisStore from "koa-redis";
-import dotenv from "dotenv"
-
+import { session } from "../db/redis";
 import playerRoutes from "../routes/players";
 import userRoutes from "../routes/users";
-import authRoutes from "../routes/auth";
 import indexRoutes from "../routes/index"
 import userOptionsRoutes from "../routes/userOptions"
 import rollRoutes from "../routes/rolls"
-import db from "../db"
-import './auth';
+import { createConnection } from 'typeorm';
+import { User } from '../db/entities/user';
 
-dotenv.config()
-const PORT: number = parseInt(process.env.PORT!) || 5000;
-const app: Koa = new Koa();
-const { REDIS_HOST } = process.env
+import { __port__, SECRET_KEY, __prod__, DATABASE_NAME, PG_USER, PG_PASS, PG_HOST, PG_PORT } from '../constants';
 
-//body parser
-app.use(bodyParser({}));
 
-//database
-db.createDatabase();
-db.migration();
-//sessions
+export async function main() {
+  const app: Koa = new Koa();
+  app.use(bodyParser({}));
 
-app.keys = [process.env.SECRETKEY!]
-app.use(session({
-  store: redisStore({
-    host: REDIS_HOST!
+
+  await createConnection({
+    type: 'postgres',
+    database: DATABASE_NAME,
+    username: PG_USER,
+    password: PG_PASS,
+    host: PG_HOST,
+    port: PG_PORT,
+    logging: true,
+    synchronize: true,
+    entities: [User]
   })
-}, app));
 
-//authentication
-import "./auth";
-app.use(passport.initialize());
-app.use(passport.session());
+  //sessions
 
-//routes
+  app.keys = [SECRET_KEY]
+  app.use(session);
 
-// app.use(serve(StaticSiteBuild));
-app.use(indexRoutes.routes())
-app.use(userRoutes.routes());
-app.use(playerRoutes.routes());
-app.use(userOptionsRoutes.routes())
-app.use(rollRoutes.routes())
-app.use(authRoutes.routes())
+
+  //routes
+  app.use(indexRoutes.routes())
+  app.use(userRoutes.routes());
+  app.use(playerRoutes.routes());
+  app.use(userOptionsRoutes.routes())
+  app.use(rollRoutes.routes())
 
 
 
-// server
-const server = app.listen(PORT, () => {
-  console.log(`Server listening on port: ${PORT}`);
-});
+  // server
+  app.listen(__port__, () => {
+    console.log(`Server listening on port: ${__port__}`);
+  });
 
-export default server;
+}
+
+
+

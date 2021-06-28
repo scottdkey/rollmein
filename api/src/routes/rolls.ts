@@ -14,8 +14,8 @@ router.get('/ffa', async (ctx: DefaultContext) => {
   if (res.error) {
     ctx.body = res.error
     ctx.throw(401)
-  } else if (res.verified === true) {
-    const players = await Players.getAllPlayers(res.id!)
+  } else if (res.id) {
+    const players = await Players.getAllPlayers(res.id)
     const inGroup = Rolls.createInGroup(players)
     const roll = await Rolls.FFARoll(inGroup)
     ctx.body = roll
@@ -31,8 +31,8 @@ router.get('/rbr', async (ctx: DefaultContext) => {
   if (res.error) {
     ctx.body = res.error
     ctx.throw(401)
-  } else if (res.verified === true) {
-    const players = await Players.getAllPlayers(res.id!)
+  } else if (res.id) {
+    const players = await Players.getAllPlayers(res.id)
     const inGroup = Rolls.createInGroup(players)
     const roll = await Rolls.rollByRole(inGroup)
     ctx.body = roll
@@ -48,8 +48,8 @@ router.get('/count', async (ctx: DefaultContext) => {
   if (res.error) {
     ctx.body = res.error
     ctx.throw(401)
-  } else if (res.verified === true) {
-    ctx.body = await Rolls.countRoles(res.id!)
+  } else if (res.id) {
+    ctx.body = await Rolls.countRoles(res.id)
     ctx.status = 200
   } else {
     ctx.error = "An unknown error has occurred."
