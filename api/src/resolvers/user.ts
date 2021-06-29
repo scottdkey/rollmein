@@ -113,9 +113,11 @@ export class UserResolver {
   me(@Ctx() { req }: MyContext) {
     // you are not logged in
     if (!req.session.userId) {
-      return null;
+      return null
+    } else {
+      return User.findOne(req.session.userId);
     }
-    return User.findOne(req.session.userId);
+
   }
 
   @Mutation(() => UserResponse)
@@ -135,24 +137,8 @@ export class UserResolver {
         username: options.username,
         password: hashedPassword,
         email: options.email
-      }).save()
-      //query builder version
-      // const result = await getConnection()
-      //   .createQueryBuilder()
-      //   .insert()
-      //   .into(User)
-      //   .values(
-      //     {
-      //       username: options.username,
-      //       password: hashedPassword,
-      //       email: options.email
-      //     }
-      //   ).returning("*")
-      //   .execute();
-      // user = result.raw[0];
+      }).save();
     } catch (err) {
-      //|| err.detail.includes("already exists")) {
-      // duplicate username error
       if (err.code === "23505") {
         return {
           errors: [
@@ -164,11 +150,11 @@ export class UserResolver {
         };
       }
     }
-
     // store user id session
     // this will set a cookie on the user
     // keep them logged in
     req.session.userId = user?.id!;
+
 
     return { user };
   }
@@ -205,7 +191,6 @@ export class UserResolver {
         ],
       };
     }
-
     req.session.userId = user.id;
 
     return {
@@ -213,9 +198,11 @@ export class UserResolver {
     };
   }
 
+
   @Mutation(() => Boolean)
   logout(@Ctx() { req, res }: MyContext): Promise<boolean> {
     return new Promise(resolve => req.session.destroy(err => {
+
       if (err) {
         console.error(err);
         resolve(false)

@@ -1,6 +1,6 @@
 import { User } from "./User";
 import { Field, ObjectType } from "type-graphql";
-import { BaseEntity, Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { BaseEntity, Column, CreateDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 
 
 @ObjectType()
@@ -36,6 +36,14 @@ export class Player extends BaseEntity {
   @Field()
   @Column({ type: 'boolean' })
   inTheRoll: boolean;
+
+  @Field(() => String)
+  @CreateDateColumn()
+  createdAt: Date;
+
+  @Field(() => String)
+  @UpdateDateColumn()
+  updatedAt: Date
 
 
 

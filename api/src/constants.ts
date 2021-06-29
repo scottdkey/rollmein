@@ -2,6 +2,7 @@ import dotenv from "dotenv"
 dotenv.config()
 
 export const __prod__ = process.env.NODE_ENV === 'production'
+export const __uri__ = process.env.frontend_uri ? process.env.frontend_uri : "http://localhost:3000"
 export const COOKIE_NAME = 'qid'
 export const FORGET_PASSWORD_PREFIX = 'forget-password:'
 export const __port__: number = parseInt(process.env.PORT!) || 5000;
