@@ -1,30 +1,34 @@
-// import Router from "koa-router";
-// import { DefaultContext, ParameterizedContext } from "koa"
+import Router from "koa-router";
+import { login, logout, me, register, UserResponse } from "../db/controllers/Users";
+const router = new Router();
 
-// import { userTable } from "../db/models/user";
-// import {db} from "../db";
+//current prefix is /api/v1/users
+router.prefix(`/user`)
 
-// const { addUser, getAllUsers, getUserByUUID } = db.controllers.Users
-// const router = new Router();
+router.get(`/me`, async (ctx) => { await me(ctx) });
 
-// //current prefix is /api/v1/users
-// router.prefix(`/api/v1/${userTable}`)
+router.post("/register", async (ctx, next) => {
+  const { username, email, password } = ctx.params.input
+  const res: UserResponse = await register({ username, email, password })
+  if (res.user) {
+    ctx.session!.userId = res.user.id
+  }
+  ctx.body = res
+  next()
+});
 
-// router.get(`/`, async (ctx: DefaultContext) => {
-//   ctx.body = await getAllUsers()
-// });
+router.post("/login", async (ctx, next) => {
+  const input = ctx.params.input
+  const res = await login(input)
+  if (res.user) {
+    ctx.session!.userId = res.user.id
+  }
+  ctx.body = res
+  next()
 
-// router.get(`/:uuid`, async (ctx: ParameterizedContext) => {
-//   const { uuid } = ctx.params
-//   ctx.body = await getUserByUUID(uuid)
-// });
+});
 
-// router.post(`/`, async (ctx: ParameterizedContext) => {
-//   await addUser(ctx).then(res => ctx = res).catch(e => ctx.throw(401, "Error unable to create user", e))
-// });
-
-// router.delete(`/:uuid`, async (ctx: ParameterizedContext) => {
-//   const { uuid } = ctx.params
+router.get("/logout", async (ctx, next) => { await logout(ctx, next) });
 
 //   ctx.body = `Delete User ${uuid}`
 // });

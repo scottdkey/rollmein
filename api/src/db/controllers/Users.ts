@@ -1,73 +1,181 @@
-// import { ParameterizedContext } from "koa"
-// import User, { userTable } from "../models/user"
-// import bcrypt from "bcryptjs";
-// import db from "../index";
-// import { addUserOptions } from "./UserOptions";
+import { Next, ParameterizedContext } from "koa"
+import { User } from "../../entites/User"
+import argon2 from "argon2"
+import { v4 } from "uuid"
+import { validateRegister } from "../../utils/validateRegister";
+import { redis } from "../redis"
+import { FORGET_PASSWORD_PREFIX } from "../../constants";
+import { sendEmail } from "../../utils/sendEmail";
 
-// const getAllUsers = async () => {
-//   const { rows } = await db.query(`SELECT * FROM ${userTable};`, []
-//   )
-//   const Users = rows.map(user => {
-//     return new User(user)
-//   })
-//   return Users
-// }
+class FieldError {
+  field: string;
+  message: string;
+}
 
-// const addLastLoginTimeStamp = async (id: string) => {
-//   const currentTime = new Date().toISOString()
-//   const values = [id, currentTime]
-//   const text = `UPDATE ${userTable} SET last_login = $2 WHERE id = $1 RETURNING *;`
-//   const { rows } = await db.query(text, values)
-//   return new User({ ...rows[0] })
-// }
-
-// const getUserByUUID = async (uuid: string) => {
-//   const values = [uuid]
-//   const text = `SELECT * FROM ${userTable} WHERE id=$1;`
-//   const { rows } = await db.query(text, values)
-//   return new User({ ...rows[0] })
-// }
-// const getUserByEmail = async (email: string) => {
-//   const values = [email]
-//   const text = `SELECT * FROM ${userTable} WHERE email=$1;`
-//   const { rows } = await db.query(text, values)
-//   return new User({ ...rows[0] })
-// }
-
-// const saltAndHashPass = (password: string) => {
-//   const salt = bcrypt.genSaltSync();
-//   const hash: string = bcrypt.hashSync(password, salt)
-//   return hash
-// }
-
-// const checkIfExistingUserByEmail = async (email: string) => {
-//   const res = await getUserByEmail(email)
-//   const booleanResponse = res.email! === email
-//   return booleanResponse
-// }
-// const addUser = async (ctx: ParameterizedContext) => {
-//   const password = saltAndHashPass(ctx.request.body.password)
-//   const newUser = new User({ ...ctx.request.body, password })
-//   const text =
-//     `INSERT INTO ${userTable}(email, password) VALUES($1, $2) RETURNING *;`
-//   const values = [newUser.email, newUser.password]
-//   const emailCheck = await checkIfExistingUserByEmail(newUser.email!)
-//   if (emailCheck) {
-//     ctx.throw(422, "Error, a user with this email address already exists")
-//   } else {
-//     const { rows } = await db.query(text, values)
-//     const currentUser = new User({ ...rows[0] })
-//     await addUserOptions(currentUser.id)
-//     ctx.body = { ...currentUser }
-//     ctx.status = 200
-//   }
-//   return ctx
-// }
+export class UserResponse {
+  errors?: FieldError[]
+  user?: User
+}
+export async function isAuth(ctx: ParameterizedContext, next: Next) {
+  if (!ctx.session?.userId) {
+    throw new Error('not authenticated')
+  }
+  return next()
+}
 
 
-// function comparePass(userPassword: string, databasePassword: string) {
-//   return bcrypt.compareSync(userPassword, databasePassword);
-// }
+export class UsernamePasswordInput {
+  username: string;
+  password: string;
+  email: string;
+}
+
+export async function changePassword(token: string, newPassword: string, ctx: ParameterizedContext): Promise<UserResponse> {
+  if (newPassword.length <= 2) {
+    return {
+      errors: [{
+        field: 'newPassword',
+        message: 'length must be greater than 2'
+      }]
+    }
+  }
+  const key = FORGET_PASSWORD_PREFIX + token
+  const userId = await redis.get(key)
+  if (!userId) {
+    return {
+      errors: [{
+        field: 'token',
+        message: "token expired"
+      }]
+    }
+  }
+  const user = await User.findOne(userId);
+  if (!user) {
+    return {
+      errors: [{
+        field: 'token',
+        message: 'user no longer exists'
+      }]
+    }
+  }
+  await User.update({ id: userId }, { password: await argon2.hash(newPassword) })
+  await redis.del(key)
+  ctx.session!.userId = user.id;
+  return { user }
+}
+
+export async function forgotPassword(email: string) {
+  const user = await User.findOne({ where: { email } })
+  const token = v4()
+  if (!user) {
+    //return true so as not to give away that we don't have a user with that email
+    return true
+  } else {
+
+    await redis.set(
+      FORGET_PASSWORD_PREFIX + token,
+      user.id,
+      "ex",
+      1000 * 60 * 60 * 24 * 3
+    )
+  }
+  await sendEmail(
+    email,
+    `<a href="http://localhost:3000/change-password/${token}">reset password</a>`
+
+  )
+  return true
+
+}
+
+export async function me(ctx: ParameterizedContext) {
+  if (!ctx.session?.userId) {
+    return null;
+  } else {
+    return User.findOne(ctx.session.userId)
+  }
+}
+
+export async function register(options: UsernamePasswordInput): Promise<UserResponse> {
+  const errors = validateRegister(options)
+  if (errors) {
+    return { errors }
+  }
+  const hashedPassword = await argon2.hash(options.password)
+  let user;
+  try {
+    user = await User.create({
+      username: options.username,
+      password: hashedPassword,
+      email: options.email
+    }).save()
+  } catch (err) {
+    if (err.code === "23505") {
+      return {
+        errors: [
+          {
+            field: "username",
+            message: "username already taken",
+          },
+        ],
+      };
+    }
+  }
 
 
-// export { addUser, getUserByUUID, getAllUsers, getUserByEmail, comparePass, addLastLoginTimeStamp }
+  return { user }
+
+}
+
+export async function login(options: { userNameOrEmail: string, password: string }): Promise<UserResponse> {
+  const user = await User.findOne(options.userNameOrEmail.includes('@') ? { where: { email: options.userNameOrEmail } } : { where: { username: options.userNameOrEmail } })
+  if (!user) {
+    return {
+      errors: [
+        {
+          field: "userNameOrEmail",
+          message: "that username doesn't exist"
+        }
+      ],
+
+    }
+  }
+  const valid = comparePass(user.password, options.password)
+  if (!valid) {
+    return {
+      errors: [
+        {
+          field: "password",
+          message: "incorrect password"
+        }
+      ]
+    }
+
+  }
+
+  return {
+    user
+  }
+}
+
+export async function logout(ctx: ParameterizedContext, next: Next): Promise<boolean> {
+  return new Promise(resolve => ctx.session?.destroy((err: Error) => {
+    if (err) {
+      console.error(err)
+      resolve(false)
+      return
+    } else {
+      resolve(true)
+      ctx.session = null
+    }
+    next()
+  }))
+
+}
+
+
+export function comparePass(userPassword: string, databasePassword: string) {
+  return argon2.verify(userPassword, databasePassword);
+}
+
+

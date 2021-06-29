@@ -1,20 +1,15 @@
-import { config } from "dotenv"
+import dotenv from "dotenv"
+dotenv.config()
 
-config()
-
-const { NODE_ENV, PORT, secretkey, FE_ORIGIN, REDIS_HOST } = process.env
-
-
-export const __prod__ = NODE_ENV === 'production'
+export const __prod__ = process.env.NODE_ENV === 'production'
 export const COOKIE_NAME = 'qid'
 export const FORGET_PASSWORD_PREFIX = 'forget-password:'
-export const __PORT__: String = PORT ? PORT : "4000"
-export const SECRET_KEY: string = __prod__ ? secretkey! : "developmentKey";
+export const __port__: number = parseInt(process.env.PORT!) || 5000;
+export const SECRET_KEY = process.env.secretkey ? process.env.secretkey : "developmentKey";
+export const REDIS_HOST = process.env.REDIS_HOST ? process.env.REDIS_HOST : "localhost"
+export const DATABASE_NAME = process.env.PGDATABASE ? process.env.PGDATABASE : "rollmein_dev"
 
-export const __uri__: string = FE_ORIGIN ? FE_ORIGIN : "http://localhost:3000"
-
-export const REDIS = REDIS_HOST ? REDIS_HOST : "http://localhost:6379"
-
-const { PGPORT, PGPASSWORD, PGUSER, PGDATABASE, PGHOST } = process.env
-
-export const __dbUri__: string = `postgres://${PGUSER}:${PGPASSWORD}@${PGHOST}:${PGPORT}/${PGDATABASE}`
+export const PG_USER = process.env.PGUSER ? process.env.PGUSER : 'postgres'
+export const PG_PASS = process.env.PGPASSWORD ? process.env.PGPASSWORD : 'postgres'
+export const PG_HOST = process.env.PGHOST ? process.env.PGHOST : 'localhost'
+export const PG_PORT = process.env.PGPORT ? parseInt(process.env.PGPORT) : 5432
