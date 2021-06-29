@@ -1,9 +1,10 @@
 import { Redis } from "ioredis"
-import { ParameterizedContext } from "koa"
+import { Request, Response } from "express"
 
 export type MyContext = {
+  req: Request;
+  res: Response;
   redis: Redis;
-  ctx: ParameterizedContext
 }
 
 declare module "express-session" {

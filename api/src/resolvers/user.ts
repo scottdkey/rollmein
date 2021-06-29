@@ -39,7 +39,7 @@ export class UserResolver {
   async changePassword(
     @Arg('token') token: string,
     @Arg('newPassword') newPassword: string,
-    @Ctx() { ctx }: MyContext
+    @Ctx() { redis, req }: MyContext
   ): Promise<UserResponse> {
     if (newPassword.length <= 2) {
       return {
@@ -51,7 +51,7 @@ export class UserResolver {
       }
     }
     const key = FORGET_PASSWORD_PREFIX + token
-    const userId = await ctx.cookies.get(key)
+    const userId = await redis.get(key)
     if (!userId) {
       return {
         errors: [{
@@ -73,8 +73,9 @@ export class UserResolver {
       }
     }
     await User.update({ id: userId }, { password: await argon2.hash(newPassword) })
-    await ctx.cookies.set(key, user.id)
+    await redis.del(key)
     //log in user after change password
+    req.session.userId = user.id;
 
     return { user }
   }
@@ -83,7 +84,7 @@ export class UserResolver {
   @Mutation(() => Boolean)
   async forgotPassword(
     @Arg("email") email: string,
-    @Ctx() { ctx }: MyContext
+    @Ctx() { redis }: MyContext
   ) {
     const user = await User.findOne({ where: { email } });
     if (!user) {
@@ -93,7 +94,7 @@ export class UserResolver {
 
     const token = v4();
 
-    await ctx.session?.set(
+    await redis.set(
       FORGET_PASSWORD_PREFIX + token,
       user.id,
       "ex",
@@ -109,20 +110,18 @@ export class UserResolver {
   }
 
   @Query(() => User, { nullable: true })
-  me(@Ctx() { ctx }: MyContext) {
+  me(@Ctx() { req }: MyContext) {
     // you are not logged in
-    if (!ctx.session?.userId) {
+    if (!req.session.userId) {
       return null;
-    } else {
-      return User.findOne(ctx.session.userId);
     }
-
+    return User.findOne(req.session.userId);
   }
 
   @Mutation(() => UserResponse)
   async register(
     @Arg("options") options: UsernamePasswordInput,
-    @Ctx() { ctx }: MyContext
+    @Ctx() { req }: MyContext
   ): Promise<UserResponse> {
     const errors = validateRegister(options)
     if (errors) {
@@ -137,7 +136,23 @@ export class UserResolver {
         password: hashedPassword,
         email: options.email
       }).save()
+      //query builder version
+      // const result = await getConnection()
+      //   .createQueryBuilder()
+      //   .insert()
+      //   .into(User)
+      //   .values(
+      //     {
+      //       username: options.username,
+      //       password: hashedPassword,
+      //       email: options.email
+      //     }
+      //   ).returning("*")
+      //   .execute();
+      // user = result.raw[0];
     } catch (err) {
+      //|| err.detail.includes("already exists")) {
+      // duplicate username error
       if (err.code === "23505") {
         return {
           errors: [
@@ -149,11 +164,11 @@ export class UserResolver {
         };
       }
     }
-    if (user != null && ctx.session != null) {
-      ctx.session.userId = user.id
-      ctx.state.userId = user?.id;
-    }
 
+    // store user id session
+    // this will set a cookie on the user
+    // keep them logged in
+    req.session.userId = user?.id!;
 
     return { user };
   }
@@ -162,7 +177,7 @@ export class UserResolver {
   async login(
     @Arg("userNameOrEmail") userNameOrEmail: string,
     @Arg("password") password: string,
-    @Ctx() { ctx }: MyContext
+    @Ctx() { req }: MyContext
   ): Promise<UserResponse> {
     const user = await User.findOne(
       userNameOrEmail.includes('@') ?
@@ -190,27 +205,26 @@ export class UserResolver {
         ],
       };
     }
-    if (ctx.session != null) {
-      ctx.session.userId = user.id
-      ctx.state.userId = user.id;
-    }
+
+    req.session.userId = user.id;
+
     return {
       user,
     };
   }
 
   @Mutation(() => Boolean)
-  logout(@Ctx() { ctx }: MyContext): Promise<boolean> {
-    return new Promise((resolve) => ctx.session?.destroy((err: Error) => {
+  logout(@Ctx() { req, res }: MyContext): Promise<boolean> {
+    return new Promise(resolve => req.session.destroy(err => {
       if (err) {
-        console.error('error', err)
+        console.error(err);
         resolve(false)
         return
       } else {
         resolve(true)
-        ctx.cookies.set(COOKIE_NAME, "")
+        res.clearCookie(COOKIE_NAME);
       }
-    }))
 
+    }))
   }
 }

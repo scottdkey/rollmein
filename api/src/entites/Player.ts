@@ -9,9 +9,10 @@ export class Player extends BaseEntity {
   @Field()
   @PrimaryGeneratedColumn()
   id!: number;
-  
+
   @ManyToOne(() => User, user => user.players)
   userId: User['id']
+
   @Field()
   @Column({ type: 'text' })
   playerName!: string;
@@ -37,5 +38,5 @@ export class Player extends BaseEntity {
   inTheRoll: boolean;
 
 
-  
+
 }
