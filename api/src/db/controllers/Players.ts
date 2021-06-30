@@ -1,7 +1,7 @@
 
-import { ParameterizedContext, Next } from "koa"
+import { ParameterizedContext } from "koa"
 import { getConnection } from "typeorm"
-import { Player } from "../entities/player"
+import { Player } from "../../entites/Player"
 import { isAuth } from "./Users"
 
 export async function players(userId: string, limit: number, cursor?: string): Promise<Player[]> {
@@ -28,20 +28,37 @@ type NewPlayer = {
   userId: String
 }
 
-export async function addPlayer(ctx: ParameterizedContext, next: Next): Promise<Player> {
-  if (isAuth(ctx, next))
-    const input = ctx.request.input
-  return await Player.create({
-    ...input,
-    userId
-  }).save()
+type Error = {
+  error: string
+}
+
+export async function addPlayer(ctx: ParameterizedContext): Promise<Player | Error> {
+  if (isAuth(ctx)) {
+    const input = ctx.body as NewPlayer
+    const userId: string = ctx.session?.userId
+    return await Player.create({
+      ...input,
+      userId
+    }).save()
+
+  } else {
+    return {
+      error: "not authorized, please sign in"
+    }
+  }
+
+
 }
 interface UpdatePlayer extends NewPlayer {
   id: number,
 }
 
-const updatePlayer = async (input: UpdatePlayer, id: number): Promise<Player> => {
-  const p = new Player(playerToUpdate)
+const updatePlayer = async (ctx: ParameterizedContext, id: number): Promise<Player> => {
+  if (isAuth(ctx)) {
+    const input = ctx.body as UpdatePlayer
+    const 
+    return await Player.update({ id }, { ...input })
+  }
   const values = [p.id, p.playerName, p.tank, p.dps, p.healer, p.locked, p.inTheRoll]
   const text = `UPDATE ${playerTable} SET player_name = $2, tank = $3, dps = $4, healer = $5, locked = $6, in_the_roll = $7 WHERE id = $1 RETURNING *;`
   const { rows } = await db.query(text, values)

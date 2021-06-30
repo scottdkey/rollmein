@@ -1,14 +1,6 @@
 import { Redis } from "ioredis"
-import { Request, Response } from "express"
+import { DefaultContext } from "koa"
 
 export type MyContext = {
-  req: Request;
-  res: Response;
-  redis: Redis;
-}
-
-declare module "express-session" {
-  interface Session {
-    userId: string
-  }
+  ctx: DefaultContext
 }

@@ -1,12 +1,12 @@
-// import Router from 'koa-router'
+import Router from 'koa-router'
 
-// const router = new Router()
+const router = new Router()
 
-// router.get('/', async (ctx) => {
-//   ctx.body = "This works!"
-// })
-// router.get('/test', async (ctx) => {
-//   ctx.body = "This test page is returning correctly"
-// })
+router.get('/', async (ctx) => {
+  ctx.body = "This works!"
+})
+router.get('/test', async (ctx) => {
+  ctx.body = "This test page is returning correctly"
+})
 
-// export default router;
+export default router;

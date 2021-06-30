@@ -1,13 +1,13 @@
-// import Router from "koa-router"
+import Router from "koa-router"
 
-// import Rolls from "../db/controllers/Rolls"
-// import Players from "../db/controllers/Players"
-// import { checkAuthStatus } from "../db/controllers/Auth"
-// import { DefaultContext } from "koa";
+import Rolls from "../db/controllers/Rolls"
+import Players from "../db/controllers/Players"
+import { isAuth } from "../db/controllers/Users"
+import { DefaultContext } from "koa";
 
-// const router = new Router();
+const router = new Router();
 
-// router.prefix('/api/v1/rolls')
+router.prefix('/api/v1/rolls')
 
 router.get('/ffa', async (ctx: DefaultContext) => {
   const res = await checkAuthStatus(ctx)

@@ -1,4 +1,4 @@
-import Player from "../entities/player";
+import { Player } from "../../entites/Player";
 import Players from "./Players"
 
 export interface DPSObject {

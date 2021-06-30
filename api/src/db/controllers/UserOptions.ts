@@ -1,16 +1,16 @@
 
 
-import { Next, ParameterizedContext } from "koa"
-import { User } from "src/entites/User"
+import { ParameterizedContext } from "koa"
 import { UserOptions } from "../../entites/UserOptions"
+import { isAuth } from "./Users"
 
 
 interface NewOptions {
   id: number,
-  roll_type: string,
-  lock_after_out: boolean,
+  rollType: string,
+  lockAfterOut: boolean,
   theme: string,
-  user_id: string
+  userId: string
 }
 
 interface UpdateOptions extends NewOptions {
@@ -22,22 +22,57 @@ export const getOptions = async (userId: string) => {
   return await UserOptions.findOne(userId)
 }
 
-export const addUserOptions = async (ctx: ParameterizedContext, next: Next) => {
-  if (ctx.session) {
+export const addUserOptions = async (ctx: ParameterizedContext) => {
+  if (isAuth(ctx) && ctx.session) {
     const userId: string = ctx.session.userId
-    const input: UserOptions = ctx.req ? ctx.req.input : 
-    return await UserOptions({
-      ...
+    const input = ctx.body as UserOptions
+    return await UserOptions.create({
+      ...input, userId
+    }).save()
+  } else {
+    return {
+      errors: {
+        field: "userId",
+        message: "no session found, please sign in"
+      }
+    }
+  }
+
+
+}
+
+export async function updateUserOptions(ctx: ParameterizedContext) {
+  const { id, rollType, lockAfterOut, theme } = ctx.body as UpdateOptions
+  const userOptions = await UserOptions.findOne(id)
+  if (isAuth(ctx)) {
+    return {
+      error: "not authorized"
+    }
+  } else if (!userOptions) {
+    return {
+      error: "submitted empty objet"
+    }
+
+  }
+  else {
+    return UserOptions.update({ id }, {
+      rollType,
+      lockAfterOut,
+      theme,
     })
 
   }
 
 }
 
-export const updateUserOptions = async (o: UserOptionsInterface) => {
-  const options = conformToDatabaseOptions(o)
-  const text = `UPDATE ${userTable} SET roll_type = $1 lock_after_out = $2 theme = $3 WHERE id = $4`
-  const values = [options.roll_type, options.lock_after_out, options.theme, options.id]
-  const { rows } = await db.query(text, values)
-  return conformToUserOptions(rows[0])
+export async function deleteUserOptions(id: number, ctx: ParameterizedContext) {
+  if (isAuth(ctx)) {
+    await UserOptions.delete(id)
+    return { delete: true }
+  } else{
+    return {
+      error: "not authorized"
+    }
+  }
+
 }

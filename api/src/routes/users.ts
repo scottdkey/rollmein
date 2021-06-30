@@ -1,4 +1,5 @@
 import Router from "koa-router";
+import { UsernamePasswordInput } from "src/resolvers/UsernamePasswordInput";
 import { login, logout, me, register, UserResponse } from "../db/controllers/Users";
 const router = new Router();
 
@@ -8,7 +9,7 @@ router.prefix(`/user`)
 router.get(`/me`, async (ctx) => { await me(ctx) });
 
 router.post("/register", async (ctx, next) => {
-  const { username, email, password } = ctx.params.input
+  const [ username, email, password ] = ctx.request.body
   const res: UserResponse = await register({ username, email, password })
   if (res.user) {
     ctx.session!.userId = res.user.id
@@ -18,7 +19,7 @@ router.post("/register", async (ctx, next) => {
 });
 
 router.post("/login", async (ctx, next) => {
-  const input = ctx.params.input
+  const input = ctx.request.body
   const res = await login(input)
   if (res.user) {
     ctx.session!.userId = res.user.id

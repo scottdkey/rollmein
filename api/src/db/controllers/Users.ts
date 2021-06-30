@@ -16,11 +16,10 @@ export class UserResponse {
   errors?: FieldError[]
   user?: User
 }
-export async function isAuth(ctx: ParameterizedContext, next: Next) {
+export async function isAuth(ctx: ParameterizedContext) {
   if (!ctx.session?.userId) {
     throw new Error('not authenticated')
   }
-  return next()
 }
 
 

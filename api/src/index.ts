@@ -8,7 +8,7 @@ import Redis from 'ioredis';
 import 'reflect-metadata';
 import { buildSchema } from "type-graphql";
 import { createConnection } from "typeorm";
-import { COOKIE_NAME, SECRET_KEY, __dbUri__, __PORT__, __prod__, __uri__ } from "./constants";
+import { COOKIE_NAME, PG_HOST, PG_PASS, PG_PORT, PG_USER, SECRET_KEY, __port__, __prod__, __uri__ } from "./constants";
 import { Player } from "./entites/Player";
 import { User } from "./entites/User";
 import { HelloResolver } from "./resolvers/hello";
@@ -24,7 +24,10 @@ const main = async () => {
 
   await createConnection({
     type: 'postgres',
-    url: __dbUri__,
+    username: PG_USER,
+    password: PG_PASS,
+    host: PG_HOST,
+    port: PG_PORT,
     logging: true,
     synchronize: true,
     entities: [User, Player]
@@ -58,8 +61,8 @@ const main = async () => {
 
   })
   apollo.applyMiddleware({ app, cors: false })
-  app.listen(__PORT__, () => {
-    console.log(`Listening on Port ${__PORT__}`)
+  app.listen(__port__, () => {
+    console.log(`Listening on Port ${__port__}`)
   }).on("Error", (err) => {
     console.error("Error:", err)
   })
