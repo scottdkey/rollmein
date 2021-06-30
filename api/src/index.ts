@@ -8,10 +8,11 @@ import Redis from 'ioredis';
 import 'reflect-metadata';
 import { buildSchema } from "type-graphql";
 import { createConnection } from "typeorm";
-import { COOKIE_NAME, PG_HOST, PG_PASS, PG_PORT, PG_USER, SECRET_KEY, __port__, __prod__, __uri__ } from "./constants";
+import { COOKIE_NAME, PG_HOST, PG_PASS, PG_PORT, PG_USER, REDIS, SECRET_KEY, __port__, __prod__, __uri__ } from "./constants";
 import { Player } from "./entites/Player";
 import { User } from "./entites/User";
 import { HelloResolver } from "./resolvers/hello";
+import { PlayerResolver } from "./resolvers/player";
 import { UserResolver } from "./resolvers/user";
 
 
@@ -38,7 +39,9 @@ const main = async () => {
     credentials: true
   }))
   const RedisStore = connectRedis(Session)
-  const redis = new Redis()
+  const redis = new Redis({
+    host: REDIS
+  })
   app.use(Session({
     name: COOKIE_NAME,
     store: new RedisStore({ client: redis, disableTouch: true }),
@@ -54,7 +57,7 @@ const main = async () => {
   }))
   const apollo = new ApolloServer({
     schema: await buildSchema({
-      resolvers: [HelloResolver, UserResolver],
+      resolvers: [HelloResolver, UserResolver, PlayerResolver],
       validate: false
     }),
     context: ({ req, res }) => ({ req, res, redis })

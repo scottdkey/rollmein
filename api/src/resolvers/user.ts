@@ -10,12 +10,11 @@ import {
 import { MyContext } from "../types";
 import { User } from "../entites/User";
 import argon2 from "argon2";
-import { FORGET_PASSWORD_PREFIX } from "../constants";
+import { COOKIE_NAME, FORGET_PASSWORD_PREFIX } from "../constants";
 import { UsernamePasswordInput } from "./UsernamePasswordInput";
 import { validateRegister } from "../utils/validateRegister";
 import { v4 } from "uuid"
 import { sendEmail } from "../utils/sendEmail";
-import { redis } from "src/db/redis";
 
 @ObjectType()
 class FieldError {
@@ -40,7 +39,7 @@ export class UserResolver {
   async changePassword(
     @Arg('token') token: string,
     @Arg('newPassword') newPassword: string,
-    @Ctx() { ctx }: MyContext
+    @Ctx() { req, redis }: MyContext
   ): Promise<UserResponse> {
     if (newPassword.length <= 2) {
       return {
@@ -76,7 +75,7 @@ export class UserResolver {
     await User.update({ id: userId }, { password: await argon2.hash(newPassword) })
     await redis.del(key)
     //log in user after change password
-    ctx.session!.userId = user.id;
+    req.session.userId = user.id;
 
     return { user }
   }
@@ -85,6 +84,7 @@ export class UserResolver {
   @Mutation(() => Boolean)
   async forgotPassword(
     @Arg("email") email: string,
+    @Ctx() { redis }: MyContext
   ) {
     const user = await User.findOne({ where: { email } });
     if (!user) {
@@ -110,10 +110,10 @@ export class UserResolver {
   }
 
   @Query(() => User, { nullable: true })
-  me(@Ctx() { ctx }: MyContext) {
+  me(@Ctx() { req }: MyContext) {
     // you are not logged in
-    if (ctx.session) {
-      return User.findOne(ctx.session.userId);
+    if (req.session) {
+      return User.findOne(req.session.userId);
     } else {
       return null;
     }
@@ -123,7 +123,7 @@ export class UserResolver {
   @Mutation(() => UserResponse)
   async register(
     @Arg("options") options: UsernamePasswordInput,
-    @Ctx() { ctx }: MyContext
+    @Ctx() { req }: MyContext
   ): Promise<UserResponse> {
     const errors = validateRegister(options)
     if (errors) {
@@ -156,7 +156,7 @@ export class UserResolver {
     // store user id session
     // this will set a cookie on the user
     // keep them logged in
-    ctx.session!.userId = user?.id!;
+    req.session.userId = user?.id!;
 
     return { user };
   }
@@ -165,7 +165,7 @@ export class UserResolver {
   async login(
     @Arg("userNameOrEmail") userNameOrEmail: string,
     @Arg("password") password: string,
-    @Ctx() { ctx }: MyContext
+    @Ctx() { req }: MyContext
   ): Promise<UserResponse> {
     const user = await User.findOne(
       userNameOrEmail.includes('@') ?
@@ -194,7 +194,7 @@ export class UserResolver {
       };
     }
 
-    ctx.session!.userId = user.id;
+    req.session.userId = user.id;
 
     return {
       user,
@@ -202,14 +202,14 @@ export class UserResolver {
   }
 
   @Mutation(() => Boolean)
-  logout(@Ctx() { ctx }: MyContext): Promise<boolean> {
-    return new Promise(resolve => ctx.session?.destroy((err: Error) => {
+  logout(@Ctx() { req, res }: MyContext): Promise<boolean> {
+    return new Promise(resolve => req.session.destroy((err: Error) => {
       if (err) {
         console.error(err);
         resolve(false)
         return
       } else {
-        ctx.session = null
+        res.clearCookie(COOKIE_NAME)
         resolve(true)
 
       }

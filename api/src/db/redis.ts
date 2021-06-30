@@ -2,10 +2,10 @@ import Application from "koa";
 import Session from "koa-session";
 import RedisStore from "koa-redis";
 import Redis from "ioredis"
-import { COOKIE_NAME, REDIS_HOST, __prod__ } from "../constants";
+import { COOKIE_NAME, REDIS, __prod__ } from "../constants";
 
 
-export const redis = new Redis({ host: REDIS_HOST })
+export const redis = new Redis({ host: REDIS })
 
 export const session = (app: Application) => Session({
   key: COOKIE_NAME,

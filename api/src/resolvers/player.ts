@@ -1,4 +1,4 @@
-import { Resolver, Query, Arg, Mutation, InputType, Field, Ctx, UseMiddleware, Int, FieldResolver, Root } from "type-graphql";
+import { Resolver, Query, Arg, Mutation, InputType, Field, Ctx, UseMiddleware, Int} from "type-graphql";
 import { getConnection } from "typeorm";
 import { Player } from "../entites/Player";
 import { isAuth } from "../middleware/isAuth";
@@ -55,11 +55,11 @@ export class PlayerResolver {
   @UseMiddleware(isAuth)
   async createPost(
     @Arg("input") input: PlayerInput,
-    @Ctx() { ctx }: MyContext
+    @Ctx() { req }: MyContext
   ): Promise<Player> {
     return await Player.create({
       ...input,
-      userId: ctx.session?.userId
+      userId: req.session.userId
     }).save();
   }
 
