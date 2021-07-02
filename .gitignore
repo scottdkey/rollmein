@@ -6,4 +6,4 @@ postgresql/
 */dist/
 
 tmp/
-*.secrets.yml
+kubernetes/*.secrets.yml

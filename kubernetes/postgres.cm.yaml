@@ -7,8 +7,6 @@ metadata:
     tier: backend
 data:
   POSTGRES_DB: rollmein_prod
-  POSTGRES_USER: postgres
-  POSTGRES_PASSWORD: postgres
   POSTGRES_PORT: "5432"
   # this must be a sub directory of the mounted path
   # reference postgres.ss.yaml in the volumeMounts.mountPath
