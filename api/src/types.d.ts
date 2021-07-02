@@ -1,15 +1,13 @@
 import { Redis } from "ioredis"
 import { Request, Response } from "express"
+import session from "express-session"
 
 
 export type MyContext = {
-  req: Request;
-  res: Response;
-  redis: Redis;
-}
+  ctx: DefaultContext & { session: modifiedSession }
+};
 
-declare module "express-session" {
-  interface Session {
-    userId: string
-  }
+interface modifiedSession extends Session {
+  userId: string
+
 }

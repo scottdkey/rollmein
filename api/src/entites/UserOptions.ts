@@ -1,6 +1,6 @@
 import { User } from "./User";
 import { Field, ObjectType } from "type-graphql";
-import { BaseEntity, Column, Entity, ManyToOne, OneToOne, PrimaryGeneratedColumn } from "typeorm";
+import { BaseEntity, Column, Entity, OneToOne, PrimaryGeneratedColumn } from "typeorm";
 
 @ObjectType()
 @Entity()
@@ -21,7 +21,7 @@ export class UserOptions extends BaseEntity {
   @Column({ type: 'text' })
   theme: string;
 
-  @OneToOne(() => User, user => user.options)
+  @OneToOne(() => User, user => user.userOptions)
   userId!: User['id']
 }
 

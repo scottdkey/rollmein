@@ -1,11 +1,9 @@
 
-import { UserOptions } from "./UserOptions";
+
 import { Field, ObjectType } from "type-graphql";
 import { BaseEntity, Column, CreateDateColumn, Entity, OneToMany, OneToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 import { Player } from "./Player"
-
-
-
+import { UserOptions } from "./UserOptions";
 @ObjectType()
 @Entity()
 export class User extends BaseEntity {
@@ -16,8 +14,8 @@ export class User extends BaseEntity {
   @OneToMany(() => Player, player => player.userId)
   players: Player[]
 
-  @OneToOne(() => UserOptions, options => options.userId)
-  options: UserOptions
+  @OneToOne(() => UserOptions, userOptions => userOptions.userId)
+  userOptions: UserOptions
 
   @Field()
   @Column({ unique: true })

@@ -61,13 +61,13 @@ export class PlayerResolver {
   async players(
     @Arg('limit', () => Int) limit: number,
     @Arg('cursor', () => String, { nullable: true }) cursor: string | null,
-    @Ctx() { req }: MyContext
+    @Ctx() { ctx }: MyContext
   ): Promise<Player[]> {
     const realLimit = Math.min(50, limit)
     const qb = getConnection()
       .getRepository(Player)
       .createQueryBuilder('p')
-      .where("userId = :uuid", { uuid: req.session.userId })
+      .where("userId = :uuid", { uuid: ctx.session.userId })
       .orderBy('"createdAt", "DESC')
       .take(realLimit)
     if (cursor) {
@@ -79,10 +79,10 @@ export class PlayerResolver {
   }
   @Query(() => Player, { nullable: true })
   async player(
-    @Ctx() { req }: MyContext,
+    @Ctx() { ctx }: MyContext,
     @Arg("id") id: number): Promise<PlayerResponse> {
     const player = await Player.findOne(id)
-    if (player?.userId === req.session.userId) {
+    if (player?.userId === ctx.session.userId) {
       return {
         player
       }
@@ -97,12 +97,16 @@ export class PlayerResolver {
   @UseMiddleware(isAuth)
   async createPlayer(
     @Arg("input") input: PlayerInput,
-    @Ctx() { req }: MyContext
-  ): Promise<Player> {
-    return await Player.create({
-      ...input,
-      userId: req.session.userId
-    }).save()
+    @Ctx() { ctx }: MyContext
+  ): Promise<Player | null> {
+    if (ctx.session.userId) {
+      return await Player.create({
+        ...input,
+        userId: ctx.session.userId
+      }).save()
+    } else {
+      return null
+    }
   }
 
   @Mutation(() => Player, { nullable: true })

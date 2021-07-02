@@ -3,7 +3,7 @@ import { Player } from "../entites/Player";
 
 import { UserOptions } from "../entites/UserOptions"
 import { isAuth } from "../middleware/isAuth";
-import { MyContext } from "../types"
+import { MyContext } from "../types";
 
 
 
@@ -52,27 +52,40 @@ export const createOptions = async (input: OptionsInput, userId: string) => {
 export class UserOptionsResolver {
   @Query(() => UserOptions, { nullable: true })
   async options(
-    @Ctx() { req }: MyContext,
+    @Ctx() { ctx}: MyContext,
   ): Promise<OptionsResponse> {
-    const options = await UserOptions.findOne({ userId: req.session.userId })
-    if (options) {
-      return {
-        userOptions: options
+    if (ctx.session.userId) {
+      const options = await UserOptions.findOne({ userId: ctx.session.userId })
+      if (options) {
+        return {
+          userOptions: options
+        }
+      } else {
+        return {
+          errors: [{ type: "notFoundError", message: "not found please create" }]
+        }
       }
     } else {
       return {
-        errors: [{ type: "notFoundError", message: "not found please create" }]
+        errors: [
+          {
+            type: "noUser",
+            message: "no userId found"
+          }
+        ]
       }
     }
+
+
 
   }
   @Mutation(() => UserOptions)
   @UseMiddleware(isAuth)
   async createUserOptions(
     @Arg("input") input: OptionsInput,
-    @Ctx() { req }: MyContext
+    @Ctx() { ctx }: MyContext
   ): Promise<UserOptions> {
-    return await createOptions(input, req.session.userId)
+    return await createOptions(input, ctx.session.userId)
   }
 
   @Mutation(() => Player, { nullable: true })
@@ -80,9 +93,10 @@ export class UserOptionsResolver {
   async updateUserOptions(
     @Arg("input", () => UpdateOptionsInput, { nullable: true }) input: UpdateOptionsInput,
     @Arg("id") id: number,
-    @Ctx() { req }: MyContext,
+    @Ctx() { ctx }: MyContext,
   ): Promise<OptionsResponse> {
-    const userOptions = await UserOptions.findOne({ userId: req.session.userId })
+
+    const userOptions = await UserOptions.findOne({ userId: ctx.session.userId })
     if (!userOptions) {
       return {
         errors: [{
