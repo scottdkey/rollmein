@@ -37,7 +37,6 @@ const main = async () => {
     port: PG_PORT,
     logging: true,
     synchronize: true,
-    // migrations: [path.join(__dirname, "./migrations/*")],
     entities: [UserOptions, Player, User],
   });
   // await conn.runMigrations();
