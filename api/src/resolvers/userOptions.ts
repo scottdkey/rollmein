@@ -8,17 +8,17 @@ import { MyContext } from "../types";
 
 
 @ObjectType()
-class Error {
+class FieldError {
   @Field()
-  type: string;
+  field: string;
   @Field()
   message: string;
 }
 
 @ObjectType()
 class OptionsResponse {
-  @Field(() => [Error], { nullable: true })
-  errors?: Error[];
+  @Field(() => [FieldError], { nullable: true })
+  errors?: FieldError[];
 
   @Field(() => UserOptions, { nullable: true })
   userOptions?: UserOptions;
@@ -31,8 +31,6 @@ class OptionsInput {
   lockAfterOut: boolean
   @Field()
   theme: string
-  @Field()
-  userId: string
 }
 @InputType()
 class UpdateOptionsInput extends OptionsInput {
@@ -40,36 +38,30 @@ class UpdateOptionsInput extends OptionsInput {
   id: number
 }
 
-export const createOptions = async (input: OptionsInput, userId: string) => {
-  return await UserOptions.create({
-    ...input,
-    userId
-  }).save()
-}
 
 
 @Resolver()
 export class UserOptionsResolver {
   @Query(() => UserOptions, { nullable: true })
   async options(
-    @Ctx() { ctx}: MyContext,
+    @Ctx() { ctx }: MyContext,
   ): Promise<OptionsResponse> {
     if (ctx.session.userId) {
-      const options = await UserOptions.findOne({ userId: ctx.session.userId })
+      const options = await UserOptions.findOne({ userId: ctx.session.userId! })
       if (options) {
         return {
           userOptions: options
         }
       } else {
         return {
-          errors: [{ type: "notFoundError", message: "not found please create" }]
+          errors: [{ field: "notFoundError", message: "not found please create" }]
         }
       }
     } else {
       return {
         errors: [
           {
-            type: "noUser",
+            field: "noUser",
             message: "no userId found"
           }
         ]
@@ -84,8 +76,23 @@ export class UserOptionsResolver {
   async createUserOptions(
     @Arg("input") input: OptionsInput,
     @Ctx() { ctx }: MyContext
-  ): Promise<UserOptions> {
-    return await createOptions(input, ctx.session.userId)
+  ): Promise<OptionsResponse> {
+    const options = await UserOptions.create({
+      ...input,
+      userId: ctx.session.userId!
+    }).save()
+    if (!options) {
+      return {
+        errors: [{
+          field: "optionsCreate",
+          message: "error creating options"
+        }]
+      }
+    } else {
+      return {
+        userOptions: options
+      }
+    }
   }
 
   @Mutation(() => Player, { nullable: true })
@@ -96,11 +103,14 @@ export class UserOptionsResolver {
     @Ctx() { ctx }: MyContext,
   ): Promise<OptionsResponse> {
 
-    const userOptions = await UserOptions.findOne({ userId: ctx.session.userId })
+    const userOptions = await UserOptions.findOne({
+      userId: ctx.session.userId!
+    }
+    )
     if (!userOptions) {
       return {
         errors: [{
-          type: "authError",
+          field: "authError",
           message: "not authorized to update"
         }]
       };
@@ -108,7 +118,7 @@ export class UserOptionsResolver {
       return {
         errors: [
           {
-            type: "inputError",
+            field: "inputError",
             message: "null input recieved"
           }
         ]

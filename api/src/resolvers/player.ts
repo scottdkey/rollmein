@@ -1,5 +1,4 @@
-import { Field, Resolver, Mutation, InputType, Query, Arg, Int, UseMiddleware, Ctx, ObjectType } from "type-graphql";
-import { getConnection } from "typeorm";
+import { Field, Resolver, Mutation, InputType, Query, Arg, UseMiddleware, Ctx, ObjectType } from "type-graphql";
 import { Player } from "../entites/Player";
 import { isAuth } from "../middleware/isAuth";
 import { MyContext } from "../types";
@@ -21,17 +20,17 @@ class PlayerInput {
   inTheRoll: boolean;
 }
 @ObjectType()
-class Error {
+class FieldError {
   @Field()
-  type: string;
+  field: string;
   @Field()
   message: string;
 }
 
 @ObjectType()
 class PlayerResponse {
-  @Field(() => [Error], { nullable: true })
-  errors?: Error[];
+  @Field(() => [FieldError], { nullable: true })
+  errors?: FieldError[];
 
   @Field(() => Player, { nullable: true })
   player?: Player;
@@ -59,37 +58,29 @@ export class PlayerResolver {
   @Query(() => [Player])
   @UseMiddleware(isAuth)
   async players(
-    @Arg('limit', () => Int) limit: number,
-    @Arg('cursor', () => String, { nullable: true }) cursor: string | null,
     @Ctx() { ctx }: MyContext
   ): Promise<Player[]> {
-    const realLimit = Math.min(50, limit)
-    const qb = getConnection()
-      .getRepository(Player)
-      .createQueryBuilder('p')
-      .where("userId = :uuid", { uuid: ctx.session.userId })
-      .orderBy('"createdAt", "DESC')
-      .take(realLimit)
-    if (cursor) {
-      qb.where('"createdAt" <:cursor', {
-        cursor: new Date(parseInt(cursor))
-      })
-    }
-    return qb.getMany()
+    const players = await Player.find({ where: { userId: ctx.session.userId } })
+    console.log(players)
+    return players
   }
   @Query(() => Player, { nullable: true })
+  @UseMiddleware(isAuth)
   async player(
-    @Ctx() { ctx }: MyContext,
     @Arg("id") id: number): Promise<PlayerResponse> {
     const player = await Player.findOne(id)
-    if (player?.userId === ctx.session.userId) {
+    console.log(player)
+    if (!player) {
       return {
-        player
+        errors: [
+          {
+            field: "playerError",
+            message: "player not found"
+          }
+        ]
       }
     } else {
-      return {
-        errors: [{ type: "authError", message: "not authorized to access data" }]
-      }
+      return { player }
     }
 
   }
@@ -98,16 +89,27 @@ export class PlayerResolver {
   async createPlayer(
     @Arg("input") input: PlayerInput,
     @Ctx() { ctx }: MyContext
-  ): Promise<Player | null> {
-    if (ctx.session.userId) {
-      return await Player.create({
-        ...input,
-        userId: ctx.session.userId
-      }).save()
+  ): Promise<PlayerResponse> {
+    const player = await Player.create({
+      ...input,
+      userId: ctx.session.userId!
+    }
+    ).save()
+    if (!player) {
+      return {
+        errors: [{
+          field: "player",
+          message: "unable to create player"
+        }]
+      }
     } else {
-      return null
+      console.log(player)
+      return {
+        player
+      }
     }
   }
+
 
   @Mutation(() => Player, { nullable: true })
   @UseMiddleware(isAuth)
@@ -119,16 +121,16 @@ export class PlayerResolver {
     if (!player) {
       return {
         errors: [{
-          type: "authError",
-          message: "not authorized to update"
+          field: "playerError",
+          message: "no player Found"
         }]
       };
     } else if (input === null) {
       return {
         errors: [
           {
-            type: "inputError",
-            message: "incorrect input recieved"
+            field: "inputError",
+            message: "incorrect cannot be null"
           }
         ]
       }

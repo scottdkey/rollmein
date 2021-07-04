@@ -15,7 +15,7 @@ export class User extends BaseEntity {
   players: Player[]
 
   @OneToOne(() => UserOptions, userOptions => userOptions.userId)
-  userOptions: UserOptions
+  options: UserOptions
 
   @Field()
   @Column({ unique: true })

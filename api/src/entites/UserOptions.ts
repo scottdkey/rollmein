@@ -21,7 +21,8 @@ export class UserOptions extends BaseEntity {
   @Column({ type: 'text' })
   theme: string;
 
-  @OneToOne(() => User, user => user.userOptions)
-  userId!: User['id']
+  @Field()
+  @OneToOne(() => User, user => user.options)
+  userId!: string
 }
 

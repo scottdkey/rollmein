@@ -72,7 +72,8 @@ const main = async () => {
     }),
     context: ({ ctx }: MyContext) => {
       return {
-        session: ctx.session
+        ctx, redis
+
       }
     }
   });
@@ -80,7 +81,7 @@ const main = async () => {
   apolloServer.applyMiddleware({ app, cors: false, });
 
   app.listen(__port__, () => {
-    console.log(`server started on localhost:${__port__}`);
+    console.log(`server started on http://localhost:${__port__}/graphql`);
   });
 
 }

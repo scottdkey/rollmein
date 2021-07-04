@@ -1,13 +1,13 @@
 import { Redis } from "ioredis"
-import { Request, Response } from "express"
+import { ParameterizedContext } from "koa"
 import session from "koa-session"
 
 
 export type MyContext = {
-  ctx: DefaultContext & { session: modifiedSession }
+  ctx: ParameterizedContext & { session: ExtendedSession }
 };
 
-interface modifiedSession extends Session {
-  userId: string
+interface ExtendedSession extends session {
+  userId: string | null
 
 }

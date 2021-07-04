@@ -11,7 +11,7 @@ export class Player extends BaseEntity {
   id!: number;
 
   @ManyToOne(() => User, user => user.players)
-  userId: User['id']
+  userId!: string
 
   @Field()
   @Column({ type: 'text' })
@@ -19,23 +19,23 @@ export class Player extends BaseEntity {
 
   @Field()
   @Column({ type: 'boolean' })
-  tank: boolean;
+  tank: boolean = false;
 
   @Field()
   @Column({ type: 'boolean' })
-  healer: boolean;
+  healer: boolean = false;
 
   @Field()
   @Column({ type: 'boolean' })
-  dps: boolean;
+  dps: boolean = false;
 
   @Field()
   @Column({ type: 'boolean' })
-  locked: boolean;
+  locked: boolean = false;
 
   @Field()
   @Column({ type: 'boolean' })
-  inTheRoll: boolean;
+  inTheRoll: boolean = false;
 
   @Field(() => String)
   @CreateDateColumn()
@@ -44,7 +44,4 @@ export class Player extends BaseEntity {
   @Field(() => String)
   @UpdateDateColumn()
   updatedAt: Date
-
-
-
 }

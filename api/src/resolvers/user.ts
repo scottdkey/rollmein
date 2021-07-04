@@ -12,7 +12,7 @@ import {
 import { MyContext } from "../types";
 import { User } from "../entites/User";
 import argon2 from "argon2";
-import { COOKIE_NAME, FORGET_PASSWORD_PREFIX } from "../constants";
+import { FORGET_PASSWORD_PREFIX } from "../constants";
 import { UsernamePasswordInput } from "./UsernamePasswordInput";
 import { validateRegister } from "../utils/validateRegister";
 import { sendEmail } from "../utils/sendEmail";
@@ -226,7 +226,6 @@ export class UserResolver {
       };
     }
     ctx.session.userId = user.id;
-    console.log(ctx.session.userId)
 
     return {
       user,
@@ -235,17 +234,15 @@ export class UserResolver {
 
   @Mutation(() => Boolean)
   logout(@Ctx() { ctx }: MyContext) {
-    return new Promise((resolve) =>
-      ctx.session.destroy((err: Error) => {
-        ctx.clearCookie(COOKIE_NAME);
-        if (err) {
-          console.log(err);
-          resolve(false);
-          return;
-        }
-
-        resolve(true);
-      })
-    );
+    return new Promise((resolve) => {
+      try {
+        ctx.session.userId = null
+        resolve(true)
+      } catch (err) {
+        console.error(err)
+        resolve(false)
+      }
+    }
+    )
   }
 }
