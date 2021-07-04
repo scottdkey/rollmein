@@ -42,7 +42,7 @@ export class UserResolver {
   @FieldResolver(() => String)
   email(@Root() user: User, @Ctx() { ctx }: MyContext) {
     // this is the current user and its ok to show them their own email
-    if (ctx.session.userId === user.id) {
+    if (ctx.session?.userId === user.id) {
       return user.email;
     }
     // current user wants to see someone elses email
@@ -53,7 +53,7 @@ export class UserResolver {
   async changePassword(
     @Arg("token") token: string,
     @Arg("newPassword") newPassword: string,
-    @Ctx() { ctx }: MyContext
+    @Ctx() { ctx, em }: MyContext
   ): Promise<UserResponse> {
     if (newPassword.length <= 2) {
       return {
@@ -79,7 +79,7 @@ export class UserResolver {
       };
     }
 
-    const user = await User.findOne(userId);
+    const user = await em.findOne(User, { id: userId });
 
     if (!user) {
       return {
@@ -91,27 +91,20 @@ export class UserResolver {
         ],
       };
     }
-
-    await User.update(
-      { id: userId },
-      {
-        password: await argon2.hash(newPassword),
-      }
-    );
-
+    user.password = await argon2.hash(newPassword)
+    await em.persist(user).flush()
     await redis.del(key);
-
     // log in user after change password
     ctx.session.userId = user.id;
-
     return { user };
   }
 
   @Mutation(() => Boolean)
   async forgotPassword(
     @Arg("email") email: string,
+    @Ctx() { em }: MyContext
   ) {
-    const user = await User.findOne({ where: { email } });
+    const user = await em.findOne(User, { email });
     if (!user) {
       // the email is not in the db
       return true;
@@ -135,13 +128,13 @@ export class UserResolver {
   }
 
   @Query(() => User, { nullable: true })
-  me(@Ctx() { ctx }: MyContext) {
+  me(@Ctx() { ctx, em }: MyContext) {
     // you are not logged in
     console.log(ctx.session)
     if (!ctx.session.userId) {
       return null;
     }
-    return User.findOne(ctx.session.userId);
+    return em.findOne(User, { id: ctx.session.userId });
 
   }
 
@@ -197,13 +190,11 @@ export class UserResolver {
   async login(
     @Arg("usernameOrEmail") usernameOrEmail: string,
     @Arg("password") password: string,
-    @Ctx() { ctx }: MyContext
+    @Ctx() { ctx, em }: MyContext
   ): Promise<UserResponse> {
-    const user = await User.findOne(
-      usernameOrEmail.includes("@")
-        ? { where: { email: usernameOrEmail } }
-        : { where: { username: usernameOrEmail } }
-    );
+    const user = await em.findOne(User, usernameOrEmail.includes("@")
+      ? { email: usernameOrEmail }
+      : { username: usernameOrEmail });
     if (!user) {
       return {
         errors: [

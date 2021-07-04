@@ -1,47 +1,48 @@
 import { User } from "./User";
 import { Field, ObjectType } from "type-graphql";
-import { BaseEntity, Column, CreateDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import { Entity, ManyToOne, PrimaryKey, Property } from "@mikro-orm/core";
 
 
 @ObjectType()
 @Entity()
-export class Player extends BaseEntity {
+export class Player {
   @Field()
-  @PrimaryGeneratedColumn()
+  @PrimaryKey()
   id!: number;
 
-  @ManyToOne(() => User, user => user.players)
-  userId!: string
+  @Field(() => String)
+  @ManyToOne({ entity: () => User })
+  userId!: User['id']
 
   @Field()
-  @Column({ type: 'text' })
-  playerName!: string;
+  @Property()
+  name!: string;
 
   @Field()
-  @Column({ type: 'boolean' })
+  @Property()
   tank: boolean = false;
 
   @Field()
-  @Column({ type: 'boolean' })
+  @Property()
   healer: boolean = false;
 
   @Field()
-  @Column({ type: 'boolean' })
+  @Property()
   dps: boolean = false;
 
   @Field()
-  @Column({ type: 'boolean' })
+  @Property()
   locked: boolean = false;
 
   @Field()
-  @Column({ type: 'boolean' })
+  @Property()
   inTheRoll: boolean = false;
 
   @Field(() => String)
-  @CreateDateColumn()
-  createdAt: Date;
+  @Property({ type: "date" })
+  createdAt = new Date();
 
   @Field(() => String)
-  @UpdateDateColumn()
-  updatedAt: Date
+  @Property({ type: "date", onUpdate: () => new Date() })
+  updatedAt = new Date();
 }

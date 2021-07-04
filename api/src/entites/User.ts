@@ -1,40 +1,43 @@
 
 
 import { Field, ObjectType } from "type-graphql";
-import { BaseEntity, Column, CreateDateColumn, Entity, OneToMany, OneToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import { Collection, Entity, OneToMany, OneToOne, PrimaryKey, Property, Unique } from "@mikro-orm/core";
 import { Player } from "./Player"
 import { UserOptions } from "./UserOptions";
+
+
 @ObjectType()
 @Entity()
-export class User extends BaseEntity {
+export class User {
   @Field()
-  @PrimaryGeneratedColumn("uuid")
+  @PrimaryKey()
   id: string;
 
   @OneToMany(() => Player, player => player.userId)
-  players: Player[]
+  players = new Collection<Player>(this)
 
   @OneToOne(() => UserOptions, userOptions => userOptions.userId)
-  options: UserOptions
+  optionsId: UserOptions['userId']
 
   @Field()
-  @Column({ unique: true })
+  @Property()
+  @Unique()
   username!: string;
 
   @Field()
-  @Column({ unique: true })
+  @Property()
+  @Unique()
   email!: string;
 
-  @Column()
+  @Property()
   password!: string;
 
+  @Field(() => String)
+  @Property({ type: "date" })
+  createdAt = new Date();
 
   @Field(() => String)
-  @CreateDateColumn()
-  createdAt: Date;
-
-  @Field(() => String)
-  @UpdateDateColumn()
-  updatedAt: Date
+  @Property({ type: "date", onUpdate: () => new Date() })
+  updatedAt = new Date();
 
 }

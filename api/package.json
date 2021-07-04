@@ -18,6 +18,8 @@
     "dockerPush": "docker push scottdkey/rollmein_api:$(echo $npm_package_version)"
   },
   "dependencies": {
+    "@mikro-orm/core": "^4.5.7",
+    "@mikro-orm/postgresql": "^4.5.7",
     "apollo-server-koa": "^2.25.2",
     "argon2": "^0.28.2",
     "class-validator": "^0.13.1",
@@ -67,5 +69,12 @@
     "ts-node": "^10.0.0",
     "typeorm": "^0.2.34",
     "typescript": "^4.1.2"
+  },
+  "mikro-orm": {
+    "useTsNode": true,
+    "configPaths": [
+      "./src/mikro-orm.config.ts",
+      "./dist/mikro-orm.config.js"
+    ]
   }
 }

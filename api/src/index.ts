@@ -8,17 +8,15 @@ import redisStore from "koa-redis";
 import session from "koa-session";
 import 'reflect-metadata';
 import { buildSchema } from "type-graphql";
-import { createConnection } from "typeorm";
-import { COOKIE_NAME, DATABASE_NAME, PG_HOST, PG_PASS, PG_PORT, PG_USER, SECRET_KEY, __port__, __prod__ } from "./constants";
-import { Player } from "./entites/Player";
-import { User } from "./entites/User";
-import { UserOptions } from "./entites/UserOptions";
+import { COOKIE_NAME, SECRET_KEY, __port__, __prod__ } from "./constants";
 import { HelloResolver } from "./resolvers/hello";
 import { PlayerResolver } from "./resolvers/player";
 import { UserResolver } from "./resolvers/user";
 import { UserOptionsResolver } from "./resolvers/userOptions";
 import { createDatabase } from "./utils/createDatabase";
 import { MyContext } from "./types";
+import { MikroORM } from "@mikro-orm/core";
+import microConfig from "./mikro-orm.config"
 
 config()
 
@@ -27,21 +25,8 @@ const main = async () => {
   if (!__prod__) {
     await createDatabase()
   }
-
-  await createConnection({
-    type: "postgres",
-    database: DATABASE_NAME,
-    username: PG_USER,
-    password: PG_PASS,
-    host: PG_HOST,
-    port: PG_PORT,
-    logging: true,
-    synchronize: true,
-    entities: [UserOptions, Player, User],
-  });
-  // await conn.runMigrations();
-
-  // await Post.delete({});
+  const orm = await MikroORM.init(microConfig);
+  await orm.getMigrator().up()
 
   const app = new Koa();
   app.use(bodyParser())
@@ -67,12 +52,16 @@ const main = async () => {
 
   const apolloServer = new ApolloServer({
     schema: await buildSchema({
-      resolvers: [HelloResolver, UserResolver, PlayerResolver, UserOptionsResolver],
+      resolvers: [
+        HelloResolver,
+        UserResolver,
+        PlayerResolver,
+        UserOptionsResolver],
       validate: true,
     }),
     context: ({ ctx }: MyContext) => {
       return {
-        ctx, redis
+        ctx, redis, em: orm.em
 
       }
     }

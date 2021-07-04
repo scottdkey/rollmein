@@ -1,28 +1,28 @@
 import { User } from "./User";
 import { Field, ObjectType } from "type-graphql";
-import { BaseEntity, Column, Entity, OneToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Entity, OneToOne, PrimaryKey, Property } from "@mikro-orm/core";
 
 @ObjectType()
 @Entity()
-export class UserOptions extends BaseEntity {
+export class UserOptions {
   @Field()
-  @PrimaryGeneratedColumn()
+  @PrimaryKey()
   id!: number;
 
   @Field()
-  @Column({ type: 'text' })
+  @Property()
   rollType: string;
 
   @Field()
-  @Column({ type: 'boolean' })
+  @Property()
   lockAfterOut: boolean;
 
   @Field()
-  @Column({ type: 'text' })
+  @Property()
   theme: string;
 
   @Field()
-  @OneToOne(() => User, user => user.options)
+  @OneToOne(() => User, user => user.optionsId)
   userId!: string
 }
 

@@ -44,10 +44,10 @@ class UpdateOptionsInput extends OptionsInput {
 export class UserOptionsResolver {
   @Query(() => UserOptions, { nullable: true })
   async options(
-    @Ctx() { ctx }: MyContext,
+    @Ctx() { ctx, em }: MyContext,
   ): Promise<OptionsResponse> {
-    if (ctx.session.userId) {
-      const options = await UserOptions.findOne({ userId: ctx.session.userId! })
+    if (ctx.session?.userId) {
+      const options = await em.findOne(UserOptions, { userId: ctx.session.userId })
       if (options) {
         return {
           userOptions: options
@@ -75,12 +75,12 @@ export class UserOptionsResolver {
   @UseMiddleware(isAuth)
   async createUserOptions(
     @Arg("input") input: OptionsInput,
-    @Ctx() { ctx }: MyContext
+    @Ctx() { ctx, em }: MyContext
   ): Promise<OptionsResponse> {
-    const options = await UserOptions.create({
+    const options = em.create(UserOptions, {
       ...input,
-      userId: ctx.session.userId!
-    }).save()
+      userId: ctx.session.userId
+    })
     if (!options) {
       return {
         errors: [{
@@ -99,14 +99,12 @@ export class UserOptionsResolver {
   @UseMiddleware(isAuth)
   async updateUserOptions(
     @Arg("input", () => UpdateOptionsInput, { nullable: true }) input: UpdateOptionsInput,
-    @Arg("id") id: number,
-    @Ctx() { ctx }: MyContext,
+    @Ctx() { ctx, em }: MyContext,
   ): Promise<OptionsResponse> {
 
-    const userOptions = await UserOptions.findOne({
-      userId: ctx.session.userId!
-    }
-    )
+    const userOptions = await em.findOne(UserOptions, {
+      userId: ctx.session?.userId!
+    })
     if (!userOptions) {
       return {
         errors: [{
@@ -124,7 +122,10 @@ export class UserOptionsResolver {
         ]
       }
     } else {
-      await UserOptions.update({ id }, { ...input })
+      userOptions.lockAfterOut = input.lockAfterOut
+      userOptions.rollType = input.rollType
+      userOptions.theme = input.theme
+      await em.persistAndFlush(userOptions)
       return {
         userOptions
       }
@@ -134,9 +135,9 @@ export class UserOptionsResolver {
   @Mutation(() => Boolean)
   @UseMiddleware(isAuth)
   async deleteOptions(
-    @Arg("id") id: number,
+    @Ctx() { ctx, em }: MyContext
   ): Promise<boolean> {
-    await UserOptions.delete(id)
+    await em.nativeDelete(UserOptions, { userId: ctx.session.userId })
     return true
   }
 
