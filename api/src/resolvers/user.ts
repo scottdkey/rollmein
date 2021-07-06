@@ -18,7 +18,7 @@ import { validateRegister } from "../utils/validateRegister";
 import { sendEmail } from "../utils/sendEmail";
 import { v4 } from "uuid";
 import { redis } from "..";
-import { UserOptions } from "../entites/UserOptions";
+import { Options } from "../entites/Options";
 
 @ObjectType()
 class FieldError {
@@ -130,7 +130,6 @@ export class UserResolver {
   @Query(() => User, { nullable: true })
   me(@Ctx() { ctx, em }: MyContext) {
     // you are not logged in
-    console.log(ctx.session)
     if (!ctx.session.userId) {
       return null;
     }
@@ -147,14 +146,14 @@ export class UserResolver {
     if (errors) {
       return { errors };
     }
-
     const hashedPassword = await argon2.hash(options.password);
     const user = em.create(User, { ...options, password: hashedPassword })
-    await em.persist(user)
-    const userOptions = em.create(UserOptions, {
-      userId: ctx.session.userId
+    
+    const userOptions = em.create(Options, {
+      userId: user.id
     })
-    await em.persist(userOptions).flush()
+    await em.persist(userOptions)
+    await em.persist(user).flush()
     // store user id session
     // this will set a cookie on the user
     // keep them logged in

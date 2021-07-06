@@ -12,7 +12,7 @@ import { COOKIE_NAME, SECRET_KEY, __port__, __prod__ } from "./constants";
 import { HelloResolver } from "./resolvers/hello";
 import { PlayerResolver } from "./resolvers/player";
 import { UserResolver } from "./resolvers/user";
-import { UserOptionsResolver } from "./resolvers/userOptions";
+import { OptionsResolver } from "./resolvers/options";
 import { createDatabase } from "./utils/createDatabase";
 import { MyContext } from "./types";
 import { MikroORM } from "@mikro-orm/core";
@@ -26,11 +26,6 @@ const main = async () => {
     await createDatabase()
   }
   const orm = await MikroORM.init(microConfig);
-  const generator = orm.getSchemaGenerator()
-  await generator.dropSchema()
-  await generator.createSchema()
-  await generator.updateSchema()
-  await orm.getMigrator().up()
 
   const app = new Koa();
   app.use(bodyParser())
@@ -61,7 +56,7 @@ const main = async () => {
         HelloResolver,
         UserResolver,
         PlayerResolver,
-        UserOptionsResolver],
+        OptionsResolver],
       validate: true,
 
     }),

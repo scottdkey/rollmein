@@ -1,6 +1,7 @@
+
 import { Arg, Ctx, Field, InputType, Mutation, ObjectType, Query, Resolver, UseMiddleware } from "type-graphql"
 
-import { UserOptions } from "../entites/UserOptions"
+import { Options } from "../entites/Options"
 import { isAuth } from "../middleware/isAuth";
 import { MyContext } from "../types";
 
@@ -25,40 +26,38 @@ class OptionsInput {
 
 
 
-@Resolver()
-export class UserOptionsResolver {
-  @Query(() => UserOptions, { nullable: true })
+@Resolver(Options)
+export class OptionsResolver {
+  @Query(() => Options, { nullable: true })
+  @UseMiddleware(isAuth)
   async options(
-    @Ctx() ctx: MyContext,
-  ): Promise<UserOptions | null> {
-    const options = await ctx.em.findOne(UserOptions, {
-      userId: ctx.ctx.session.userId
+    @Ctx() { ctx, em }: MyContext,
+  ): Promise<Options | null> {
+    const options = await em.findOne(Options, {
+      userId: ctx.session.userId
     })
-    if (!options) {
-      return await this.createUserOptions(ctx)
-    }
     return options
   }
-  @Mutation(() => UserOptions)
+  @Mutation(() => Options)
   @UseMiddleware(isAuth)
-  async createUserOptions(
+  async createOptions(
     @Ctx() { ctx, em }: MyContext
-  ): Promise<UserOptions> {
-    const options = em.create(UserOptions, {
+  ): Promise<Options> {
+    const options = em.create(Options, {
       userId: ctx.session.userId
     })
     await em.persistAndFlush(options)
     return options
   }
 
-  @Mutation(() => UserOptions, { nullable: true })
+  @Mutation(() => Options, { nullable: true })
   @UseMiddleware(isAuth)
-  async updateUserOptions(
+  async updateOptions(
     @Arg("input", () => OptionsInput, { nullable: true }) input: OptionsInput,
     @Ctx() { ctx, em }: MyContext,
-  ): Promise<UserOptions | FieldError[]> {
+  ): Promise<Options | FieldError[]> {
     console.log(ctx.session.userId)
-    const userOptions = await em.findOne(UserOptions, { userId: ctx.session?.userId! })
+    const userOptions = await em.findOne(Options, { userId: ctx.session?.userId! })
     if (userOptions === null) {
       return [{
         field: "authError",
@@ -77,7 +76,6 @@ export class UserOptionsResolver {
     userOptions.rollType = input.rollType
     userOptions.theme = input.theme
     await em.persistAndFlush(userOptions)
-    console.log(userOptions)
     return userOptions
   }
   @Mutation(() => Boolean)
@@ -85,7 +83,7 @@ export class UserOptionsResolver {
   async deleteOptions(
     @Ctx() { ctx, em }: MyContext
   ): Promise<boolean> {
-    await em.nativeDelete(UserOptions, {
+    await em.nativeDelete(Options, {
       userId: ctx.session.userId
     })
     return true

@@ -19,6 +19,7 @@
     "create:migration": "mikro-orm migration:create"
   },
   "dependencies": {
+    "@mikro-orm/cli": "^4.5.7",
     "@mikro-orm/core": "^4.5.7",
     "@mikro-orm/migrations": "^4.5.7",
     "@mikro-orm/postgresql": "^4.5.7",

@@ -4,7 +4,7 @@ import { MikroORM, ReflectMetadataProvider } from "@mikro-orm/core"
 import path from "path"
 import { User } from "./entites/User"
 import { Player } from "./entites/Player"
-import { UserOptions } from "./entites/UserOptions"
+import { Options } from "./entites/Options"
 
 export default {
   metadataProvider: ReflectMetadataProvider,
@@ -12,7 +12,7 @@ export default {
     path: path.join(__dirname, "./migrations"),
     pattern: /^[\w-]+\d+\.[tj]s$/,
   },
-  entities: [User, Player, UserOptions],
+  entities: [Options, User, Player],
   dbName: DATABASE_NAME,
   user: PG_USER,
   password: PG_PASS,

@@ -28,11 +28,11 @@ export class User {
   @Property()
   password!: string;
 
-  @Field(() => String)
+  @Field(() => Date)
   @Property({ type: "date" })
   createdAt = new Date();
 
-  @Field(() => String)
+  @Field(() => Date)
   @Property({ type: "date", onUpdate: () => new Date() })
   updatedAt = new Date();
 

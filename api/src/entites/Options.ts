@@ -3,10 +3,10 @@ import { Entity, PrimaryKey, Property } from "@mikro-orm/core";
 
 @ObjectType()
 @Entity()
-export class UserOptions {
+export class Options {
   @Field(() => ID)
   @PrimaryKey()
-  userId: string;
+  userId!: string;
 
   @Field()
   @Property()
@@ -19,5 +19,13 @@ export class UserOptions {
   @Field()
   @Property()
   theme: string = "dark";
+
+  @Field(() => Date)
+  @Property({ type: "date" })
+  createdAt = new Date();
+
+  @Field(() => Date)
+  @Property({ type: "date", onUpdate: () => new Date() })
+  updatedAt = new Date();
 }
 

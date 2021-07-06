@@ -39,13 +39,13 @@ export class Player {
   @Property()
   inTheRoll: boolean
 
-  @Field(() => String)
+  @Field(() => Date)
   @Property({
     type: 'string'
   })
   createdAt = new Date();
 
-  @Field(() => String)
+  @Field(() => Date)
   @Property({
     type: "string",
     onUpdate: () => new Date()
