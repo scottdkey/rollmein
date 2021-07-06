@@ -17,8 +17,8 @@ import { UsernamePasswordInput } from "./UsernamePasswordInput";
 import { validateRegister } from "../utils/validateRegister";
 import { sendEmail } from "../utils/sendEmail";
 import { v4 } from "uuid";
-import { getConnection } from "typeorm";
 import { redis } from "..";
+import { UserOptions } from "../entites/UserOptions";
 
 @ObjectType()
 class FieldError {
@@ -141,7 +141,7 @@ export class UserResolver {
   @Mutation(() => UserResponse)
   async register(
     @Arg("options") options: UsernamePasswordInput,
-    @Ctx() { ctx }: MyContext
+    @Ctx() { ctx, em }: MyContext
   ): Promise<UserResponse> {
     const errors = validateRegister(options);
     if (errors) {
@@ -149,36 +149,12 @@ export class UserResolver {
     }
 
     const hashedPassword = await argon2.hash(options.password);
-    let user;
-    try {
-      // User.create({}).save()
-      const result = await getConnection()
-        .createQueryBuilder()
-        .insert()
-        .into(User)
-        .values({
-          username: options.username,
-          email: options.email,
-          password: hashedPassword,
-        })
-        .returning("*")
-        .execute();
-      user = result.raw[0];
-    } catch (err) {
-      //|| err.detail.includes("already exists")) {
-      // duplicate username error
-      if (err.code === "23505") {
-        return {
-          errors: [
-            {
-              field: "username",
-              message: "username already taken",
-            },
-          ],
-        };
-      }
-    }
-
+    const user = em.create(User, { ...options, password: hashedPassword })
+    await em.persist(user)
+    const userOptions = em.create(UserOptions, {
+      userId: ctx.session.userId
+    })
+    await em.persist(userOptions).flush()
     // store user id session
     // this will set a cookie on the user
     // keep them logged in

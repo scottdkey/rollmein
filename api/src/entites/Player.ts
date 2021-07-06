@@ -1,18 +1,19 @@
-import { User } from "./User";
-import { Field, ObjectType } from "type-graphql";
+
+import { Field, ID, ObjectType } from "type-graphql";
 import { Entity, ManyToOne, PrimaryKey, Property } from "@mikro-orm/core";
+import { User } from "./User";
 
 
 @ObjectType()
 @Entity()
 export class Player {
-  @Field()
+  @Field(() => ID)
   @PrimaryKey()
   id!: number;
 
-  @Field(() => String)
-  @ManyToOne({ entity: () => User })
-  userId!: User['id']
+  @Field(() => User)
+  @ManyToOne(() => User)
+  user: User
 
   @Field()
   @Property()
@@ -20,29 +21,34 @@ export class Player {
 
   @Field()
   @Property()
-  tank: boolean = false;
+  tank!: boolean
 
   @Field()
   @Property()
-  healer: boolean = false;
+  healer!: boolean
 
   @Field()
   @Property()
-  dps: boolean = false;
+  dps!: boolean
 
   @Field()
   @Property()
-  locked: boolean = false;
+  locked!: boolean
 
   @Field()
   @Property()
-  inTheRoll: boolean = false;
+  inTheRoll: boolean
 
   @Field(() => String)
-  @Property({ type: "date" })
+  @Property({
+    type: 'string'
+  })
   createdAt = new Date();
 
   @Field(() => String)
-  @Property({ type: "date", onUpdate: () => new Date() })
+  @Property({
+    type: "string",
+    onUpdate: () => new Date()
+  })
   updatedAt = new Date();
 }

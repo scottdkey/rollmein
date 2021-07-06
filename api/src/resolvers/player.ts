@@ -1,5 +1,6 @@
 
-import { Field, Resolver, Mutation, InputType, Query, Arg, UseMiddleware, Ctx, ObjectType } from "type-graphql";
+import { User } from "../entites/User";
+import { Field, Resolver, Mutation, InputType, Query, Arg, UseMiddleware, Ctx, ObjectType, FieldResolver, Root } from "type-graphql";
 import { Player } from "../entites/Player";
 import { isAuth } from "../middleware/isAuth";
 import { MyContext } from "../types";
@@ -36,16 +37,18 @@ class PlayerResponse {
   @Field(() => Player, { nullable: true })
   player?: Player;
 }
-@Resolver()
+@Resolver(Player)
 export class PlayerResolver {
   @Query(() => [Player])
   @UseMiddleware(isAuth)
   async players(
     @Ctx() { ctx, em }: MyContext
   ): Promise<Player[]> {
-    const players = await em.find(Player, { userId: ctx.session.userId })
-    console.log(players)
-    return players
+    return await em.find(Player, {
+      user: {
+        id: ctx.session.userId
+      }
+    })
   }
   @Query(() => Player, { nullable: true })
   @UseMiddleware(isAuth)
@@ -54,7 +57,6 @@ export class PlayerResolver {
     @Ctx() { em }: MyContext
   ): Promise<PlayerResponse> {
     const player = await em.findOne(Player, id)
-    console.log(player)
     if (!player) {
       return {
         errors: [
@@ -64,10 +66,8 @@ export class PlayerResolver {
           }
         ]
       }
-    } else {
-      return { player }
     }
-
+    return { player }
   }
   @Mutation(() => Player)
   @UseMiddleware(isAuth)
@@ -76,8 +76,16 @@ export class PlayerResolver {
     @Ctx() { ctx, em }: MyContext
   ): Promise<PlayerResponse> {
     const player = em.create(Player, {
-      ...input, userId: ctx.session.userId
+      name: input.name,
+      tank: input.tank,
+      healer: input.healer,
+      dps: input.dps,
+      locked: input.locked,
+      inTheRoll: input.inTheRoll,
+      user: em.getReference(User, ctx.session.userId!)
+
     })
+    await em.persistAndFlush(player)
     if (!player) {
       return {
         errors: [{
@@ -85,13 +93,11 @@ export class PlayerResolver {
           message: "unable to create player"
         }]
       }
-    } else {
-      console.log(player)
-      await em.persist(player).flush()
-      return {
-        player
-      }
     }
+    return {
+      player
+    }
+
   }
 
 
@@ -102,7 +108,7 @@ export class PlayerResolver {
     @Ctx() { em }: MyContext,
     @Arg("input", () => PlayerInput, { nullable: true }) input: PlayerInput
   ): Promise<PlayerResponse> {
-    let player = await em.findOne(Player, id)
+    const player = await em.findOne(Player, id)
     if (!player) {
       return {
         errors: [{
@@ -142,7 +148,10 @@ export class PlayerResolver {
     await em.nativeDelete(Player, { id })
     return true
   }
-
+  @FieldResolver()
+  async user(@Root() player: Player, @Ctx() { em }: MyContext): Promise<User> {
+    return em.findOneOrFail(User, player.user.id)
+  }
 }
 
 

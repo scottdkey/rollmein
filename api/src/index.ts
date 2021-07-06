@@ -26,6 +26,10 @@ const main = async () => {
     await createDatabase()
   }
   const orm = await MikroORM.init(microConfig);
+  const generator = orm.getSchemaGenerator()
+  await generator.dropSchema()
+  await generator.createSchema()
+  await generator.updateSchema()
   await orm.getMigrator().up()
 
   const app = new Koa();
@@ -51,6 +55,7 @@ const main = async () => {
   );
 
   const apolloServer = new ApolloServer({
+    playground: !__prod__,
     schema: await buildSchema({
       resolvers: [
         HelloResolver,
@@ -58,10 +63,11 @@ const main = async () => {
         PlayerResolver,
         UserOptionsResolver],
       validate: true,
+
     }),
     context: ({ ctx }: MyContext) => {
       return {
-        ctx, redis, em: orm.em
+        ctx, redis, em: orm.em.fork()
 
       }
     }

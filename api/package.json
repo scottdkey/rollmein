@@ -15,10 +15,12 @@
     "watch:node": "nodemon ./dist/index.js",
     "typescript": "tsc",
     "build": "docker build -t scottdkey/rollmein_api:$(echo $npm_package_version) .",
-    "dockerPush": "docker push scottdkey/rollmein_api:$(echo $npm_package_version)"
+    "dockerPush": "docker push scottdkey/rollmein_api:$(echo $npm_package_version)",
+    "create:migration": "mikro-orm migration:create"
   },
   "dependencies": {
     "@mikro-orm/core": "^4.5.7",
+    "@mikro-orm/migrations": "^4.5.7",
     "@mikro-orm/postgresql": "^4.5.7",
     "apollo-server-koa": "^2.25.2",
     "argon2": "^0.28.2",

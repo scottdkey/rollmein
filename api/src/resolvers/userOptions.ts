@@ -1,5 +1,4 @@
 import { Arg, Ctx, Field, InputType, Mutation, ObjectType, Query, Resolver, UseMiddleware } from "type-graphql"
-import { Player } from "../entites/Player";
 
 import { UserOptions } from "../entites/UserOptions"
 import { isAuth } from "../middleware/isAuth";
@@ -14,28 +13,14 @@ class FieldError {
   @Field()
   message: string;
 }
-
-@ObjectType()
-class OptionsResponse {
-  @Field(() => [FieldError], { nullable: true })
-  errors?: FieldError[];
-
-  @Field(() => UserOptions, { nullable: true })
-  userOptions?: UserOptions;
-}
 @InputType()
 class OptionsInput {
   @Field()
-  rollType: string
+  rollType!: string
   @Field()
-  lockAfterOut: boolean
+  lockAfterOut!: boolean
   @Field()
-  theme: string
-}
-@InputType()
-class UpdateOptionsInput extends OptionsInput {
-  @Field()
-  id: number
+  theme!: string
 }
 
 
@@ -44,101 +29,66 @@ class UpdateOptionsInput extends OptionsInput {
 export class UserOptionsResolver {
   @Query(() => UserOptions, { nullable: true })
   async options(
-    @Ctx() { ctx, em }: MyContext,
-  ): Promise<OptionsResponse> {
-    if (ctx.session?.userId) {
-      const options = await em.findOne(UserOptions, { userId: ctx.session.userId })
-      if (options) {
-        return {
-          userOptions: options
-        }
-      } else {
-        return {
-          errors: [{ field: "notFoundError", message: "not found please create" }]
-        }
-      }
-    } else {
-      return {
-        errors: [
-          {
-            field: "noUser",
-            message: "no userId found"
-          }
-        ]
-      }
+    @Ctx() ctx: MyContext,
+  ): Promise<UserOptions | null> {
+    const options = await ctx.em.findOne(UserOptions, {
+      userId: ctx.ctx.session.userId
+    })
+    if (!options) {
+      return await this.createUserOptions(ctx)
     }
-
-
-
+    return options
   }
   @Mutation(() => UserOptions)
   @UseMiddleware(isAuth)
   async createUserOptions(
-    @Arg("input") input: OptionsInput,
     @Ctx() { ctx, em }: MyContext
-  ): Promise<OptionsResponse> {
+  ): Promise<UserOptions> {
     const options = em.create(UserOptions, {
-      ...input,
       userId: ctx.session.userId
     })
-    if (!options) {
-      return {
-        errors: [{
-          field: "optionsCreate",
-          message: "error creating options"
-        }]
-      }
-    } else {
-      return {
-        userOptions: options
-      }
-    }
+    await em.persistAndFlush(options)
+    return options
   }
 
-  @Mutation(() => Player, { nullable: true })
+  @Mutation(() => UserOptions, { nullable: true })
   @UseMiddleware(isAuth)
   async updateUserOptions(
-    @Arg("input", () => UpdateOptionsInput, { nullable: true }) input: UpdateOptionsInput,
+    @Arg("input", () => OptionsInput, { nullable: true }) input: OptionsInput,
     @Ctx() { ctx, em }: MyContext,
-  ): Promise<OptionsResponse> {
+  ): Promise<UserOptions | FieldError[]> {
+    console.log(ctx.session.userId)
+    const userOptions = await em.findOne(UserOptions, { userId: ctx.session?.userId! })
+    if (userOptions === null) {
+      return [{
+        field: "authError",
+        message: "not authorized to update"
+      }]
 
-    const userOptions = await em.findOne(UserOptions, {
-      userId: ctx.session?.userId!
-    })
-    if (!userOptions) {
-      return {
-        errors: [{
-          field: "authError",
-          message: "not authorized to update"
-        }]
-      };
     } else if (input === null) {
-      return {
-        errors: [
-          {
-            field: "inputError",
-            message: "null input recieved"
-          }
-        ]
-      }
-    } else {
-      userOptions.lockAfterOut = input.lockAfterOut
-      userOptions.rollType = input.rollType
-      userOptions.theme = input.theme
-      await em.persistAndFlush(userOptions)
-      return {
-        userOptions
-      }
-
+      return [
+        {
+          field: "inputError",
+          message: "null input recieved"
+        }
+      ]
     }
+    userOptions.lockAfterOut = input.lockAfterOut
+    userOptions.rollType = input.rollType
+    userOptions.theme = input.theme
+    await em.persistAndFlush(userOptions)
+    console.log(userOptions)
+    return userOptions
   }
   @Mutation(() => Boolean)
   @UseMiddleware(isAuth)
   async deleteOptions(
     @Ctx() { ctx, em }: MyContext
   ): Promise<boolean> {
-    await em.nativeDelete(UserOptions, { userId: ctx.session.userId })
+    await em.nativeDelete(UserOptions, {
+      userId: ctx.session.userId
+    })
     return true
   }
-
 }
+

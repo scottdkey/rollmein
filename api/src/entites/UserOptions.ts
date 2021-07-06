@@ -1,28 +1,23 @@
-import { User } from "./User";
-import { Field, ObjectType } from "type-graphql";
-import { Entity, OneToOne, PrimaryKey, Property } from "@mikro-orm/core";
+import { Field, ID, ObjectType } from "type-graphql";
+import { Entity, PrimaryKey, Property } from "@mikro-orm/core";
 
 @ObjectType()
 @Entity()
 export class UserOptions {
-  @Field()
+  @Field(() => ID)
   @PrimaryKey()
-  id!: number;
+  userId: string;
 
   @Field()
   @Property()
-  rollType: string;
+  rollType: string = "ffa";
 
   @Field()
   @Property()
-  lockAfterOut: boolean;
+  lockAfterOut: boolean = false;
 
   @Field()
   @Property()
-  theme: string;
-
-  @Field()
-  @OneToOne(() => User, user => user.optionsId)
-  userId!: string
+  theme: string = "dark";
 }
 

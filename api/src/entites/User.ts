@@ -1,23 +1,19 @@
 
-
-import { Field, ObjectType } from "type-graphql";
-import { Collection, Entity, OneToMany, OneToOne, PrimaryKey, Property, Unique } from "@mikro-orm/core";
-import { Player } from "./Player"
-import { UserOptions } from "./UserOptions";
-
+import { Field, ID, ObjectType } from "type-graphql";
+import { Collection, Entity, OneToMany, PrimaryKey, Property, Unique } from "@mikro-orm/core";
+import { v4 } from "uuid";
+import { Player } from "./Player";
 
 @ObjectType()
 @Entity()
 export class User {
-  @Field()
+  @Field(() => ID)
   @PrimaryKey()
-  id: string;
+  id: string = v4();
 
-  @OneToMany(() => Player, player => player.userId)
+  @Field(() => [Player])
+  @OneToMany(() => Player, player => player.user)
   players = new Collection<Player>(this)
-
-  @OneToOne(() => UserOptions, userOptions => userOptions.userId)
-  optionsId: UserOptions['userId']
 
   @Field()
   @Property()
