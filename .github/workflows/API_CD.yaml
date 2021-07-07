@@ -23,7 +23,7 @@ jobs:
         env:
           KUBE_CONFIG: ${{ secrets.KUBECONFIG }}
         with:
-          args: set image deployment/rollmein-api api=scottdkey/rollmein_api:`${SHA}`
+          args: set image deployment/rollmein-api api=scottdkey/rollmein_api:${{ steps.short-sha.outputs.sha }}
 
       - name: Verify Deployment
         uses: actions-hub/kubectl@master
