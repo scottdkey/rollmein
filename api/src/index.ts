@@ -8,7 +8,7 @@ import redisStore from "koa-redis";
 import session from "koa-session";
 import 'reflect-metadata';
 import { buildSchema } from "type-graphql";
-import { COOKIE_NAME, SECRET_KEY, __port__, __prod__, REDIS } from "./constants";
+import { COOKIE_NAME, SECRET_KEY, __port__, __prod__, REDIS, __uri__ } from "./constants";
 import { HelloResolver } from "./resolvers/hello";
 import { PlayerResolver } from "./resolvers/player";
 import { UserResolver } from "./resolvers/user";
@@ -30,11 +30,16 @@ const main = async () => {
 
   const app = new Koa();
   app.use(bodyParser())
-  app.use(
-    cors({
-      origin: "http://localhost:3000"
-    })
-  );
+  // app.use(
+  //   cors({
+  //     origin: __uri__,
+  //     credentials: true
+  //   })
+  // )
+
+  app.use(cors())
+
+
   app.keys = [SECRET_KEY]
   app.use(
     session({
@@ -50,7 +55,7 @@ const main = async () => {
   );
 
   const apolloServer = new ApolloServer({
-    playground: true,
+    playground: __prod__,
     schema: await buildSchema({
       resolvers: [
         HelloResolver,
@@ -58,12 +63,12 @@ const main = async () => {
         PlayerResolver,
         OptionsResolver],
       validate: true,
-
     }),
     context: ({ ctx }: MyContext) => {
       return {
-        ctx, redis, em: orm.em.fork()
-
+        ctx,
+        redis,
+        em: orm.em.fork()
       }
     }
   });
@@ -71,7 +76,8 @@ const main = async () => {
   apolloServer.applyMiddleware({ app, cors: false, });
 
   app.listen(__port__, () => {
-    console.log(`server started on http://localhost:${__port__}/graphql`);
+    const message = __prod__ ? "server started" : `server started on http://localhost:${__port__}/graphql`
+    console.log(message);
   });
 
 }
