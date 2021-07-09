@@ -11,6 +11,7 @@ export default {
   migrations: {
     path: path.join(__dirname, "./migrations"),
     pattern: /^[\w-]+\d+\.[tj]s$/,
+    transactional: true,
   },
   entities: [Options, User, Player],
   dbName: DATABASE_NAME,

@@ -32,23 +32,31 @@ spec:
                 configMapKeyRef:
                   name: postgres-config
                   key: POSTGRES_PORT
+            - name: PGDATA
+              valueFrom:
+                configMapKeyRef:
+                  name: postgres-config
+                  key: PGDATA
             - name: POSTGRES_USER
               valueFrom:
                 secretKeyRef:
-                  name: pgSecrets
+                  name: pg-secrets
                   key: POSTGRES_USER
             - name: POSTGRES_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: pgSecrets
+                  name: pg-secrets
                   key: POSTGRES_PASSWORD
           ports:
             - containerPort: 5432
               name: postgres
           resources:
+            requests:
+              memory: "128Mi"
+              cpu: "0.2m"
             limits:
               memory: "256Mi"
-              cpu: "0.2m"
+              cpu: "0.4m"
           volumeMounts:
             - name: pv-data
               mountPath: /var/lib/postgresql/data

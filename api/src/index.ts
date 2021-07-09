@@ -8,33 +8,38 @@ import bodyParser from "koa-bodyparser";
 import redisStore from "koa-redis";
 import session from "koa-session";
 import { buildSchema } from "type-graphql";
-import { COOKIE_NAME, SECRET_KEY, __port__, __prod__ } from "./constants";
+import { COOKIE_NAME, SECRET_KEY, __port__, __prod__, REDIS, __uri__ } from "./constants";
 import { HelloResolver } from "./resolvers/hello";
 import { PlayerResolver } from "./resolvers/player";
 import { UserResolver } from "./resolvers/user";
 import { OptionsResolver } from "./resolvers/options";
-import { createDatabase } from "./utils/createDatabase";
+// import { createDatabase } from "./utils/createDatabase";
 import { MyContext } from "./types";
 import { MikroORM } from "@mikro-orm/core";
 import microConfig from "./mikro-orm.config"
 
 config()
-
-export const redis = new Redis();
+export const redis = new Redis({
+  host: REDIS
+});
 const main = async () => {
-  if (!__prod__) {
-    await createDatabase()
-  }
+  // if (!__prod__) {
+  //   await createDatabase()
+  // }
   const orm = await MikroORM.init(microConfig);
 
   const app = new Koa();
   app.use(bodyParser())
-  const redis = new Redis();
-  app.use(
-    cors({
-      origin: "http://localhost:3000"
-    })
-  );
+  // app.use(
+  //   cors({
+  //     origin: __uri__,
+  //     credentials: true
+  //   })
+  // )
+
+  app.use(cors())
+
+
   app.keys = [SECRET_KEY]
   app.use(
     session({
@@ -50,7 +55,7 @@ const main = async () => {
   );
 
   const apolloServer = new ApolloServer({
-    playground: !__prod__,
+    playground: __prod__,
     schema: await buildSchema({
       resolvers: [
         HelloResolver,
@@ -58,12 +63,12 @@ const main = async () => {
         PlayerResolver,
         OptionsResolver],
       validate: true,
-
     }),
     context: ({ ctx }: MyContext) => {
       return {
-        ctx, redis, em: orm.em.fork()
-
+        ctx,
+        redis,
+        em: orm.em.fork()
       }
     }
   });
@@ -71,7 +76,8 @@ const main = async () => {
   apolloServer.applyMiddleware({ app, cors: false, });
 
   app.listen(__port__, () => {
-    console.log(`server started on http://localhost:${__port__}/graphql`);
+    const message = __prod__ ? "server started" : `server started on http://localhost:${__port__}/graphql`
+    console.log(message);
   });
 
 }

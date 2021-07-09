@@ -20,7 +20,7 @@ spec:
     spec:
       containers:
         - name: api
-          image: <IMAGE>
+          image: scottdkey/rollmein_api:1.0.3
           imagePullPolicy: Always
           env:
             - name: PGHOST
@@ -38,12 +38,12 @@ spec:
             - name: POSTGRES_USER
               valueFrom:
                 secretKeyRef:
-                  name: pgSecrets
+                  name: pg-secrets
                   key: POSTGRES_USER
             - name: POSTGRES_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: pgSecrets
+                  name: pg-secrets
                   key: POSTGRES_PASSWORD
             - name: PORT
               valueFrom:
@@ -71,5 +71,5 @@ spec:
               memory: "128Mi"
               cpu: "0.4m"
             limits:
-              memory: "256Mi"
-              cpu: "0.5m"
+              memory: "512Mi"
+              cpu: "0.8m"

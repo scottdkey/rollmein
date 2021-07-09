@@ -1,4 +1,4 @@
-FROM node:current-alpine3.11 as build
+FROM node:slim as build
 WORKDIR /usr/app
 COPY package.json .
 COPY yarn.lock .
@@ -8,7 +8,7 @@ RUN yarn typescript
 
 
 
-FROM node:current-alpine3.11
+FROM node:slim
 WORKDIR /usr/app
 COPY package.json .
 COPY yarn.lock .

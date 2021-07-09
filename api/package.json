@@ -1,6 +1,6 @@
 {
   "name": "rollmein_api",
-  "version": "1.0.2",
+  "version": "1.0.5",
   "description": "",
   "main": "./dist/index.js",
   "type": "commonjs",
@@ -14,8 +14,9 @@
     "watch:ts": "tsc -w",
     "watch:node": "nodemon ./dist/index.js",
     "typescript": "tsc",
-    "build": "docker build -t scottdkey/rollmein_api:$(echo $npm_package_version) .",
-    "dockerPush": "docker push scottdkey/rollmein_api:$(echo $npm_package_version)",
+    "docker:build": "docker build -t scottdkey/rollmein_api:$(echo $npm_package_version) .",
+    "docker:push": "docker push scottdkey/rollmein_api:$(echo $npm_package_version)",
+    "build": "run-s docker:build docker:push",
     "create:migration": "mikro-orm migration:create"
   },
   "dependencies": {
