@@ -147,17 +147,21 @@ export class UserResolver {
       return { errors };
     }
     const hashedPassword = await argon2.hash(options.password);
-    const user = em.create(User, { ...options, password: hashedPassword })
-    
-    const userOptions = em.create(Options, {
-      userId: user.id
+    const user = em.create(User, {
+      ...options,
+      password: hashedPassword
     })
-    await em.persist(userOptions)
     await em.persist(user).flush()
+
     // store user id session
     // this will set a cookie on the user
     // keep them logged in
-    ctx.session.userId = user.id;
+    const id = user.id
+    ctx.session.userId = id;
+    const userOptions = em.create(Options, {
+      userId: id
+    })
+    await em.persist(userOptions).flush()
     return { user };
   }
 

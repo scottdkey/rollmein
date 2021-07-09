@@ -55,26 +55,25 @@ export class PlayerResolver {
   async player(
     @Arg("id") id: number,
     @Ctx() { em }: MyContext
-  ): Promise<PlayerResponse> {
+  ): Promise<Player | FieldError[]> {
     const player = await em.findOne(Player, id)
     if (!player) {
-      return {
-        errors: [
-          {
-            field: "playerError",
-            message: "player not found"
-          }
-        ]
-      }
+      return [
+        {
+          field: "playerError",
+          message: "player not found"
+        }
+      ]
+
     }
-    return { player }
+    return player
   }
   @Mutation(() => Player)
   @UseMiddleware(isAuth)
   async createPlayer(
     @Arg("input") input: PlayerInput,
     @Ctx() { ctx, em }: MyContext
-  ): Promise<PlayerResponse> {
+  ): Promise<Player | FieldError[]> {
     const player = em.create(Player, {
       name: input.name,
       tank: input.tank,
@@ -87,16 +86,13 @@ export class PlayerResolver {
     })
     await em.persistAndFlush(player)
     if (!player) {
-      return {
-        errors: [{
-          field: "player",
-          message: "unable to create player"
-        }]
-      }
+      return [{
+        field: "player",
+        message: "unable to create player"
+      }]
+
     }
-    return {
-      player
-    }
+    return player
 
   }
 
@@ -107,24 +103,22 @@ export class PlayerResolver {
     @Arg("id") id: number,
     @Ctx() { em }: MyContext,
     @Arg("input", () => PlayerInput, { nullable: true }) input: PlayerInput
-  ): Promise<PlayerResponse> {
+  ): Promise<Player | FieldError[]> {
     const player = await em.findOne(Player, id)
     if (!player) {
-      return {
-        errors: [{
-          field: "playerError",
-          message: "no player Found"
-        }]
-      };
+      return [{
+        field: "playerError",
+        message: "no player Found"
+      }]
+
     } else if (input === null) {
-      return {
-        errors: [
-          {
-            field: "inputError",
-            message: "incorrect cannot be null"
-          }
-        ]
-      }
+      return [
+        {
+          field: "inputError",
+          message: "incorrect cannot be null"
+        }
+      ]
+
     } else {
       player.name = input.name
       player.tank = input.tank
@@ -134,9 +128,8 @@ export class PlayerResolver {
       player.locked = input.locked
       await em.persist(player).flush()
     }
-    return {
-      player
-    }
+    return player
+
   }
 
   @Mutation(() => Boolean)

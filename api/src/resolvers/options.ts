@@ -1,4 +1,4 @@
-
+import { IDatabaseDriver, EntityManager, Connection } from "@mikro-orm/core";
 import { Arg, Ctx, Field, InputType, Mutation, ObjectType, Query, Resolver, UseMiddleware } from "type-graphql"
 
 import { Options } from "../entites/Options"
@@ -24,6 +24,24 @@ class OptionsInput {
   theme!: string
 }
 
+async function createOptions(
+  userId: string, em: EntityManager<any> & EntityManager<IDatabaseDriver<Connection>>
+): Promise<Options> {
+  const options = em.create(Options, {
+    userId
+  })
+  await em.persistAndFlush(options)
+  return options
+}
+
+async function deleteOptions(userId: string, em: EntityManager<any> & EntityManager<IDatabaseDriver<Connection>>) {
+
+  await em.nativeDelete(Options, {
+    userId
+  })
+  return true
+}
+
 
 
 @Resolver(Options)
@@ -36,17 +54,9 @@ export class OptionsResolver {
     const options = await em.findOne(Options, {
       userId: ctx.session.userId
     })
-    return options
-  }
-  @Mutation(() => Options)
-  @UseMiddleware(isAuth)
-  async createOptions(
-    @Ctx() { ctx, em }: MyContext
-  ): Promise<Options> {
-    const options = em.create(Options, {
-      userId: ctx.session.userId
-    })
-    await em.persistAndFlush(options)
+    if (!options) {
+      return createOptions(ctx.session.userId!, em)
+    }
     return options
   }
 
@@ -83,10 +93,7 @@ export class OptionsResolver {
   async deleteOptions(
     @Ctx() { ctx, em }: MyContext
   ): Promise<boolean> {
-    await em.nativeDelete(Options, {
-      userId: ctx.session.userId
-    })
-    return true
+    return await deleteOptions(ctx.session.userId!, em)
   }
 }
 

@@ -6,7 +6,7 @@ import { Entity, PrimaryKey, Property } from "@mikro-orm/core";
 export class Options {
   @Field(() => ID)
   @PrimaryKey()
-  userId!: string;
+  userId: string;
 
   @Field()
   @Property()
@@ -27,5 +27,9 @@ export class Options {
   @Field(() => Date)
   @Property({ type: "date", onUpdate: () => new Date() })
   updatedAt = new Date();
+
+  constructor(userId: string) {
+    this.userId = userId
+  }
 }
 

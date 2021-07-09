@@ -1,3 +1,4 @@
+import 'reflect-metadata';
 import { ApolloServer } from "apollo-server-koa";
 import cors from "koa-cors";
 import { config } from "dotenv";
@@ -6,7 +7,6 @@ import Koa from "koa";
 import bodyParser from "koa-bodyparser";
 import redisStore from "koa-redis";
 import session from "koa-session";
-import 'reflect-metadata';
 import { buildSchema } from "type-graphql";
 import { COOKIE_NAME, SECRET_KEY, __port__, __prod__ } from "./constants";
 import { HelloResolver } from "./resolvers/hello";

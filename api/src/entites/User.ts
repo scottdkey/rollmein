@@ -12,7 +12,7 @@ export class User {
   id: string = v4();
 
   @Field(() => [Player])
-  @OneToMany(() => Player, player => player.user)
+  @OneToMany(() => Player, player => player.user, { orphanRemoval: true })
   players = new Collection<Player>(this)
 
   @Field()
