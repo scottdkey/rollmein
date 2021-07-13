@@ -5,7 +5,7 @@ import { Redirect } from "react-router-dom";
 import { useAuth } from "./providers/AuthProvider";
 import { AuthObject } from "../types/Interfaces";
 
-const Authenticate = () => {
+const Login: React.FC<{}> = ({ }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [passwordConfirm, setPasswordConfirm] = useState("");
@@ -21,7 +21,7 @@ const Authenticate = () => {
       )}
     </div>
   );
-  const handleSubmit = async(e: any) => {
+  const handleSubmit = async (e: any) => {
     if (loginForm) {
       const loggingInUser: AuthObject = { email, password };
       await login(loggingInUser);
@@ -105,4 +105,4 @@ const Authenticate = () => {
   }
 };
 
-export default Authenticate;
+export default Login;

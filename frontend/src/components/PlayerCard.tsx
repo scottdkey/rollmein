@@ -12,7 +12,7 @@ import { PlayerObject, PlayerFormObject } from "../types/Interfaces";
 import { usePlayerData } from "./providers/PlayerProvider";
 import RoleLogoImage from "./RoleLogoImage";
 import { useAuth } from "./providers/AuthProvider";
-import { GetOnePlayer } from "./utils/PlayerCRUD";
+import { GetOnePlayer } from "../utils/PlayerCRUD";
 
 type PlayerCardType = {
   cardId?: number;

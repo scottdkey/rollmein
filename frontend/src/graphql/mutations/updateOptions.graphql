@@ -1,0 +1,7 @@
+mutation UpdateOptions($input: OptionsInput!) {
+  updateOptions(input: $input) {
+    lockAfterOut
+    rollType
+    theme
+  }
+}

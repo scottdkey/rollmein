@@ -1,0 +1,10 @@
+mutation CreatePlayer($input: PlayerInput!) {
+  createPlayer(input: $input) {
+    id
+    name
+    tank
+    healer
+    dps
+    locked
+  }
+}

@@ -1,4 +1,4 @@
-import { AuthObject, UserObject } from "../../types/Interfaces"
+import { AuthObject, UserObject } from "../types/Interfaces"
 import axios from "axios";
 
 

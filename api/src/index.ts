@@ -17,27 +17,28 @@ import { OptionsResolver } from "./resolvers/options";
 import { MyContext } from "./types";
 import { MikroORM } from "@mikro-orm/core";
 import microConfig from "./mikro-orm.config"
+import { createDatabase } from './utils/createDatabase';
 
 config()
 export const redis = new Redis({
   host: REDIS
 });
 const main = async () => {
-  // if (!__prod__) {
-  //   await createDatabase()
-  // }
+  if (!__prod__) {
+    await createDatabase()
+  }
   const orm = await MikroORM.init(microConfig);
 
   const app = new Koa();
   app.use(bodyParser())
-  // app.use(
-  //   cors({
-  //     origin: __uri__,
-  //     credentials: true
-  //   })
-  // )
+  app.use(
+    cors({
+      origin: __uri__,
+      credentials: true
+    })
+  )
 
-  app.use(cors())
+  // app.use(cors())
 
 
   app.keys = [SECRET_KEY]
@@ -55,7 +56,7 @@ const main = async () => {
   );
 
   const apolloServer = new ApolloServer({
-    playground: __prod__,
+    playground: !__prod__,
     schema: await buildSchema({
       resolvers: [
         HelloResolver,

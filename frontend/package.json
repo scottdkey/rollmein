@@ -12,7 +12,8 @@
     "build:react": "react-scripts build",
     "watch:css": "sass src/styles/App.scss:src/styles --watch",
     "watch:react-dev": "react-scripts start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "gen": "graphql-codegen --config codegen.yml"
   },
   "eslintConfig": {
     "extends": [
@@ -33,29 +34,47 @@
     ]
   },
   "dependencies": {
+    "@chakra-ui/react": "^1.6.5",
+    "@emotion/react": "^11.4.0",
+    "@emotion/styled": "^11.3.0",
     "@material-ui/core": "^4.11.3",
     "@material-ui/icons": "^4.11.2",
+    "@urql/exchange-graphcache": "^4.2.1",
     "axios": "^0.21.0",
+    "emotion-theming": "^11.0.0",
+    "formik": "^2.2.9",
+    "framer-motion": "^4.1.17",
+    "graphql": "^15.5.1",
+    "isomorphic-unfetch": "^3.1.0",
     "rc-drawer": "^4.3.1",
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
     "react-icons": "^4.2.0",
+    "react-is": "^17.0.2",
     "react-router": "^5.2.0",
     "react-router-dom": "^5.2.0",
     "react-scripts": "4.0.3",
-    "rsuite": "^5.0.0-alpha.5"
+    "rsuite": "^5.0.0-alpha.5",
+    "urql": "^2.0.4"
   },
   "devDependencies": {
+    "@graphql-codegen/cli": "^1.21.6",
+    "@graphql-codegen/typescript": "^1.22.4",
+    "@graphql-codegen/typescript-operations": "^1.18.3",
+    "@graphql-codegen/typescript-urql": "^2.0.10",
     "@testing-library/dom": "7.31.0",
     "@testing-library/jest-dom": "^5.11.4",
     "@testing-library/react": "^11.1.0",
     "@testing-library/user-event": "13.1.8",
-    "@types/react": "^17.0.0",
+    "@types/node": "^16.3.0",
+    "@types/react": "^17.0.14",
     "@types/react-dom": "^17.0.0",
     "@types/react-router-dom": "^5.1.6",
+    "graphql-tag": "^2.12.5",
     "npm-run-all": "^4.1.5",
+    "prop-types": "^15.7.2",
     "sass": "^1.32.8",
-    "typescript": "^4.1.2",
+    "typescript": "^4.3.5",
     "web-vitals": "^1.1.2"
   }
 }

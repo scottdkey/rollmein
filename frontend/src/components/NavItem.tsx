@@ -3,7 +3,7 @@ import React from "react";
 import { NavLink } from "react-router-dom";
 import { NavItemType } from "../types/Types";
 
-import { isActive } from "./utils/Navbar";
+import { isActive } from "../utils/Navbar";
 
 const NavItem = ({ route, name }: NavItemType) => {
   return (
