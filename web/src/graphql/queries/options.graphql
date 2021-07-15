@@ -1,0 +1,7 @@
+query Options{
+  options{
+    lockAfterOut
+    rollType
+    theme
+  }
+}
