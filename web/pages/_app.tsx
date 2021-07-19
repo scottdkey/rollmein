@@ -1,5 +1,4 @@
 import { CSSReset, ChakraProvider } from "@chakra-ui/react";
-// import theme from "../theme";
 
 
 function App({ Component, pageProps }: any) {

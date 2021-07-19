@@ -42,4 +42,4 @@ const ForgotPassword: React.FC<{}> = ({ }) => {
   )
 };
 
-export default withUrqlClient(createUrqlClient)(ForgotPassword)
+export default withUrqlClient(createUrqlClient, { ssr: false })(ForgotPassword)
