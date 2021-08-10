@@ -8,7 +8,7 @@ import bodyParser from "koa-bodyparser";
 import redisStore from "koa-redis";
 import session from "koa-session";
 import { buildSchema } from "type-graphql";
-import { COOKIE_NAME, __secretKey__, __port__, __prod__, REDIS, __uri__ } from "./constants";
+import { __cookieName__, __secretKey__, __port__, __prod__, __redisHost__, __uri__ } from "./constants";
 import { HelloResolver } from "./resolvers/hello";
 import { PlayerResolver } from "./resolvers/player";
 import { UserResolver } from "./resolvers/user";
@@ -20,7 +20,7 @@ import { createDatabase } from './utils/createDatabase';
 
 config()
 export const redis = new Redis({
-  host: REDIS
+  host: __redisHost__
 });
 const main = async () => {
   if (!__prod__) {
@@ -30,18 +30,20 @@ const main = async () => {
 
   const app = new Koa();
   app.use(bodyParser())
-  app.use(
-    cors({
-      origin: __uri__,
-      credentials: true
-    })
-  )
+  // app.use(
+  //   cors({
+  //     origin: __uri__,
+  //     credentials: true
+  //   })
+  // )
+
+  app.use(cors())
 
 
   app.keys = [__secretKey__]
   app.use(
     session({
-      key: COOKIE_NAME,
+      key: __cookieName__,
       store: redisStore({
         client: redis
       }),
@@ -53,7 +55,8 @@ const main = async () => {
   );
 
   const apolloServer = new ApolloServer({
-    playground: !__prod__,
+    // playground: !__prod__,
+    playground: true,
     schema: await buildSchema({
       resolvers: [
         HelloResolver,

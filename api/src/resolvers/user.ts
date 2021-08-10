@@ -12,7 +12,7 @@ import {
 import { MyContext } from "../types";
 import { User } from "../entites/User";
 import argon2 from "argon2";
-import { FORGET_PASSWORD_PREFIX } from "../constants";
+import { __forgetPasswordPrefix__} from "../constants";
 import { UsernamePasswordInput } from "./UsernamePasswordInput";
 import { validateRegister } from "../utils/validateRegister";
 import { sendEmail } from "../utils/sendEmail";
@@ -66,7 +66,7 @@ export class UserResolver {
       };
     }
 
-    const key = FORGET_PASSWORD_PREFIX + token;
+    const key = __forgetPasswordPrefix__ + token;
     const userId = await redis.get(key);
     if (!userId) {
       return {
@@ -113,7 +113,7 @@ export class UserResolver {
     const token = v4();
 
     await redis.set(
-      FORGET_PASSWORD_PREFIX + token,
+      __forgetPasswordPrefix__ + token,
       user.id,
       "ex",
       1000 * 60 * 60 * 24 * 3

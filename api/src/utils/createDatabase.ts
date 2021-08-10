@@ -1,13 +1,13 @@
 import { Client } from "pg"
 import { createDb } from "postgres-migrations"
-import { DATABASE_NAME, PG_USER } from "../constants"
+import { __dbName__, __pgUser__ } from "../constants"
 
 export const createDatabase = async () => {
   const client = await new Client({
-    database: PG_USER,
+    database: __pgUser__,
   })
   await client.connect().then(() =>
-    createDb(DATABASE_NAME, { client })
+    createDb(__dbName__, { client })
 
   ).catch((e) => {
     console.log(e.stack)

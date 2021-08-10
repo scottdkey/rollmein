@@ -1,4 +1,4 @@
-import { DATABASE_NAME, PG_HOST, PG_PASS, PG_PORT, PG_USER, __prod__ } from "./constants"
+import { __dbName__, __pgHost__, __pgPass__, __pgPort__, __pgUser__, __prod__ } from "./constants"
 
 import { MikroORM, ReflectMetadataProvider } from "@mikro-orm/core"
 import path from "path"
@@ -14,11 +14,11 @@ export default {
     transactional: true,
   },
   entities: [Options, User, Player],
-  dbName: DATABASE_NAME,
-  user: PG_USER,
-  password: PG_PASS,
-  host: PG_HOST,
-  port: PG_PORT,
+  dbName: __dbName__,
+  user: __pgUser__,
+  password: __pgPass__,
+  host: __pgHost__,
+  port: __pgPort__,
   type: "postgresql",
   debug: !__prod__
 } as Parameters<typeof MikroORM.init>[0];

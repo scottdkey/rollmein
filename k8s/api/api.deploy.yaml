@@ -1,59 +1,64 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: rollmein-api
+  name: rollmein
   labels:
-    app: rollmein-api
+    app: rollmein
     tier: backend
 spec:
   replicas: 1
   revisionHistoryLimit: 2
   selector:
     matchLabels:
-      app: rollmein-api
+      app: rollmein
       tier: backend
   template:
     metadata:
       labels:
-        app: rollmein-api
+        app: rollmein
         tier: backend
     spec:
       containers:
         - name: api
-          image: scottdkey/rollmein_api:1.0.4
+          image: scottdkey/rollmein_api:1.0.5
           imagePullPolicy: Always
           env:
-            - name: PGHOST
-              value: postgres
-            - name: POSTGRES_DB
-              valueFrom:
-                configMapKeyRef:
-                  name: postgres-config
-                  key: POSTGRES_DB
-            - name: POSTGRES_PORT
-              valueFrom:
-                configMapKeyRef:
-                  name: postgres-config
-                  key: POSTGRES_PORT
-            - name: POSTGRES_USER
-              valueFrom:
-                secretKeyRef:
-                  name: pg-secrets
-                  key: POSTGRES_USER
-            - name: POSTGRES_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: pg-secrets
-                  key: POSTGRES_PASSWORD
             - name: NODE_ENV
               value: production
+            - name: CORS_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: rollmein-config
+                  key: CORS_URL
             - name: REDIS_HOST
               value: redis
             - name: SECRETKEY
               valueFrom:
                 secretKeyRef:
-                  name: rollmein-api-secrets
+                  name: rollmein-secrets
                   key: SECRETKEY
+            - name: PGHOST
+              value: postgres
+            - name: PGDB
+              valueFrom:
+                configMapKeyRef:
+                  name: postgres-config
+                  key: POSTGRES_DB
+            - name: PGPORT
+              valueFrom:
+                configMapKeyRef:
+                  name: postgres-config
+                  key: POSTGRES_PORT
+            - name: PGUSER
+              valueFrom:
+                secretKeyRef:
+                  name: pg-secrets
+                  key: POSTGRES_USER
+            - name: PGPASS
+              valueFrom:
+                secretKeyRef:
+                  name: pg-secrets
+                  key: POSTGRES_PASSWORD
           ports:
             - containerPort: 5000
           resources:
