@@ -19,7 +19,7 @@ spec:
         tier: backend
     spec:
       containers:
-        - name: api
+        - name: rollmein
           image: scottdkey/rollmein_api:1.0.5
           imagePullPolicy: Always
           env:
