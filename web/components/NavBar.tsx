@@ -4,7 +4,6 @@ import React, { useState } from 'react'
 import NextLink from "next/link"
 import { useLogoutMutation, useMeQuery } from '../generated/graphql';
 import { isServer } from '../utils/isServer';
-import { useTheme } from "@chakra-ui/react"
 interface NavBarProps {
 
 }
@@ -36,11 +35,11 @@ export const NavBar: React.FC<NavBarProps> = ({ }) => {
   } else {
     body = (
       <Flex>
-        <Box mr={2}>{data.me.username}</Box>
-        <Button onClick={() => logout()} variant="link" isLoading={logoutFetching}>logout</Button>
+        <Box mr={2} alignContent="center">{data.me.username}</Box>
+        <Button mr={2} onClick={() => logout()} variant="link" isLoading={logoutFetching}>logout</Button>
         <Menu isOpen={optionsOpen}>
-          <MenuButton onClick={() => { setOptionsOpen(!optionsOpen) }} as={Button} rightIcon={<ChevronDownIcon />}>
-            Actions
+          <MenuButton mr={2} onClick={() => { setOptionsOpen(!optionsOpen) }} as={Link} rightIcon={<ChevronDownIcon />}>
+            options
           </MenuButton>
           <MenuList>
             <MenuItem>

@@ -29,14 +29,7 @@ class FieldError {
   message: string;
 }
 
-@ObjectType()
-class PlayerResponse {
-  @Field(() => [FieldError], { nullable: true })
-  errors?: FieldError[];
 
-  @Field(() => Player, { nullable: true })
-  player?: Player;
-}
 @Resolver(Player)
 export class PlayerResolver {
   @Query(() => [Player])

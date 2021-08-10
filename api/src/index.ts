@@ -8,12 +8,11 @@ import bodyParser from "koa-bodyparser";
 import redisStore from "koa-redis";
 import session from "koa-session";
 import { buildSchema } from "type-graphql";
-import { COOKIE_NAME, SECRET_KEY, __port__, __prod__, REDIS, __uri__ } from "./constants";
+import { COOKIE_NAME, __secretKey__, __port__, __prod__, REDIS, __uri__ } from "./constants";
 import { HelloResolver } from "./resolvers/hello";
 import { PlayerResolver } from "./resolvers/player";
 import { UserResolver } from "./resolvers/user";
 import { OptionsResolver } from "./resolvers/options";
-// import { createDatabase } from "./utils/createDatabase";
 import { MyContext } from "./types";
 import { MikroORM } from "@mikro-orm/core";
 import microConfig from "./mikro-orm.config"
@@ -38,10 +37,8 @@ const main = async () => {
     })
   )
 
-  // app.use(cors())
 
-
-  app.keys = [SECRET_KEY]
+  app.keys = [__secretKey__]
   app.use(
     session({
       key: COOKIE_NAME,

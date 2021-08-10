@@ -5,6 +5,7 @@ metadata:
   labels:
     app: redis
     tier: backend
+    namespace: rollmein
 spec:
   type: ClusterIP
   selector:

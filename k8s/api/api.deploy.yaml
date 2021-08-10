@@ -20,7 +20,7 @@ spec:
     spec:
       containers:
         - name: api
-          image: scottdkey/rollmein_api:1.0.3
+          image: scottdkey/rollmein_api:1.0.4
           imagePullPolicy: Always
           env:
             - name: PGHOST
@@ -45,24 +45,14 @@ spec:
                 secretKeyRef:
                   name: pg-secrets
                   key: POSTGRES_PASSWORD
-            - name: PORT
-              valueFrom:
-                configMapKeyRef:
-                  name: rollmein-api-config
-                  key: PORT
             - name: NODE_ENV
               value: production
-            - name: BASE_URL
-              valueFrom:
-                configMapKeyRef:
-                  name: rollmein-api-config
-                  key: BASE_URL
             - name: REDIS_HOST
               value: redis
             - name: SECRETKEY
               valueFrom:
-                configMapKeyRef:
-                  name: rollmein-api-config
+                secretKeyRef:
+                  name: rollmein-api-secrets
                   key: SECRETKEY
           ports:
             - containerPort: 5000
