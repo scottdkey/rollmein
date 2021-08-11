@@ -6,6 +6,7 @@ import Redis from 'ioredis';
 import Koa from "koa";
 import bodyParser from "koa-bodyparser";
 import redisStore from "koa-redis";
+// import router from "@koa/router"
 import session from "koa-session";
 import { buildSchema } from "type-graphql";
 import { __cookieName__, __secretKey__, __port__, __prod__, __redisHost__, __uri__ } from "./constants";
@@ -27,16 +28,6 @@ const main = async () => {
     await createDatabase()
   }
   const orm = await MikroORM.init(microConfig);
-  try {
-    const migrator = orm.getMigrator();
-    const migrations = await migrator.getPendingMigrations();
-    if (migrations && migrations.length > 0) {
-      await migrator.up();
-    }
-  } catch (error) {
-    console.error('📌 Could not connect to the database', error);
-    throw Error(error);
-  }
 
   const app = new Koa();
   app.use(bodyParser())
@@ -84,8 +75,9 @@ const main = async () => {
   apolloServer.applyMiddleware({ app, cors: false, });
 
   app.listen(__port__, () => {
-    const message = __prod__ ? "server started" : `server started on http://localhost:${__port__}/graphql`
+    const message = __prod__ ? "server started on https://rollmein.scottkey.dev/graphql" : `server started on http://localhost:${__port__}/graphql`
     console.log(message);
+    console.log(`accepting requests from ${__uri__}`)
   });
 
 }
