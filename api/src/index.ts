@@ -55,7 +55,7 @@ const main = async () => {
   );
 
   const apolloServer = new ApolloServer({
-    playground: __prod__,
+    playground: !__prod__,
     schema: await buildSchema({
       resolvers: [
         HelloResolver,

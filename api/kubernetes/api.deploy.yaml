@@ -25,12 +25,12 @@ spec:
           env:
             - name: PGHOST
               value: postgres
-            - name: POSTGRES_DB
+            - name: PGDATABASE
               valueFrom:
                 configMapKeyRef:
                   name: postgres-config
                   key: POSTGRES_DB
-            - name: POSTGRES_PORT
+            - name: PGPORT
               valueFrom:
                 configMapKeyRef:
                   name: postgres-config
@@ -40,7 +40,7 @@ spec:
                 secretKeyRef:
                   name: pg-secrets
                   key: POSTGRES_USER
-            - name: POSTGRES_PASSWORD
+            - name: PGPASSWORD
               valueFrom:
                 secretKeyRef:
                   name: pg-secrets
@@ -52,11 +52,11 @@ spec:
                   key: PORT
             - name: NODE_ENV
               value: production
-            - name: BASE_URL
+            - name: CORS_URL
               valueFrom:
                 configMapKeyRef:
                   name: rollmein-api-config
-                  key: BASE_URL
+                  key: CORS_URL
             - name: REDIS_HOST
               value: redis
             - name: SECRETKEY

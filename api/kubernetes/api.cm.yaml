@@ -4,5 +4,5 @@ metadata:
   name: rollmein-api-config
 data:
   PORT: "5000"
-  BASE_URL: /api/v1
+  CORS_URL: https://rollmein.scottkey.me
   SECRETKEY: 213j123d12jio2138d192dj2139d

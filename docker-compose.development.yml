@@ -24,7 +24,7 @@ services:
   api:
     image: scottdkey/rollmein_api
     build:
-      context: ./packages/api
+      context: ./api
       dockerfile: Dockerfile.dev
     volumes:
       - ./api/src:/usr/api/src
@@ -53,7 +53,7 @@ services:
   frontend:
     image: scottdkey/rollmein_frontend
     build:
-      context: ./packages/frontend
+      context: ./frontend
       dockerfile: Dockerfile.dev
     volumes:
       - ./frontend/src:/usr/app/src
