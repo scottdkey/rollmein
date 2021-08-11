@@ -12,7 +12,7 @@ export const __forgetPasswordPrefix__: string = 'forget-password:'
 export const __redisHost__: string = REDIS_HOST ? REDIS_HOST : "localhost"
 
 
-export const __pgHost__ = PGHOST ? PGHOST : 'localhost'
+export const __pgHost__ = PGHOST ? PGHOST : '0.0.0.0'
 export const __dbName__: string = PGDB ? PGDB : "rollmein_dev"
 export const __pgPort__ = PGPORT ? parseInt(PGPORT) : 5432
 export const __pgUser__ = PGUSER ? PGUSER : 'postgres'

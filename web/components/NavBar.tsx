@@ -1,4 +1,4 @@
-import { Box, Button, Center, Circle, Flex, FormLabel, Link, Menu, MenuButton, MenuItem, MenuList, Stack, Switch, useColorMode } from '@chakra-ui/react';
+import { Box, Button, Circle, Flex, FormLabel, Link, Menu, MenuButton, MenuItem, MenuList, Stack, Switch, useColorMode } from '@chakra-ui/react';
 import { ChevronDownIcon, SunIcon, MoonIcon } from "@chakra-ui/icons"
 import React, { useState } from 'react'
 import NextLink from "next/link"
@@ -38,7 +38,7 @@ export const NavBar: React.FC<NavBarProps> = ({ }) => {
         <Box mr={2} alignContent="center">{data.me.username}</Box>
         <Button mr={2} onClick={() => logout()} variant="link" isLoading={logoutFetching}>logout</Button>
         <Menu isOpen={optionsOpen}>
-          <MenuButton mr={2} onClick={() => { setOptionsOpen(!optionsOpen) }} as={Link} rightIcon={<ChevronDownIcon />}>
+          <MenuButton mr={2} onClick={() => { setOptionsOpen(!optionsOpen) }} rightIcon={<ChevronDownIcon />}>
             options
           </MenuButton>
           <MenuList>

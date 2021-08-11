@@ -27,17 +27,25 @@ const main = async () => {
     await createDatabase()
   }
   const orm = await MikroORM.init(microConfig);
+  try {
+    const migrator = orm.getMigrator();
+    const migrations = await migrator.getPendingMigrations();
+    if (migrations && migrations.length > 0) {
+      await migrator.up();
+    }
+  } catch (error) {
+    console.error('📌 Could not connect to the database', error);
+    throw Error(error);
+  }
 
   const app = new Koa();
   app.use(bodyParser())
-  // app.use(
-  //   cors({
-  //     origin: __uri__,
-  //     credentials: true
-  //   })
-  // )
-
-  app.use(cors())
+  app.use(
+    cors({
+      origin: __uri__,
+      credentials: true
+    })
+  )
 
 
   app.keys = [__secretKey__]
@@ -55,8 +63,7 @@ const main = async () => {
   );
 
   const apolloServer = new ApolloServer({
-    // playground: !__prod__,
-    playground: true,
+    playground: !__prod__,
     schema: await buildSchema({
       resolvers: [
         HelloResolver,

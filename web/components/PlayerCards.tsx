@@ -1,17 +1,18 @@
-import { Spinner, Wrap, WrapItem } from "@chakra-ui/react"
+import { Box, Spinner, Wrap, WrapItem, } from "@chakra-ui/react"
 import { withUrqlClient } from "next-urql";
 import React from "react"
 import { usePlayersQuery } from "../generated/graphql";
 import { createUrqlClient } from "../utils/createUrqlClient";
 import { Layout } from "./Layout";
+import { NewPlayerCard } from "./NewPlayerCard";
 import { PlayerCard } from "./PlayerCard"
 
 
-const PlayerCards = ({}) => {
+const PlayerCards = ({ }) => {
   const [{ data, fetching }] = usePlayersQuery();
 
   if (!fetching && !data) {
-    return <div>query failed for some reason</div>
+    return <Box bg="red">Query Failed</Box>
   }
   return (
     <Layout>
@@ -25,6 +26,7 @@ const PlayerCards = ({}) => {
                 <PlayerCard player={p} />
               </WrapItem>
             )}
+            <NewPlayerCard />
           </Wrap>
       }
     </Layout>

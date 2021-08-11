@@ -132,7 +132,7 @@ export const errorExchange: Exchange = ({ forward }) => ops$ => {
     })
   )
 }
-const __uri__: string = process.env.NODE_ENV === "production" ? "localhost:5000" : "rollmein.scottkey.dev"
+const __uri__: string = process.env.NODE_ENV !== "production" ? "http://localhost:5000/graphql" : "rollmeinApi.scottkey.dev"
 export const createUrqlClient = (ssrExchange: any) => ({
   url: __uri__,
   fetchOptions: {
