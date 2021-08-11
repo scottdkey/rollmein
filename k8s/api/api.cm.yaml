@@ -6,4 +6,4 @@ metadata:
     app: rollmein
     tier: backend
 data:
-  CORS_URL: rollmein.scottkey.dev
+  CORS_URL: https://rollmein.scottkey.me
