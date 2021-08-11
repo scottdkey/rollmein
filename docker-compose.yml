@@ -18,13 +18,17 @@ services:
   redis:
     image: redis:alpine
     ports:
-      - "80:6379"
+      - "6379:6379"
     expose:
       - 6379
   api:
-    image: scottdkey/rollmein_api:1.0.5
-  
-    command: bash -c 'while !/dev/tcp/database/5432; do sleep 1; done; yarn start'
+    image: scottdkey/rollmein_api
+    build:
+      context: ./api
+      dockerfile: Dockerfile.dev
+    volumes:
+      - ./api/src:/usr/api/src
+    command: bash -c 'while !/dev/tcp/database/5432; do sleep 1; done; yarn dev'
     env_file:
       - .env
     environment:
@@ -36,6 +40,9 @@ services:
       - PGDATABASE=${PGDATABASE}
       - REDIS_HOST=redis
       - PGHOST=database
+      - DEVELOPMENT_DATABASE=${DEVELOPMENT_DB}
+      - TEST_DATABASE=${TEST_DB}
+      - PRODUCTION_DATABASE=${PRODUCTION_DB}
     ports:
       - 5000:5000
     expose:
@@ -43,3 +50,20 @@ services:
     depends_on:
       - database
       - redis
+  frontend:
+    image: scottdkey/rollmein_frontend
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.dev
+    volumes:
+      - ./frontend/src:/usr/app/src
+    env_file:
+      - .env
+    environment:
+      - REACT_APP_API_HOST=${API_BASE_URL}
+    ports:
+      - 3000:3000
+    expose:
+      - 3000
+    depends_on:
+      - api
