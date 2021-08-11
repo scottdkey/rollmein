@@ -23,6 +23,8 @@ const CreatePost: React.FC<{}> = ({ }) => {
           const { error } = await createPlayer({ input: values })
           if (!error) {
             Router.push("/")
+          } else {
+            setErrors(error)
           }
 
         }}>

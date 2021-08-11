@@ -10,7 +10,7 @@ import Dps from "../assets/images/DPS.png"
 import Healer from "../assets/images/HEALER.png"
 import Dice from "../assets/svgs/Dice.svg"
 import Lock from "../assets/svgs/Lock.svg"
-import OpenLock from "../assets/svgs/OpenLock.svg"
+// import OpenLock from "../assets/svgs/OpenLock.svg"
 import Trash from "../assets/svgs/Trash.svg"
 
 export const NewPlayerCard = () => {

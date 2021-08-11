@@ -22,7 +22,7 @@ const PlayerCards = ({ }) => {
           :
           <Wrap spacing="5px" align="center" m="5px" justify="center">
             {data?.players.map(p =>
-              <WrapItem >
+              <WrapItem key={p.id}>
                 <PlayerCard player={p} />
               </WrapItem>
             )}
