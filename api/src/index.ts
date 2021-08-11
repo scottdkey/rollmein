@@ -6,7 +6,7 @@ import Redis from 'ioredis';
 import Koa from "koa";
 import bodyParser from "koa-bodyparser";
 import redisStore from "koa-redis";
-// import router from "@koa/router"
+
 import session from "koa-session";
 import { buildSchema } from "type-graphql";
 import { __cookieName__, __secretKey__, __port__, __prod__, __redisHost__, __uri__ } from "./constants";
@@ -18,6 +18,7 @@ import { MyContext } from "./types";
 import { MikroORM } from "@mikro-orm/core";
 import microConfig from "./mikro-orm.config"
 import { createDatabase } from './utils/createDatabase';
+import { kubeRouter } from './routes/kubernetesRoutes';
 
 config()
 export const redis = new Redis({
@@ -73,6 +74,7 @@ const main = async () => {
   });
 
   apolloServer.applyMiddleware({ app, cors: false, });
+  app.use(kubeRouter.routes())
 
   app.listen(__port__, () => {
     const message = __prod__ ? "server started on https://rollmein.scottkey.dev/graphql" : `server started on http://localhost:${__port__}/graphql`

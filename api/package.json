@@ -20,6 +20,7 @@
     "create:migration": "mikro-orm migration:create"
   },
   "dependencies": {
+    "@cloudnative/health-connect": "^2.1.0",
     "@koa/router": "^10.1.0",
     "@mikro-orm/cli": "^4.5.7",
     "@mikro-orm/core": "^4.5.7",
