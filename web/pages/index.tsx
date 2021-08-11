@@ -1,6 +1,8 @@
 import React from "react"
 import PlayerCards from "../components/PlayerCards"
 import { Layout } from "../components/Layout";
+import { createUrqlClient } from "../utils/createUrqlClient";
+import { withUrqlClient } from "next-urql";
 
 
 
@@ -14,4 +16,4 @@ const Index = () => {
   )
 }
 
-export default Index
+export default withUrqlClient(createUrqlClient, { ssr: false })(Index);
