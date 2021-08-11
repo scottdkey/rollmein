@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: rollmein
+    tier: backend
+  name: rollmein
+spec:
+  type: ClusterIP
+  selector:
+    app: rollmein
+    tier: backend
+  ports:
+    - protocol: TCP
+      name: http
+      port: 80
+      targetPort: 5000

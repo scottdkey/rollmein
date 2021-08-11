@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: rollmein-config
+  labels:
+    app: rollmein
+    tier: backend
+data:
+  CORS_URL: https://rollmein.scottkey.me

@@ -12,7 +12,7 @@ import {
 import { MyContext } from "../types";
 import { User } from "../entites/User";
 import argon2 from "argon2";
-import { FORGET_PASSWORD_PREFIX } from "../constants";
+import { __forgetPasswordPrefix__} from "../constants";
 import { UsernamePasswordInput } from "./UsernamePasswordInput";
 import { validateRegister } from "../utils/validateRegister";
 import { sendEmail } from "../utils/sendEmail";
@@ -66,7 +66,7 @@ export class UserResolver {
       };
     }
 
-    const key = FORGET_PASSWORD_PREFIX + token;
+    const key = __forgetPasswordPrefix__ + token;
     const userId = await redis.get(key);
     if (!userId) {
       return {
@@ -113,7 +113,7 @@ export class UserResolver {
     const token = v4();
 
     await redis.set(
-      FORGET_PASSWORD_PREFIX + token,
+      __forgetPasswordPrefix__ + token,
       user.id,
       "ex",
       1000 * 60 * 60 * 24 * 3
@@ -147,18 +147,50 @@ export class UserResolver {
       return { errors };
     }
     const hashedPassword = await argon2.hash(options.password);
-    const user = em.create(User, { ...options, password: hashedPassword })
-    
-    const userOptions = em.create(Options, {
-      userId: user.id
-    })
-    await em.persist(userOptions)
-    await em.persist(user).flush()
-    // store user id session
-    // this will set a cookie on the user
-    // keep them logged in
-    ctx.session.userId = user.id;
-    return { user };
+
+    try {
+      const user: User = em.create(User, {
+        ...options,
+        password: hashedPassword
+      })
+      await em.persist(user).flush()
+      const id = user.id
+      const userOptions = em.create(Options, {
+        userId: id
+      })
+      await em.persist(userOptions).flush()
+      // store user id session
+      // this will set a cookie on the user
+      // keep them logged in
+      ctx.session.userId = id;
+      return { user };
+    } catch (err) {
+      console.log(err)
+      if (err.constraint === "user_email_unique") {
+        return {
+          errors: [{
+            field: "email",
+            message: "email already exists, please choose another"
+          }]
+        }
+      } else if (err.constraint === "user_username_unique") {
+        return {
+          errors: [{
+            field: "username",
+            message: "username already exists, please choose another"
+          }]
+        }
+      } else {
+        return {
+          errors: [{
+            field: "error",
+            message: `unexpected error ${err.constraint}`
+          }]
+        }
+      }
+    }
+
+
   }
 
   @Mutation(() => UserResponse)

@@ -23,14 +23,14 @@ jobs:
         env:
           KUBE_CONFIG: ${{ secrets.KUBECONFIG }}
         with:
-          args: set image deployment/rollmein-api api=scottdkey/rollmein_api:${{ steps.short-sha.outputs.sha }}
+          args: set image deployment/rollmein rollmein=scottdkey/rollmein_api:${{ steps.short-sha.outputs.sha }}
 
       - name: Verify Deployment
         uses: actions-hub/kubectl@master
         env:
           KUBE_CONFIG: ${{ secrets.KUBECONFIG }}
         with:
-          args: rollout status deployment/rollmein-api
+          args: rollout status deployment/rollmein
   on-failure:
     runs-on: ubuntu-latest
     if: ${{ github.event.workflow_run.conclusion == 'failure' }}

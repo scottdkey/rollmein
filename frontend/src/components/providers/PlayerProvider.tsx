@@ -12,11 +12,11 @@ import {
   PlayerUpdate,
   NewPlayer,
   GetPlayers,
-} from "../utils/PlayerCRUD";
+} from "../../utils/PlayerCRUD";
 
 import { useAuth } from "./AuthProvider";
 import Axios from "axios";
-import { validCheck } from "../utils/BaseAppLogic";
+import { validCheck } from "../../utils/BaseAppLogic";
 
 const PlayerContext = createContext<PlayerContextType | undefined>(undefined);
 

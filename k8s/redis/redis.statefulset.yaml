@@ -1,0 +1,34 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: redis
+  labels:
+    app: redis
+    tier: backend
+    namespace: rollmein
+spec:
+  serviceName: "redis"
+  replicas: 1
+  selector:
+    matchLabels:
+      app: redis
+      tier: backend
+  template:
+    metadata:
+      labels:
+        app: redis
+        tier: backend
+    spec:
+      containers:
+        - name: redis
+          image: redis
+          resources:
+            requests:
+              memory: "128Mi"
+              cpu: "0.2m"
+            limits:
+              memory: "256Mi"
+              cpu: "0.4m"
+          ports:
+            - containerPort: 6379
+              name: redis

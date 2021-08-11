@@ -7,7 +7,7 @@ import {
   Logout,
   Register,
   Update,
-} from "../utils/AuthCRUD";
+} from "../../utils/AuthCRUD";
 import { UserObject, AuthObject } from "../../types/Interfaces";
 import { AuthReturn, AuthContextType } from "../../types/Types";
 
