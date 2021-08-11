@@ -16,15 +16,15 @@ jobs:
       backend: ${{ steps.filter.outputs.backend }}
       frontend: ${{ steps.filter.outputs.frontend }}
     steps:
-    # For pull requests it's not necessary to checkout the code
-    - uses: dorny/paths-filter@v2
-      id: filter
-      with:
-        filters: |
-          backend:
-            - 'backend/**'
-          frontend:
-            - 'frontend/**'
+      - uses: actions/checkout@v2
+      - uses: dorny/paths-filter@v2
+        id: filter
+        with:
+          filters: |
+            backend:
+              - 'backend/**'
+            frontend:
+              - 'frontend/**'
   test:
     needs: changes
     if: ${{ needs.changes.outputs.backend == 'true' }}
@@ -38,7 +38,6 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
-
 
       - name: Use Node.js ${{ matrix.node }}
         uses: actions/setup-node@v2
