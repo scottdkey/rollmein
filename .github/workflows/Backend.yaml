@@ -10,24 +10,24 @@ on:
     branches: [main]
 
 jobs:
-  changes:
-    runs-on: ubuntu-latest
-    outputs:
-      backend: ${{ steps.filter.outputs.backend }}
-      frontend: ${{ steps.filter.outputs.frontend }}
-    steps:
-      - uses: actions/checkout@v2
-      - uses: dorny/paths-filter@v2
-        id: filter
-        with:
-          filters: |
-            backend:
-              - 'backend/**'
-            frontend:
-              - 'frontend/**'
+  # changes:
+  #   runs-on: ubuntu-latest
+  #   outputs:
+  #     backend: ${{ steps.filter.outputs.backend }}
+  #     frontend: ${{ steps.filter.outputs.frontend }}
+  #   steps:
+  #     - uses: actions/checkout@v2
+  #     - uses: dorny/paths-filter@v2
+  #       id: filter
+  #       with:
+  #         filters: |
+  #           backend:
+  #             - 'backend/**'
+  #           frontend:
+  #             - 'frontend/**'
   test:
-    needs: changes
-    if: ${{ needs.changes.outputs.backend == 'true' }}
+    # needs: changes
+    # if: ${{ needs.changes.outputs.backend == 'true' }}
     runs-on: ubuntu-latest
     defaults:
       run:
