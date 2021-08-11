@@ -8,7 +8,7 @@ interface NavBarProps {
 
 }
 
-export const NavBar: React.FC<NavBarProps> = ({ }) => {
+const NavBar: React.FC<NavBarProps> = ({ }) => {
   const [{ fetching: logoutFetching }, logout] = useLogoutMutation()
   const [optionsOpen, setOptionsOpen] = useState(false)
   const [rollType, setRollType] = useState("ffa")
@@ -79,3 +79,5 @@ export const NavBar: React.FC<NavBarProps> = ({ }) => {
       </Box>
     </Flex>);
 }
+
+export default NavBar

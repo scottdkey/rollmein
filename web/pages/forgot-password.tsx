@@ -17,8 +17,8 @@ const ForgotPassword: React.FC<{}> = ({ }) => {
         onSubmit={async (values, { setErrors }) => {
           try {
             await forgotPassword(values);
-          setComplete(true);
-          } catch (e){
+            setComplete(true);
+          } catch (e: any) {
             setErrors(e)
           }
         }}>

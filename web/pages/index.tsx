@@ -1,5 +1,6 @@
 import React from "react"
 import PlayerCards from "../components/PlayerCards"
+import { Layout } from "../components/Layout";
 
 
 
@@ -7,8 +8,9 @@ const Index = () => {
 
 
   return (
-    <PlayerCards pageProps/>
-
+    <Layout>
+      <PlayerCards pageProps />
+    </Layout>
   )
 }
 

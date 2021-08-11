@@ -3,7 +3,6 @@ import { withUrqlClient } from "next-urql";
 import React from "react"
 import { usePlayersQuery } from "../generated/graphql";
 import { createUrqlClient } from "../utils/createUrqlClient";
-import { Layout } from "./Layout";
 import { NewPlayerCard } from "./NewPlayerCard";
 import { PlayerCard } from "./PlayerCard"
 
@@ -15,7 +14,7 @@ const PlayerCards = ({ }) => {
     return <Box bg="red">Query Failed</Box>
   }
   return (
-    <Layout>
+    <>
       {
         !data && fetching ?
           <Spinner size="xl" />
@@ -29,8 +28,7 @@ const PlayerCards = ({ }) => {
             <NewPlayerCard />
           </Wrap>
       }
-    </Layout>
-
+    </>
   )
 }
 
