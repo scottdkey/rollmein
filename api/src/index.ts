@@ -21,6 +21,7 @@ import { createDatabase } from './utils/createDatabase';
 import { kubeRouter } from './routes/kubernetesRoutes';
 
 config()
+export let serverOn = false
 export const redis = new Redis({
   host: __redisHost__
 });
@@ -50,7 +51,7 @@ const main = async () => {
       maxAge: 1000 * 60 * 60 * 24, // 24 hours
       httpOnly: true,
       sameSite: "lax", // csrf
-      secure: __prod__, // cookie only works in https
+      secure: false, // cookie only works in https
     }, app)
   );
 
@@ -79,7 +80,7 @@ const main = async () => {
   app.listen(__port__, () => {
     const message = __prod__ ? "server started on https://rollmein.scottkey.dev/graphql" : `server started on http://localhost:${__port__}/graphql`
     console.log(message);
-    console.log(`accepting requests from ${__uri__}`)
+    serverOn = true
   });
 
 }
