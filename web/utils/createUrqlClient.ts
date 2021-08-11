@@ -133,16 +133,28 @@ export const errorExchange: Exchange = ({ forward }) => ops$ => {
   )
 }
 const __url__: string = process.env.NODE_ENV !== "production" ? "http://localhost:5000/graphql" : "https://rollmein.scottkey.dev/graphql"
-export const createUrqlClient = (ssrExchange: any) => ({
-  url: __url__,
-  fetchOptions: {
-    credentials: "include" as const,
+const isServer = () => typeof window === "undefined";
 
-  },
-  exchanges: [
-    dedupExchange,
-    cacheExchange,
-    ssrExchange,
-    errorExchange,
-    fetchExchange]
-})
+export const createUrqlClient = (ssrExchange: any, ctx: any) => {
+  let cookie = "";
+  if (isServer()) {
+    cookie = ctx?.req?.headers?.cookie;
+  }
+  return {
+    url: __url__,
+    fetchOptions: {
+      credentials: "include" as const,
+      headers: cookie
+        ? {
+          cookie,
+        }
+        : undefined,
+    },
+    exchanges: [
+      dedupExchange,
+      cacheExchange,
+      ssrExchange,
+      errorExchange,
+      fetchExchange]
+  }
+}

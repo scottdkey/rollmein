@@ -51,7 +51,8 @@ const main = async () => {
       maxAge: 1000 * 60 * 60 * 24, // 24 hours
       httpOnly: true,
       sameSite: "lax", // csrf
-      secure: false, // cookie only works in https
+      secure: false, // behind kubernetes, not secure behind cluster control plane
+      
     }, app)
   );
 
