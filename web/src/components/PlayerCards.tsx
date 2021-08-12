@@ -10,7 +10,7 @@ const PlayerCards = ({ }) => {
   if (!loading && !data) {
     return <Box bg="red">Query Failed</Box>
   }
-  const NewPlayerCard = dynamic(() => import("./NavBar"))
+  const NewPlayerCard = dynamic(() => import("./NewPlayerCard"))
   const PlayerCard = dynamic(() => import("./PlayerCard"))
   return (
     <>

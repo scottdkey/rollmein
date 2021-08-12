@@ -5,7 +5,6 @@ import NextLink from "next/link"
 import { useLogoutMutation, useMeQuery } from '../generated/graphql';
 import { isServer } from '../utils/varables';
 import { useApolloClient } from '@apollo/client';
-import dynamic from "next/dynamic"
 interface NavBarProps {
 
 }

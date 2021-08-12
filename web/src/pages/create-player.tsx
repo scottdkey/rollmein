@@ -1,15 +1,17 @@
 import { Box, Button } from '@chakra-ui/react';
 import { Form, Formik } from 'formik';
-import Router from 'next/router';
+import Router, { useRouter } from 'next/router';
 import React from 'react';
 import { InputField } from '../components/InputField';
 import { Layout as Layout } from '../components/Layout';
 import { useCreatePlayerMutation } from '../generated/graphql';
 import { useIsAuth } from '../utils/useIsAuth';
+import { withApollo } from '../utils/withApollo';
 
 
 
-const CreatePost: React.FC<{}> = ({ }) => {
+const CreatePlayer: React.FC<{}> = ({ }) => {
+  const router = useRouter()
   useIsAuth()
   const [createPlayer] = useCreatePlayerMutation()
   return (
@@ -61,4 +63,4 @@ const CreatePost: React.FC<{}> = ({ }) => {
   )
 };
 
-export default CreatePost
+export default withApollo({ ssr: false })(CreatePlayer);

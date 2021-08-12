@@ -13,7 +13,7 @@ import Lock from "../assets/svgs/Lock.svg"
 // import OpenLock from "../assets/svgs/OpenLock.svg"
 import Trash from "../assets/svgs/Trash.svg"
 
-export const NewPlayerCard = () => {
+const NewPlayerCard = () => {
   useIsAuth()
   const [createPlayer] = useCreatePlayerMutation()
 
@@ -71,3 +71,4 @@ export const NewPlayerCard = () => {
   )
 }
 
+export default NewPlayerCard

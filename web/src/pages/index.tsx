@@ -1,6 +1,7 @@
 import React from "react"
 import PlayerCards from "../components/PlayerCards"
 import { Layout } from "../components/Layout";
+import { withApollo } from "../utils/withApollo";
 
 
 
@@ -14,4 +15,4 @@ const Index = () => {
   )
 }
 
-export default Index
+export default withApollo({ ssr: true })(Index);
