@@ -27,16 +27,18 @@ const Login: React.FC<{}> = ({ }) => {
                   me: data?.login.user,
                 },
               });
-              cache.evict({ fieldName: "posts:{}" });
+              cache.evict({ fieldName: "players:{}" });
             },
           });
           if (response.data?.login.errors) {
             setErrors(toErrorMap(response.data.login.errors));
           } else if (response.data?.login.user) {
             if (typeof router.query.next === "string") {
+              console.log(response)
               router.push(router.query.next);
             } else {
               // worked
+              console.log(response)
               router.push("/");
             }
           }

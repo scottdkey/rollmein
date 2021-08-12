@@ -52,7 +52,7 @@ const main = async () => {
       httpOnly: true,
       sameSite: "lax", // csrf
       secure: false, // behind kubernetes, not secure behind cluster control plane
-      
+
     }, app)
   );
 
@@ -75,7 +75,13 @@ const main = async () => {
     }
   });
 
-  apolloServer.applyMiddleware({ app, cors: false, });
+  apolloServer.applyMiddleware({
+    app,
+    cors: {
+      origin: __uri__,
+      credentials: true
+    },
+  });
   app.use(kubeRouter.routes())
 
   app.listen(__port__, () => {
