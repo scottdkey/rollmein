@@ -13,7 +13,6 @@ import {
 } from "../../generated/graphql";
 import { useRouter } from "next/router";
 import NextLink from "next/link";
-import { withApollo } from "../../utils/withApollo";
 
 const ChangePassword: NextPage = () => {
   const router = useRouter();
@@ -87,4 +86,4 @@ const ChangePassword: NextPage = () => {
   );
 };
 
-export default withApollo({ ssr: false })(ChangePassword);
+export default ChangePassword

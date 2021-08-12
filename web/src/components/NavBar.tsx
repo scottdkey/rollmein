@@ -4,19 +4,21 @@ import React, { useState } from 'react'
 import NextLink from "next/link"
 import { useLogoutMutation, useMeQuery } from '../generated/graphql';
 import { isServer } from '../utils/varables';
+import { useApollo } from '../utils/apollo';
+import { useApolloClient } from '@apollo/client';
 interface NavBarProps {
 
 }
 
 const NavBar: React.FC<NavBarProps> = ({ }) => {
   const [logout, { loading: logoutFetching }] = useLogoutMutation();
+  const { cache } = useApolloClient()
   const [optionsOpen, setOptionsOpen] = useState(false)
   const [rollType, setRollType] = useState("ffa")
   const { colorMode, toggleColorMode } = useColorMode()
   const { data, loading } = useMeQuery({
     skip: isServer(),
   });
-
 
   let body = null
   if (loading) {
@@ -36,7 +38,10 @@ const NavBar: React.FC<NavBarProps> = ({ }) => {
     body = (
       <Flex>
         <Box mr={2} alignContent="center">{data.me.username}</Box>
-        <Button mr={2} onClick={() => logout()} variant="link" isLoading={logoutFetching}>logout</Button>
+        <Button mr={2} onClick={async () => {
+          await logout(); 
+          await cache.reset()
+        }} variant="link" isLoading={logoutFetching}>logout</Button>
         <Menu isOpen={optionsOpen}>
           <MenuButton mr={2} onClick={() => { setOptionsOpen(!optionsOpen) }} rightIcon={<ChevronDownIcon />}>
             options

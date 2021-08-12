@@ -1,7 +1,6 @@
 import { Box, Spinner, Wrap, WrapItem, } from "@chakra-ui/react"
 import React from "react"
 import { usePlayersQuery } from "../generated/graphql";
-import { withApollo } from "../utils/withApollo";
 import { NewPlayerCard } from "./NewPlayerCard";
 import { PlayerCard } from "./PlayerCard"
 
@@ -31,4 +30,4 @@ const PlayerCards = ({ }) => {
   )
 }
 
-export default withApollo({ ssr: false })(PlayerCards)
+export default PlayerCards
