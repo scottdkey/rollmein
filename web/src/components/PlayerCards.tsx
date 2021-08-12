@@ -1,8 +1,7 @@
 import { Box, Spinner, Wrap, WrapItem, } from "@chakra-ui/react"
 import React from "react"
 import { usePlayersQuery } from "../generated/graphql";
-import { NewPlayerCard } from "./NewPlayerCard";
-import { PlayerCard } from "./PlayerCard"
+import dynamic from "next/dynamic"
 
 
 const PlayerCards = ({ }) => {
@@ -11,6 +10,8 @@ const PlayerCards = ({ }) => {
   if (!loading && !data) {
     return <Box bg="red">Query Failed</Box>
   }
+  const NewPlayerCard = dynamic(() => import("./NavBar"))
+  const PlayerCard = dynamic(() => import("./PlayerCard"))
   return (
     <>
       {

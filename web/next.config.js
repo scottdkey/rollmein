@@ -1,4 +1,5 @@
 module.exports = {
   reactStrictMode: true,
-  distDir: "out"
-}
+  distDir: "out",
+  compress: true,
+};

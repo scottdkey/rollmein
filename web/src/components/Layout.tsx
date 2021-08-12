@@ -10,11 +10,12 @@ interface LayoutProps {
 
 export const Layout: React.FC<LayoutProps> = ({
   variant, children
+
 }) => {
-  const NavBar = dynamic(() => import("./NavBar"))
+  const Navbar = dynamic(() => import("./NavBar"))
   return (
     <>
-      <NavBar />
+      <Navbar />
       <Wrapper variant={variant}>
         {children}
       </Wrapper>

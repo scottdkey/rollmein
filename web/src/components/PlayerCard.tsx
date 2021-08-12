@@ -12,7 +12,7 @@ export type Player = {
   inTheRoll: boolean
   id: string
 }
-export const PlayerCard = ({ player }: { player: Player }) => {
+const PlayerCard = ({ player }: { player: Player }) => {
   const [p, _] = useState(player)
   const [playerUpdate] = useUpdatePlayerMutation()
   console.log(playerUpdate)
@@ -31,3 +31,5 @@ export const PlayerCard = ({ player }: { player: Player }) => {
     </Box>
   )
 }
+
+export default PlayerCard

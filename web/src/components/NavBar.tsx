@@ -4,8 +4,8 @@ import React, { useState } from 'react'
 import NextLink from "next/link"
 import { useLogoutMutation, useMeQuery } from '../generated/graphql';
 import { isServer } from '../utils/varables';
-import { useApollo } from '../utils/apollo';
 import { useApolloClient } from '@apollo/client';
+import dynamic from "next/dynamic"
 interface NavBarProps {
 
 }
@@ -84,5 +84,7 @@ const NavBar: React.FC<NavBarProps> = ({ }) => {
       </Box>
     </Flex>);
 }
+
+
 
 export default NavBar
