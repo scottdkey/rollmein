@@ -3,23 +3,23 @@ import { ChevronDownIcon, SunIcon, MoonIcon } from "@chakra-ui/icons"
 import React, { useState } from 'react'
 import NextLink from "next/link"
 import { useLogoutMutation, useMeQuery } from '../generated/graphql';
-import { isServer } from '../utils/isServer';
+import { isServer } from '../utils/varables';
 interface NavBarProps {
 
 }
 
 const NavBar: React.FC<NavBarProps> = ({ }) => {
-  const [{ fetching: logoutFetching }, logout] = useLogoutMutation()
+  const [logout, { loading: logoutFetching }] = useLogoutMutation();
   const [optionsOpen, setOptionsOpen] = useState(false)
   const [rollType, setRollType] = useState("ffa")
   const { colorMode, toggleColorMode } = useColorMode()
-  const [{ data, fetching }] = useMeQuery({
-    pause: isServer()
-  })
+  const { data, loading } = useMeQuery({
+    skip: isServer(),
+  });
 
 
   let body = null
-  if (fetching) {
+  if (loading) {
 
   } else if (!data?.me) {
     body = (

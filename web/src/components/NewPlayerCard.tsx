@@ -15,7 +15,7 @@ import Trash from "../assets/svgs/Trash.svg"
 
 export const NewPlayerCard = () => {
   useIsAuth()
-  const [, createPlayer] = useCreatePlayerMutation()
+  const [createPlayer] = useCreatePlayerMutation()
 
   const Icon = ({ src, alt, boxSize = "70" }: { src: StaticImageData, alt: string, boxSize?: string }) => {
     return (
@@ -28,10 +28,12 @@ export const NewPlayerCard = () => {
     <Formik
       initialValues={{ name: "", tank: false, healer: false, dps: false, inTheRoll: false, locked: false }}
       onSubmit={async (values, { setErrors }) => {
-        const { error } = await createPlayer({ input: values })
-        if (error) {
-          setErrors(error)
-        }
+        const { errors } = await createPlayer({
+          variables: { input: values },
+          update: (cache) => {
+            cache.evict({ fieldName: "posts:{}" });
+          },
+        })
 
       }}>
 

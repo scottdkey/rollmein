@@ -1,22 +1,21 @@
 import { Box, Spinner, Wrap, WrapItem, } from "@chakra-ui/react"
-import { withUrqlClient } from "next-urql";
 import React from "react"
 import { usePlayersQuery } from "../generated/graphql";
-import { createUrqlClient } from "../utils/createUrqlClient";
+import { withApollo } from "../utils/withApollo";
 import { NewPlayerCard } from "./NewPlayerCard";
 import { PlayerCard } from "./PlayerCard"
 
 
 const PlayerCards = ({ }) => {
-  const [{ data, fetching }] = usePlayersQuery();
+  const { data, error, loading, fetchMore, variables } = usePlayersQuery();
 
-  if (!fetching && !data) {
+  if (!loading && !data) {
     return <Box bg="red">Query Failed</Box>
   }
   return (
     <>
       {
-        !data && fetching ?
+        !data && loading ?
           <Spinner size="xl" />
           :
           <Wrap spacing="5px" align="center" m="5px" justify="center">
@@ -32,4 +31,4 @@ const PlayerCards = ({ }) => {
   )
 }
 
-export default withUrqlClient(createUrqlClient, { ssr: false })(PlayerCards)
+export default withApollo({ ssr: false })(PlayerCards)
