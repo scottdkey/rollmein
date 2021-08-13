@@ -77,10 +77,7 @@ const main = async () => {
 
   apolloServer.applyMiddleware({
     app,
-    cors: {
-      origin: __uri__,
-      credentials: true
-    },
+    cors: false,
   });
   app.use(kubeRouter.routes())
 
