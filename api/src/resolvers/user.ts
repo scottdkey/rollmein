@@ -12,13 +12,14 @@ import {
 import { MyContext } from "../types";
 import { User } from "../entites/User";
 import argon2 from "argon2";
-import { __forgetPasswordPrefix__ } from "../constants";
+import { __forgetPasswordPrefix__, __secretKey__ } from "../constants";
 import { UsernamePasswordInput } from "./UsernamePasswordInput";
 import { validateRegister } from "../utils/validateRegister";
 import { sendEmail } from "../utils/sendEmail";
 import { v4 } from "uuid";
 import { redis } from "..";
 import { Options } from "../entites/Options";
+import { signJwt } from "../utils/jwtUtils";
 
 @ObjectType()
 class FieldError {
@@ -28,6 +29,8 @@ class FieldError {
   message: string;
 }
 
+
+
 @ObjectType()
 class UserResponse {
   @Field(() => [FieldError], { nullable: true })
@@ -35,6 +38,9 @@ class UserResponse {
 
   @Field(() => User, { nullable: true })
   user?: User;
+
+  @Field(() => String, { nullable: true })
+  token?: string
 }
 
 @Resolver(User)
@@ -42,7 +48,7 @@ export class UserResolver {
   @FieldResolver(() => String)
   email(@Root() user: User, @Ctx() { ctx }: MyContext): string {
     // this is the current user and its ok to show them their own email
-    if (ctx.session?.userId === user.id) {
+    if (ctx.state.user.id === user.id) {
       return user.email;
     }
     // current user wants to see someone elses email
@@ -53,14 +59,14 @@ export class UserResolver {
   async changePassword(
     @Arg("token") token: string,
     @Arg("newPassword") newPassword: string,
-    @Ctx() { ctx, em }: MyContext
+    @Ctx() { em }: MyContext
   ): Promise<UserResponse> {
-    if (newPassword.length <= 2) {
+    if (newPassword.length <= 8) {
       return {
         errors: [
           {
             field: "newPassword",
-            message: "length must be greater than 2",
+            message: "length must be greater than 8",
           },
         ],
       };
@@ -95,8 +101,8 @@ export class UserResolver {
     await em.persist(user).flush()
     await redis.del(key);
     // log in user after change password
-    ctx.session.userId = user.id;
-    return { user };
+    const jwtToken = signJwt(user.id)
+    return { user, token: jwtToken };
   }
 
   @Mutation(() => Boolean)
@@ -128,19 +134,30 @@ export class UserResolver {
   }
 
   @Query(() => User, { nullable: true })
-  me(@Ctx() { ctx, em }: MyContext): Promise<User | null> | null {
-    // you are not logged in
-    if (!ctx.session.userId) {
+  me(@Ctx() { ctx }: MyContext): User | null {
+    // no user found or token invalid
+    if (!ctx.state.user) {
       return null;
+    } {
+      return ctx.state.user
     }
-    return em.findOne(User, { id: ctx.session.userId });
+
+  }
+  @Query(() => String, { nullable: true })
+  refreshToken(@Ctx() { ctx }: MyContext): String | null {
+    // no user found or token invalid
+    if (!ctx.state.user) {
+      return null;
+    } {
+      return signJwt(ctx.state.user)
+    }
 
   }
 
   @Mutation(() => UserResponse)
   async register(
     @Arg("options") options: UsernamePasswordInput,
-    @Ctx() { ctx, em }: MyContext
+    @Ctx() { em, ctx }: MyContext
   ): Promise<UserResponse> {
     const errors = validateRegister(options);
     if (errors) {
@@ -159,13 +176,11 @@ export class UserResolver {
         userId: id
       })
       await em.persist(userOptions).flush()
-      // store user id session
-      // this will set a cookie on the user
-      // keep them logged in
-      ctx.session.userId = id;
-      return { user };
+      const token = signJwt(user.id)
+      ctx.state.user = user
+      return { user, token };
     } catch (err) {
-      console.log(err)
+      console.error("error:", err.constraint)
       if (err.constraint === "user_email_unique") {
         return {
           errors: [{
@@ -173,7 +188,7 @@ export class UserResolver {
             message: "email already exists, please choose another"
           }]
         }
-      } else if (err.constraint === "user_username_unique") {
+      } else if (err.constraint == 'user_username_unique') {
         return {
           errors: [{
             field: "username",
@@ -197,7 +212,7 @@ export class UserResolver {
   async login(
     @Arg("usernameOrEmail") usernameOrEmail: string,
     @Arg("password") password: string,
-    @Ctx() { ctx, em }: MyContext
+    @Ctx() { em }: MyContext
   ): Promise<UserResponse> {
     const user = await em.findOne(User, usernameOrEmail.includes("@")
       ? { email: usernameOrEmail }
@@ -223,10 +238,11 @@ export class UserResolver {
         ],
       };
     }
-    ctx.session.userId = user.id;
+    const token = signJwt(user.id)
 
     return {
       user,
+      token
     };
   }
 

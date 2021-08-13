@@ -52,10 +52,10 @@ export class OptionsResolver {
     @Ctx() { ctx, em }: MyContext,
   ): Promise<Options | null> {
     const options = await em.findOne(Options, {
-      userId: ctx.session.userId
+      userId: ctx.state.user.id
     })
     if (!options) {
-      return createOptions(ctx.session.userId!, em)
+      return createOptions(ctx.state.user.id!, em)
     }
     return options
   }
@@ -67,7 +67,7 @@ export class OptionsResolver {
     @Ctx() { ctx, em }: MyContext,
   ): Promise<Options | FieldError[]> {
     console.log(ctx.session.userId)
-    const userOptions = await em.findOne(Options, { userId: ctx.session?.userId! })
+    const userOptions = await em.findOne(Options, { userId: ctx.state.user.id })
     if (userOptions === null) {
       return [{
         field: "authError",
@@ -93,7 +93,7 @@ export class OptionsResolver {
   async deleteOptions(
     @Ctx() { ctx, em }: MyContext
   ): Promise<boolean> {
-    return await deleteOptions(ctx.session.userId!, em)
+    return await deleteOptions(ctx.state.user.id!, em)
   }
 }
 

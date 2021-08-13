@@ -5,10 +5,7 @@ import cors from "koa-cors";
 import Redis from 'ioredis';
 import Koa from "koa";
 import bodyParser from "koa-bodyparser";
-import redisStore from "koa-redis";
-// import {verify} from "koa-jwt"
-
-import session from "koa-session";
+// import koaJwt from "koa-jwt"
 import { buildSchema } from "type-graphql";
 import { __cookieName__, __secretKey__, __port__, __prod__, __redisHost__, __uri__, __test__ } from "./constants";
 import { HelloResolver } from "./resolvers/hello";
@@ -20,6 +17,7 @@ import { MikroORM } from "@mikro-orm/core";
 import microConfig from "./mikro-orm.config"
 import { createDatabase } from './utils/createDatabase';
 import { kubeRouter } from './routes/kubernetesRoutes';
+import { jwtSetUserOrFail } from "./utils/jwtUtils";
 
 
 export let serverOn = false
@@ -30,16 +28,16 @@ let orm: MikroORM
 async function dbSetup() {
   if (!__prod__) {
     await createDatabase()
-  } else if (!__test__) {
+  }
+  if (!__test__) {
     orm = await MikroORM.init(microConfig);
   }
-
-
 }
 dbSetup()
 
 
 const app = new Koa();
+
 app.use(bodyParser())
 app.use(kubeRouter.routes())
 app.use(
@@ -48,23 +46,7 @@ app.use(
     credentials: true
   })
 )
-
-
-app.keys = [__secretKey__]
-app.use(
-  session({
-    key: __cookieName__,
-    store: redisStore({
-      client: redis
-    }),
-    maxAge: 1000 * 60 * 60 * 24, // 24 hours
-    httpOnly: true,
-    sameSite: "lax", // csrf
-    secure: false, // behind kubernetes, not secure behind cluster control plane
-
-  }, app)
-);
-
+// app.use(koaJwt({ secret: __secretKey__, passthrough: true }))
 const apolloServer = async () => new ApolloServer({
   playground: !__prod__,
   schema: await buildSchema({
@@ -76,6 +58,7 @@ const apolloServer = async () => new ApolloServer({
     validate: true,
   }),
   context: ({ ctx }: MyContext) => {
+    jwtSetUserOrFail(ctx, orm.em)
     return {
       ctx,
       redis,
@@ -84,8 +67,8 @@ const apolloServer = async () => new ApolloServer({
   }
 });
 
-apolloServer().then(data => {
-  data.applyMiddleware({
+apolloServer().then(apollo => {
+  apollo.applyMiddleware({
     app,
     cors: false,
   });
