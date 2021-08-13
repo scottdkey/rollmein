@@ -8,10 +8,14 @@ const router = new Router()
 
 router.get('/live', async (ctx, next) => {
   if (serverOn) {
-    ctx.body = "Currently Running"
+    ctx.body = {
+      message: "Currently Running"
+    }
     ctx.status = 200
   } else {
-    ctx.body = "waiting"
+    ctx.body = {
+      message: "waiting"
+    }
     ctx.status = 500
   }
 
@@ -20,10 +24,14 @@ router.get('/live', async (ctx, next) => {
 
 router.get('/health', async (ctx, next) => {
   if (serverOn) {
-    ctx.body = "Currently Healthy"
+    ctx.body = {
+      message: "Currently Healthy"
+    }
     ctx.status = 200
   } else {
-    ctx.body = "server crash"
+    ctx.body = {
+      message: "Bad Health"
+    }
     ctx.status = 500
   }
   next()
