@@ -12,7 +12,7 @@ import {
 import { MyContext } from "../types";
 import { User } from "../entites/User";
 import argon2 from "argon2";
-import { __forgetPasswordPrefix__} from "../constants";
+import { __forgetPasswordPrefix__ } from "../constants";
 import { UsernamePasswordInput } from "./UsernamePasswordInput";
 import { validateRegister } from "../utils/validateRegister";
 import { sendEmail } from "../utils/sendEmail";
@@ -40,7 +40,7 @@ class UserResponse {
 @Resolver(User)
 export class UserResolver {
   @FieldResolver(() => String)
-  email(@Root() user: User, @Ctx() { ctx }: MyContext) {
+  email(@Root() user: User, @Ctx() { ctx }: MyContext): string {
     // this is the current user and its ok to show them their own email
     if (ctx.session?.userId === user.id) {
       return user.email;
@@ -103,7 +103,7 @@ export class UserResolver {
   async forgotPassword(
     @Arg("email") email: string,
     @Ctx() { em }: MyContext
-  ) {
+  ): Promise<boolean> {
     const user = await em.findOne(User, { email });
     if (!user) {
       // the email is not in the db
@@ -128,7 +128,7 @@ export class UserResolver {
   }
 
   @Query(() => User, { nullable: true })
-  me(@Ctx() { ctx, em }: MyContext) {
+  me(@Ctx() { ctx, em }: MyContext): Promise<User | null> | null {
     // you are not logged in
     if (!ctx.session.userId) {
       return null;
@@ -231,7 +231,7 @@ export class UserResolver {
   }
 
   @Mutation(() => Boolean)
-  logout(@Ctx() { ctx }: MyContext) {
+  logout(@Ctx() { ctx }: MyContext): Promise<boolean> {
     return new Promise((resolve) => {
       try {
         ctx.session.userId = null

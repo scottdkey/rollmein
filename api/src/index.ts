@@ -7,6 +7,7 @@ import Koa from "koa";
 import Router from "@koa/router"
 import bodyParser from "koa-bodyparser";
 import redisStore from "koa-redis";
+
 import session from "koa-session";
 import { buildSchema } from "type-graphql";
 import { __cookieName__, __secretKey__, __port__, __prod__, __redisHost__, __uri__ } from "./constants";
@@ -18,8 +19,10 @@ import { MyContext } from "./types";
 import { MikroORM } from "@mikro-orm/core";
 import microConfig from "./mikro-orm.config"
 import { createDatabase } from './utils/createDatabase';
+import { kubeRouter } from './routes/kubernetesRoutes';
 
 config()
+export let serverOn = false
 export const redis = new Redis({
   host: __redisHost__
 });
@@ -28,16 +31,6 @@ const main = async () => {
     await createDatabase()
   }
   const orm = await MikroORM.init(microConfig);
-  try {
-    const migrator = orm.getMigrator();
-    const migrations = await migrator.getPendingMigrations();
-    if (migrations && migrations.length > 0) {
-      await migrator.up();
-    }
-  } catch (error) {
-    console.error('📌 Could not connect to the database', error);
-    throw Error(error);
-  }
 
   const app = new Koa();
   app.use(bodyParser())
@@ -69,8 +62,9 @@ const main = async () => {
       }),
       maxAge: 1000 * 60 * 60 * 24, // 24 hours
       httpOnly: true,
-      sameSite: "none", // csrf
-      secure: __prod__, // cookie only works in https
+      sameSite: "lax", // csrf
+      secure: false, // behind kubernetes, not secure behind cluster control plane
+
     }, app)
   );
 
@@ -93,12 +87,16 @@ const main = async () => {
     }
   });
 
-  apolloServer.applyMiddleware({ app, cors: false, });
+  apolloServer.applyMiddleware({
+    app,
+    cors: false,
+  });
+  app.use(kubeRouter.routes())
 
   app.listen(__port__, () => {
-    const message = __prod__ ? "server started" : `server started on http://localhost:${__port__}/graphql`
+    const message = __prod__ ? "server started on https://rollmein.scottkey.dev/graphql" : `server started on http://localhost:${__port__}/graphql`
     console.log(message);
-    console.log(__uri__)
+    serverOn = true
   });
 
 }
