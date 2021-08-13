@@ -1,5 +1,5 @@
 import React from "react"
-import PlayerCards from "../components/playerCards"
+import PlayerCards from "../components/PlayerCards"
 
 
 

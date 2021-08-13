@@ -1,6 +1,6 @@
 import { Box, Heading, HStack, Text } from "@chakra-ui/react"
 import React, { useState } from "react"
-import { useUpdatePlayerMutation } from "../generated/graphql"
+// import { useUpdatePlayerMutation } from "../generated/graphql"
 
 
 export type Player = {
@@ -13,10 +13,10 @@ export type Player = {
   id: string
 }
 export const PlayerCard = ({ player }: { player: Player }) => {
-  const [p, setP] = useState(player)
-  const [updatePost] = useUpdatePlayerMutation()
+  const [p, _] = useState(player)
+  // const [_] = useUpdatePlayerMutation()
   return (
-    <Box p={5} w="250px" shadow="md" boderWidth="1px" key={p.id} bg="blue.200">
+    <Box p={5} w="250px" shadow="md" boderWidth="1px" bg="blue.200">
       <Heading fontSize="xl">{p.name}</Heading>
       <HStack>
         <Text mt={4}>in the roll: {p.inTheRoll.toString()}</Text>

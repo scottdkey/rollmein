@@ -16,7 +16,7 @@ export interface PaginationParams {
 
 export const cursorPagination = ({
   offsetArgument = 'skip',
-  limitArgument = 'limit',
+  // limitArgument = 'limit',
   mergeMode = 'after',
 }: PaginationParams = {}): Resolver => {
   return (_parent, fieldArgs, cache, info) => {
@@ -93,10 +93,10 @@ const cacheExchange = CacheExchange({
   },
   updates: {
     Mutation: {
-      logout: (_result, args, cache, info) => {
+      logout: (_result, _, cache, __) => {
         betterUpdateQuery<LogoutMutation, MeQuery>(cache, { query: MeDocument }, _result, () => ({ me: null }))
       },
-      login: (_result, args, cache, info) => {
+      login: (_result, _, cache, __) => {
         betterUpdateQuery<LoginMutation, MeQuery>(cache, { query: MeDocument }, _result, (result, query) => {
           if (result.login.errors) {
             return query
@@ -107,7 +107,7 @@ const cacheExchange = CacheExchange({
           }
         })
       },
-      register: (_result, args, cache, info) => {
+      register: (_result, _, cache, __) => {
         betterUpdateQuery<RegisterMutation, MeQuery>(cache, { query: MeDocument }, _result, (result, query) => {
           if (result.register.errors) {
             return query
