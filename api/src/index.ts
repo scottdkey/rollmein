@@ -33,6 +33,7 @@ const main = async () => {
 
   const app = new Koa();
   app.use(bodyParser())
+  app.use(kubeRouter.routes())
   app.use(
     cors({
       origin: __uri__,
@@ -82,7 +83,7 @@ const main = async () => {
       credentials: true
     },
   });
-  app.use(kubeRouter.routes())
+
 
   app.listen(__port__, () => {
     const message = __prod__ ? "server started on https://rollmein.scottkey.dev/graphql" : `server started on http://localhost:${__port__}/graphql`
