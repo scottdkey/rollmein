@@ -6,6 +6,7 @@ import Redis from 'ioredis';
 import Koa from "koa";
 import bodyParser from "koa-bodyparser";
 import redisStore from "koa-redis";
+
 import session from "koa-session";
 import { buildSchema } from "type-graphql";
 import { __cookieName__, __secretKey__, __port__, __prod__, __redisHost__, __uri__ } from "./constants";
@@ -17,8 +18,10 @@ import { MyContext } from "./types";
 import { MikroORM } from "@mikro-orm/core";
 import microConfig from "./mikro-orm.config"
 import { createDatabase } from './utils/createDatabase';
+import { kubeRouter } from './routes/kubernetesRoutes';
 
 config()
+export let serverOn = false
 export const redis = new Redis({
   host: __redisHost__
 });
@@ -30,14 +33,12 @@ const main = async () => {
 
   const app = new Koa();
   app.use(bodyParser())
-  // app.use(
-  //   cors({
-  //     origin: __uri__,
-  //     credentials: true
-  //   })
-  // )
-
-  app.use(cors())
+  app.use(
+    cors({
+      origin: __uri__,
+      credentials: true
+    })
+  )
 
 
   app.keys = [__secretKey__]
@@ -50,13 +51,13 @@ const main = async () => {
       maxAge: 1000 * 60 * 60 * 24, // 24 hours
       httpOnly: true,
       sameSite: "lax", // csrf
-      secure: __prod__, // cookie only works in https
+      secure: false, // behind kubernetes, not secure behind cluster control plane
+
     }, app)
   );
 
   const apolloServer = new ApolloServer({
-    // playground: !__prod__,
-    playground: true,
+    playground: !__prod__,
     schema: await buildSchema({
       resolvers: [
         HelloResolver,
@@ -74,11 +75,19 @@ const main = async () => {
     }
   });
 
-  apolloServer.applyMiddleware({ app, cors: false, });
+  apolloServer.applyMiddleware({
+    app,
+    cors: {
+      origin: __uri__,
+      credentials: true
+    },
+  });
+  app.use(kubeRouter.routes())
 
   app.listen(__port__, () => {
-    const message = __prod__ ? "server started" : `server started on http://localhost:${__port__}/graphql`
+    const message = __prod__ ? "server started on https://rollmein.scottkey.dev/graphql" : `server started on http://localhost:${__port__}/graphql`
     console.log(message);
+    serverOn = true
   });
 
 }
