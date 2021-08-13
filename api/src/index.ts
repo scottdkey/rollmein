@@ -1,12 +1,13 @@
+import "dotenv/config";
 import 'reflect-metadata';
 import { ApolloServer } from "apollo-server-koa";
 import cors from "koa-cors";
-import { config } from "dotenv";
 import Redis from 'ioredis';
 import Koa from "koa";
-import Router from "@koa/router"
 import bodyParser from "koa-bodyparser";
 import redisStore from "koa-redis";
+import cookieParser from "koa-cookie"
+// import {verify} from "koa-jwt"
 
 import session from "koa-session";
 import { buildSchema } from "type-graphql";
@@ -21,7 +22,7 @@ import microConfig from "./mikro-orm.config"
 import { createDatabase } from './utils/createDatabase';
 import { kubeRouter } from './routes/kubernetesRoutes';
 
-config()
+
 export let serverOn = false
 export const redis = new Redis({
   host: __redisHost__
@@ -40,20 +41,10 @@ const main = async () => {
       credentials: true
     })
   )
-  const router = new Router()
-  router.get("/health-check", (ctx, next) => {
-    ctx.body = "Health check passed"
-    next()
-  })
-  router.get("/bad-health", (ctx, next) => {
-    ctx.body = "Health check failed"
-    next()
-  })
-
-  app.use(router.routes())
 
 
   app.keys = [__secretKey__]
+  app.use(cookieParser())
   app.use(
     session({
       key: __cookieName__,
