@@ -4,6 +4,7 @@ import cors from "koa-cors";
 import { config } from "dotenv";
 import Redis from 'ioredis';
 import Koa from "koa";
+import Router from "@koa/router"
 import bodyParser from "koa-bodyparser";
 import redisStore from "koa-redis";
 import session from "koa-session";
@@ -46,6 +47,17 @@ const main = async () => {
       credentials: true
     })
   )
+  const router = new Router()
+  router.get("/health-check", (ctx, next) => {
+    ctx.body = "Health check passed"
+    next()
+  })
+  router.get("/bad-health", (ctx, next) => {
+    ctx.body = "Health check failed"
+    next()
+  })
+
+  app.use(router.routes())
 
 
   app.keys = [__secretKey__]
@@ -57,7 +69,7 @@ const main = async () => {
       }),
       maxAge: 1000 * 60 * 60 * 24, // 24 hours
       httpOnly: true,
-      sameSite: "lax", // csrf
+      sameSite: "none", // csrf
       secure: __prod__, // cookie only works in https
     }, app)
   );
@@ -86,6 +98,7 @@ const main = async () => {
   app.listen(__port__, () => {
     const message = __prod__ ? "server started" : `server started on http://localhost:${__port__}/graphql`
     console.log(message);
+    console.log(__uri__)
   });
 
 }
