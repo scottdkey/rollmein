@@ -20,8 +20,20 @@ spec:
     spec:
       containers:
         - name: rollmein
-          image: scottdkey/rollmein_api:1.0.5
+          image: scottdkey/rollmein_api:latest
           imagePullPolicy: Always
+          ports:
+            - containerPort: 5000
+          readinessProbe:
+            tcpSocket:
+              port: 5000
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          livenessProbe:
+            tcpSocket:
+              port: 5000
+            initialDelaySeconds: 15
+            periodSeconds: 20
           env:
             - name: NODE_ENV
               value: production
@@ -59,8 +71,6 @@ spec:
                 secretKeyRef:
                   name: pg-secrets
                   key: POSTGRES_PASSWORD
-          ports:
-            - containerPort: 5000
           resources:
             requests:
               memory: "128Mi"

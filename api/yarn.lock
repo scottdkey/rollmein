@@ -74,18 +74,6 @@
   dependencies:
     regenerator-runtime "^0.13.4"
 
-"@cloudnative/health-connect@^2.1.0":
-  version "2.1.0"
-  resolved "https://registry.yarnpkg.com/@cloudnative/health-connect/-/health-connect-2.1.0.tgz#f6cc0d4d2ba5c7e91b7b53c28ce0ca48eb9cc1cd"
-  integrity sha512-GieeiusY64i1Q5LdAf70n5W08MF5uom3qdVvnwIed/asBqpNPv7hlC6FGSH20lTYvyujF3wV5oBDcTa4SS/cbA==
-  dependencies:
-    "@cloudnative/health" "^2.1.1"
-
-"@cloudnative/health@^2.1.1":
-  version "2.1.2"
-  resolved "https://registry.yarnpkg.com/@cloudnative/health/-/health-2.1.2.tgz#337a4d23ac6872ec439e21aec2499785d7a27fd4"
-  integrity sha512-mEQdbj9dM4KMClS358MCzbqXUmj+Vw5snjDb5bXdaf1sZvVu7+3UqR4HaG4RoNkNUwe1yjfIuengdyWp9quF1A==
-
 "@eslint/eslintrc@^0.4.2":
   version "0.4.2"
   resolved "https://registry.npmjs.org/@eslint/eslintrc/-/eslintrc-0.4.2.tgz"
@@ -526,13 +514,6 @@
   dependencies:
     "@types/koa" "*"
 
-"@types/koa-cookie@^1.0.0":
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/@types/koa-cookie/-/koa-cookie-1.0.0.tgz#facd85b3f1b4cd1f72c73a70314757d459672ea0"
-  integrity sha512-0YTUgGqXlyVV2zYkDaDr5KNOXLki3ZqHP3adtlcz8+Fh94vzLfv8mnlxzDpfHuj//bIkwsh2zHVzdNrurUIKvA==
-  dependencies:
-    "@types/koa" "*"
-
 "@types/koa-cors@^0.0.0":
   version "0.0.0"
   resolved "https://registry.npmjs.org/@types/koa-cors/-/koa-cors-0.0.0.tgz"
@@ -548,7 +529,7 @@
     "@types/koa-session" "*"
     "@types/redis" "*"
 
-"@types/koa-session@*", "@types/koa-session@^5.10.3":
+"@types/koa-session@*":
   version "5.10.3"
   resolved "https://registry.npmjs.org/@types/koa-session/-/koa-session-5.10.3.tgz"
   integrity sha512-68JIQ9enY8KVW1rSFYyepLAkRmR9KWPgS3Qstf+HHHu9TK5GRiwDBHY55eOgkhbVwsFqWszpQYX9feKDuBaQsw==
@@ -1230,11 +1211,6 @@ balanced-match@^1.0.0:
   resolved "https://registry.npmjs.org/balanced-match/-/balanced-match-1.0.2.tgz"
   integrity sha512-3oSeUO0TMV67hN1AmbXsK4yaqU7tjiHlbxRDZOpH0KW9+CeX4bRAaX0Anxt0tx2MrpRpWwQaPwIlISEJhYU5Pw==
 
-base64-js@^1.3.1:
-  version "1.5.1"
-  resolved "https://registry.npmjs.org/base64-js/-/base64-js-1.5.1.tgz"
-  integrity sha512-AKpaYlHn8t4SVbOHCy+b5+KKgvR4vrsD8vbvrbiQJps7fKDTkjkDry6ji0rUJjC0kzbNePLwzxq8iypo41qeWA==
-
 base@^0.11.1:
   version "0.11.2"
   resolved "https://registry.npmjs.org/base/-/base-0.11.2.tgz"
@@ -1329,14 +1305,6 @@ buffer-writer@2.0.0:
   version "2.0.0"
   resolved "https://registry.npmjs.org/buffer-writer/-/buffer-writer-2.0.0.tgz"
   integrity sha512-a7ZpuTZU1TRtnwyCNW3I5dc0wWNC3VR9S++Ewyk2HHZdrO3CQJqSpd+95Us590V6AL7JqUAH2IwZ/398PmNFgw==
-
-buffer@^5.1.0:
-  version "5.7.1"
-  resolved "https://registry.npmjs.org/buffer/-/buffer-5.7.1.tgz"
-  integrity sha512-EHcyIPBQ4BSGlvjB16k5KgAJ27CIsHY/2JBmCRReo48y9rQ3MaUzWX3KVlBa4U7MyX02HdVj0K7C3WaB3ju7FQ==
-  dependencies:
-    base64-js "^1.3.1"
-    ieee754 "^1.1.13"
 
 busboy@^0.3.1:
   version "0.3.1"
@@ -1752,17 +1720,10 @@ core-js-pure@^3.10.2:
   resolved "https://registry.npmjs.org/core-js-pure/-/core-js-pure-3.15.2.tgz"
   integrity sha512-D42L7RYh1J2grW8ttxoY1+17Y4wXZeKe7uyplAI3FkNQyI5OgBIAjUfFiTPfL1rs0qLpxaabITNbjKl1Sp82tA==
 
-core-util-is@1.0.2, core-util-is@^1.0.2, core-util-is@~1.0.0:
+core-util-is@1.0.2, core-util-is@~1.0.0:
   version "1.0.2"
   resolved "https://registry.npmjs.org/core-util-is/-/core-util-is-1.0.2.tgz"
   integrity sha1-tf1UIgqivFq1eqtxQMlAdUUDwac=
-
-crc@^3.4.4:
-  version "3.8.0"
-  resolved "https://registry.npmjs.org/crc/-/crc-3.8.0.tgz"
-  integrity sha512-iX3mfgcTMIq3ZKLIsVFAbv7+Mc10kxabAGQb8HvjA1o3T1PIYprbakQ65d3I+2HGHt6nSKkM9PYjgoJO2KcFBQ==
-  dependencies:
-    buffer "^5.1.0"
 
 create-require@^1.1.0:
   version "1.1.1"
@@ -2910,11 +2871,6 @@ iconv-lite@0.4.24:
   dependencies:
     safer-buffer ">= 2.1.2 < 3"
 
-ieee754@^1.1.13:
-  version "1.2.1"
-  resolved "https://registry.npmjs.org/ieee754/-/ieee754-1.2.1.tgz"
-  integrity sha512-dcyqhDvX1C46lXZcVqCpK+FtMRQVdIMN6/Df5js2zouUsqG7I6sFxitIC+7KYK29KdXOLHdu9zL4sFnoVQnqaA==
-
 ignore-by-default@^1.0.1:
   version "1.0.1"
   resolved "https://registry.npmjs.org/ignore-by-default/-/ignore-by-default-1.0.1.tgz"
@@ -3069,11 +3025,6 @@ is-ci@^2.0.0:
   integrity sha512-YfJT7rkpQB0updsdHLGWrvhBJfcfzNNawYDNIyQXJz0IViGf75O8EBPKSdvw2rF+LGCsX4FZ8tcr3b19LcZq4w==
   dependencies:
     ci-info "^2.0.0"
-
-is-class-hotfix@~0.0.6:
-  version "0.0.6"
-  resolved "https://registry.npmjs.org/is-class-hotfix/-/is-class-hotfix-0.0.6.tgz"
-  integrity sha512-0n+pzCC6ICtVr/WXnN2f03TK/3BfXY7me4cjCAqT8TYXEl0+JBRoqBo94JJHXcyDSLUeWbNX8Fvy5g5RJdAstQ==
 
 is-core-module@^2.2.0:
   version "2.4.0"
@@ -3255,15 +3206,6 @@ is-symbol@^1.0.2, is-symbol@^1.0.3:
   integrity sha512-C/CPBqKWnvdcxqIARxyOh4v1UUEOCHpgDa0WYgpKDFMszcrPcffg5uhwSgPCLD2WWxmq6isisz87tzT01tuGhg==
   dependencies:
     has-symbols "^1.0.2"
-
-is-type-of@^1.0.0:
-  version "1.2.1"
-  resolved "https://registry.npmjs.org/is-type-of/-/is-type-of-1.2.1.tgz"
-  integrity sha512-uK0kyX9LZYhSDS7H2sVJQJop1UnWPWmo5RvR3q2kFH6AUHYs7sOrVg0b4nyBHw29kRRNFofYN/JbHZDlHiItTA==
-  dependencies:
-    core-util-is "^1.0.2"
-    is-class-hotfix "~0.0.6"
-    isstream "~0.1.2"
 
 is-typedarray@^1.0.0, is-typedarray@~1.0.0:
   version "1.0.0"
@@ -3537,11 +3479,6 @@ koa-convert@^1.2.0:
     co "^4.6.0"
     koa-compose "^3.0.0"
 
-koa-cookie@^1.0.0:
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/koa-cookie/-/koa-cookie-1.0.0.tgz#7c79723dd03b97abcfe430028b700bd47a36dafb"
-  integrity sha1-fHlyPdA7l6vP5DACi3AL1Ho22vs=
-
 koa-cors@^0.0.16:
   version "0.0.16"
   resolved "https://registry.npmjs.org/koa-cors/-/koa-cors-0.0.16.tgz"
@@ -3565,16 +3502,6 @@ koa-redis@^4.0.1:
     co-wrap-all "^1.0.0"
     debug "^4.1.1"
     ioredis "^4.14.1"
-
-koa-session@^6.2.0:
-  version "6.2.0"
-  resolved "https://registry.npmjs.org/koa-session/-/koa-session-6.2.0.tgz"
-  integrity sha512-l2ZC6D1BnRkIXhWkRgpewdqKn38/9/2WScmxyShuN408TxX+J/gUzdzGBIvGZaRwmezOU819sNpGmfFGLeDckg==
-  dependencies:
-    crc "^3.4.4"
-    debug "^3.1.0"
-    is-type-of "^1.0.0"
-    uuid "^3.3.2"
 
 koa-unless@^1.0.7:
   version "1.0.7"
