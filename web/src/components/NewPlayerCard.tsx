@@ -4,20 +4,21 @@ import React from "react";
 import { useCreatePlayerMutation } from "../generated/graphql";
 import { useIsAuth } from "../utils/useIsAuth";
 import { InputField } from "./InputField";
-import Tank from "../assets/images/TANK.png"
-import Image from "next/image"
-import Dps from "../assets/images/DPS.png"
-import Healer from "../assets/images/HEALER.png"
-import Dice from "../assets/svgs/Dice.svg"
-import Lock from "../assets/svgs/Lock.svg"
+import Tank from "../public/images/TANK.png"
+import Dps from "../public/images/DPS.png"
+import Healer from "../public/images/HEALER.png"
+import Dice from "../public/svgs/Dice.svg"
+import Lock from "../public/svgs/Lock.svg"
 // import OpenLock from "../assets/svgs/OpenLock.svg"
-import Trash from "../assets/svgs/Trash.svg"
+import Trash from "../public/svgs/Trash.svg"
+import Image from "next/image"
 
 const NewPlayerCard = () => {
   useIsAuth()
   const [createPlayer] = useCreatePlayerMutation()
 
-  const Icon = ({ src, alt, boxSize = "70" }: { src: StaticImageData, alt: string, boxSize?: string }) => {
+
+  const Icon = ({ src, alt, boxSize = "70" }: { src: string | StaticImageData, alt: string, boxSize?: string }) => {
     return (
       <Box boxSize={boxSize} borderRadius="full"><Image src={src} alt={alt}></Image></Box>
     )
