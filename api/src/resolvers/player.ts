@@ -39,7 +39,7 @@ export class PlayerResolver {
   ): Promise<Player[]> {
     return await em.find(Player, {
       user: {
-        id: ctx.session.userId
+        id: ctx.state.user.id
       }
     })
   }
@@ -74,7 +74,7 @@ export class PlayerResolver {
       dps: input.dps,
       locked: input.locked,
       inTheRoll: input.inTheRoll,
-      user: em.getReference(User, ctx.session.userId!)
+      user: em.getReference(User, ctx.state.user.id)
 
     })
     await em.persistAndFlush(player)

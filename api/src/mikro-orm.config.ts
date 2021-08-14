@@ -1,4 +1,4 @@
-import { __dbName__, __pgHost__, __pgPass__, __pgPort__, __pgUser__, __prod__ } from "./constants"
+import { __dbName__, __pgHost__, __pgPass__, __pgPort__, __pgUser__, __prod__, __test__ } from "./constants"
 
 import { MikroORM, ReflectMetadataProvider } from "@mikro-orm/core"
 import path from "path"
@@ -20,5 +20,5 @@ export default {
   host: __pgHost__,
   port: __pgPort__,
   type: "postgresql",
-  debug: !__prod__
+  debug: !__prod__ || !__test__
 } as Parameters<typeof MikroORM.init>[0];

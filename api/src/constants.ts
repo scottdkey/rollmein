@@ -4,6 +4,7 @@ dotenv.config()
 const { REDIS_HOST, PGDB, PGUSER, PGPASS, PGHOST, PGPORT, SECRETKEY, PORT, CORS_URL } = process.env
 
 export const __prod__: boolean = process.env.NODE_ENV === 'production'
+export const __test__: boolean = process.env.NODE_ENV === 'test'
 export const __uri__: string = CORS_URL ? CORS_URL : "http://localhost:3000"
 export const __port__: number = PORT ? parseInt(PORT) : 5000
 export const __secretKey__: string = SECRETKEY ? SECRETKEY : "developmentKey";

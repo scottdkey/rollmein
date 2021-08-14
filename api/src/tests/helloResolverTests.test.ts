@@ -1,7 +1,7 @@
 import chai from 'chai'
 
 
-describe('baseline tests', () => {
+describe('Hello Resolver Tests', () => {
   it('should add two numbers sucessfully', (done) => {
     chai.expect(2 + 2).to.equal(4)
     done()

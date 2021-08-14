@@ -5,13 +5,9 @@ import cors from "koa-cors";
 import Redis from 'ioredis';
 import Koa from "koa";
 import bodyParser from "koa-bodyparser";
-import redisStore from "koa-redis";
-import session from "koa-session";
-import jwt from "jsonwebtoken"
-import koaJwt from "koa-jwt"
-
+// import koaJwt from "koa-jwt"
 import { buildSchema } from "type-graphql";
-import { __cookieName__, __secretKey__, __port__, __prod__, __redisHost__, __uri__ } from "./constants";
+import { __cookieName__, __secretKey__, __port__, __prod__, __redisHost__, __uri__, __test__ } from "./constants";
 import { HelloResolver } from "./resolvers/hello";
 import { PlayerResolver } from "./resolvers/player";
 import { UserResolver } from "./resolvers/user";
@@ -21,92 +17,68 @@ import { MikroORM } from "@mikro-orm/core";
 import microConfig from "./mikro-orm.config"
 import { createDatabase } from './utils/createDatabase';
 import { kubeRouter } from './routes/kubernetesRoutes';
+import { jwtSetUserOrFail } from "./utils/jwtUtils";
 
 
 export let serverOn = false
 export const redis = new Redis({
   host: __redisHost__
 });
-const main = async () => {
+let orm: MikroORM
+async function dbSetup() {
   if (!__prod__) {
     await createDatabase()
   }
-  const orm = await MikroORM.init(microConfig);
+  if (!__test__) {
+    orm = await MikroORM.init(microConfig);
+  }
+}
+dbSetup()
 
-  const app = new Koa();
-  app.use(bodyParser())
-  app.use(kubeRouter.routes())
-  app.use(
-    cors({
-      origin: __uri__,
-      credentials: true
-    })
-  )
 
-  app.use(
-    koaJwt({
-      secret: __secretKey__,
-      algorithms: ["HS256"],
-      issuer: "https://rollmein.scottkey.dev",
-      passthrough: true
-    })
-  )
+const app = new Koa();
 
-  // app.keys = [__secretKey__]
-  // app.use(
-  //   session({
-  //     key: __cookieName__,
-  //     store: redisStore({
-  //       client: redis
-  //     }),
-  //     maxAge: 1000 * 60 * 60 * 24, // 24 hours
-  //     httpOnly: true,
-  //     sameSite: "lax", // csrf
-  //     secure: false, // behind kubernetes, not secure behind cluster control plane
-
-  //   }, app)
-  // );
-
-  const apolloServer = new ApolloServer({
-    playground: !__prod__,
-    schema: await buildSchema({
-      resolvers: [
-        HelloResolver,
-        UserResolver,
-        PlayerResolver,
-        OptionsResolver],
-      validate: true,
-    }),
-    context: ({ ctx }: MyContext) => {
-      const token = ctx.req.headers.authorization
-      let id
-      if (token) {
-        const valid = jwt.verify(token?.substring(7), __secretKey__)
-        if (valid) {
-          id = valid.id
-        }
-      }
-      return {
-        ctx,
-        redis,
-        em: orm.em.fork(),
-        id: id
-      }
+app.use(bodyParser())
+app.use(kubeRouter.routes())
+app.use(
+  cors({
+    origin: __uri__,
+    credentials: true
+  })
+)
+// app.use(koaJwt({ secret: __secretKey__, passthrough: true }))
+const apolloServer = async () => new ApolloServer({
+  playground: !__prod__,
+  schema: await buildSchema({
+    resolvers: [
+      HelloResolver,
+      UserResolver,
+      PlayerResolver,
+      OptionsResolver],
+    validate: true,
+  }),
+  context: ({ ctx }: MyContext) => {
+    jwtSetUserOrFail(ctx, orm.em)
+    return {
+      ctx,
+      redis,
+      em: orm.em.fork(),
     }
-  });
+  }
+});
 
-  apolloServer.applyMiddleware({
+apolloServer().then(apollo => {
+  apollo.applyMiddleware({
     app,
     cors: false,
   });
+})
+
+let PORT = __test__ ? 9000 : __port__
 
 
-  app.listen(__port__, () => {
-    const message = __prod__ ? "server started on https://rollmein.scottkey.dev/graphql" : `server started on http://localhost:${__port__}/graphql`
-    console.log(message);
-    serverOn = true
-  });
-
-}
-
-export default main()
+export const server = app.listen(PORT, () => {
+  const message = __prod__ ? "server started on https://rollmein.scottkey.dev/graphql" : `server started on http://localhost:${PORT}/graphql`
+  !__test__ ? console.log(message) : null
+  serverOn = true
+});
