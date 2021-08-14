@@ -17,7 +17,8 @@ import { MikroORM } from "@mikro-orm/core";
 import microConfig from "./mikro-orm.config"
 import { createDatabase } from './utils/createDatabase';
 import { kubeRouter } from './routes/kubernetesRoutes';
-import { jwtSetUserOrFail } from "./utils/jwtUtils";
+import { TokenInterface, verifyJwt } from "./utils/jwtUtils";
+import { User } from "./entites/User";
 
 
 export let serverOn = false
@@ -58,7 +59,17 @@ const apolloServer = async () => new ApolloServer({
     validate: true,
   }),
   context: ({ ctx }: MyContext) => {
-    jwtSetUserOrFail(ctx, orm.em)
+    if (ctx.request.headers.authorization) {
+      const validToken = verifyJwt(ctx.request.headers.authorization) as TokenInterface
+      if (validToken) {
+        orm.em.findOne(User, validToken.id).then(res => {
+          ctx.state.user = res
+        }
+
+        )
+      }
+    }
+
     return {
       ctx,
       redis,

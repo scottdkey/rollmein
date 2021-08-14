@@ -66,7 +66,6 @@ export class OptionsResolver {
     @Arg("input", () => OptionsInput, { nullable: true }) input: OptionsInput,
     @Ctx() { ctx, em }: MyContext,
   ): Promise<Options | FieldError[]> {
-    console.log(ctx.session.userId)
     const userOptions = await em.findOne(Options, { userId: ctx.state.user.id })
     if (userOptions === null) {
       return [{

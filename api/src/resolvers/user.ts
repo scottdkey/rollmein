@@ -48,7 +48,7 @@ export class UserResolver {
   @FieldResolver(() => String)
   email(@Root() user: User, @Ctx() { ctx }: MyContext): string {
     // this is the current user and its ok to show them their own email
-    if (ctx.state.user.id === user.id) {
+    if (ctx.state.user && ctx.state.user.id === user.id) {
       return user.email;
     }
     // current user wants to see someone elses email
@@ -212,7 +212,7 @@ export class UserResolver {
   async login(
     @Arg("usernameOrEmail") usernameOrEmail: string,
     @Arg("password") password: string,
-    @Ctx() { em }: MyContext
+    @Ctx() { ctx, em }: MyContext
   ): Promise<UserResponse> {
     const user = await em.findOne(User, usernameOrEmail.includes("@")
       ? { email: usernameOrEmail }
@@ -241,7 +241,7 @@ export class UserResolver {
       };
     }
     const token = signJwt(user.id)
-
+    ctx.state.user = user
     return {
       user,
       token
@@ -252,7 +252,7 @@ export class UserResolver {
   logout(@Ctx() { ctx }: MyContext): Promise<boolean> {
     return new Promise((resolve) => {
       try {
-        ctx.session.userId = null
+        ctx.state.user = null
         resolve(true)
       } catch (err) {
         console.error(err)

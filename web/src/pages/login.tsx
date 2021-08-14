@@ -34,12 +34,15 @@ const Login: React.FC<{}> = ({ }) => {
             setErrors(toErrorMap(response.data.login.errors));
           } else if (response.data?.login.user) {
             if (typeof router.query.next === "string") {
-              console.log(response)
+
+
               router.push(router.query.next);
             } else {
               // worked
-              console.log(response)
               router.push("/");
+            }
+            if (response.data.login.token) {
+              localStorage.setItem("qid", response.data.login.token)
             }
           }
         }}
@@ -68,7 +71,7 @@ const Login: React.FC<{}> = ({ }) => {
               mt={4}
               type="submit"
               isLoading={isSubmitting}
-              variantColor="teal"
+              colorScheme="teal"
             >
               login
             </Button>
