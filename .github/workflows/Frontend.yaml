@@ -41,8 +41,8 @@ jobs:
       - name: Install Dependencies
         run: yarn install --prefer-offline
 
-      - name: what is directory?
-        run: pwd
+      - name: Build
+        run: yarn build
 
       - name: Deploy to Netlify
         uses: nwtgck/actions-netlify@v1.2
