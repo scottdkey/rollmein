@@ -6,32 +6,20 @@ name: Backend
 on:
   push:
     branches: [main]
+    paths:
+      - "api/**"
   pull_request:
     branches: [main]
+    paths:
+      - "api/**"
 
 jobs:
-  # changes:
-  #   runs-on: ubuntu-latest
-  #   outputs:
-  #     backend: ${{ steps.filter.outputs.backend }}
-  #     frontend: ${{ steps.filter.outputs.frontend }}
-  #   steps:
-  #     - uses: actions/checkout@v2
-  #     - uses: dorny/paths-filter@v2
-  #       id: filter
-  #       with:
-  #         filters: |
-  #           backend:
-  #             - 'backend/**'
-  #           frontend:
-  #             - 'frontend/**'
   test:
-    # needs: changes
-    # if: ${{ needs.changes.outputs.backend == 'true' }}
     runs-on: ubuntu-latest
     defaults:
       run:
         working-directory: ./api
+
     strategy:
       matrix:
         node: [12.x, 14.x, 16.x]
