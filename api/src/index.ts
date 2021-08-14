@@ -63,7 +63,7 @@ const apolloServer = async () => new ApolloServer({
       const validToken = verifyJwt(ctx.request.headers.authorization) as TokenInterface
       if (validToken) {
         orm.em.findOne(User, validToken.id).then(res => {
-          ctx.state.user = res
+          ctx.state.user= res
         }
 
         )

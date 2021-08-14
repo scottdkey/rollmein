@@ -1,9 +1,10 @@
 
 import { User } from "../entites/User";
-import { Field, Resolver, Mutation, InputType, Query, Arg, UseMiddleware, Ctx, ObjectType, FieldResolver, Root } from "type-graphql";
+import { Field, Resolver, Mutation, InputType, Query, Arg, UseMiddleware, Ctx, FieldResolver, Root } from "type-graphql";
 import { Player } from "../entites/Player";
 import { isAuth } from "../middleware/isAuth";
 import { MyContext } from "../types";
+import { BasicError } from "../utils/errorsHelpers";
 
 
 @InputType()
@@ -21,13 +22,6 @@ class PlayerInput {
   @Field()
   inTheRoll: boolean;
 }
-@ObjectType()
-class FieldError {
-  @Field()
-  field: string;
-  @Field()
-  message: string;
-}
 
 
 @Resolver(Player)
@@ -39,7 +33,7 @@ export class PlayerResolver {
   ): Promise<Player[]> {
     return await em.find(Player, {
       user: {
-        id: ctx.state.user.id
+        id: ctx.state.user?.id
       }
     })
   }
@@ -48,12 +42,12 @@ export class PlayerResolver {
   async player(
     @Arg("id") id: number,
     @Ctx() { em }: MyContext
-  ): Promise<Player | FieldError[]> {
+  ): Promise<Player | BasicError[]> {
     const player = await em.findOne(Player, id)
     if (!player) {
       return [
         {
-          field: "playerError",
+          type: "playerError",
           message: "player not found"
         }
       ]
@@ -66,7 +60,7 @@ export class PlayerResolver {
   async createPlayer(
     @Arg("input") input: PlayerInput,
     @Ctx() { ctx, em }: MyContext
-  ): Promise<Player | FieldError[]> {
+  ): Promise<Player | BasicError[]> {
     const player = em.create(Player, {
       name: input.name,
       tank: input.tank,
@@ -74,13 +68,13 @@ export class PlayerResolver {
       dps: input.dps,
       locked: input.locked,
       inTheRoll: input.inTheRoll,
-      user: em.getReference(User, ctx.state.user.id)
+      user: em.getReference(User, ctx.state.user?.id!)
 
     })
     await em.persistAndFlush(player)
     if (!player) {
       return [{
-        field: "player",
+        type: "playerError",
         message: "unable to create player"
       }]
 
@@ -96,18 +90,18 @@ export class PlayerResolver {
     @Arg("id") id: number,
     @Ctx() { em }: MyContext,
     @Arg("input", () => PlayerInput, { nullable: true }) input: PlayerInput
-  ): Promise<Player | FieldError[]> {
+  ): Promise<Player | BasicError[]> {
     const player = await em.findOne(Player, id)
     if (!player) {
       return [{
-        field: "playerError",
+        type: "playerError",
         message: "no player Found"
       }]
 
     } else if (input === null) {
       return [
         {
-          field: "inputError",
+          type: "inputError",
           message: "incorrect cannot be null"
         }
       ]

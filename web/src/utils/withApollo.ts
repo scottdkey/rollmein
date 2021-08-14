@@ -1,10 +1,11 @@
 import { createWithApollo } from "./createWithApollo";
 import { ApolloClient, InMemoryCache, HttpLink } from "@apollo/client";
 import { NextPageContext } from "next";
-import { isServer } from "./varables";
+import { isServer } from "./constants";
+import { getCookie } from "./cookieHelpers";
 
 
-const token: string | null = typeof window !== "undefined" ? localStorage.getItem("qid") : null
+const token = !isServer() ? getCookie() : null
 
 const httpLink = new HttpLink({
   uri: process.env.NEXT_PUBLIC_API_URL as string,
@@ -13,7 +14,7 @@ const httpLink = new HttpLink({
   },
   headers: {
     ...Headers,
-    authorization: token ? token : "",
+    authorization: token ? token : ""
   }
 })
 const createClient = (ctx: NextPageContext) =>

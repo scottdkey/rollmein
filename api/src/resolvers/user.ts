@@ -11,14 +11,10 @@ import {
 } from "type-graphql";
 import { MyContext } from "../types";
 import { User } from "../entites/User";
-import argon2 from "argon2";
 import { __forgetPasswordPrefix__, __secretKey__ } from "../constants";
 import { UsernamePasswordInput } from "./UsernamePasswordInput";
-import { validateRegister } from "../utils/validateRegister";
-import { sendEmail } from "../utils/sendEmail";
-import { v4 } from "uuid";
-import { redis } from "..";
-import { Options } from "../entites/Options";
+import { changeUserPassword, checkError, createUser, forgotUserPassword, loginUser, validateRegister } from "../utils/userHelper";
+
 import { signJwt } from "../utils/jwtUtils";
 
 @ObjectType()
@@ -61,48 +57,7 @@ export class UserResolver {
     @Arg("newPassword") newPassword: string,
     @Ctx() { em }: MyContext
   ): Promise<UserResponse> {
-    if (newPassword.length <= 8) {
-      return {
-        errors: [
-          {
-            field: "newPassword",
-            message: "length must be greater than 8",
-          },
-        ],
-      };
-    }
-
-    const key = __forgetPasswordPrefix__ + token;
-    const userId = await redis.get(key);
-    if (!userId) {
-      return {
-        errors: [
-          {
-            field: "token",
-            message: "token expired",
-          },
-        ],
-      };
-    }
-
-    const user = await em.findOne(User, { id: userId });
-
-    if (!user) {
-      return {
-        errors: [
-          {
-            field: "token",
-            message: "user no longer exists",
-          },
-        ],
-      };
-    }
-    user.password = await argon2.hash(newPassword)
-    await em.persist(user).flush()
-    await redis.del(key);
-    // log in user after change password
-    const jwtToken = signJwt(user.id)
-    return { user, token: jwtToken };
+    return await changeUserPassword(newPassword, token, em)
   }
 
   @Mutation(() => Boolean)
@@ -110,27 +65,7 @@ export class UserResolver {
     @Arg("email") email: string,
     @Ctx() { em }: MyContext
   ): Promise<boolean> {
-    const user = await em.findOne(User, { email });
-    if (!user) {
-      // the email is not in the db
-      return true;
-    }
-
-    const token = v4();
-
-    await redis.set(
-      __forgetPasswordPrefix__ + token,
-      user.id,
-      "ex",
-      1000 * 60 * 60 * 24 * 3
-    ); // 3 days
-
-    await sendEmail(
-      email,
-      `<a href="http://localhost:3000/change-password/${token}">reset password</a>`
-    );
-
-    return true;
+    return await forgotUserPassword(email, em)
   }
 
   @Query(() => User, { nullable: true })
@@ -149,7 +84,7 @@ export class UserResolver {
     if (!ctx.state.user) {
       return null;
     } {
-      return signJwt(ctx.state.user)
+      return signJwt(ctx.state.user.id)
     }
 
   }
@@ -163,49 +98,13 @@ export class UserResolver {
     if (errors) {
       return { errors };
     }
-    const hashedPassword = await argon2.hash(options.password);
-
     try {
-      const user: User = em.create(User, {
-        ...options,
-        password: hashedPassword
-      })
-      await em.persist(user).flush()
-      const id = user.id
-      const userOptions = em.create(Options, {
-        userId: id
-      })
-      await em.persist(userOptions).flush()
-      const token = signJwt(user.id)
-      ctx.state.user = user
-      return { user, token };
+      const returnObject = await createUser(em, options)
+      ctx.state.user = returnObject.user
+      return returnObject
     } catch (err) {
-      console.error("error:", err.constraint)
-      if (err.constraint === "user_email_unique") {
-        return {
-          errors: [{
-            field: "email",
-            message: "email already exists, please choose another"
-          }]
-        }
-      } else if (err.constraint == 'user_username_unique') {
-        return {
-          errors: [{
-            field: "username",
-            message: "username already exists, please choose another"
-          }]
-        }
-      } else {
-        return {
-          errors: [{
-            field: "error",
-            message: `unexpected error ${err.constraint}`
-          }]
-        }
-      }
+      return checkError(err)
     }
-
-
   }
 
   @Mutation(() => UserResponse)
@@ -214,51 +113,26 @@ export class UserResolver {
     @Arg("password") password: string,
     @Ctx() { ctx, em }: MyContext
   ): Promise<UserResponse> {
-    const user = await em.findOne(User, usernameOrEmail.includes("@")
-      ? { email: usernameOrEmail }
-      : { username: usernameOrEmail });
-    if (!user) {
-      console.log("no user found")
-      return {
-        errors: [
-          {
-            field: "usernameOrEmail",
-            message: "that user doesn't exist",
-          },
-        ],
-      };
+    const returnObject = await loginUser(usernameOrEmail, em, password)
+    if (returnObject.user) {
+      ctx.state.user = returnObject.user
     }
-    const valid = await argon2.verify(user.password, password);
-    if (!valid) {
-      console.log("invalid")
-      return {
-        errors: [
-          {
-            field: "password",
-            message: "incorrect password",
-          },
-        ],
-      };
-    }
-    const token = signJwt(user.id)
-    ctx.state.user = user
-    return {
-      user,
-      token
-    };
+
+    return returnObject
+
   }
 
-  @Mutation(() => Boolean)
-  logout(@Ctx() { ctx }: MyContext): Promise<boolean> {
-    return new Promise((resolve) => {
-      try {
-        ctx.state.user = null
-        resolve(true)
-      } catch (err) {
-        console.error(err)
-        resolve(false)
-      }
-    }
-    )
-  }
+  // @Mutation(() => Boolean)
+  // logout(@Ctx() { ctx }: MyContext): Promise<boolean> {
+  //   return new Promise((resolve) => {
+  //     try {
+  //       ctx.state.user = null
+  //       resolve(true)
+  //     } catch (err) {
+  //       console.error(err)
+  //       resolve(false)
+  //     }
+  //   }
+  //   )
+  // }
 }

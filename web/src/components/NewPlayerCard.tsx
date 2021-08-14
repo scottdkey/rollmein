@@ -2,7 +2,6 @@ import { Box, Button, Grid } from "@chakra-ui/react";
 import { Formik, Form } from "formik";
 import React from "react";
 import { useCreatePlayerMutation } from "../generated/graphql";
-import { useIsAuth } from "../utils/useIsAuth";
 import { InputField } from "./InputField";
 import Tank from "../public/images/TANK.png"
 import Dps from "../public/images/DPS.png"
@@ -14,7 +13,6 @@ import Trash from "../public/svgs/Trash.svg"
 import Image from "next/image"
 
 const NewPlayerCard = () => {
-  useIsAuth()
   const [createPlayer] = useCreatePlayerMutation()
 
 

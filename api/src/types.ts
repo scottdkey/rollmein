@@ -1,17 +1,17 @@
 import { IDatabaseDriver, EntityManager, Connection } from "@mikro-orm/core";
 import { Redis } from "ioredis"
 import { ParameterizedContext } from "koa"
-import { Session } from "koa-session"
+import { Options } from "./entites/Options";
+import { User } from "./entites/User";
 
 
 export type MyContext = {
-  ctx: ParameterizedContext & { session: ExtendedSession }
+  ctx: ParameterizedContext & { state: ExtendedState }
   redis: Redis
   em: EntityManager<any> & EntityManager<IDatabaseDriver<Connection>>;
-  id: string
 };
 
-interface ExtendedSession extends Session {
-  userId: string | null
-
+interface ExtendedState {
+  user: User | null
+  options?: Options
 }

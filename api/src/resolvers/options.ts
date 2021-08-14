@@ -1,21 +1,20 @@
-import { IDatabaseDriver, EntityManager, Connection } from "@mikro-orm/core";
 import { Arg, Ctx, Field, InputType, Mutation, ObjectType, Query, Resolver, UseMiddleware } from "type-graphql"
 
 import { Options } from "../entites/Options"
 import { isAuth } from "../middleware/isAuth";
 import { MyContext } from "../types";
-
+import { createOpts, deleteOpts, validateUserOptionsInput } from "../utils/optionsHelpers";
 
 
 @ObjectType()
-class FieldError {
+export class OptionsError {
   @Field()
-  field: string;
+  type: string;
   @Field()
   message: string;
 }
 @InputType()
-class OptionsInput {
+export class OptionsInput {
   @Field()
   rollType!: string
   @Field()
@@ -24,23 +23,7 @@ class OptionsInput {
   theme!: string
 }
 
-async function createOptions(
-  userId: string, em: EntityManager<any> & EntityManager<IDatabaseDriver<Connection>>
-): Promise<Options> {
-  const options = em.create(Options, {
-    userId
-  })
-  await em.persistAndFlush(options)
-  return options
-}
 
-async function deleteOptions(userId: string, em: EntityManager<any> & EntityManager<IDatabaseDriver<Connection>>) {
-
-  await em.nativeDelete(Options, {
-    userId
-  })
-  return true
-}
 
 
 
@@ -52,10 +35,10 @@ export class OptionsResolver {
     @Ctx() { ctx, em }: MyContext,
   ): Promise<Options | null> {
     const options = await em.findOne(Options, {
-      userId: ctx.state.user.id
+      userId: ctx.state.user?.id
     })
     if (!options) {
-      return createOptions(ctx.state.user.id!, em)
+      return createOpts(ctx.state.user?.id!, em)
     }
     return options
   }
@@ -65,34 +48,30 @@ export class OptionsResolver {
   async updateOptions(
     @Arg("input", () => OptionsInput, { nullable: true }) input: OptionsInput,
     @Ctx() { ctx, em }: MyContext,
-  ): Promise<Options | FieldError[]> {
-    const userOptions = await em.findOne(Options, { userId: ctx.state.user.id })
-    if (userOptions === null) {
-      return [{
-        field: "authError",
-        message: "not authorized to update"
-      }]
-
-    } else if (input === null) {
-      return [
-        {
-          field: "inputError",
-          message: "null input recieved"
-        }
-      ]
+  ): Promise<Options | OptionsError> {
+    const userOptions = await em.findOne(Options, { userId: ctx.state.user?.id })
+    if (userOptions) {
+      const validOptionsorError = validateUserOptionsInput(ctx.state.user?.id!, input, userOptions)
+      if (validOptionsorError.options !== undefined) {
+        await em.persistAndFlush(validOptionsorError.options)
+        return validOptionsorError.options
+      } else {
+        const unknownError = { type: "unknownErr", message: "unknown error occurred" }
+        return validOptionsorError.error ? validOptionsorError.error : unknownError
+      }
+    } else {
+      return {
+        type: "dbErorr",
+        message: "database did not find record"
+      }
     }
-    userOptions.lockAfterOut = input.lockAfterOut
-    userOptions.rollType = input.rollType
-    userOptions.theme = input.theme
-    await em.persistAndFlush(userOptions)
-    return userOptions
   }
   @Mutation(() => Boolean)
   @UseMiddleware(isAuth)
   async deleteOptions(
     @Ctx() { ctx, em }: MyContext
   ): Promise<boolean> {
-    return await deleteOptions(ctx.state.user.id!, em)
+    return await deleteOpts(ctx.state.user?.id!, em)
   }
 }
 

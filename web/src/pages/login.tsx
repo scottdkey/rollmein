@@ -8,6 +8,9 @@ import { toErrorMap } from "../utils/toErrorMap";
 import { useRouter } from "next/router";
 import NextLink from "next/link";
 import { withApollo } from "../utils/withApollo";
+import { setCookie } from "../utils/cookieHelpers";
+
+
 
 const Login: React.FC<{}> = ({ }) => {
   const router = useRouter();
@@ -33,16 +36,9 @@ const Login: React.FC<{}> = ({ }) => {
           if (response.data?.login.errors) {
             setErrors(toErrorMap(response.data.login.errors));
           } else if (response.data?.login.user) {
-            if (typeof router.query.next === "string") {
-
-
-              router.push(router.query.next);
-            } else {
-              // worked
-              router.push("/");
-            }
+            router.push("/");
             if (response.data.login.token) {
-              localStorage.setItem("qid", response.data.login.token)
+              setCookie(response.data.login.token, 5)
             }
           }
         }}

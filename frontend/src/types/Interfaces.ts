@@ -16,10 +16,7 @@ export interface PlayerFormObject extends newPlayerFormObject {
 export interface PlayerObject extends PlayerFormObject {
   id: number;
 }
-export interface DPSObject {
-  newDPS: Array<PlayerObject>;
-  players: Array<PlayerObject>;
-}
+
 
 
 export interface UserObject {
