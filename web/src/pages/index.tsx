@@ -11,7 +11,6 @@ const Index = () => {
 
   return (
     <Layout>
-      <Box>Github actions test: part 3</Box>
       <PlayerCards />
     </Layout>
   )
