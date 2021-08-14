@@ -1,4 +1,4 @@
-[![Netlify Status](https://api.netlify.com/api/v1/badges/a9461aa2-96b3-42ae-a1cf-ddae4e90cf50/deploy-status)](https://app.netlify.com/sites/rollmein/deploys)
+[![Frontend](https://github.com/scottdkey/rollmein/actions/workflows/Frontend.yaml/badge.svg)](https://github.com/scottdkey/rollmein/actions/workflows/Frontend.yaml)
 [![Backend](https://github.com/scottdkey/rollmein/actions/workflows/Backend.yaml/badge.svg)](https://github.com/scottdkey/rollmein/actions/workflows/Backend.yaml)
 
 
