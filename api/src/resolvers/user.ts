@@ -12,13 +12,15 @@ import {
 import { MyContext } from "../types";
 import { User } from "../entites/User";
 import argon2 from "argon2";
-import { __forgetPasswordPrefix__ } from "../constants";
+import { __forgetPasswordPrefix__, __secretKey__ } from "../constants";
 import { UsernamePasswordInput } from "./UsernamePasswordInput";
 import { validateRegister } from "../utils/validateRegister";
 import { sendEmail } from "../utils/sendEmail";
 import { v4 } from "uuid";
 import { redis } from "..";
 import { Options } from "../entites/Options";
+import jwt from "jsonwebtoken";
+
 
 @ObjectType()
 class FieldError {
@@ -35,6 +37,9 @@ class UserResponse {
 
   @Field(() => User, { nullable: true })
   user?: User;
+
+  @Field()
+  token?: string
 }
 
 @Resolver(User)
@@ -128,12 +133,12 @@ export class UserResolver {
   }
 
   @Query(() => User, { nullable: true })
-  me(@Ctx() { ctx, em }: MyContext): Promise<User | null> | null {
+  me(@Ctx() { ctx, em, id }: MyContext): Promise<User | null> | null {
     // you are not logged in
-    if (!ctx.session.userId) {
-      return null;
-    }
-    return em.findOne(User, { id: ctx.session.userId });
+    
+
+    return em.findOne(User, { id: id });
+
 
   }
 
@@ -203,17 +208,19 @@ export class UserResolver {
       ? { email: usernameOrEmail }
       : { username: usernameOrEmail });
     if (!user) {
+      console.log("no user found")
       return {
         errors: [
           {
             field: "usernameOrEmail",
-            message: "that username doesn't exist",
+            message: "that user doesn't exist",
           },
         ],
       };
     }
     const valid = await argon2.verify(user.password, password);
     if (!valid) {
+      console.log("invalid")
       return {
         errors: [
           {
@@ -223,10 +230,15 @@ export class UserResolver {
         ],
       };
     }
-    ctx.session.userId = user.id;
-
+    const token = jwt.sign(
+      {
+        id: user.id,
+      }, __secretKey__,
+      { expiresIn: "1d" }
+    )
     return {
       user,
+      token
     };
   }
 

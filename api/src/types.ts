@@ -8,6 +8,7 @@ export type MyContext = {
   ctx: ParameterizedContext & { session: ExtendedSession }
   redis: Redis
   em: EntityManager<any> & EntityManager<IDatabaseDriver<Connection>>;
+  id: string
 };
 
 interface ExtendedSession extends Session {

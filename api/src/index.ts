@@ -6,10 +6,10 @@ import Redis from 'ioredis';
 import Koa from "koa";
 import bodyParser from "koa-bodyparser";
 import redisStore from "koa-redis";
-import cookieParser from "koa-cookie"
-// import {verify} from "koa-jwt"
-
 import session from "koa-session";
+import jwt from "jsonwebtoken"
+import koaJwt from "koa-jwt"
+
 import { buildSchema } from "type-graphql";
 import { __cookieName__, __secretKey__, __port__, __prod__, __redisHost__, __uri__ } from "./constants";
 import { HelloResolver } from "./resolvers/hello";
@@ -35,6 +35,7 @@ const main = async () => {
 
   const app = new Koa();
   app.use(bodyParser())
+  app.use(kubeRouter.routes())
   app.use(
     cors({
       origin: __uri__,
@@ -42,22 +43,29 @@ const main = async () => {
     })
   )
 
-
-  app.keys = [__secretKey__]
-  app.use(cookieParser())
   app.use(
-    session({
-      key: __cookieName__,
-      store: redisStore({
-        client: redis
-      }),
-      maxAge: 1000 * 60 * 60 * 24, // 24 hours
-      httpOnly: true,
-      sameSite: "lax", // csrf
-      secure: false, // behind kubernetes, not secure behind cluster control plane
+    koaJwt({
+      secret: __secretKey__,
+      algorithms: ["HS256"],
+      issuer: "https://rollmein.scottkey.dev",
+      passthrough: true
+    })
+  )
 
-    }, app)
-  );
+  // app.keys = [__secretKey__]
+  // app.use(
+  //   session({
+  //     key: __cookieName__,
+  //     store: redisStore({
+  //       client: redis
+  //     }),
+  //     maxAge: 1000 * 60 * 60 * 24, // 24 hours
+  //     httpOnly: true,
+  //     sameSite: "lax", // csrf
+  //     secure: false, // behind kubernetes, not secure behind cluster control plane
+
+  //   }, app)
+  // );
 
   const apolloServer = new ApolloServer({
     playground: !__prod__,
@@ -70,10 +78,19 @@ const main = async () => {
       validate: true,
     }),
     context: ({ ctx }: MyContext) => {
+      const token = ctx.req.headers.authorization
+      let id
+      if (token) {
+        const valid = jwt.verify(token?.substring(7), __secretKey__)
+        if (valid) {
+          id = valid.id
+        }
+      }
       return {
         ctx,
         redis,
-        em: orm.em.fork()
+        em: orm.em.fork(),
+        id: id
       }
     }
   });
@@ -82,7 +99,7 @@ const main = async () => {
     app,
     cors: false,
   });
-  app.use(kubeRouter.routes())
+
 
   app.listen(__port__, () => {
     const message = __prod__ ? "server started on https://rollmein.scottkey.dev/graphql" : `server started on http://localhost:${__port__}/graphql`
