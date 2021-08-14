@@ -40,13 +40,14 @@ jobs:
 
       - name: Install Dependencies
         run: yarn install --prefer-offline
-        
-      - run: pwd
+
+      - name: what is directory?
+        run: pwd
 
       - name: Deploy to Netlify
         uses: nwtgck/actions-netlify@v1.2
         with:
-          publish-dir: "./out"
+          publish-dir: "./web/out"
           production-branch: master
           github-token: ${{ github.token }}
           deploy-message: ${{github.event_name}}
