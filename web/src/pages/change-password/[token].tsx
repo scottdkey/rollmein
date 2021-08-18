@@ -6,48 +6,39 @@ import { toErrorMap } from "../../utils/toErrorMap";
 import { InputField } from "../../components/InputField";
 import { Box, Button, Link, Flex } from "@chakra-ui/react";
 import {
-  MeDocument,
-  MeQuery,
+  ChangePasswordMutation,
   useChangePasswordMutation,
 } from "../../generated/graphql";
 import { useRouter } from "next/router";
 import NextLink from "next/link";
-import { withApollo } from "../../utils/withApollo";
+import { client } from "../../lib/clients/graphqlRequestClient";
 
 const ChangePassword: NextPage = () => {
   const router = useRouter();
-  const [changePassword] = useChangePasswordMutation()
+  const { mutate, data } = useChangePasswordMutation<ChangePasswordMutation, Error>(client, {
+
+  })
   const [tokenError, setTokenError] = useState("");
   return (
     <Wrapper variant="small">
       <Formik
         initialValues={{ newPassword: "" }}
         onSubmit={async (values, { setErrors }) => {
-          const response = await changePassword({
-            variables: {
+          await mutate(
+            {
               newPassword: values.newPassword,
               token:
                 typeof router.query.token === "string"
                   ? router.query.token
                   : "",
-            },
-            update: (cache, { data }) => {
-              cache.writeQuery<MeQuery>({
-                query: MeDocument,
-                data: {
-                  __typename: "Query",
-                  me: data?.changePassword.user,
-                },
-              });
-            },
-          });
-          if (response.data?.changePassword.errors) {
-            const errorMap = toErrorMap(response.data.changePassword.errors);
+            });
+          if (data?.changePassword.errors) {
+            const errorMap = toErrorMap(data.changePassword.errors);
             if ("token" in errorMap) {
               setTokenError(errorMap.token);
             }
             setErrors(errorMap);
-          } else if (response.data?.changePassword.user) {
+          } else if (data?.changePassword.user) {
             // worked
             router.push("/");
           }
@@ -86,4 +77,4 @@ const ChangePassword: NextPage = () => {
   );
 };
 
-export default withApollo({ ssr: false })(ChangePassword);
+export default ChangePassword;

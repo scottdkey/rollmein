@@ -1,5 +1,5 @@
 
-import { Field, ID, ObjectType } from "type-graphql";
+import { Field, ObjectType } from "type-graphql";
 import { Entity, ManyToOne, PrimaryKey, Property } from "@mikro-orm/core";
 import { User } from "./User";
 
@@ -7,7 +7,7 @@ import { User } from "./User";
 @ObjectType()
 @Entity()
 export class Player {
-  @Field(() => ID)
+  @Field()
   @PrimaryKey()
   id!: number;
 

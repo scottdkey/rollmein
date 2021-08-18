@@ -6,5 +6,6 @@ mutation UpdatePlayer($id: Float!, $input: PlayerInput!) {
     healer
     dps
     locked
+    inTheRoll
   }
 }

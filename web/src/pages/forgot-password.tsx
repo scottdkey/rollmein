@@ -4,17 +4,17 @@ import { Formik, Form } from "formik";
 import { InputField } from "../components/InputField";
 import { Box, Button } from "@chakra-ui/react";
 import { useForgotPasswordMutation } from "../generated/graphql";
-import { withApollo } from "../utils/withApollo";
+import { client } from "../lib/clients/graphqlRequestClient";
 
 const ForgotPassword: React.FC<{}> = ({ }) => {
   const [complete, setComplete] = useState(false);
-  const [forgotPassword] = useForgotPasswordMutation();
+  const { mutate } = useForgotPasswordMutation(client);
   return (
     <Wrapper variant="small">
       <Formik
         initialValues={{ email: "" }}
         onSubmit={async (values) => {
-          await forgotPassword({ variables: values });
+          await mutate({ ...values });
           setComplete(true);
         }}
       >
@@ -47,4 +47,4 @@ const ForgotPassword: React.FC<{}> = ({ }) => {
   );
 };
 
-export default withApollo({ ssr: false })(ForgotPassword);
+export default ForgotPassword;

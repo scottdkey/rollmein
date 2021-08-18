@@ -13,7 +13,7 @@ import { MyContext } from "../types";
 import { User } from "../entites/User";
 import { __forgetPasswordPrefix__, __secretKey__ } from "../constants";
 import { UsernamePasswordInput } from "./UsernamePasswordInput";
-import { changeUserPassword, checkError, createUser, forgotUserPassword, loginUser, validateRegister } from "../utils/userHelper";
+import { changeUserPassword, checkError, createUser, forgotUserPassword, loginUser, validateRegister } from "../utils/userHelpers";
 
 import { signJwt } from "../utils/jwtUtils";
 
@@ -122,17 +122,17 @@ export class UserResolver {
 
   }
 
-  // @Mutation(() => Boolean)
-  // logout(@Ctx() { ctx }: MyContext): Promise<boolean> {
-  //   return new Promise((resolve) => {
-  //     try {
-  //       ctx.state.user = null
-  //       resolve(true)
-  //     } catch (err) {
-  //       console.error(err)
-  //       resolve(false)
-  //     }
-  //   }
-  //   )
-  // }
+  @Mutation(() => Boolean)
+  logout(@Ctx() { ctx }: MyContext): Promise<boolean> {
+    return new Promise((resolve) => {
+      try {
+        ctx.state.user = null
+        resolve(true)
+      } catch (err) {
+        console.error(err)
+        resolve(false)
+      }
+    }
+    )
+  }
 }

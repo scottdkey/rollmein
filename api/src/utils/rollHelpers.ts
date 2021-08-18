@@ -1,19 +1,13 @@
 import { Player } from "../entites/Player";
 import { BasicError } from "./errorsHelpers";
 
-type RollCountObject = {
-  Tanks: number,
-  Dps: number,
-  Healers: number,
-  inCount: number
-}
 
 type PlayerCounts = {
   locked: number,
   inTheRoll: number,
   tanks: number,
   healers: number,
-  dps: number
+  dps: number,
 }
 
 type RollByRoleReturn = {

@@ -1,6 +1,8 @@
 import { Box, Heading, HStack, Text } from "@chakra-ui/react"
 import React, { useState } from "react"
-import { useUpdatePlayerMutation } from "../generated/graphql"
+import { useQueryClient } from "react-query"
+import { UpdatePlayerMutation, UpdatePlayerMutationVariables, useUpdatePlayerMutation } from "../generated/graphql"
+import { client } from "../lib/clients/graphqlRequestClient"
 
 
 export type Player = {
@@ -10,25 +12,43 @@ export type Player = {
   dps: boolean,
   locked: boolean,
   inTheRoll: boolean
-  id: string
+  id: number
 }
 const PlayerCard = ({ player }: { player: Player }) => {
-  const [p, _] = useState(player)
-  const [playerUpdate] = useUpdatePlayerMutation()
+  const queryClient = useQueryClient()
+  const [playerState, setPlayerState] = useState<Player>(player)
+  const { mutate } = useUpdatePlayerMutation<UpdatePlayerMutation | Error>(client, {
+    onSuccess: (data: UpdatePlayerMutation, _variables: UpdatePlayerMutationVariables, _context: unknown) => {
+      queryClient.invalidateQueries("GetAllPlayers")
+      setPlayerState({ ...data.updatePlayer! })
+    }
+  })
+
+
+
   return (
     <Box p={5} w="250px" shadow="md" borderWidth="1px" bg="blue.200">
-      <Heading fontSize="xl">{p.name}</Heading>
+      <Heading fontSize="xl">{playerState.name}</Heading>
       <HStack>
-        <Text mt={4}>in the roll: {p.inTheRoll.toString()}</Text>
-        <Text>locked: {p.locked.toString()}</Text>
+        <Text mt={4}>in the roll: {playerState}</Text>
+        <Text onClick={() => {
+          mutate({
+            id: playerState.id,
+            input: {
+              ...playerState,
+
+            }
+          })
+        }}>locked: {playerState.locked.toString()}</Text>
       </HStack>
       <HStack>
-        <Text>dps: {p.dps.toString()}</Text>
-        <Text>tank: {p.tank.toString()}</Text>
-        <Text>healer: {p.healer.toString()}</Text>
+        <Text>dps: {playerState.dps.toString()}</Text>
+        <Text>tank: {playerState.tank.toString()}</Text>
+        <Text>healer: {playerState.healer.toString()}</Text>
       </HStack>
     </Box>
   )
 }
+
 
 export default PlayerCard

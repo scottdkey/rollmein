@@ -1,44 +1,40 @@
-import React from "react";
+import React, { useContext } from "react";
 import { Formik, Form } from "formik";
 import { Box, Button, Link, Flex } from "@chakra-ui/react";
 import { Wrapper } from "../components/Wrapper";
 import { InputField } from "../components/InputField";
-import { useLoginMutation, MeQuery, MeDocument } from "../generated/graphql";
+import { useLoginMutation, MeQuery, MeDocument, LoginMutation } from "../generated/graphql";
 import { toErrorMap } from "../utils/toErrorMap";
 import { useRouter } from "next/router";
 import NextLink from "next/link";
-import { withApollo } from "../utils/withApollo";
 import { setCookie } from "../utils/cookieHelpers";
+import { useAuth } from "../providers/AuthProvider";
+import { client } from "../lib/clients/graphqlRequestClient";
 
 
 
 const Login: React.FC<{}> = ({ }) => {
   const router = useRouter();
-  const [login] = useLoginMutation();
+  const { mutate, data } = useLoginMutation<LoginMutation, Error>(client)
+  const { setAuth } = useAuth()
   return (
     <Wrapper variant="small">
       <Formik
         initialValues={{ usernameOrEmail: "", password: "" }}
-        onSubmit={async (values, { setErrors }) => {
-          const response = await login({
-            variables: values,
-            update: (cache, { data }) => {
-              cache.writeQuery<MeQuery>({
-                query: MeDocument,
-                data: {
-                  __typename: "Query",
-                  me: data?.login.user,
-                },
-              });
-              cache.evict({ fieldName: "players:{}" });
-            },
-          });
-          if (response.data?.login.errors) {
-            setErrors(toErrorMap(response.data.login.errors));
-          } else if (response.data?.login.user) {
+        onSubmit={async ({ usernameOrEmail, password }, { setErrors }) => {
+          await mutate({
+            usernameOrEmail,
+            password
+          },
+          );
+          if (data?.login.errors) {
+            setErrors(toErrorMap(data.login.errors));
+          } else if (data?.login.user) {
             router.push("/");
-            if (response.data.login.token) {
-              setCookie(response.data.login.token, 5)
+
+            if (data.login.token) {
+              setCookie(data.login.token, 3)
+              setAuth(true)
             }
           }
         }}
@@ -78,4 +74,4 @@ const Login: React.FC<{}> = ({ }) => {
   );
 };
 
-export default withApollo({ ssr: false })(Login);
+export default Login

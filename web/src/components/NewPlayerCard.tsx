@@ -1,7 +1,7 @@
 import { Box, Button, Grid } from "@chakra-ui/react";
 import { Formik, Form } from "formik";
 import React from "react";
-import { useCreatePlayerMutation } from "../generated/graphql";
+import { CreatePlayerMutation, useCreatePlayerMutation } from "../generated/graphql";
 import { InputField } from "./InputField";
 import Tank from "../public/images/TANK.png"
 import Dps from "../public/images/DPS.png"
@@ -11,9 +11,10 @@ import Lock from "../public/svgs/Lock.svg"
 // import OpenLock from "../assets/svgs/OpenLock.svg"
 import Trash from "../public/svgs/Trash.svg"
 import Image from "next/image"
+import { client } from "../lib/clients/graphqlRequestClient";
 
 const NewPlayerCard = () => {
-  const [createPlayer] = useCreatePlayerMutation()
+  const { mutate } = useCreatePlayerMutation<CreatePlayerMutation, Error>(client)
 
 
   const Icon = ({ src, alt, boxSize = "70" }: { src: string | StaticImageData, alt: string, boxSize?: string }) => {
@@ -26,12 +27,9 @@ const NewPlayerCard = () => {
   return (
     <Formik
       initialValues={{ name: "", tank: false, healer: false, dps: false, inTheRoll: false, locked: false }}
-      onSubmit={async (values, { setErrors }) => {
-        const { errors } = await createPlayer({
-          variables: { input: values },
-          update: (cache) => {
-            cache.evict({ fieldName: "posts:{}" });
-          },
+      onSubmit={async (values, { setFieldError }) => {
+        await mutate({
+          input: { ...values },
         })
 
       }}>

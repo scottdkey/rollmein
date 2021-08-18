@@ -1,32 +1,23 @@
 import { Box, Spinner, Wrap, WrapItem, } from "@chakra-ui/react"
-import React, { useEffect } from "react"
-import { usePlayersQuery } from "../generated/graphql";
+import React, { useEffect, useState } from "react"
+import { PlayersQuery, usePlayersQuery } from "../generated/graphql";
 import dynamic from "next/dynamic"
-import { withApollo } from "../utils/withApollo";
+import { client } from "../lib/clients/graphqlRequestClient";
+import { Player } from "./PlayerCard";
 
-export type Player = {
-  id: string,
-  name: string,
-  tank: boolean,
-  healer: boolean,
-  dps: boolean,
-  inTheRoll: boolean,
-  locked: boolean
-}
 const PlayerCards = ({ }) => {
-  const { data, loading } = usePlayersQuery();
+  const { data, isLoading } = usePlayersQuery<PlayersQuery, Error>(client);
 
-  if (!loading && !data) {
+  if (!isLoading && !data) {
     return <Box bg="red">Query Failed</Box>
   }
   const NewPlayerCard = dynamic(() => import("./NewPlayerCard"))
   const PlayerCard = dynamic(() => import("./PlayerCard"))
-  console.log(data)
 
   return (
     <>
       {
-        !data && loading ?
+        !data && isLoading ?
           <Spinner size="xl" />
           :
           <Wrap spacing="5px" align="center" m="5px" justify="center">
@@ -45,4 +36,4 @@ const PlayerCards = ({ }) => {
 
 }
 
-export default withApollo({ ssr: false })(PlayerCards);
+export default PlayerCards

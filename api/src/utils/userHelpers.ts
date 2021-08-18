@@ -8,15 +8,21 @@ import { __forgetPasswordPrefix__ } from "../constants";
 import { redis } from "..";
 import { sendEmail } from "./sendEmail";
 import { v4 } from "uuid";
+import { FieldError } from "./errorsHelpers";
 
 
-export const validateRegister = (options: UsernamePasswordInput) => {
-  if (options.username.length <= 2) {
+export const validUsernameLength = {
+  length: 2,
+  error: {
+    field: "username",
+      message: "length must be greater than 2",
+    },
+}
+
+export const validateRegister = (options: UsernamePasswordInput): FieldError[] | null => {
+  if (options.username.length <= validUsernameLength.length) {
     return [
-      {
-        field: "username",
-        message: "length must be greater than 2",
-      },
+      validUsernameLength.error
     ];
   }
 

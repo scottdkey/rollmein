@@ -8,3 +8,11 @@ export class BasicError {
   @Field()
   message: string;
 }
+
+@ObjectType()
+export class FieldError {
+  @Field()
+  field: string;
+  @Field()
+  message: string;
+}

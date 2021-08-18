@@ -5,7 +5,7 @@ import { Player } from "../entites/Player";
 import { isAuth } from "../middleware/isAuth";
 import { MyContext } from "../types";
 import { BasicError } from "../utils/errorsHelpers";
-import { FFARoll, rollByRole, RollReturn, inCheck, validRoll } from "../utils/GroupRollLogic";
+import { FFARoll, rollByRole, RollReturn, inCheck, validRoll } from "../utils/rollHelpers";
 
 
 

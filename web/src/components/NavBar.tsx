@@ -1,31 +1,31 @@
 import { Box, Button, Circle, Flex, FormLabel, Link, Menu, MenuButton, MenuItem, MenuList, Stack, Switch, useColorMode } from '@chakra-ui/react';
-import { ChevronDownIcon, SunIcon, MoonIcon } from "@chakra-ui/icons"
-import React, { useState, useEffect } from 'react'
+import { SunIcon, MoonIcon } from "@chakra-ui/icons"
+import React, { useState, useEffect, useContext } from 'react'
 import NextLink from "next/link"
-import { useMeQuery } from '../generated/graphql';
-import { isServer } from '../utils/constants';
+import { MeQuery, useMeQuery } from '../generated/graphql';
 import { useApolloClient } from '@apollo/client';
-import router from 'next/router';
 import { deleteCookie } from '../utils/cookieHelpers';
+import { AuthContext } from '../providers/AuthProvider';
+import { client } from '../lib/clients/graphqlRequestClient';
 interface NavBarProps {
 
 }
 
 const NavBar: React.FC<NavBarProps> = ({ }) => {
-  // const [logout, { loading: logoutFetching }] = useLogoutMutation();
   const { cache } = useApolloClient()
   const [optionsOpen, setOptionsOpen] = useState(false)
   const [rollType, setRollType] = useState("ffa")
   const [logoutLoading, setLogoutLoading] = useState(false)
-  const { colorMode, toggleColorMode } = useColorMode()
-  const { data, loading, refetch } = useMeQuery({
-    skip: isServer(),
-  });
-
+  const { colorMode, toggleColorMode, setColorMode } = useColorMode()
+  const { data, isLoading } = useMeQuery<MeQuery, Error>(client);
+  const { auth, setAuth, options } = useContext(AuthContext)
 
   useEffect(() => {
-    refetch()
-  }, [])
+    if (colorMode !== options.theme) {
+      setColorMode(options.theme)
+    }
+  }, [options])
+
 
   const OptionsMenu = () => {
     return (
@@ -63,11 +63,11 @@ const NavBar: React.FC<NavBarProps> = ({ }) => {
   }
 
   let body = null
-  if (loading) {
+  if (isLoading) {
     <>
       Loading
     </>
-  } else if (!data?.me) {
+  } else if (!auth) {
     body = (
       <>
         <NextLink href="/login">
@@ -81,14 +81,12 @@ const NavBar: React.FC<NavBarProps> = ({ }) => {
   } else {
     body = (
       <Flex>
-        <Box mr={2} alignContent="center">{data.me.username}</Box>
+        <Box mr={2} alignContent="center">{data?.me?.username}</Box>
         <Button mr={2} onClick={async () => {
           await cache.reset()
           deleteCookie()
           setLogoutLoading(true)
-
-          router.push("/login")
-
+          setAuth(false)
         }} variant="link" isLoading={logoutLoading}>logout</Button>
         <OptionsMenu />
       </Flex>

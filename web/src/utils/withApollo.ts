@@ -17,6 +17,14 @@ const httpLink = new HttpLink({
     authorization: token ? token : ""
   }
 })
+
+export const client = new ApolloClient({
+  credentials: 'include',
+  ssrMode: isServer(),
+  link: httpLink,
+  cache: new InMemoryCache(),
+});
+
 const createClient = (ctx: NextPageContext) =>
   new ApolloClient({
     credentials: 'include',

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext } from "react";
 import { Formik, Form } from "formik";
 import { Box, Button } from "@chakra-ui/react";
 import { Wrapper } from "../components/Wrapper";
@@ -7,34 +7,37 @@ import { useRegisterMutation, MeQuery, MeDocument } from "../generated/graphql";
 import { toErrorMap } from "../utils/toErrorMap";
 import { useRouter } from "next/router";
 import { withApollo } from "../utils/withApollo";
+import { setCookie } from "../utils/cookieHelpers";
+import { AuthContext, useAuth } from "../providers/AuthProvider";
+import { client } from "../lib/clients/graphqlRequestClient";
 
 interface registerProps { }
 
 const Register: React.FC<registerProps> = ({ }) => {
   const router = useRouter();
-  const [register] = useRegisterMutation();
+  const { mutate, data, } = useRegisterMutation(client);
+  const { setAuth } = useAuth()
   return (
     <Wrapper variant="small">
       <Formik
         initialValues={{ email: "", username: "", password: "" }}
         onSubmit={async (values, { setErrors }) => {
-          const response = await register({
-            variables: { options: values },
-            update: (cache, { data }) => {
-              cache.writeQuery<MeQuery>({
-                query: MeDocument,
-                data: {
-                  __typename: "Query",
-                  me: data?.register.user,
-                },
-              });
-            },
-          });
-          if (response.data?.register.errors) {
-            setErrors(toErrorMap(response.data.register.errors));
-          } else if (response.data?.register.user) {
+          await mutate({
+            options: {
+              ...values
+            }
+          },
+          );
+          if (data?.register.errors) {
+            setErrors(toErrorMap(data.register.errors));
+          } else if (data?.register.user) {
             // worked
             router.push("/");
+
+            if (data.register.token) {
+              setCookie(data.register.token, 5)
+              setAuth(true)
+            }
           }
         }}
       >
@@ -71,4 +74,4 @@ const Register: React.FC<registerProps> = ({ }) => {
   );
 };
 
-export default withApollo({ ssr: false })(Register);
+export default Register
