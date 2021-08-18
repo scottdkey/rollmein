@@ -5,7 +5,7 @@ import cors from "koa-cors";
 import Redis from 'ioredis';
 import Koa from "koa";
 import bodyParser from "koa-bodyparser";
-// import koaJwt from "koa-jwt"
+import koaJwt from "koa-jwt"
 import { buildSchema } from "type-graphql";
 import { __cookieName__, __secretKey__, __port__, __prod__, __redisHost__, __uri__, __test__ } from "./constants";
 import { HelloResolver } from "./resolvers/hello";
@@ -17,7 +17,6 @@ import { MikroORM } from "@mikro-orm/core";
 import microConfig from "./mikro-orm.config"
 import { createDatabase } from './utils/createDatabase';
 import { kubeRouter } from './routes/kubernetesRoutes';
-import { TokenInterface, verifyJwt } from "./utils/jwtUtils";
 import { User } from "./entites/User";
 
 
@@ -47,7 +46,7 @@ app.use(
     credentials: true
   })
 )
-// app.use(koaJwt({ secret: __secretKey__, passthrough: true }))
+app.use(koaJwt({ secret: __secretKey__, passthrough: true }))
 const apolloServer = async () => new ApolloServer({
   playground: !__prod__,
   schema: await buildSchema({
@@ -59,15 +58,12 @@ const apolloServer = async () => new ApolloServer({
     validate: true,
   }),
   context: ({ ctx }: MyContext) => {
-    if (ctx.request.headers.authorization) {
-      const validToken = verifyJwt(ctx.request.headers.authorization) as TokenInterface
-      if (validToken) {
-        orm.em.findOne(User, validToken.id).then(res => {
-          ctx.state.user= res
-        }
+    if (ctx.state.user) {
+      orm.em.findOne(User, ctx.state.user.id).then(res => {
+        ctx.state.user = res
 
-        )
-      }
+      })
+
     }
 
     return {
@@ -76,7 +72,7 @@ const apolloServer = async () => new ApolloServer({
       em: orm.em.fork(),
     }
   }
-});
+})
 
 apolloServer().then(apollo => {
   apollo.applyMiddleware({

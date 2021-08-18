@@ -4,15 +4,11 @@ import { AuthProvider } from "../providers/AuthProvider"
 
 import { QueryClient, QueryClientProvider } from 'react-query'
 import { ReactQueryDevtools } from "react-query/devtools"
+import { getCookie } from "../utils/cookieHelpers"
 
 
-const queryClient = new QueryClient({
-  defaultOptions: {
-    queries: {
-      staleTime: 5 * 1000,
-    }
-  }
-})
+const queryClient = new QueryClient({})
+
 function App({ Component, pageProps }: AppProps) {
   return (
     <QueryClientProvider client={queryClient}>

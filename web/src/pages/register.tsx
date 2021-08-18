@@ -1,44 +1,49 @@
-import React, { useContext } from "react";
+import React from "react";
 import { Formik, Form } from "formik";
 import { Box, Button } from "@chakra-ui/react";
 import { Wrapper } from "../components/Wrapper";
 import { InputField } from "../components/InputField";
-import { useRegisterMutation, MeQuery, MeDocument } from "../generated/graphql";
+import { useRegisterMutation } from "../generated/graphql";
 import { toErrorMap } from "../utils/toErrorMap";
 import { useRouter } from "next/router";
-import { withApollo } from "../utils/withApollo";
 import { setCookie } from "../utils/cookieHelpers";
-import { AuthContext, useAuth } from "../providers/AuthProvider";
+import { useAuth } from "../providers/AuthProvider";
 import { client } from "../lib/clients/graphqlRequestClient";
 
 interface registerProps { }
 
 const Register: React.FC<registerProps> = ({ }) => {
   const router = useRouter();
-  const { mutate, data, } = useRegisterMutation(client);
   const { setAuth } = useAuth()
+  const { mutateAsync } = useRegisterMutation(client, {
+    onSuccess: (data) => {
+      if (data?.register.user) {
+        // worked
+        router.push("/");
+
+        if (data.register.token) {
+          setCookie(data.register.token, 5)
+          setAuth(true)
+        }
+      }
+    }
+  });
+
   return (
     <Wrapper variant="small">
       <Formik
         initialValues={{ email: "", username: "", password: "" }}
         onSubmit={async (values, { setErrors }) => {
-          await mutate({
+          await mutateAsync({
             options: {
               ...values
             }
-          },
-          );
-          if (data?.register.errors) {
-            setErrors(toErrorMap(data.register.errors));
-          } else if (data?.register.user) {
-            // worked
-            router.push("/");
-
-            if (data.register.token) {
-              setCookie(data.register.token, 5)
-              setAuth(true)
+          }).then(res => {
+            if (res.register.errors) {
+              setErrors(toErrorMap(res.register.errors));
             }
-          }
+          });
+
         }}
       >
         {({ isSubmitting }) => (
