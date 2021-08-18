@@ -1,44 +1,60 @@
-import { Box, Button, Circle, Flex, FormLabel, Link, Menu, MenuButton, MenuItem, MenuList, Stack, Switch, useColorMode } from '@chakra-ui/react';
+import { Box, Button, Circle, Flex, FormLabel, Link, Menu, MenuButton, MenuItem, MenuList, Spinner, Stack, Switch, useColorMode } from '@chakra-ui/react';
 import { SunIcon, MoonIcon } from "@chakra-ui/icons"
-import React, { useState, useEffect, useContext } from 'react'
+import React, { useState, useEffect } from 'react'
 import NextLink from "next/link"
-import { MeQuery, useMeQuery, useOptionsQuery, useUpdateOptionsMutation } from '../generated/graphql';
+import { useOptionsQuery, useUpdateOptionsMutation } from '../generated/graphql';
 import { deleteCookie } from '../utils/cookieHelpers';
-import { AuthContext } from '../providers/AuthProvider';
+import { useAuth } from '../providers/AuthProvider';
 import { client } from '../lib/clients/graphqlRequestClient';
-import { useIsAuth } from '../utils/useIsAuth';
+import { useQueryClient } from "react-query"
+
 interface NavBarProps {
 
 }
 
 const NavBar: React.FC<NavBarProps> = ({ }) => {
+  const queryClient = useQueryClient()
   const [logoutLoading, setLogoutLoading] = useState(false)
   const [optionsOpen, setOptionsOpen] = useState(false)
-  const { mutate } = useUpdateOptionsMutation(client, {
-    onSuccess: (data) => {
-      if (data.updateOptions) {
-        setOptions(data.updateOptions)
-      }
-
+  const { mutateAsync } = useUpdateOptionsMutation(client, {
+    onSuccess: (data, _variables, _context) => {
+      queryClient.invalidateQueries("Options")
     }
+
   })
-  const { colorMode, toggleColorMode, setColorMode } = useColorMode()
-  const optionsQuery = useOptionsQuery(client)
+  const [theme, setTheme] = useState("dark")
+  const [rollType, setRollType] = useState('ffa')
+  const [lockAfterOut, setLockAfterOut] = useState(false)
+  const { colorMode, setColorMode } = useColorMode()
+  const { data, isFetched, isLoading } = useOptionsQuery(client)
 
-  const { auth, setAuth, options, setOptions } = useContext(AuthContext)
-  const meQuery = useMeQuery<MeQuery, Error>(client);
 
-  useEffect(() => {
-    if (colorMode !== options.theme) {
-      setColorMode(options.theme)
-    }
-  }, [options])
+  const { auth, setAuth, user } = useAuth()
+
 
   useEffect(() => {
-    if (optionsQuery.isFetched && optionsQuery.data?.options) {
-      setOptions(optionsQuery.data?.options)
+    if (colorMode !== theme) {
+      setColorMode(theme)
     }
-  }, [optionsQuery.isFetched])
+  }, [theme, colorMode, setColorMode])
+
+  useEffect(() => {
+    if (isFetched && data?.options) {
+      const res = data.options
+      if (res.theme !== theme) {
+        setTheme(res.theme)
+      }
+      if (res.lockAfterOut !== lockAfterOut) {
+        setLockAfterOut(res.lockAfterOut)
+      }
+      if (res.rollType !== rollType) {
+        setRollType(res.rollType)
+      }
+    }
+
+  }, [data, lockAfterOut, rollType, theme, isFetched])
+
+
 
 
   const OptionsMenu = () => {
@@ -47,13 +63,31 @@ const NavBar: React.FC<NavBarProps> = ({ }) => {
         <MenuButton mr={2} onClick={() => { setOptionsOpen(!optionsOpen) }} >
           options
         </MenuButton>
-        <MenuList>
-
+        {isLoading ? <Spinner /> : <MenuList>
           <Stack direction="row" spacing={4} align="center">
-            <Button onClick={() => mutate({ input: { ...options, rollType: "ffa" } })} colorScheme="teal" variant={options.rollType === "ffa" ? "solid" : "outline"}>
+            <Button
+              onClick={async (e) => {
+                e.preventDefault()
+                await mutateAsync({ input: { lockAfterOut, rollType: "ffa", theme } }).then(data => {
+                  if (data.updateOptions) {
+                    setRollType(data.updateOptions.rollType)
+                  }
+                })
+              }}
+              colorScheme="teal" variant={data?.options?.rollType === "ffa" ? "solid" : "outline"}>
               Free For All
             </Button>
-            <Button onClick={() => mutate({ input: { ...options, rollType: "role" } })} colorScheme="teal" variant={options.rollType === "role" ? "solid" : "outline"}>
+            <Button
+              onClick={async (e) => {
+                e.preventDefault()
+                await mutateAsync({ input: { lockAfterOut, rollType: "role", theme } }).then(data => {
+                  if (data.updateOptions) {
+                    setRollType(data.updateOptions.rollType)
+                  }
+                })
+              }}
+              colorScheme="teal"
+              variant={rollType === "role" ? "solid" : "outline"}>
               By Role
             </Button>
           </Stack>
@@ -61,9 +95,25 @@ const NavBar: React.FC<NavBarProps> = ({ }) => {
             <FormLabel htmlFor="lock" mb="0">
               Lock after Out?
             </FormLabel>
-            <Switch colorScheme="teal" id="lock" />
+            <Switch isChecked={lockAfterOut} colorScheme="teal" id="lock" onChange={async (e) => {
+              e.preventDefault()
+              await mutateAsync({ input: { lockAfterOut: !lockAfterOut, rollType, theme } }).then(data => {
+                if (data.updateOptions) {
+
+                  setLockAfterOut(data.updateOptions.lockAfterOut)
+                }
+              })
+            }} />
           </MenuItem>
-          <MenuItem onClick={() => toggleColorMode()}>
+          <MenuItem onClick={async (e) => {
+            const themeOption = theme === "dark" ? "light" : "dark"
+            e.preventDefault()
+            await mutateAsync({ input: { lockAfterOut, rollType, theme: themeOption } }).then(data => {
+              if (data.updateOptions) {
+                setTheme(data.updateOptions.theme)
+              }
+            })
+          }}>
             <Flex alignItems="center">
               <Circle size="40px" bg="tomato" color="white">
                 {colorMode === "light" ? <SunIcon /> : <MoonIcon />}
@@ -72,12 +122,13 @@ const NavBar: React.FC<NavBarProps> = ({ }) => {
 
           </MenuItem>
         </MenuList>
+        }
       </Menu >
     )
   }
 
   let body = null
-  if (meQuery.isLoading) {
+  if (logoutLoading) {
     <>
       Loading
     </>
@@ -95,7 +146,7 @@ const NavBar: React.FC<NavBarProps> = ({ }) => {
   } else {
     body = (
       <Flex>
-        <Box mr={2} alignContent="center">{meQuery.data?.me?.username}</Box>
+        <Box mr={2} alignContent="center">{user?.username}</Box>
         <Button mr={2} onClick={async () => {
           deleteCookie()
           setLogoutLoading(true)

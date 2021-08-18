@@ -6,5 +6,4 @@ module.exports = withBundleAnalyzer({
   reactStrictMode: true,
   distDir: "out",
   compress: true,
-  target: "serverless",
 });

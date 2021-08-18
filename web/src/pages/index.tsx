@@ -1,34 +1,24 @@
 import React, { useEffect } from "react"
-import { Spinner, Wrap, WrapItem, } from "@chakra-ui/react"
+import { Box, Spinner, Wrap, WrapItem, } from "@chakra-ui/react"
 import { Layout } from "../components/Layout";
 import dynamic from "next/dynamic"
 import { PlayersQuery, useMeQuery, usePlayersQuery } from "../generated/graphql";
 import { Player } from "../components/PlayerCard";
 import { client } from "../lib/clients/graphqlRequestClient";
 import { useAuth } from "../providers/AuthProvider";
+import PlayerCards from "../components/PlayerCards";
 
 const Index = () => {
 
-  const { data, isLoading } = usePlayersQuery<PlayersQuery, Error>(client);
-  const NewPlayerCard = dynamic(() => import("../components/NewPlayerCard"))
-  const PlayerCard = dynamic(() => import("../components/PlayerCard"))
+  const { auth } = useAuth()
 
   return (
     <Layout>
       {
-        !data && isLoading ?
-          <Spinner size="xl" />
+        !auth ?
+          <Box>Please Login to continue</Box>
           :
-          <Wrap spacing="5px" align="center" m="5px" justify="center">
-            {data?.players.map((p: Player) =>
-              <WrapItem key={p.id}>
-                <PlayerCard player={p} />
-              </WrapItem>
-            )}
-            <WrapItem>
-              <NewPlayerCard />
-            </WrapItem>
-          </Wrap>
+          <PlayerCards />
       }
     </Layout>
   )

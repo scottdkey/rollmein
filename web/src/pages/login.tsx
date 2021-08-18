@@ -18,8 +18,8 @@ const Login: React.FC<{}> = ({ }) => {
     onSuccess: (data) => {
       if (data.login.token) {
         setCookie(data.login.token, 3)
-        setAuth(true)
         router.replace("/")
+        setAuth(true)
       }
 
     },
