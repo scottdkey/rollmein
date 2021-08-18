@@ -1,6 +1,6 @@
 import { GraphQLClient } from "graphql-request";
 import { HeaderOptions } from "../../providers/AuthProvider";
-import { graphqlEndpoint, isServer } from "../../utils/constants";
+import { isServer } from "../../utils/constants";
 import { getCookie } from "../../utils/cookieHelpers";
 
 let token: string | undefined = undefined
@@ -16,4 +16,4 @@ const headerOptions: HeaderOptions | undefined = token === undefined ? undefined
     authorization: `Bearer ${token}`
   }
 }
-export const client = new GraphQLClient(graphqlEndpoint, headerOptions)
+export const client = new GraphQLClient(process.env.NEXT_PUBLIC_GRAPHQL_ENDPOINT!, headerOptions)
