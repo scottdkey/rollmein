@@ -1,9 +1,9 @@
-import React, { useState } from "react";
-import { Formik, Form, Field, useFormikContext } from "formik";
+import React from "react";
+import { Formik, Form } from "formik";
 import { Box, Button, Link, Flex } from "@chakra-ui/react";
 import { Wrapper } from "../components/Wrapper";
 import { InputField } from "../components/InputField";
-import { useLoginMutation, MeQuery, MeDocument, LoginMutation } from "../generated/graphql";
+import { useLoginMutation, LoginMutation } from "../generated/graphql";
 import { useRouter } from "next/router";
 import NextLink from "next/link";
 import { setCookie } from "../utils/cookieHelpers";

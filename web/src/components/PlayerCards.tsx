@@ -1,9 +1,10 @@
 import { Box, Spinner, Wrap, WrapItem, } from "@chakra-ui/react"
-import React, { useEffect, useState } from "react"
+import React from "react"
 import { PlayersQuery, usePlayersQuery } from "../generated/graphql";
-import dynamic from "next/dynamic"
+
 import { client } from "../lib/clients/graphqlRequestClient";
-import { Player } from "./PlayerCard";
+import PlayerCard, { Player } from "./PlayerCard";
+import NewPlayerCard from "./NewPlayerCard";
 
 const PlayerCards = ({ }) => {
   const { data, isLoading } = usePlayersQuery<PlayersQuery, Error>(client);
@@ -11,8 +12,6 @@ const PlayerCards = ({ }) => {
   if (!isLoading && !data) {
     return <Box bg="red">Query Failed</Box>
   }
-  const NewPlayerCard = dynamic(() => import("./NewPlayerCard"))
-  const PlayerCard = dynamic(() => import("./PlayerCard"))
 
   return (
     <>
