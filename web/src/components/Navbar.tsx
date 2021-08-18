@@ -26,7 +26,7 @@ const NavBar: React.FC<NavBarProps> = ({ }) => {
   const [rollType, setRollType] = useState('ffa')
   const [lockAfterOut, setLockAfterOut] = useState(false)
   const { colorMode, setColorMode } = useColorMode()
-  const { data, isFetched, isLoading } = useOptionsQuery(client)
+  const { data, isFetched } = useOptionsQuery(client)
 
 
   const { auth, setAuth, user } = useAuth()
@@ -63,7 +63,7 @@ const NavBar: React.FC<NavBarProps> = ({ }) => {
         <MenuButton mr={2} onClick={() => { setOptionsOpen(!optionsOpen) }} >
           options
         </MenuButton>
-        {isLoading ? <Spinner /> : <MenuList>
+        <MenuList>
           <Stack direction="row" spacing={4} align="center">
             <Button
               onClick={async (e) => {
@@ -122,7 +122,7 @@ const NavBar: React.FC<NavBarProps> = ({ }) => {
 
           </MenuItem>
         </MenuList>
-        }
+
       </Menu >
     )
   }

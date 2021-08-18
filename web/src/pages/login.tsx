@@ -9,17 +9,20 @@ import NextLink from "next/link";
 import { setCookie } from "../utils/cookieHelpers";
 import { useAuth } from "../providers/AuthProvider";
 import { client } from "../lib/clients/graphqlRequestClient";
-import { toErrorMap } from "../utils/toErrorMap";
+import { useQueryClient } from "react-query";
+
 
 const Login: React.FC<{}> = ({ }) => {
   const router = useRouter();
+  const queryClient = useQueryClient()
   const { setAuth } = useAuth()
   const { mutateAsync } = useLoginMutation<LoginMutation, Error>(client, {
-    onSuccess: (data) => {
+    onSuccess: async (data) => {
       if (data.login.token) {
         setCookie(data.login.token, 3)
         router.replace("/")
         setAuth(true)
+        await queryClient.refetchQueries()
       }
 
     },
