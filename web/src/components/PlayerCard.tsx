@@ -20,15 +20,7 @@ interface PlayerCardProps {
 }
 const PlayerCard = ({ playerId }: PlayerCardProps): JSX.Element => {
   const queryClient = useQueryClient()
-  const [player, setPlayer] = useState<Player>({
-    id: 0,
-    name: "error",
-    tank: false,
-    dps: false,
-    healer: false,
-    inTheRoll: false,
-    locked: false
-  })
+  const [player, setPlayer] = useState<Player>()
   const { mutateAsync } = useUpdatePlayerMutation<UpdatePlayerMutation | Error>(client, {
     onSuccess: (data: UpdatePlayerMutation, _variables: UpdatePlayerMutationVariables, _context: unknown) => {
       queryClient.invalidateQueries(["Players", { id: playerId }])
@@ -37,31 +29,38 @@ const PlayerCard = ({ playerId }: PlayerCardProps): JSX.Element => {
       }])
     }
   })
-  const { data, isLoading } = usePlayerQuery(client, {
+  const { data, isLoading } = playerId === 0 ? {
+    data: {
+      player: {
+        id: 0,
+        name: "error",
+        tank: false,
+        dps: false,
+        healer: false,
+        inTheRoll: false,
+        locked: false
+      }
+    }, isLoading: false
+  } : usePlayerQuery(client, {
     id: playerId
   })
   useEffect(() => {
     if (!isLoading && data?.player) {
       setPlayer({ ...data.player })
     }
-  }, [data, isLoading, setPlayer])
+  }, [])
 
-  const playerInput = {
-    name: player.name,
-    tank: player.tank,
-    healer: player.healer,
-    dps: player.dps,
-    inTheRoll: player.inTheRoll,
-    locked: player.locked
-  }
-  if (player.id === 0) {
-    return (
-      <>
-      </>
-    )
+  const playerInput = player ? player : {
+    id: 0,
+    name: "error",
+    tank: false,
+    dps: false,
+    healer: false,
+    inTheRoll: false,
+    locked: false
   }
   const updateField = async (field: string, changeValue: any) => {
-    if (player) {
+    if (playerId !== 0 && player) {
       await mutateAsync({
         id: playerId,
         input: {
@@ -75,34 +74,40 @@ const PlayerCard = ({ playerId }: PlayerCardProps): JSX.Element => {
         }
 
       })
+    } else {
+      const updatePlayer = { ...playerInput, [field]: changeValue }
+      setPlayer(updatePlayer)
     }
 
   }
+
   return (
     <Box p={5} w="250px" shadow="md" borderWidth="1px" bg="blue.200">
       <Heading fontSize="xl">{player?.name}</Heading>
       <HStack>
         <Text onClick={() => {
-          updateField("inTheRoll", !player.inTheRoll)
+          updateField("inTheRoll", !player?.inTheRoll)
         }} mt={4}>in the roll: {player?.inTheRoll}</Text>
         <Text onClick={() => {
-          updateField("locked", !player.locked)
+          updateField("locked", !player?.locked)
         }}>locked: {player?.locked.toString()}</Text>
       </HStack>
       <HStack>
         <Text onClick={() => {
-          updateField("dps", !player.dps)
+          updateField("dps", !player?.dps)
         }}>dps: {player?.dps.toString()}</Text>
         <Text onClick={() => {
-          updateField("tank", !player.tank)
+          updateField("tank", !player?.tank)
         }}>tank: {player?.tank.toString()}</Text>
         <Text onClick={() => {
-          updateField("healer", !player.healer)
+          updateField("healer", !player?.healer)
         }}>healer: {player?.healer.toString()}</Text>
       </HStack>
     </Box>
 
   )
+
+
 }
 
 

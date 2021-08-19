@@ -11,7 +11,7 @@ const PlayerCards = ({ }) => {
   const { data, isLoading } = usePlayersQuery<PlayersQuery, Error>(client);
   const [players, setPlayers] = useState<Player[]>([
     {
-      id: 1,
+      id: 0,
       name: "test",
       tank: true,
       healer: true,
@@ -20,18 +20,19 @@ const PlayerCards = ({ }) => {
       inTheRoll: true
     }
   ])
+  // useEffect(() => {
+  //   console.log(isLoading)
+
+  // },[])
 
   if (!isLoading && !data) {
     return <Box bg="red">Query Failed</Box>
   }
 
-
-
-
   return (
     <>
       <Wrap spacing="5px" align="center" m="5px" justify="center">
-        {players.map((player, index) => <PlayerCard key={player.name} playerId={player.id} />)}
+        {players.map((player) => <PlayerCard key={player.name} playerId={player.id} />)}
         <WrapItem>
           <NewPlayerCard />
         </WrapItem>
