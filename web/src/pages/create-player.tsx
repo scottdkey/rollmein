@@ -15,7 +15,7 @@ const CreatePlayer: React.FC<{}> = ({ }) => {
   const queryClient = useQueryClient()
   const { auth } = useAuth()
   const router = useRouter()
-  const { mutate, error } = useCreatePlayerMutation<CreatePlayerMutation, Error>(client,
+  const { mutate } = useCreatePlayerMutation<CreatePlayerMutation, Error>(client,
     {
       onSuccess: (data, _variables, _context) => {
         queryClient.invalidateQueries("GetAllPlayers")

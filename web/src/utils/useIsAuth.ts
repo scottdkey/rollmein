@@ -8,11 +8,7 @@ export const useIsAuth = () => {
   const { data, isLoading } = useMeQuery(client);
   const { setAuth } = useAuth()
   const router = useRouter();
-  useEffect(() => {
-    if (!isLoading && !data?.me) {
-      router.replace("/login");
-    } else {
-      setAuth(true)
-    }
-  }, [isLoading, data, router]);
+  if (!isLoading && !data?.me) {
+    router.replace("/login");
+  }
 };

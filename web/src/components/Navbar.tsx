@@ -128,7 +128,7 @@ const NavBar: React.FC<NavBarProps> = ({ }) => {
   }
 
   let body = null
-  if (logoutLoading) {
+  if (logoutLoading && !auth) {
     <>
       Loading
     </>
@@ -149,7 +149,6 @@ const NavBar: React.FC<NavBarProps> = ({ }) => {
         <Box mr={2} alignContent="center">{user?.username}</Box>
         <Button mr={2} onClick={async () => {
           deleteCookie()
-          setLogoutLoading(true)
           setAuth(false)
         }} variant="link" isLoading={logoutLoading}>logout</Button>
         <OptionsMenu />

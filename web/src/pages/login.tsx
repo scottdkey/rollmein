@@ -18,12 +18,8 @@ const Login: React.FC<{}> = ({ }) => {
   const { setAuth } = useAuth()
   const { mutateAsync } = useLoginMutation<LoginMutation, Error>(client, {
     onSuccess: async (data) => {
-      if (data.login.token) {
-        setCookie(data.login.token, 3)
-        router.replace("/")
-        setAuth(true)
-        await queryClient.refetchQueries()
-      }
+
+      router.replace("/")
 
     },
   })
@@ -38,7 +34,13 @@ const Login: React.FC<{}> = ({ }) => {
           await mutateAsync({
             usernameOrEmail,
             password
-          }).then((data) => {
+          }).then(async (data) => {
+            if (data.login.token) {
+              setCookie(data.login.token, 3)
+              await queryClient.refetchQueries()
+              setAuth(true)
+            }
+
             if (data.login.errors) {
               data.login.errors.forEach(error => {
                 setFieldError(error.field, error.message)
