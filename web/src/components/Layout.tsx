@@ -1,5 +1,6 @@
 import { Wrapper, WrapperVariant } from "./Wrapper"
 import Navbar from "./Navbar"
+import dynamic from "next/dynamic"
 
 
 
@@ -12,6 +13,7 @@ export const Layout: React.FC<LayoutProps> = ({
   variant, children
 
 }) => {
+  const Navbar = dynamic(() => import('./Navbar'))
   return (
     <>
       <Navbar />

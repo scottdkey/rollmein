@@ -3,8 +3,9 @@ import React, { FC, useEffect, useState } from "react"
 import { PlayersQuery, usePlayersQuery } from "../generated/graphql";
 
 import { client } from "../lib/clients/graphqlRequestClient";
-import PlayerCard, { Player } from "./PlayerCard";
+import { Player } from "./PlayerCard";
 import NewPlayerCard from "./NewPlayerCard";
+import dynamic from "next/dynamic";
 
 
 const PlayerCards = ({ }) => {
@@ -24,6 +25,8 @@ const PlayerCards = ({ }) => {
   //   console.log(isLoading)
 
   // },[])
+
+  const PlayerCard = dynamic(() => import('./PlayerCard'))
 
   if (!isLoading && !data) {
     return <Box bg="red">Query Failed</Box>

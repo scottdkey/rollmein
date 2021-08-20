@@ -26,7 +26,7 @@ const NavBar: React.FC<NavBarProps> = ({ }) => {
   const [rollType, setRollType] = useState('ffa')
   const [lockAfterOut, setLockAfterOut] = useState(false)
   const { colorMode, setColorMode } = useColorMode()
-  const { data, isFetched } = useOptionsQuery(client)
+  const { data, isFetched, isStale } = useOptionsQuery(client)
 
 
   const { auth, setAuth, user } = useAuth()
@@ -68,6 +68,8 @@ const NavBar: React.FC<NavBarProps> = ({ }) => {
             <Button
               onClick={async (e) => {
                 e.preventDefault()
+                const rollSwitch = rollType === "ffa" ? "role" : "ffa"
+                setRollType(rollSwitch)
                 await mutateAsync({ input: { lockAfterOut, rollType: "ffa", theme } }).then(data => {
                   if (data.updateOptions) {
                     setRollType(data.updateOptions.rollType)
@@ -79,6 +81,8 @@ const NavBar: React.FC<NavBarProps> = ({ }) => {
             </Button>
             <Button
               onClick={async (e) => {
+                const rollSwitch = rollType === "ffa" ? "role" : "ffa"
+                setRollType(rollSwitch)
                 e.preventDefault()
                 await mutateAsync({ input: { lockAfterOut, rollType: "role", theme } }).then(data => {
                   if (data.updateOptions) {

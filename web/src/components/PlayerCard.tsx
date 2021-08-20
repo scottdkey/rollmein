@@ -1,4 +1,5 @@
 import { Box, Heading, HStack, Text, WrapItem } from "@chakra-ui/react"
+import dynamic from "next/dynamic"
 import React, { useEffect, useState } from "react"
 import { useQueryClient } from "react-query"
 import { UpdatePlayerMutation, UpdatePlayerMutationVariables, usePlayerQuery, useUpdatePlayerMutation } from "../generated/graphql"
@@ -29,20 +30,10 @@ const PlayerCard = ({ playerId }: PlayerCardProps): JSX.Element => {
       }])
     }
   })
-  const { data, isLoading } = playerId === 0 ? {
-    data: {
-      player: {
-        id: 0,
-        name: "error",
-        tank: false,
-        dps: false,
-        healer: false,
-        inTheRoll: false,
-        locked: false
-      }
-    }, isLoading: false
-  } : usePlayerQuery(client, {
+  const { data, isLoading } = usePlayerQuery(client, {
     id: playerId
+  }, {
+    enabled: false
   })
   useEffect(() => {
     if (!isLoading && data?.player) {
@@ -60,6 +51,7 @@ const PlayerCard = ({ playerId }: PlayerCardProps): JSX.Element => {
     locked: false
   }
   const updateField = async (field: string, changeValue: any) => {
+    setPlayer({ ...playerInput, [field]: changeValue })
     if (playerId !== 0 && player) {
       await mutateAsync({
         id: playerId,
