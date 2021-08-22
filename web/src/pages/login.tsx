@@ -37,7 +37,7 @@ const Login: React.FC<{}> = ({ }) => {
           }).then(async (data) => {
             if (data.login.token) {
               setCookie(data.login.token, 3)
-              await queryClient.refetchQueries()
+              await queryClient.refetchQueries({ stale: true })
               setAuth(true)
             }
 

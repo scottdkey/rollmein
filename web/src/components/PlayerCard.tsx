@@ -39,10 +39,11 @@ const PlayerCard = ({ playerId }: PlayerCardProps): JSX.Element => {
 
   useEffect(() => {
     if (!isLoading && data?.player) {
-      setName(player?.name!)
-      setPlayer({ ...data.player })
+      setPlayer(data.player)
+      setName(data.player.name)
     }
   }, [data])
+
 
   const updateField = async (field: string, changeValue: any) => {
     if (player) {
@@ -103,7 +104,7 @@ const PlayerCard = ({ playerId }: PlayerCardProps): JSX.Element => {
               textAlign="center"
               justifyContent="center"
               alignContent="center">{
-                player?.name}
+                name}
             </Heading>}
           {editing ? <Button
             mt={4}
@@ -143,7 +144,11 @@ const PlayerCard = ({ playerId }: PlayerCardProps): JSX.Element => {
           >
             submit
           </Button> : <Button ml="auth" color="green.700"
-            bgColor="green.300" onClick={() => { setEditing(!editing) }}>Edit</Button>}
+            bgColor="green.300" onClick={() => {
+              setName(player?.name)
+              setEditing(!editing)
+
+            }}>Edit</Button>}
         </HStack>
 
 
