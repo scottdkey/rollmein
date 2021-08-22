@@ -6,5 +6,6 @@ mutation CreatePlayer($input: PlayerInput!) {
     healer
     dps
     locked
+    inTheRoll
   }
 }

@@ -23,7 +23,7 @@ export const InputField: React.FC<InputFieldProps> = ({
   textArea,
   ...props
 }) => {
-  const [field, { error }] = useField(props);
+  const [field, { error }] = useField({ ...props });
   let InputOrTextArea = Input;
   if (textArea) {
     // @ts-ignore

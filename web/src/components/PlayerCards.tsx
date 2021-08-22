@@ -35,7 +35,7 @@ const PlayerCards = ({ }) => {
   return (
     <>
       <Wrap spacing="5px" align="center" m="5px" justify="center">
-        {players.map((player) => <PlayerCard key={player.name} playerId={player.id} />)}
+        {data?.players.map((player) => <PlayerCard key={player.id} playerId={player.id} />)}
         <WrapItem>
           <NewPlayerCard />
         </WrapItem>

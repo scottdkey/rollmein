@@ -2,6 +2,7 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { useMeQuery, useOptionsQuery } from "../generated/graphql"
 import { client } from "../lib/clients/graphqlRequestClient"
+import { getCookie } from "../utils/cookieHelpers";
 
 export type OptionsType = {
   rollType: string
@@ -18,9 +19,7 @@ export type HeaderOptions = {
 
 export type AuthContextType = {
   auth: boolean
-  options: OptionsType
   setAuth: (value: boolean) => void;
-  setOptions: (value: OptionsType) => void;
   user?: User
 }
 
@@ -41,7 +40,12 @@ export const AuthProvider = ({ children }: any) => {
     if (!isLoading && data?.me) {
       setAuth(true)
       setUser(data.me)
+    } else {
+      setUser(undefined)
+      setAuth(false)
     }
+
+
   }, [isLoading])
 
 

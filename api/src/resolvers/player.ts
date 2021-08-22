@@ -23,6 +23,16 @@ class PlayerInput {
   inTheRoll: boolean;
 }
 
+@InputType()
+class UpdatePlayerInput extends PlayerInput {
+  @Field()
+  id!: number;
+  @Field()
+  name: string;
+  @Field()
+  tank: boolean;
+}
+
 
 @Resolver(Player)
 export class PlayerResolver {
@@ -87,11 +97,10 @@ export class PlayerResolver {
   @Mutation(() => Player, { nullable: true })
   @UseMiddleware(isAuth)
   async updatePlayer(
-    @Arg("id") id: number,
     @Ctx() { em }: MyContext,
-    @Arg("input", () => PlayerInput, { nullable: true }) input: PlayerInput
+    @Arg("input", () => UpdatePlayerInput, { nullable: true }) input: UpdatePlayerInput
   ): Promise<Player | BasicError[]> {
-    const player = await em.findOne(Player, id)
+    const player = await em.findOne(Player, input.id)
     if (!player) {
       return [{
         type: "playerError",
@@ -107,12 +116,13 @@ export class PlayerResolver {
       ]
 
     } else {
-      player.name = input.name
-      player.tank = input.tank
-      player.healer = input.healer
-      player.dps = input.dps
-      player.inTheRoll = input.inTheRoll
-      player.locked = input.locked
+      const { name, tank, dps, healer, inTheRoll, locked } = input
+      player.name = name
+      player.tank = tank
+      player.dps = dps
+      player.healer = healer
+      player.inTheRoll = inTheRoll
+      player.locked = locked
       await em.persist(player).flush()
     }
     return player

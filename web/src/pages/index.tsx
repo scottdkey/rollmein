@@ -1,8 +1,9 @@
 import React from "react"
-import { Box } from "@chakra-ui/react"
+import { Box, Circle } from "@chakra-ui/react"
 import { Layout } from "../components/Layout";
 import { useAuth } from "../providers/AuthProvider";
 import PlayerCards from "../components/PlayerCards";
+import { FirstAid, Dice, Lock, Trash } from "../assets";
 
 const Index = () => {
 

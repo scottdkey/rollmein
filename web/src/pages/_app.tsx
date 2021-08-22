@@ -7,14 +7,7 @@ import { ReactQueryDevtools } from "react-query/devtools"
 
 
 
-const queryClient = new QueryClient({
-  defaultOptions: {
-    queries: {
-      retry: 5,
-      staleTime: 10000
-    }
-  }
-})
+const queryClient = new QueryClient()
 
 
 function App({ Component, pageProps }: AppProps) {

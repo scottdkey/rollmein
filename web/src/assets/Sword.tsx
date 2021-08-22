@@ -1,18 +1,12 @@
+import { createIcon, Icon, IconProps } from "@chakra-ui/react"
 import React from "react"
 
 
 
-export const Sword = () => {
-  return (
-    <svg version="1.0" xmlns="http://www.w3.org/2000/svg"
-      width="1239.000000pt" height="1280.000000pt" viewBox="0 0 1239.000000 1280.000000"
-      preserveAspectRatio="xMidYMid meet">
-      <metadata>
-        Created by potrace 1.15, written by Peter Selinger 2001-2017
-      </metadata>
-      <g transform="translate(0.000000,1280.000000) scale(0.100000,-0.100000)"
-        fill="#000000" stroke="none">
-        <path d="M11705 12595 c-357 -112 -916 -286 -1242 -387 l-591 -183 -3152
+export const Sword = (props: IconProps) => <Icon viewBox="0 0 1239.000000 1280.000000" {...props} >
+  <g transform="translate(0.000000,1280.000000) scale(0.100000,-0.100000)"
+    fill="currentColor" stroke="none">
+    <path d="M11705 12595 c-357 -112 -916 -286 -1242 -387 l-591 -183 -3152
 -3637 c-1734 -2001 -3155 -3638 -3160 -3638 -4 0 -240 182 -526 404 -285 223
 -520 404 -520 403 -50 -55 -724 -852 -724 -857 0 -3 283 -145 630 -315 346
 -170 630 -311 630 -314 -1 -3 -18 -25 -38 -47 -25 -29 -53 -47 -89 -58 -58
@@ -35,7 +29,5 @@ c-73 -74 -79 -77 -150 -94 -70 -16 -78 -21 -123 -73 l-49 -55 15 -53 15 -52
 -234 167 -497 354 l-476 339 1226 1213 c1409 1391 3155 3116 4729 4671 890
 879 1094 1085 1098 1110 2 17 30 279 60 581 31 303 81 789 111 1081 29 292 54
 536 54 543 0 6 -8 11 -17 10 -10 -1 -310 -93 -668 -204z"/>
-      </g>
-    </svg>
-  )
-}
+  </g>
+</Icon>

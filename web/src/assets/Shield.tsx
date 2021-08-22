@@ -1,14 +1,12 @@
-export const Sheild = () => {
-  return (
-    <svg version="1.0" xmlns="http://www.w3.org/2000/svg"
-      width="1088.000000pt" height="1280.000000pt" viewBox="0 0 1088.000000 1280.000000"
-      preserveAspectRatio="xMidYMid meet">
-      <metadata>
-        Created by potrace 1.15, written by Peter Selinger 2001-2017
-      </metadata>
-      <g transform="translate(0.000000,1280.000000) scale(0.100000,-0.100000)"
-        fill="#000000" stroke="none">
-        <path d="M4738 12461 l-697 -338 -468 189 c-257 104 -548 221 -646 261 l-177
+import { createIcon, Icon, IconProps } from "@chakra-ui/react"
+import React from "react"
+
+
+
+export const Sheild = (props: IconProps) => <Icon viewBox="0 0 1088.000000 1280.000000" {...props} >
+  <g transform="translate(0.000000,1280.000000) scale(0.100000,-0.100000)"
+    fill="currentColor" stroke="none">
+    <path d="M4738 12461 l-697 -338 -468 189 c-257 104 -548 221 -646 261 l-177
 71 -63 -21 c-34 -12 -168 -58 -297 -102 -129 -44 -327 -111 -440 -149 -338
 -116 -1065 -363 -1388 -473 -238 -82 -302 -107 -299 -119 3 -8 36 -89 75 -180
 178 -422 321 -924 391 -1370 49 -309 56 -403 56 -755 0 -513 -21 -647 -325
@@ -22,7 +20,4 @@ c395 261 794 493 1091 636 88 43 332 153 541 245 626 275 833 370 1195 551
 110 -1050 357 -1388 473 -113 38 -311 105 -440 149 -129 44 -263 90 -297 102
 l-63 21 -177 -71 c-98 -40 -389 -157 -646 -261 l-468 -189 -699 338 c-385 187
 -701 339 -702 338 -2 0 -317 -152 -700 -338z"/>
-      </g>
-    </svg>
-  )
-}
+  </g></Icon>

@@ -47,8 +47,7 @@ export type MutationCreatePlayerArgs = {
 
 
 export type MutationUpdatePlayerArgs = {
-  input?: Maybe<PlayerInput>;
-  id: Scalars['Float'];
+  input?: Maybe<UpdatePlayerInput>;
 };
 
 
@@ -137,6 +136,16 @@ export type QueryPlayerArgs = {
   id: Scalars['Float'];
 };
 
+export type UpdatePlayerInput = {
+  name: Scalars['String'];
+  tank: Scalars['Boolean'];
+  healer: Scalars['Boolean'];
+  dps: Scalars['Boolean'];
+  locked: Scalars['Boolean'];
+  inTheRoll: Scalars['Boolean'];
+  id: Scalars['Float'];
+};
+
 export type User = {
   __typename?: 'User';
   id: Scalars['ID'];
@@ -179,7 +188,7 @@ export type CreatePlayerMutationVariables = Exact<{
 }>;
 
 
-export type CreatePlayerMutation = { __typename?: 'Mutation', createPlayer: { __typename?: 'Player', id: number, name: string, tank: boolean, healer: boolean, dps: boolean, locked: boolean } };
+export type CreatePlayerMutation = { __typename?: 'Mutation', createPlayer: { __typename?: 'Player', id: number, name: string, tank: boolean, healer: boolean, dps: boolean, locked: boolean, inTheRoll: boolean } };
 
 export type DeletePlayerMutationVariables = Exact<{
   id: Scalars['Float'];
@@ -223,8 +232,7 @@ export type UpdateOptionsMutationVariables = Exact<{
 export type UpdateOptionsMutation = { __typename?: 'Mutation', updateOptions?: Maybe<{ __typename?: 'Options', lockAfterOut: boolean, rollType: string, theme: string }> };
 
 export type UpdatePlayerMutationVariables = Exact<{
-  id: Scalars['Float'];
-  input: PlayerInput;
+  input: UpdatePlayerInput;
 }>;
 
 
@@ -303,6 +311,7 @@ export const CreatePlayerDocument = `
     healer
     dps
     locked
+    inTheRoll
   }
 }
     `;
@@ -422,8 +431,8 @@ export const useUpdateOptionsMutation = <
       options
     );
 export const UpdatePlayerDocument = `
-    mutation UpdatePlayer($id: Float!, $input: PlayerInput!) {
-  updatePlayer(id: $id, input: $input) {
+    mutation UpdatePlayer($input: UpdatePlayerInput!) {
+  updatePlayer(input: $input) {
     id
     name
     tank
