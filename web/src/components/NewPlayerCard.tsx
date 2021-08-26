@@ -1,33 +1,14 @@
-import { Box, Button, Circle, HStack, Icon, Input, Spinner } from "@chakra-ui/react";
-import React, { FC, useState } from "react";
+import { Box, Button, Center, Heading, HStack, Input, Spinner } from "@chakra-ui/react";
+import React, { useRef, useState } from "react";
 import { useQueryClient } from "react-query";
-import { Dice, FirstAid, Lock, OpenLock, Sheild, Sword } from "../assets";
+import { Trash, Lock, OpenLock, Dice, Sheild, Sword, FirstAid } from "../assets";
 import { CreatePlayerMutation, CreatePlayerMutationVariables, useCreatePlayerMutation } from "../generated/graphql";
 import { client } from "../lib/clients/graphqlRequestClient";
+import CardGeneric, { CardWraper, IconWrapper } from "./CardGeneric";
 
 
 
-interface IconWrapperType {
-  Icon: typeof Icon
-  onClick: Function
-  selected: boolean
-  color?: string
-}
-export const IconWrapper: FC<IconWrapperType> = ({ Icon, onClick, selected, color = "teal" }): JSX.Element => {
-  return (
-    <Circle bg={selected ? `${color}.300` : "gray.400"} w="10" h="10" _hover={{
-      backgroundColor: selected ? `${color}.400` : "gray.300"
-    }
 
-    } onClick={() => {
-      onClick()
-    }}>
-      <Icon w={8} h={8} color={selected ? `${color}.600` : "gray.500"} _hover={{
-        color: selected ? `${color}.700` : "gray.600"
-      }} />
-    </Circle >
-  )
-}
 
 
 const NewPlayerCard = () => {
@@ -53,84 +34,78 @@ const NewPlayerCard = () => {
     }
   })
 
-  if (open && !isLoading) {
-    return (
-      <Box p={5} w="250px" h="150px" shadow="md" borderWidth="1px" bg="blue.200" position="relative">
-        <Box position="absolute" top="2" left="2"><IconWrapper color="yellow" selected={locked} Icon={locked ? Lock : OpenLock} onClick={() => {
-          setLocked(!locked)
-        }} /></Box>
-        <Box position="absolute" top="2" left="50"><IconWrapper selected={inTheRoll} Icon={Dice} onClick={() =>
-          setInTheRoll(!inTheRoll)
-        } /></Box>
+  const handleSubmit = () => {
+    mutate({
+      input: {
+        name,
+        tank,
+        healer,
+        dps,
+        locked,
+        inTheRoll
+      }
+    })
+  }
 
-        <HStack mt="8">
+  if (!open) {
+    return (
+      <CardWraper>
+        <Button variant="teal" onClick={() => setOpen(true)}>New Player</Button>
+      </CardWraper>
+    )
+  } else if (isLoading) {
+    return (
+      <CardWraper>
+        <Spinner />
+      </CardWraper>
+    )
+  } else {
+    return (
+      <CardWraper>
+        <Box position="absolute" top="2" right="0">
+          <IconWrapper color="red" selected={true} Icon={Trash} onClick={() => { }} />
+        </Box>
+        <Box position="absolute" top="2" left="2">
+          <IconWrapper color="yellow" selected={locked} Icon={locked ? Lock : OpenLock} onClick={() => setLocked(!locked)} />
+        </Box>
+        <Box position="absolute" top="2" left="50">
+          <IconWrapper color="teal" selected={inTheRoll} Icon={Dice} onClick={() => setInTheRoll(!inTheRoll)} />
+        </Box>
+
+        <HStack mt="6" alignContent="center" justifyContent="center">
           <Input
             color="gray.700"
             name="name"
             placeholder="player name"
             label="name"
-            value={name || ""}
-
+            value={name}
+            size="sm"
             onChange={(e) => {
+              e.preventDefault()
               setName(e.target.value)
             }}
-          />
+          >
+          </Input>
           <Button
             mt={4}
             type="submit"
             isLoading={isLoading}
-            colorScheme="teal"
-            onClick={() => {
-              mutate({
-                input: {
-                  name,
-                  tank,
-                  healer,
-                  dps,
-                  locked,
-                  inTheRoll
-                }
-              })
-            }}
-          >
+            color="green.700"
+            bgColor="green.300"
+            onClick={() => handleSubmit()}>
             submit
           </Button>
         </HStack>
-
-
-
-
-        <HStack justifyContent="center">
-          <IconWrapper selected={tank} Icon={Sheild} onClick={() => {
-            setTank(!tank)
-          }} />
-          <IconWrapper selected={dps} Icon={Sword} onClick={() => {
-            setDps(!dps)
-          }} />
-          <IconWrapper selected={healer} Icon={FirstAid} onClick={() => {
-            setHealer(!healer)
-          }} />
-        </HStack>
-
-
-
-      </Box >
-    )
-
-  } else if (isLoading) {
-    return (
-      <Box p={5} w="250px" shadow="md" borderWidth="1px" bg="blue.200">
-        <Spinner />
-      </Box>
-    )
-  } else {
-    return (
-      <Box p={5} w="250px" h="150px" shadow="md" borderWidth="1px" bg="blue.200" position="relative">
-        <Button variant="teal" onClick={() => setOpen(true)}>New Player</Button>
-      </Box>
+        <Center mt="2">
+          <HStack>
+            <IconWrapper selected={tank} color="blue" Icon={Sheild} onClick={() => setTank(!tank)} />
+            <IconWrapper selected={dps} color="orange" Icon={Sword} onClick={() => setDps(!dps)} />
+            <IconWrapper selected={healer} color="green" Icon={FirstAid} onClick={() => setHealer(!healer)} />
+          </HStack>
+        </Center>
+      </CardWraper>
     )
   }
-
 }
 
 export default NewPlayerCard
