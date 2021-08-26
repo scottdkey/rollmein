@@ -2,7 +2,7 @@ import { Box, Center, Circle, Heading, HStack } from "@chakra-ui/layout"
 import { Button, Input, Icon } from "@chakra-ui/react"
 import React from "react"
 import { Trash, Lock, OpenLock, Dice, Sheild, Sword, FirstAid } from "../assets"
-
+import { useColorModeValue } from "@chakra-ui/react"
 
 interface IconWrapperType {
   Icon: typeof Icon
@@ -12,22 +12,32 @@ interface IconWrapperType {
 }
 
 export const CardWraper: React.FC = (props): JSX.Element => {
+  const primary = useColorModeValue(`gray.300`, `gray.600`)
   return (
-    <Box p={5} w="250px" h="150px" shadow="md" borderWidth="1px" bg="blue.200" position="relative" justifyContent="center" alignItems="center">{props.children}</Box>
+    <Box borderRadius={"lg"} p={5} w="250px" h="150px" shadow="lg" borderWidth="1px" bg={primary} position="relative" justifyContent="center" alignItems="center">{props.children}</Box>
   )
 }
 
 export const IconWrapper: React.FC<IconWrapperType> = ({ Icon, onClick, selected, color = "teal" }): JSX.Element => {
+  const primary = useColorModeValue(`${color}.500`, `${color}.800`)
+  const primaryHover = useColorModeValue(`${color}.800`, `${color}.600`)
+  const secondary = useColorModeValue(`${color}.700`, `${color}.600`)
+  const secondaryHover = useColorModeValue(`${color}.500`, `${color}.800`)
+  const disabled = useColorModeValue("gray.400", "gray.500")
+  const disabledHover = useColorModeValue("gray.500", "gray.400")
+  const secondaryDisabled = useColorModeValue("gray.500", "gray.600")
+  const secondaryDiabledHover = useColorModeValue("gray.400", "gray.900")
+
   return (
-    <Circle bg={selected ? `${color}.300` : "gray.400"} w="10" h="10" _hover={{
-      backgroundColor: selected ? `${color}.400` : "gray.300"
+    <Circle bg={selected ? primary : disabled} w="10" h="10" _hover={{
+      backgroundColor: selected ? primaryHover : disabledHover
     }
 
     } onClick={() => {
       onClick()
     }}>
-      <Icon w={8} h={8} color={selected ? `${color}.600` : "gray.500"} _hover={{
-        color: selected ? `${color}.700` : "gray.600"
+      <Icon w={8} h={8} color={selected ? secondary : secondaryDisabled} _hover={{
+        color: selected ? secondaryHover : secondaryDiabledHover
       }} />
     </Circle >
   )
