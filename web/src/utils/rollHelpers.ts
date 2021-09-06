@@ -1,5 +1,5 @@
 
-type Player = {
+export type Player = {
   id: number,
   name: string,
   tank: boolean,
@@ -82,11 +82,17 @@ export const rollForDps = (currentGroup: Player[]) => {
   return { remaining, players };
 };
 
+export const getInGroup = (players: Player[]): Player[] => {
+  return players.filter(player => player.inTheRoll == true)
 
-export const FFARoll = (currentGroup: Player[]) => {
+}
+
+
+export const FFARoll = (currentGroup: Player[], rollSize: number) => {
   let remaining = currentGroup
   const players: Player[] = []
-  for (let i = 1; i <= 5; i++) {
+  for (let i = 1; i <= rollSize; i++) {
+
     const pickedPlayer = rollWithLocked(remaining)
     players.push(pickedPlayer)
     remaining = removeFromGroup(pickedPlayer, remaining)
@@ -107,8 +113,8 @@ export const rollByRole = (currentGroup: Player[]) => {
   return { players, remaining: dpsRoll.remaining };
 };
 
-export const inCheck = (players: Player[]) => {
-  return players.filter(p => p.locked).length
+export const numberInTheRoll = (players: Player[]): number => {
+  return players.filter(p => p.inTheRoll).length
 };
 
 
