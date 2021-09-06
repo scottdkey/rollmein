@@ -42,7 +42,7 @@ const PlayerCards: React.FC = (): JSX.Element => {
   } else {
     return (
       <>
-        <Button onClick={onOpen} padding="30px"
+        <Button onClick={onOpen} zIndex="0" padding="30px"
           variant="solid" _focus={{
             outline: "none"
           }}

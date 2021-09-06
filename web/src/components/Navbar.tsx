@@ -68,7 +68,7 @@ const NavBar: React.FC<NavBarProps> = ({ }) => {
           options
         </MenuButton>
         <MenuList>
-          <Stack direction="row" spacing={4} align="center">
+          <MenuItem>
             <Button
               onClick={async (e) => {
                 e.preventDefault()
@@ -98,7 +98,7 @@ const NavBar: React.FC<NavBarProps> = ({ }) => {
               variant={rollType === "role" ? "solid" : "outline"}>
               By Role
             </Button>
-          </Stack>
+          </MenuItem>
           <MenuItem>
             <FormLabel htmlFor="lock" mb="0">
               Lock after Out?
@@ -156,7 +156,7 @@ const NavBar: React.FC<NavBarProps> = ({ }) => {
       <>
 
         <HStack>
-          
+
           <Box mr={2} alignContent="center">{user?.username}</Box>
           <Button mr={2} onClick={async () => {
             deleteCookie()
@@ -169,7 +169,7 @@ const NavBar: React.FC<NavBarProps> = ({ }) => {
 
   }
   return (
-    <Flex w="100%" zIndex={2} bg="teal.800" p={4} >
+    <Flex w="100%" zIndex="modal" bg="teal.800" p={4} >
       <Box ml={'auto'}>
         {body}
       </Box>
