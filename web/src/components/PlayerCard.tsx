@@ -1,11 +1,8 @@
-import { Box, Button, Center, Heading, HStack, Input, Spinner, Text, WrapItem } from "@chakra-ui/react"
-
 import React, { useEffect, useState } from "react"
 import { useQueryClient } from "react-query"
-import { Dice, FirstAid, Lock, OpenLock, Sheild, Sword, Trash } from "../assets"
 import { DeletePlayerMutation, UpdatePlayerMutation, UpdatePlayerMutationVariables, useDeletePlayerMutation, usePlayerQuery, useUpdatePlayerMutation } from "../generated/graphql"
 import { client } from "../lib/clients/graphqlRequestClient"
-import CardGeneric, { CardWraper, IconWrapper } from "./CardGeneric"
+import CardGeneric, { CardWraper } from "./CardGeneric"
 
 
 export type Player = {
@@ -23,6 +20,7 @@ interface PlayerCardProps {
   deletePlayer: Function
 }
 const PlayerCard = ({ playerId, deletePlayer }: PlayerCardProps): JSX.Element => {
+
   const queryClient = useQueryClient()
   const [player, setPlayer] = useState<Player>()
   const [name, setName] = useState(player?.name)
@@ -30,7 +28,7 @@ const PlayerCard = ({ playerId, deletePlayer }: PlayerCardProps): JSX.Element =>
   const UpdatePlayerMutation = useUpdatePlayerMutation<UpdatePlayerMutation | Error>(client, {
     onSuccess: (data: UpdatePlayerMutation, _variables: UpdatePlayerMutationVariables, _context: unknown) => {
       queryClient.invalidateQueries(["Player", {
-        id: playerId
+        id: data.updatePlayer?.id
       }])
     }
   })
@@ -96,63 +94,56 @@ const PlayerCard = ({ playerId, deletePlayer }: PlayerCardProps): JSX.Element =>
   }
 
 
-  if (isLoading) {
-    return (
-      <CardWraper>
-        <Spinner />
-      </CardWraper>
-
-    )
-  } else {
-    return (
-      <CardWraper>
-        <CardGeneric
-          locked={{
-            selected: player?.locked || false,
-            onClick: () => { updateField("locked", !player?.locked) }
-          }}
-          inTheRoll={{
-            selected: player?.inTheRoll || false,
-            onClick: () => {
-              updateField("inTheRoll", !player?.inTheRoll)
-            }
-          }}
-          editing={{
-            state: editing,
-            onClick: () => {
-              setEditing(!editing)
-            }
-          }}
-          onSubmit={() => handleSubmit()}
-          loading={UpdatePlayerMutation.isLoading}
-          name={{
-            value: name || "",
-            onChange: (name: string) => {
-              setName(name)
-            },
-            isLoading: UpdatePlayerMutation.isLoading
-          }}
-          tank={{
-            selected: player?.tank || false,
-            onClick: () => updateField("tank", !player?.tank)
-          }}
-          dps={{
-            selected: player?.dps || false,
-            onClick: () => updateField("dps", !player?.dps)
-          }}
-          healer={{
-            selected: player?.healer || false,
-            onClick: () => updateField("healer", !player?.healer)
-          }} deleteObject={{
-            show: true,
-            onClick: () => {
-              deletePlayerMutation.mutate({ id: playerId })
-            }
-          }} />
-      </CardWraper>
-    )
-  }
+  return (
+    <CardWraper locked={player?.locked || false}>
+      <CardGeneric
+        hideDelete={editing}
+        locked={{
+          selected: player?.locked || false,
+          onClick: () => { updateField("locked", !player?.locked) }
+        }}
+        inTheRoll={{
+          selected: player?.inTheRoll || false,
+          onClick: () => {
+            updateField("inTheRoll", !player?.inTheRoll)
+          }
+        }}
+        editing={{
+          state: editing,
+          onClick: () => {
+            setEditing(!editing)
+          }
+        }}
+        onSubmit={() => handleSubmit()}
+        loading={UpdatePlayerMutation.isLoading}
+        name={{
+          value: name || "",
+          onChange: (name: string) => {
+            setName(name)
+          },
+          isLoading: UpdatePlayerMutation.isLoading
+        }}
+        tank={{
+          selected: player?.tank || false,
+          onClick: () => updateField("tank", !player?.tank)
+        }}
+        dps={{
+          selected: player?.dps || false,
+          onClick: () => updateField("dps", !player?.dps)
+        }}
+        healer={{
+          selected: player?.healer || false,
+          onClick: () => updateField("healer", !player?.healer)
+        }} deleteObject={{
+          show: true,
+          onClick: () => {
+            deletePlayerMutation.mutate({ id: playerId })
+          }
+        }} />
+    </CardWraper>
+  )
 }
+
 
 
 export default PlayerCard

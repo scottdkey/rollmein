@@ -4,7 +4,8 @@ import { useQueryClient } from "react-query";
 import { Trash, Lock, OpenLock, Dice, Sheild, Sword, FirstAid } from "../assets";
 import { CreatePlayerMutation, CreatePlayerMutationVariables, useCreatePlayerMutation } from "../generated/graphql";
 import { client } from "../lib/clients/graphqlRequestClient";
-import CardGeneric, { CardWraper, IconWrapper } from "./CardGeneric";
+import CardGeneric, { CardWraper } from "./CardGeneric";
+import { IconWrapper } from "./IconWrapper";
 
 
 
@@ -49,60 +50,49 @@ const NewPlayerCard = () => {
 
   if (!open) {
     return (
-      <CardWraper>
+      <CardWraper locked={false}>
         <Button variant="teal" onClick={() => setOpen(true)}>New Player</Button>
       </CardWraper>
     )
   } else if (isLoading) {
     return (
-      <CardWraper>
+      <CardWraper locked={false}>
         <Spinner />
       </CardWraper>
     )
   } else {
     return (
-      <CardWraper>
-        <Box position="absolute" top="2" right="0">
-          <IconWrapper color="red" selected={true} Icon={Trash} onClick={() => { }} />
-        </Box>
-        <Box position="absolute" top="2" left="2">
-          <IconWrapper color="yellow" selected={locked} Icon={locked ? Lock : OpenLock} onClick={() => setLocked(!locked)} />
-        </Box>
-        <Box position="absolute" top="2" left="50">
-          <IconWrapper color="teal" selected={inTheRoll} Icon={Dice} onClick={() => setInTheRoll(!inTheRoll)} />
-        </Box>
+      <CardWraper locked={false}>
+        <CardGeneric
+          hideDelete={true}
+          locked={{
+            selected: locked,
+            onClick: () => setLocked(!locked)
+          }} inTheRoll={{
+            selected: inTheRoll,
+            onClick: () => setInTheRoll(!inTheRoll)
+          }} editing={{
+            state: true,
+            onClick: () => { }
+          }} onSubmit={() => handleSubmit()} loading={isLoading}
+          name={{
+            value: name,
+            onChange: (name: string) => setName(name),
+            isLoading: isLoading
+          }} tank={{
+            selected: tank,
+            onClick: () => setTank(!tank)
+          }} dps={{
+            selected: dps,
+            onClick: () => setDps(!dps)
+          }} healer={{
+            selected: healer,
+            onClick: () => setHealer(!healer)
+          }} deleteObject={{
+            show: false,
+            onClick: () => { }
+          }} />
 
-        <HStack mt="6" alignContent="center" justifyContent="center">
-          <Input
-            color="gray.700"
-            name="name"
-            placeholder="player name"
-            label="name"
-            value={name}
-            size="sm"
-            onChange={(e) => {
-              e.preventDefault()
-              setName(e.target.value)
-            }}
-          >
-          </Input>
-          <Button
-            mt={4}
-            type="submit"
-            isLoading={isLoading}
-            color="green.700"
-            bgColor="green.300"
-            onClick={() => handleSubmit()}>
-            submit
-          </Button>
-        </HStack>
-        <Center mt="2">
-          <HStack>
-            <IconWrapper selected={tank} color="blue" Icon={Sheild} onClick={() => setTank(!tank)} />
-            <IconWrapper selected={dps} color="orange" Icon={Sword} onClick={() => setDps(!dps)} />
-            <IconWrapper selected={healer} color="green" Icon={FirstAid} onClick={() => setHealer(!healer)} />
-          </HStack>
-        </Center>
       </CardWraper>
     )
   }

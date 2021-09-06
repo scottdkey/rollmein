@@ -1,4 +1,4 @@
-import { Box, Button, Circle, Flex, FormLabel, Link, Menu, MenuButton, MenuItem, MenuList, Spinner, Stack, Switch, useColorMode } from '@chakra-ui/react';
+import { Box, Button, Center, Circle, Flex, FormLabel, HStack, Link, Menu, MenuButton, MenuItem, MenuList, Spinner, Stack, Switch, useColorMode, useDisclosure } from '@chakra-ui/react';
 import { SunIcon, MoonIcon } from "@chakra-ui/icons"
 import React, { useState, useEffect } from 'react'
 import NextLink from "next/link"
@@ -7,6 +7,8 @@ import { deleteCookie } from '../utils/cookieHelpers';
 import { useAuth } from '../providers/AuthProvider';
 import { client } from '../lib/clients/graphqlRequestClient';
 import { useQueryClient } from "react-query"
+import PlayerCards from './PlayerCards';
+import { Style } from 'util';
 
 interface NavBarProps {
 
@@ -16,6 +18,8 @@ const NavBar: React.FC<NavBarProps> = ({ }) => {
   const queryClient = useQueryClient()
   const [logoutLoading, setLogoutLoading] = useState(false)
   const [optionsOpen, setOptionsOpen] = useState(false)
+
+  const btnRef = React.useRef()
   const { mutateAsync } = useUpdateOptionsMutation(client, {
     onSuccess: (data, _variables, _context) => {
       queryClient.invalidateQueries("Options")
@@ -26,7 +30,7 @@ const NavBar: React.FC<NavBarProps> = ({ }) => {
   const [rollType, setRollType] = useState('ffa')
   const [lockAfterOut, setLockAfterOut] = useState(false)
   const { colorMode, setColorMode } = useColorMode()
-  const { data, isFetched, isStale } = useOptionsQuery(client)
+  const { data, isFetched } = useOptionsQuery(client)
 
 
   const { auth, setAuth, user } = useAuth()
@@ -118,7 +122,7 @@ const NavBar: React.FC<NavBarProps> = ({ }) => {
               }
             })
           }}>
-            <Flex alignItems="center">
+            <Flex align="center">
               <Circle size="40px" bg="tomato" color="white">
                 {colorMode === "light" ? <SunIcon /> : <MoonIcon />}
               </Circle>
@@ -149,14 +153,18 @@ const NavBar: React.FC<NavBarProps> = ({ }) => {
     )
   } else {
     body = (
-      <Flex>
-        <Box mr={2} alignContent="center">{user?.username}</Box>
-        <Button mr={2} onClick={async () => {
-          deleteCookie()
-          setAuth(false)
-        }} variant="link" isLoading={logoutLoading}>logout</Button>
-        <OptionsMenu />
-      </Flex>
+      <>
+
+        <HStack>
+          
+          <Box mr={2} alignContent="center">{user?.username}</Box>
+          <Button mr={2} onClick={async () => {
+            deleteCookie()
+            setAuth(false)
+          }} variant="link" isLoading={logoutLoading}>logout</Button>
+          <OptionsMenu />
+        </HStack>
+      </>
     )
 
   }
@@ -171,3 +179,4 @@ const NavBar: React.FC<NavBarProps> = ({ }) => {
 
 
 export default NavBar
+
