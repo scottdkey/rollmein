@@ -1,7 +1,8 @@
 import { Box, Center, Heading, VStack } from '@chakra-ui/layout'
 import { HStack, Button, Input, useNumberInput, useToast } from '@chakra-ui/react'
 import React, { FC, useState } from 'react'
-import { PlayersQuery, usePlayersQuery } from '../generated/graphql'
+import { useQueryClient } from 'react-query'
+import { PlayersQuery, UpdatePlayerMutationVariables, UpdatePlayerMutation, useOptionsQuery, usePlayersQuery, useUpdatePlayerMutation } from '../generated/graphql'
 import { client } from '../lib/clients/graphqlRequestClient'
 import { FFARoll, getInGroup, numberInTheRoll, Player } from '../utils/rollHelpers'
 
@@ -10,19 +11,34 @@ export type RollsType = {
 }
 
 const Rolls: FC<RollsType> = (): JSX.Element => {
-  const { data, isLoading } = usePlayersQuery<PlayersQuery, Error>(client);
+  const queryClient = useQueryClient()
+  const { data } = usePlayersQuery<PlayersQuery, Error>(client);
   const [rollSize, SetRollSize] = useState(5)
   const [currentRoll, setCurrentRoll] = useState<Player[] | undefined>()
   const [remainingPlayers, setRemainingPlayers] = useState<Player[] | undefined>()
   const [previousRoll, setPreviousRoll] = useState<Player[] | undefined>()
   const [validRole, setValidRole] = useState(false)
-  const toast = useToast()
+  const { mutate } = useUpdatePlayerMutation<UpdatePlayerMutation | Error>(client, {
+    onSuccess: (data: UpdatePlayerMutation, _variables: UpdatePlayerMutationVariables, _context: unknown) => {
+      queryClient.invalidateQueries(["Player", {
+        id: data.updatePlayer?.id
+      }])
+      queryClient.invalidateQueries("Players")
 
+    }
+  })
+  const toast = useToast()
+  const optionsQuery = useOptionsQuery(client)
 
   const rollClick = () => {
 
     const inCount = data?.players ? numberInTheRoll(data.players) : 0
     const playerText = inCount === 1 ? "player is" : "players are"
+    if (currentRoll) {
+      setPreviousRoll(currentRoll)
+      setCurrentRoll(undefined)
+      setRemainingPlayers(undefined)
+    }
     if (inCount < rollSize) {
       toast({
         title: "size mismatch",
@@ -46,6 +62,24 @@ const Rolls: FC<RollsType> = (): JSX.Element => {
         const roll = FFARoll(currentPlayers, rollSize)
         setCurrentRoll(roll.players)
         setRemainingPlayers(roll.remaining)
+        roll.players.forEach(player => {
+          mutate({
+            input: {
+              ...player, locked: false
+            }
+          })
+        })
+        if (optionsQuery.data?.options?.lockAfterOut === true) {
+          remainingPlayers?.forEach(player => {
+            mutate({
+              input: {
+                ...player, locked: true
+              }
+            })
+          })
+
+
+        }
       } else {
         toast({
           title: "server error",
@@ -62,6 +96,7 @@ const Rolls: FC<RollsType> = (): JSX.Element => {
 
   const incrament = () => {
     const inCount = data?.players ? numberInTheRoll(data.players) : 0
+    const playerText = inCount === 1 ? "player is" : "players are"
     if (rollSize >= 25) {
       toast({
         title: "too many players",
@@ -70,6 +105,15 @@ const Rolls: FC<RollsType> = (): JSX.Element => {
         duration: 5000,
         isClosable: true
       })
+    } else if (inCount <= rollSize) {
+      toast({
+        title: "size mismatch",
+        description: `Only ${inCount} ${playerText} in the roll. Your roll size is ${rollSize}. Please add more players`,
+        status: "error",
+        duration: 5000,
+        isClosable: true
+      })
+
     }
 
     else {
@@ -78,7 +122,6 @@ const Rolls: FC<RollsType> = (): JSX.Element => {
 
   }
   const decrement = () => {
-    const inCount = data?.players ? numberInTheRoll(data.players) : 0
     if (rollSize <= 1) {
       toast({
         title: "too few players",
@@ -129,6 +172,8 @@ const Rolls: FC<RollsType> = (): JSX.Element => {
       <RollInfo players={currentRoll} />
       {remainingPlayers ? <Heading size="large">Out of the Roll</Heading> : null}
       <RollInfo players={remainingPlayers} />
+      {previousRoll ? <Heading size="large">Prevous Roll</Heading> : null}
+      <RollInfo players={previousRoll} />
       <Button onClick={rollClick
       }>Roll</Button>
     </VStack>

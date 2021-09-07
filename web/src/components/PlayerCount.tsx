@@ -8,20 +8,13 @@ import { PlayerCounts } from "../utils/rollHelpers"
 
 
 const PlayerCount = ({ }) => {
-  const { data, isLoading } = usePlayersQuery<PlayersQuery, Error>(client);
+  const { data } = usePlayersQuery<PlayersQuery, Error>(client);
 
   const optionsQuery = useOptionsQuery(client)
-  const [counts, setCounts] = useState<PlayerCounts>()
+  const rollType = optionsQuery.data?.options?.rollType
+  const players = data?.players
+  const currentCounts = players && rollType ? PlayerCounts(players, rollType) : { locked: 0, inTheRoll: 0, tanks: 0, dps: 0, healers: 0 }
 
-  useEffect(() => {
-    if (!isLoading && data?.players && optionsQuery.data?.options) {
-
-      const rollType = optionsQuery.data?.options?.rollType
-      const players = data?.players
-      const currentCounts = PlayerCounts(players, rollType)
-      setCounts(currentCounts)
-    }
-  }, [isLoading, data?.players, optionsQuery.data])
 
 
   type CountItemType = {
@@ -42,12 +35,12 @@ const PlayerCount = ({ }) => {
 
   return (
     <HStack align="center" justify="center" position="relative">
-      <CountItem count={counts?.locked} icon={Lock} color="yellow" />
-      <CountItem count={counts?.inTheRoll} icon={Dice} color="teal" />
+      <CountItem count={currentCounts.locked} icon={Lock} color="yellow" />
+      <CountItem count={currentCounts.inTheRoll} icon={Dice} color="teal" />
       {optionsQuery.data?.options?.rollType === "role" ? <>
-        <CountItem count={counts?.tanks} icon={Sheild} color="blue" />
-        <CountItem count={counts?.dps} icon={Sword} color="orange" />
-        <CountItem count={counts?.healers} icon={FirstAid} color="green" />
+        <CountItem count={currentCounts.tanks} icon={Sheild} color="blue" />
+        <CountItem count={currentCounts.dps} icon={Sword} color="orange" />
+        <CountItem count={currentCounts.healers} icon={FirstAid} color="green" />
       </> : null}
     </HStack>
   )
