@@ -1,5 +1,4 @@
 import { Wrapper, WrapperVariant } from "./Wrapper"
-import Navbar from "./Navbar"
 import dynamic from "next/dynamic"
 
 

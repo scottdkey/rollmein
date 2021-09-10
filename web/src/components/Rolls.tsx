@@ -1,10 +1,10 @@
 import { Box, Center, Heading, VStack } from '@chakra-ui/layout'
-import { HStack, Button, Input, useNumberInput, useToast, Tooltip } from '@chakra-ui/react'
-import React, { FC, useEffect, useState } from 'react'
+import { HStack, Button, useToast } from '@chakra-ui/react'
+import React, { FC, useState } from 'react'
 import { useQueryClient } from 'react-query'
 import { PlayersQuery, UpdatePlayerMutationVariables, UpdatePlayerMutation, useOptionsQuery, usePlayersQuery, useUpdatePlayerMutation } from '../generated/graphql'
 import { client } from '../lib/clients/graphqlRequestClient'
-import { FFARoll, getInGroup, numberInTheRoll, Player, isValidRoll, BasicError, ValidRoll, rollByRole, RollReturn, RollByRoleReturn } from '../utils/rollHelpers'
+import { FFARoll, getInGroup, numberInTheRoll, Player, isValidRoll, ValidRoll, rollByRole, RollByRoleReturn } from '../utils/rollHelpers'
 
 export type RollsType = {
 

@@ -1,26 +1,13 @@
 import { Box, Center, Heading, HStack } from "@chakra-ui/layout"
-import { Button, IconButton, Input } from "@chakra-ui/react"
+import { Input } from "@chakra-ui/react"
 import React from "react"
-import { Trash, Lock, OpenLock, Dice, Sheild, Sword, FirstAid } from "../assets"
+import { Trash, Lock, OpenLock, Dice, Shield, Sword, FirstAid } from "../assets"
 import { useColorModeValue } from "@chakra-ui/react"
 import { IconWrapper } from "./IconWrapper"
 import { CheckCircleIcon, EditIcon } from "@chakra-ui/icons"
 import { useOptionsQuery } from "../generated/graphql"
-
 import { client } from "../lib/clients/graphqlRequestClient"
 
-interface CardWrapperType {
-  locked: boolean
-}
-
-export const CardWraper: React.FC<CardWrapperType> = ({ children, locked }): JSX.Element => {
-  const primary = useColorModeValue(`gray.300`, `gray.600`)
-  const lockedColor = useColorModeValue("yellow.100", "yellow.600")
-  const background = locked ? lockedColor : primary
-  return (
-    <Box borderRadius={"md"} padding={2} w="200px" h="100%" shadow="base" borderWidth="1px" bg={background} position="relative" justifyContent="center" alignItems="center">{children}</Box>
-  )
-}
 
 
 
@@ -123,7 +110,7 @@ const CardGeneric = ({ locked, inTheRoll, editing, name, onSubmit, tank, dps, he
       </HStack>
 
       {optionsQuery.data?.options?.rollType === "role" ? <HStack align="center" justify="center">
-        <IconWrapper selected={tank.selected} color="blue" Icon={Sheild} onClick={() => tank.onClick()} />
+        <IconWrapper selected={tank.selected} color="blue" Icon={Shield} onClick={() => tank.onClick()} />
         <IconWrapper selected={dps.selected} color="orange" Icon={Sword} onClick={() => dps.onClick()} />
         <IconWrapper selected={healer.selected} color="green" Icon={FirstAid} onClick={() => healer.onClick()} />
       </HStack> : null}

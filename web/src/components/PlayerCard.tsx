@@ -1,8 +1,8 @@
+import dynamic from "next/dynamic"
 import React, { useEffect, useState } from "react"
 import { useQueryClient } from "react-query"
 import { DeletePlayerMutation, UpdatePlayerMutation, UpdatePlayerMutationVariables, useDeletePlayerMutation, usePlayerQuery, useUpdatePlayerMutation } from "../generated/graphql"
 import { client } from "../lib/clients/graphqlRequestClient"
-import CardGeneric, { CardWraper } from "./CardGeneric"
 
 
 export type Player = {
@@ -25,6 +25,8 @@ const PlayerCard = ({ playerId, deletePlayer }: PlayerCardProps): JSX.Element =>
   const [player, setPlayer] = useState<Player>()
   const [name, setName] = useState(player?.name)
   const [editing, setEditing] = useState(false)
+  const CardGeneric = dynamic(() => import("./CardGeneric"))
+  const CardWrapper = dynamic(() => import("./CardWrapper"))
   const UpdatePlayerMutation = useUpdatePlayerMutation<UpdatePlayerMutation | Error>(client, {
     onSuccess: (data: UpdatePlayerMutation, _variables: UpdatePlayerMutationVariables, _context: unknown) => {
       queryClient.invalidateQueries(["Player", {
@@ -95,7 +97,7 @@ const PlayerCard = ({ playerId, deletePlayer }: PlayerCardProps): JSX.Element =>
 
 
   return (
-    <CardWraper locked={player?.locked || false}>
+    <CardWrapper locked={player?.locked || false}>
       <CardGeneric
         hideDelete={editing}
         locked={{
@@ -140,7 +142,7 @@ const PlayerCard = ({ playerId, deletePlayer }: PlayerCardProps): JSX.Element =>
             deletePlayerMutation.mutate({ id: playerId })
           }
         }} />
-    </CardWraper>
+    </CardWrapper>
   )
 }
 

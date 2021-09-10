@@ -1,4 +1,4 @@
-import { createIcon, Icon, IconProps } from "@chakra-ui/react"
+import { Icon, IconProps } from "@chakra-ui/react"
 import React from "react"
 
 
@@ -24,3 +24,6 @@ m650 -424 c1286 -87 2497 -573 3500 -1406 167 -139 560 -532 699 -699 318
 1775 -1250 0 -1250 0 0 1260 0 1260 -1775 0 -1775 0 0 -1260z"/>
   </g>
 </Icon>
+
+
+export default FirstAid

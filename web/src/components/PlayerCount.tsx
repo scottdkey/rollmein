@@ -1,6 +1,6 @@
-import { Box, Circle, Flex, HStack, Icon, useColorModeValue } from "@chakra-ui/react"
-import React, { FC, useEffect, useState } from "react"
-import { Lock, Dice, Sheild, Sword, FirstAid } from "../assets"
+import { Circle, Flex, HStack, Icon, useColorModeValue } from "@chakra-ui/react"
+import React, { FC } from "react"
+import { Lock, Dice, Shield, Sword, FirstAid } from "../assets"
 import { PlayersQuery, useOptionsQuery, usePlayersQuery } from "../generated/graphql"
 import { client } from "../lib/clients/graphqlRequestClient"
 import { PlayerCounts } from "../utils/rollHelpers"
@@ -38,7 +38,7 @@ const PlayerCount = ({ }) => {
       <CountItem count={currentCounts.locked} icon={Lock} color="yellow" />
       <CountItem count={currentCounts.inTheRoll} icon={Dice} color="teal" />
       {optionsQuery.data?.options?.rollType === "role" ? <>
-        <CountItem count={currentCounts.tanks} icon={Sheild} color="blue" />
+        <CountItem count={currentCounts.tanks} icon={Shield} color="blue" />
         <CountItem count={currentCounts.dps} icon={Sword} color="orange" />
         <CountItem count={currentCounts.healers} icon={FirstAid} color="green" />
       </> : null}

@@ -1,11 +1,9 @@
-import { Box, Button, Center, Heading, HStack, Input, Spinner } from "@chakra-ui/react";
-import React, { useRef, useState } from "react";
+import { Button, Spinner } from "@chakra-ui/react";
+import dynamic from "next/dynamic";
+import React, { useState } from "react";
 import { useQueryClient } from "react-query";
-import { Trash, Lock, OpenLock, Dice, Sheild, Sword, FirstAid } from "../assets";
 import { CreatePlayerMutation, CreatePlayerMutationVariables, useCreatePlayerMutation } from "../generated/graphql";
 import { client } from "../lib/clients/graphqlRequestClient";
-import CardGeneric, { CardWraper } from "./CardGeneric";
-import { IconWrapper } from "./IconWrapper";
 
 
 
@@ -21,6 +19,8 @@ const NewPlayerCard = () => {
   const [dps, setDps] = useState(false)
   const [inTheRoll, setInTheRoll] = useState(false)
   const [locked, setLocked] = useState(false)
+  const CardGeneric = dynamic(() => import("./CardGeneric"))
+  const CardWrapper = dynamic(() => import("./CardWrapper"))
   const { mutate, isLoading } = useCreatePlayerMutation<CreatePlayerMutation, Error>(client, {
     onSuccess: (_data: CreatePlayerMutation, _variables: CreatePlayerMutationVariables, _context: unknown) => {
       queryClient.invalidateQueries(["Players"])
@@ -50,19 +50,19 @@ const NewPlayerCard = () => {
 
   if (!open) {
     return (
-      <CardWraper locked={false}>
+      <CardWrapper locked={false}>
         <Button variant="teal" onClick={() => setOpen(true)}>New Player</Button>
-      </CardWraper>
+      </CardWrapper>
     )
   } else if (isLoading) {
     return (
-      <CardWraper locked={false}>
+      <CardWrapper locked={false}>
         <Spinner />
-      </CardWraper>
+      </CardWrapper>
     )
   } else {
     return (
-      <CardWraper locked={false}>
+      <CardWrapper locked={false}>
         <CardGeneric
           hideDelete={true}
           locked={{
@@ -92,8 +92,7 @@ const NewPlayerCard = () => {
             show: false,
             onClick: () => { }
           }} />
-
-      </CardWraper>
+      </CardWrapper>
     )
   }
 }

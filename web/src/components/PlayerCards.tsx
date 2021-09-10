@@ -1,12 +1,10 @@
-import { Box, Button, Center, Drawer, DrawerBody, DrawerCloseButton, DrawerContent, DrawerFooter, DrawerHeader, DrawerOverlay, HStack, Spinner, useDisclosure, Wrap, WrapItem, } from "@chakra-ui/react"
+import { Box, Button, Drawer, DrawerBody, DrawerCloseButton, DrawerContent, DrawerHeader, DrawerOverlay, Spinner, useDisclosure, Wrap, WrapItem, } from "@chakra-ui/react"
 import React, { useEffect, useState } from "react"
 import { PlayersQuery, usePlayersQuery } from "../generated/graphql";
 
 import { client } from "../lib/clients/graphqlRequestClient";
 import NewPlayerCard from "./NewPlayerCard";
 import dynamic from "next/dynamic";
-import { Sheild, Sword, FirstAid, Lock, Dice } from "../assets";
-import { IconWrapper } from "./IconWrapper";
 import PlayerCount from "./PlayerCount";
 import { useQueryClient } from "react-query";
 

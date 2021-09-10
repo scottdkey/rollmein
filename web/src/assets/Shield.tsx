@@ -1,9 +1,9 @@
-import { createIcon, Icon, IconProps } from "@chakra-ui/react"
+import { Icon, IconProps } from "@chakra-ui/react"
 import React from "react"
 
 
 
-export const Sheild = (props: IconProps) => <Icon viewBox="0 0 1088.000000 1280.000000" {...props} >
+export const Shield = (props: IconProps) => <Icon viewBox="0 0 1088.000000 1280.000000" {...props} >
   <g transform="translate(0.000000,1280.000000) scale(0.100000,-0.100000)"
     fill="currentColor" stroke="none">
     <path d="M4738 12461 l-697 -338 -468 189 c-257 104 -548 221 -646 261 l-177
