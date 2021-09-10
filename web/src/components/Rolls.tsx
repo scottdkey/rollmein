@@ -1,10 +1,10 @@
 import { Box, Center, Heading, VStack } from '@chakra-ui/layout'
-import { HStack, Button, Input, useNumberInput, useToast } from '@chakra-ui/react'
-import React, { FC, useState } from 'react'
+import { HStack, Button, Input, useNumberInput, useToast, Tooltip } from '@chakra-ui/react'
+import React, { FC, useEffect, useState } from 'react'
 import { useQueryClient } from 'react-query'
 import { PlayersQuery, UpdatePlayerMutationVariables, UpdatePlayerMutation, useOptionsQuery, usePlayersQuery, useUpdatePlayerMutation } from '../generated/graphql'
 import { client } from '../lib/clients/graphqlRequestClient'
-import { FFARoll, getInGroup, numberInTheRoll, Player } from '../utils/rollHelpers'
+import { FFARoll, getInGroup, numberInTheRoll, Player, isValidRoll, BasicError, ValidRoll, rollByRole, RollReturn, RollByRoleReturn } from '../utils/rollHelpers'
 
 export type RollsType = {
 
@@ -15,9 +15,9 @@ const Rolls: FC<RollsType> = (): JSX.Element => {
   const { data } = usePlayersQuery<PlayersQuery, Error>(client);
   const [rollSize, SetRollSize] = useState(5)
   const [currentRoll, setCurrentRoll] = useState<Player[] | undefined>()
+  const [currentRollByRole, setCurrentRollByRole] = useState<RollByRoleReturn | undefined>()
   const [remainingPlayers, setRemainingPlayers] = useState<Player[] | undefined>()
   const [previousRoll, setPreviousRoll] = useState<Player[] | undefined>()
-  const [validRole, setValidRole] = useState(false)
   const { mutate } = useUpdatePlayerMutation<UpdatePlayerMutation | Error>(client, {
     onSuccess: (data: UpdatePlayerMutation, _variables: UpdatePlayerMutationVariables, _context: unknown) => {
       queryClient.invalidateQueries(["Player", {
@@ -30,56 +30,70 @@ const Rolls: FC<RollsType> = (): JSX.Element => {
   const toast = useToast()
   const optionsQuery = useOptionsQuery(client)
 
-  const rollClick = () => {
 
+  const rollClick = () => {
+    let valid: ValidRoll | undefined
     const inCount = data?.players ? numberInTheRoll(data.players) : 0
-    const playerText = inCount === 1 ? "player is" : "players are"
+    if (data?.players && optionsQuery.data?.options?.rollType) {
+      valid = isValidRoll(
+        data.players,
+        optionsQuery.data.options.rollType,
+        0, 0, 0,
+        rollSize, inCount)
+    } else {
+      valid = undefined
+    }
+
+
     if (currentRoll) {
       setPreviousRoll(currentRoll)
       setCurrentRoll(undefined)
       setRemainingPlayers(undefined)
+    } else if (currentRollByRole) {
+      setCurrentRollByRole(undefined)
+      setRemainingPlayers(undefined)
     }
-    if (inCount < rollSize) {
-      toast({
-        title: "size mismatch",
-        description: `Only ${inCount} ${playerText} in the roll. Your roll size is ${rollSize}. Include more players in your roll`,
-        status: "error",
-        duration: 5000,
-        isClosable: true
+    if (valid?.valid === false) {
+      valid.errors.forEach(error => {
+        toast({
+          title: error.type,
+          description: error.message,
+          status: "error",
+          duration: 5000,
+          isClosable: true
+        })
       })
 
-    } else if (inCount === rollSize) {
-      toast({
-        title: "equal numbers",
-        description: `you have the same amount in your rollsize and available players. No roll required`,
-        status: "error",
-        duration: 5000,
-        isClosable: true
-      })
     } else {
       if (data?.players) {
         const currentPlayers = getInGroup(data?.players)
-        const roll = FFARoll(currentPlayers, rollSize)
-        setCurrentRoll(roll.players)
-        setRemainingPlayers(roll.remaining)
-        roll.players.forEach(player => {
-          mutate({
-            input: {
-              ...player, locked: false
-            }
-          })
-        })
-        if (optionsQuery.data?.options?.lockAfterOut === true) {
-          remainingPlayers?.forEach(player => {
+        if (optionsQuery.data?.options?.rollType === "ffa") {
+          const roll = FFARoll(currentPlayers, rollSize)
+          setCurrentRoll(roll.players)
+          setRemainingPlayers(roll.remaining)
+          roll.players.forEach(player => {
             mutate({
               input: {
-                ...player, locked: true
+                ...player, locked: false
               }
             })
           })
-
-
+          if (optionsQuery.data?.options?.lockAfterOut === true) {
+            roll.remaining?.forEach(player => {
+              mutate({
+                input: {
+                  ...player, locked: true
+                }
+              })
+            })
+          }
+        } else {
+          const tankNumber = 1
+          const healerNumber = 1
+          const dpsNumber = 1
+          const roll = rollByRole(currentPlayers, tankNumber, healerNumber, dpsNumber)
         }
+
       } else {
         toast({
           title: "server error",
@@ -91,8 +105,6 @@ const Rolls: FC<RollsType> = (): JSX.Element => {
       }
     }
   }
-
-
 
   const incrament = () => {
     const inCount = data?.players ? numberInTheRoll(data.players) : 0
@@ -136,6 +148,7 @@ const Rolls: FC<RollsType> = (): JSX.Element => {
 
   }
 
+  const inCount = data?.players ? numberInTheRoll(data.players) : 0
   type RollInfoType = {
     players: Player[] | undefined
   }
@@ -148,9 +161,10 @@ const Rolls: FC<RollsType> = (): JSX.Element => {
         <HStack>
           {
             players.map(player => {
-              return (<Box key={player.id}>
-                {player.name}
-              </Box>)
+              return (
+                <Center key={player.id} w="20" h="10" bg="gray.900" borderRadius="5">
+                  {player.name}
+                </Center>)
             })
           }
         </HStack>
@@ -168,17 +182,18 @@ const Rolls: FC<RollsType> = (): JSX.Element => {
         <Box>{rollSize}</Box>
         <Button onClick={decrement}>-</Button>
       </HStack>
+
       {currentRoll ? <Heading size="large">In the roll</Heading> : null}
       <RollInfo players={currentRoll} />
       {remainingPlayers ? <Heading size="large">Out of the Roll</Heading> : null}
       <RollInfo players={remainingPlayers} />
       {previousRoll ? <Heading size="large">Prevous Roll</Heading> : null}
       <RollInfo players={previousRoll} />
-      <Button onClick={rollClick
-      }>Roll</Button>
+      <Button variant="solid" onClick={rollClick}>Roll</Button>
     </VStack>
   )
 }
+
 
 
 export default Rolls

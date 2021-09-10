@@ -1,4 +1,3 @@
-
 export type Player = {
   id: number,
   name: string,
@@ -9,7 +8,7 @@ export type Player = {
   inTheRoll: boolean
 }
 
-type BasicError = {
+export type BasicError = {
   type: string,
   message: string
 }
@@ -22,7 +21,7 @@ export type PlayerCounts = {
   dps: number,
 }
 
-type RollByRoleReturn = {
+export type RollByRoleReturn = {
   tank: Player;
   healer: Player;
   dps: Player[]
@@ -31,6 +30,11 @@ type RollByRoleReturn = {
 export type RollReturn = {
   players: Player[] | RollByRoleReturn,
   remaining: Player[]
+}
+
+export type ValidRoll = {
+  valid: boolean,
+  errors: BasicError[]
 }
 
 interface DPSObject {
@@ -70,12 +74,12 @@ export const removeFromGroup = (
   return newRollGroup;
 };
 
-export const rollForDps = (currentGroup: Player[]) => {
+export const roll = (currentGroup: Player[], rollCount: number, role: string) => {
   let remaining = currentGroup;
 
   const players: Player[] = [];
-  for (let dpsCount = 1; dpsCount < 4; dpsCount++) {
-    const pickedDPS = rollForRole("dps", remaining);
+  for (let count = 1; count < rollCount; count++) {
+    const pickedDPS = rollForRole(role, remaining);
     players.push(pickedDPS);
     remaining = removeFromGroup(pickedDPS, remaining);
   }
@@ -100,24 +104,27 @@ export const FFARoll = (currentGroup: Player[], rollSize: number) => {
   return { players, remaining }
 }
 
-export const rollByRole = (currentGroup: Player[]) => {
+export const rollByRole = (currentGroup: Player[], tankNumber: number, healerNumber: number, dpsNumber: number) => {
   let remaining = currentGroup;
-  const tank: Player = rollForRole("tank", remaining);
-  remaining = removeFromGroup(tank, remaining);
-  const healer: Player = rollForRole("healer", remaining);
-  remaining = removeFromGroup(healer, remaining);
-  const dpsRoll: DPSObject = rollForDps(remaining);
+
+  const tanksRoll = roll(currentGroup, tankNumber, "tank")
+  remaining = tanksRoll.remaining
+  const tanks = tanksRoll.players
+
+  const healersRoll = roll(currentGroup, healerNumber, "healer");
+  remaining = healersRoll.remaining
+  const healers = healersRoll.players
+
+  const dpsRoll = roll(currentGroup, dpsNumber, "dps");
   const dps = dpsRoll.players
 
-  const players = { tank, healer, dps }
+  const players = { tanks, healers, dps }
   return { players, remaining: dpsRoll.remaining };
 };
 
 export const numberInTheRoll = (players: Player[]): number => {
   return players.filter(p => p.inTheRoll).length
 };
-
-
 
 export const PlayerCounts = (players: Player[], rollType: string): PlayerCounts => {
   const locked = players.filter(p => p.locked).length
@@ -145,45 +152,58 @@ export const PlayerCounts = (players: Player[], rollType: string): PlayerCounts 
 };
 
 
-type ValidRoll = {
-  valid: Boolean,
-  errors: BasicError[]
-}
 
-export const validRoll = (players: Player[], rollType: string): ValidRoll => {
+
+export const isValidRoll = (
+  players: Player[],
+  rollType: string,
+  tankNumber: number = 0,
+  dpsNumber: number = 0,
+  healerNumber: number = 0,
+  rollSize: number = 5,
+  inCount: number = 10,
+): ValidRoll => {
   const playerCounts = PlayerCounts(players, rollType)
   const errorArray: BasicError[] = []
   const isRoleBased = rollType === "role"
-  if (isRoleBased && playerCounts.tanks === 0) {
-    errorArray.push({
-      type: "invalidRoll",
-      message: "must have a tank"
+  const playerText = inCount === 1 ? "player is" : "players are"
 
+  if (inCount < rollSize) {
+    errorArray.push({
+      type: "size mismatch",
+      message: `Only ${inCount} ${playerText} in the roll. Your roll size is ${rollSize}. Include more players in your roll`
     })
 
   }
-  if (isRoleBased && playerCounts.dps >= 3) {
+  if (inCount === rollSize) {
+    errorArray.push({
+      type: "equal numbers",
+      message: `you have the same amount in your rollsize and available players. No roll required`,
+    })
+  }
+
+  if (isRoleBased && playerCounts.tanks <= tankNumber) {
     errorArray.push({
       type: "invalidRoll",
-      message: "must have at least 3 dps"
+      message: `must have ${tankNumber} tank${tankNumber === 1 ? null : "s"}`
+    })
+
+  }
+  if (isRoleBased && playerCounts.dps <= dpsNumber) {
+    errorArray.push({
+      type: "invalidRoll",
+      message: `must have at least ${dpsNumber} dps`
     }
     )
 
   }
-  if (isRoleBased && playerCounts.healers === 0) {
+  if (isRoleBased && playerCounts.healers <= healerNumber) {
     errorArray.push({
       type: "invalidRoll",
-      message: "must have a healer"
+      message: `must have ${healerNumber} healer${healerNumber === 1 ? null : "s"}`
     }
     )
 
-  }
-  if (playerCounts.inTheRoll > 5) {
-    errorArray.push({
-      type: "invalidRoll",
-      message: "must have more than 5 players"
-    }
-    )
   }
 
   if (errorArray.length > 0) {
