@@ -1,5 +1,5 @@
 import { Box, Center, Heading, VStack } from '@chakra-ui/layout'
-import { HStack, Button, useToast } from '@chakra-ui/react'
+import { HStack, Button, useToast, useColorModeValue } from '@chakra-ui/react'
 import React, { FC, useState } from 'react'
 import { useQueryClient } from 'react-query'
 import { PlayersQuery, UpdatePlayerMutationVariables, UpdatePlayerMutation, useOptionsQuery, usePlayersQuery, useUpdatePlayerMutation } from '../generated/graphql'
@@ -154,6 +154,8 @@ const Rolls: FC<RollsType> = (): JSX.Element => {
   }
 
   const RollInfo: FC<RollInfoType> = ({ players }) => {
+    const bgColor = useColorModeValue("gray:700", "gray:500")
+    const textColor = useColorModeValue("gray.900", "gray:600")
     if (players === undefined) {
       return null
     } else {
@@ -162,7 +164,8 @@ const Rolls: FC<RollsType> = (): JSX.Element => {
           {
             players.map(player => {
               return (
-                <Center key={player.id} w="20" h="10" bg="gray.900" borderRadius="5">
+                <Center key={player.id} w="20" h="10" bg="gray.500"
+                textColor={textColor} borderRadius="2" textShadow="light-lg">
                   {player.name}
                 </Center>)
             })

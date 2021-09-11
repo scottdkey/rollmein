@@ -21,6 +21,7 @@ export type AuthContextType = {
   auth: boolean
   setAuth: (value: boolean) => void;
   user?: User
+  setUser: (value: User) => void;
 }
 
 
@@ -51,7 +52,7 @@ export const AuthProvider = ({ children }: any) => {
 
 
   return (
-    <AuthContext.Provider value={{ auth, setAuth, user } as AuthContextType}>
+    <AuthContext.Provider value={{ auth, setAuth, user, setUser } as AuthContextType}>
       {children}
     </AuthContext.Provider>
   )

@@ -16,11 +16,20 @@ import { useQueryClient } from "react-query";
 const Login: React.FC<{}> = ({ }) => {
   const router = useRouter();
   const queryClient = useQueryClient()
-  const { setAuth } = useAuth()
+  const { setAuth, setUser } = useAuth()
   const { mutateAsync } = useLoginMutation<LoginMutation, Error>(client, {
     onSuccess: async (data) => {
-
-      router.replace("/")
+      if (data.login.token) {
+        setCookie(data.login.token, 3)
+        router.replace("/")
+      }
+      if (data.login.user) {
+        await queryClient.invalidateQueries("Me")
+        setUser(data.login.user)
+        setAuth(true)
+        await queryClient.invalidateQueries("Players")
+        await queryClient.invalidateQueries("Options")
+      }
 
     },
   })
@@ -37,12 +46,6 @@ const Login: React.FC<{}> = ({ }) => {
               usernameOrEmail,
               password
             }).then(async (data) => {
-              if (data.login.token) {
-                setCookie(data.login.token, 3)
-                await queryClient.refetchQueries({ stale: true })
-                setAuth(true)
-              }
-
               if (data.login.errors) {
                 data.login.errors.forEach(error => {
                   setFieldError(error.field, error.message)

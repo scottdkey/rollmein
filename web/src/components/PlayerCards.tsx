@@ -1,5 +1,5 @@
 import { Box, Button, Drawer, DrawerBody, DrawerCloseButton, DrawerContent, DrawerHeader, DrawerOverlay, Spinner, useDisclosure, Wrap, WrapItem, } from "@chakra-ui/react"
-import React, { useEffect, useState } from "react"
+import React, { useEffect, useLayoutEffect, useState } from "react"
 import { PlayersQuery, usePlayersQuery } from "../generated/graphql";
 
 import { client } from "../lib/clients/graphqlRequestClient";
@@ -7,40 +7,52 @@ import NewPlayerCard from "./NewPlayerCard";
 import dynamic from "next/dynamic";
 import PlayerCount from "./PlayerCount";
 import { useQueryClient } from "react-query";
+import { useAuth } from "../providers/AuthProvider";
 
 
 const PlayerCards: React.FC = (): JSX.Element => {
   const queryClient = useQueryClient()
+  const { auth } = useAuth()
   const { isOpen, onOpen, onClose } = useDisclosure()
   const { data, isLoading } = usePlayersQuery<PlayersQuery, Error>(client);
   const PlayerCard = dynamic(() => import('./PlayerCard'))
   const [players, setPlayers] = useState<number[] | undefined>()
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (data?.players) {
       const returnArray = data.players.map(p => {
         return p.id
       })
       setPlayers(returnArray)
     }
-  }, [data?.players])
+  }, [data?.players, auth])
 
   const deletePlayer = (id: number) => {
-    const newPlayers = players?.filter(p => {
-      p = id
-    })
-    setPlayers(newPlayers)
+    if (players) {
+      const newPlayers = players.filter(p => {
+        if (p !== id) {
+          return p
+        }
+
+      })
+      setPlayers(newPlayers)
+    }
+
+
+    queryClient.invalidateQueries("Players")
   }
 
 
   if (isLoading) {
     return <Box><Spinner /></Box>
   } else if (!isLoading && !data) {
-    return <Box bg="red">Query Failed</Box>
+    return (<Box bg="red">Query Failed<Button onClick={() => {
+      queryClient.refetchQueries("Players")
+    }}>Retry</Button></Box>)
   } else {
     return (
       <>
-        <Button onClick={onOpen} zIndex="0" padding="30px"
+        <Button onClick={onOpen} zIndex="0" padding="40px"
           variant="solid" _focus={{
             outline: "none"
           }}

@@ -4,9 +4,8 @@ import React, { useState } from "react";
 import { useQueryClient } from "react-query";
 import { CreatePlayerMutation, CreatePlayerMutationVariables, useCreatePlayerMutation } from "../generated/graphql";
 import { client } from "../lib/clients/graphqlRequestClient";
-
-
-
+import CardWrapper from "./CardWrapper"
+import CardGeneric from "./CardGeneric";
 
 
 
@@ -19,8 +18,7 @@ const NewPlayerCard = () => {
   const [dps, setDps] = useState(false)
   const [inTheRoll, setInTheRoll] = useState(false)
   const [locked, setLocked] = useState(false)
-  const CardGeneric = dynamic(() => import("./CardGeneric"))
-  const CardWrapper = dynamic(() => import("./CardWrapper"))
+
   const { mutate, isLoading } = useCreatePlayerMutation<CreatePlayerMutation, Error>(client, {
     onSuccess: (_data: CreatePlayerMutation, _variables: CreatePlayerMutationVariables, _context: unknown) => {
       queryClient.invalidateQueries(["Players"])

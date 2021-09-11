@@ -1,4 +1,4 @@
-import { Box, Button, Circle, Flex, FormLabel, HStack, Link, Menu, MenuButton, MenuItem, MenuList, Switch, useColorMode } from '@chakra-ui/react';
+import { Box, Button, Circle, Flex, FormLabel, Heading, HStack, Link, Menu, MenuButton, MenuItem, MenuList, Switch, useColorMode, useColorModeValue } from '@chakra-ui/react';
 import { SunIcon, MoonIcon } from "@chakra-ui/icons"
 import React, { useState, useEffect } from 'react'
 import NextLink from "next/link"
@@ -30,7 +30,7 @@ const NavBar: React.FC<NavBarProps> = ({ }) => {
 
 
   const { auth, setAuth, user } = useAuth()
-
+  const textColor = useColorModeValue("gray.800", "gray:400")
 
   useEffect(() => {
     if (colorMode !== theme) {
@@ -60,7 +60,7 @@ const NavBar: React.FC<NavBarProps> = ({ }) => {
   const OptionsMenu = () => {
     return (
       <Menu isOpen={optionsOpen}>
-        <MenuButton mr={2} onClick={() => { setOptionsOpen(!optionsOpen) }} >
+        <MenuButton textColor={textColor} mr={2} onClick={() => { setOptionsOpen(!optionsOpen) }}>
           options
         </MenuButton>
         <MenuList>
@@ -132,6 +132,7 @@ const NavBar: React.FC<NavBarProps> = ({ }) => {
   }
 
   let body = null
+  
   if (logoutLoading && !auth) {
     <>
       Loading
@@ -140,18 +141,18 @@ const NavBar: React.FC<NavBarProps> = ({ }) => {
     body = (
       <>
         <NextLink href="/login">
-          <Link mr={2}>login</Link>
+          <Link textColor={textColor} mr={2}>login</Link>
         </NextLink>
         <NextLink href="/register">
-          <Link >register</Link>
+          <Link textColor={textColor}>register</Link>
         </NextLink>
       </>
     )
   } else {
     body = (
       <HStack>
-        <Box mr={2} alignContent="center">{user?.username}</Box>
-        <Button mr={2} onClick={async () => {
+        <Box mr={2} textColor={textColor} alignContent="center">{user?.username}</Box>
+        <Button textColor={textColor} mr={2} onClick={async () => {
           deleteCookie()
           setAuth(false)
         }} variant="link" isLoading={logoutLoading}>logout</Button>
@@ -160,8 +161,10 @@ const NavBar: React.FC<NavBarProps> = ({ }) => {
     )
 
   }
+  const headerBgColor = useColorModeValue("teal.600", "teal:400")
   return (
-    <Flex w="100%" zIndex="modal" bg="teal.800" p={4} >
+    <Flex w="100%" zIndex="modal" bg={headerBgColor} p={4} >
+      <Heading textColor={textColor} size="md" ml="15">Rollmein</Heading>
       <Box ml={'auto'}>
         {body}
       </Box>

@@ -1,8 +1,10 @@
 import dynamic from "next/dynamic"
-import React, { useEffect, useState } from "react"
+import React, { useLayoutEffect, useState } from "react"
 import { useQueryClient } from "react-query"
 import { DeletePlayerMutation, UpdatePlayerMutation, UpdatePlayerMutationVariables, useDeletePlayerMutation, usePlayerQuery, useUpdatePlayerMutation } from "../generated/graphql"
 import { client } from "../lib/clients/graphqlRequestClient"
+import CardGeneric from "./CardGeneric"
+import CardWrapper from "./CardWrapper"
 
 
 export type Player = {
@@ -25,8 +27,7 @@ const PlayerCard = ({ playerId, deletePlayer }: PlayerCardProps): JSX.Element =>
   const [player, setPlayer] = useState<Player>()
   const [name, setName] = useState(player?.name)
   const [editing, setEditing] = useState(false)
-  const CardGeneric = dynamic(() => import("./CardGeneric"))
-  const CardWrapper = dynamic(() => import("./CardWrapper"))
+
   const UpdatePlayerMutation = useUpdatePlayerMutation<UpdatePlayerMutation | Error>(client, {
     onSuccess: (data: UpdatePlayerMutation, _variables: UpdatePlayerMutationVariables, _context: unknown) => {
       queryClient.invalidateQueries(["Player", {
@@ -37,7 +38,7 @@ const PlayerCard = ({ playerId, deletePlayer }: PlayerCardProps): JSX.Element =>
   const deletePlayerMutation = useDeletePlayerMutation<DeletePlayerMutation | Error>(client, {
     onSuccess: () => {
       deletePlayer(playerId)
-      queryClient.invalidateQueries("Players")
+     
     }
   })
   const { data, isLoading } = usePlayerQuery(client, {
@@ -68,7 +69,7 @@ const PlayerCard = ({ playerId, deletePlayer }: PlayerCardProps): JSX.Element =>
   }
 
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (!isLoading && data?.player) {
       setPlayer(data.player)
       setName(data.player.name)
