@@ -6,6 +6,7 @@ import { InputField } from "../components/InputField";
 import { useLoginMutation, LoginMutation } from "../generated/graphql";
 import { useRouter } from "next/router";
 import NextLink from "next/link";
+import { Layout } from "../components/Layout";
 import { setCookie } from "../utils/cookieHelpers";
 import { useAuth } from "../providers/AuthProvider";
 import { client } from "../lib/clients/graphqlRequestClient";
@@ -26,69 +27,71 @@ const Login: React.FC<{}> = ({ }) => {
 
 
   return (
-    <Wrapper variant="small">
-      <Formik
-        enableReinitialize
-        initialValues={{ usernameOrEmail: "", password: "" }}
-        onSubmit={async ({ usernameOrEmail, password }, { setFieldError }) => {
-          await mutateAsync({
-            usernameOrEmail,
-            password
-          }).then(async (data) => {
-            if (data.login.token) {
-              setCookie(data.login.token, 3)
-              await queryClient.refetchQueries({ stale: true })
-              setAuth(true)
-            }
+    <Layout>
+      <Wrapper variant="small">
+        <Formik
+          enableReinitialize
+          initialValues={{ usernameOrEmail: "", password: "" }}
+          onSubmit={async ({ usernameOrEmail, password }, { setFieldError }) => {
+            await mutateAsync({
+              usernameOrEmail,
+              password
+            }).then(async (data) => {
+              if (data.login.token) {
+                setCookie(data.login.token, 3)
+                await queryClient.refetchQueries({ stale: true })
+                setAuth(true)
+              }
 
-            if (data.login.errors) {
-              data.login.errors.forEach(error => {
-                setFieldError(error.field, error.message)
-              });
-            }
+              if (data.login.errors) {
+                data.login.errors.forEach(error => {
+                  setFieldError(error.field, error.message)
+                });
+              }
 
-          }).catch(err => {
-            console.log("error: unknown", err)
-          })
-
-
+            }).catch(err => {
+              console.log("error: unknown", err)
+            })
 
 
-        }}
 
-      >
-        {({ isSubmitting }) => (
-          <Form>
-            <InputField
-              name="usernameOrEmail"
-              placeholder="username or email"
-              label="Username or Email"
-            />
-            <Box mt={4}>
+
+          }}
+
+        >
+          {({ isSubmitting }) => (
+            <Form>
               <InputField
-                name="password"
-                placeholder="password"
-                label="Password"
-                type="password"
+                name="usernameOrEmail"
+                placeholder="username or email"
+                label="Username or Email"
               />
-            </Box>
-            <Flex mt={2}>
-              <NextLink href="/forgot-password">
-                <Link ml="auto">forgot password?</Link>
-              </NextLink>
-            </Flex>
-            <Button
-              mt={4}
-              type="submit"
-              isLoading={isSubmitting}
-              colorScheme="teal"
-            >
-              login
-            </Button>
-          </Form>
-        )}
-      </Formik>
-    </Wrapper>
+              <Box mt={4}>
+                <InputField
+                  name="password"
+                  placeholder="password"
+                  label="Password"
+                  type="password"
+                />
+              </Box>
+              <Flex mt={2}>
+                <NextLink href="/forgot-password">
+                  <Link ml="auto">forgot password?</Link>
+                </NextLink>
+              </Flex>
+              <Button
+                mt={4}
+                type="submit"
+                isLoading={isSubmitting}
+                colorScheme="teal"
+              >
+                login
+              </Button>
+            </Form>
+          )}
+        </Formik>
+      </Wrapper>
+    </Layout>
   );
 };
 

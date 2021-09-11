@@ -9,6 +9,7 @@ import { useRouter } from "next/router";
 import { setCookie } from "../utils/cookieHelpers";
 import { useAuth } from "../providers/AuthProvider";
 import { client } from "../lib/clients/graphqlRequestClient";
+import { Layout } from "../components/Layout";
 
 interface registerProps { }
 
@@ -30,52 +31,54 @@ const Register: React.FC<registerProps> = ({ }) => {
   });
 
   return (
-    <Wrapper variant="small">
-      <Formik
-        initialValues={{ email: "", username: "", password: "" }}
-        onSubmit={async (values, { setErrors }) => {
-          await mutateAsync({
-            options: {
-              ...values
-            }
-          }).then(res => {
-            if (res.register.errors) {
-              setErrors(toErrorMap(res.register.errors));
-            }
-          });
+    <Layout>
+      <Wrapper variant="small">
+        <Formik
+          initialValues={{ email: "", username: "", password: "" }}
+          onSubmit={async (values, { setErrors }) => {
+            await mutateAsync({
+              options: {
+                ...values
+              }
+            }).then(res => {
+              if (res.register.errors) {
+                setErrors(toErrorMap(res.register.errors));
+              }
+            });
 
-        }}
-      >
-        {({ isSubmitting }) => (
-          <Form>
-            <InputField
-              name="username"
-              placeholder="username"
-              label="Username"
-            />
-            <Box mt={4}>
-              <InputField name="email" placeholder="email" label="Email" />
-            </Box>
-            <Box mt={4}>
+          }}
+        >
+          {({ isSubmitting }) => (
+            <Form>
               <InputField
-                name="password"
-                placeholder="password"
-                label="Password"
-                type="password"
+                name="username"
+                placeholder="username"
+                label="Username"
               />
-            </Box>
-            <Button
-              mt={4}
-              type="submit"
-              isLoading={isSubmitting}
-              variantColor="teal"
-            >
-              register
-            </Button>
-          </Form>
-        )}
-      </Formik>
-    </Wrapper>
+              <Box mt={4}>
+                <InputField name="email" placeholder="email" label="Email" />
+              </Box>
+              <Box mt={4}>
+                <InputField
+                  name="password"
+                  placeholder="password"
+                  label="Password"
+                  type="password"
+                />
+              </Box>
+              <Button
+                mt={4}
+                type="submit"
+                isLoading={isSubmitting}
+                variantColor="teal"
+              >
+                register
+              </Button>
+            </Form>
+          )}
+        </Formik>
+      </Wrapper>
+    </Layout>
   );
 };
 

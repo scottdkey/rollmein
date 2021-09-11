@@ -1,20 +1,21 @@
 import React from "react"
-import { Flex, Spinner, VStack } from "@chakra-ui/react"
+import { VStack } from "@chakra-ui/react"
 import { Layout } from "../components/Layout";
 import { useAuth } from "../providers/AuthProvider";
-import PlayerCards from "../components/PlayerCards";
-import Rolls from "../components/Rolls";
+import dynamic from "next/dynamic";
 
 
 const Index = () => {
 
   const { auth } = useAuth()
+  const PlayerCards = dynamic(() => import('../components/PlayerCards'))
+  const Rolls = dynamic(() => import('../components/Rolls'))
 
   return (
     <Layout>
       {
         !auth ?
-          <Spinner />
+          null
           :
           <VStack >
             <PlayerCards />

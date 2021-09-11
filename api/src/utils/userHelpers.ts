@@ -11,70 +11,81 @@ import { v4 } from "uuid";
 import { FieldError } from "./errorsHelpers";
 
 
-export const validUsernameLength = {
+
+export const passwordErrors = {
   length: 2,
-  error: {
+  lengthError: {
+    field: "password",
+    message: "length must be greater than 2",
+  },
+}
+
+export const emailErrors = {
+  validEmail: {
+    field: "email",
+    message: "invalid email",
+  },
+  uniqueConstraint: { constraint: "user_email_unique" },
+  unique: {
+    field: "email",
+    message: "email already exists, please choose another"
+  }
+}
+
+export const usernameErrors = {
+  length: 2,
+  lengthError: {
     field: "username",
-      message: "length must be greater than 2",
-    },
+    message: "length must be greater than 2",
+  },
+  noAtSymbol: {
+    field: "username",
+    message: "username cannot contain @ symbol",
+  },
+  uniqueConstraint: { constraint: 'user_username_unique' },
+  unique: {
+    field: "username",
+    message: "username already exists, please choose another"
+  }
 }
 
 export const validateRegister = (options: UsernamePasswordInput): FieldError[] | null => {
-  if (options.username.length <= validUsernameLength.length) {
+  if (options.username.length <= usernameErrors.length) {
     return [
-      validUsernameLength.error
+      usernameErrors.lengthError
     ];
   }
 
-  if (options.password.length <= 2) {
+  if (options.password.length <= passwordErrors.length) {
     return [
-      {
-        field: "password",
-        message: "length must be greater than 2",
-      },
+      passwordErrors.lengthError
     ]
   }
   if (!options.email.includes('@')) {
     return [
-      {
-        field: "email",
-        message: "invalid email",
-      },
+      emailErrors.validEmail
     ]
   }
   if (options.username.includes('@')) {
     return [
-      {
-        field: "username",
-        message: "username cannot contain @ symbol",
-      },
+      usernameErrors.noAtSymbol
     ]
   }
   return null
 }
 
 export const checkError = (err: any) => {
-  if (err.constraint === "user_email_unique") {
-    return {
-      errors: [{
-        field: "email",
-        message: "email already exists, please choose another"
-      }]
-    }
-  } else if (err.constraint == 'user_username_unique') {
-    return {
-      errors: [{
-        field: "username",
-        message: "username already exists, please choose another"
-      }]
-    }
+  if (err.constraint === emailErrors.uniqueConstraint.constraint) {
+    return [emailErrors.unique]
+
+  } else if (err.constraint == usernameErrors.uniqueConstraint.constraint) {
+    return [usernameErrors.unique]
   } else {
-    return {
-      errors: [{
-        field: "error",
-        message: `unexpected error ${err.constraint}`
-      }]
-    }
+    return [{
+      field: "error",
+      message: `unexpected error ${err.constraint}`
+    }]
+
   }
 }
 

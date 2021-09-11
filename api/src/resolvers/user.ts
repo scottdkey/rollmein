@@ -103,7 +103,9 @@ export class UserResolver {
       ctx.state.user = returnObject.user
       return returnObject
     } catch (err) {
-      return checkError(err)
+      return {
+        errors: checkError(err)
+      }
     }
   }
 
