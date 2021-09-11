@@ -154,8 +154,8 @@ const Rolls: FC<RollsType> = (): JSX.Element => {
   }
 
   const RollInfo: FC<RollInfoType> = ({ players }) => {
-    const bgColor = useColorModeValue("gray:700", "gray:500")
-    const textColor = useColorModeValue("gray.900", "gray:600")
+    const bgColor = useColorModeValue("gray.200", "gray.700")
+    const textColor = useColorModeValue("gray.900", "gray.300")
     if (players === undefined) {
       return null
     } else {
@@ -164,8 +164,8 @@ const Rolls: FC<RollsType> = (): JSX.Element => {
           {
             players.map(player => {
               return (
-                <Center key={player.id} w="20" h="10" bg="gray.500"
-                textColor={textColor} borderRadius="2" textShadow="light-lg">
+                <Center key={player.id} w="20" h="10" bg={bgColor}
+                  textColor={textColor} borderRadius="2" textShadow="light-lg">
                   {player.name}
                 </Center>)
             })
