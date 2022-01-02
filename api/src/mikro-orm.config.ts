@@ -2,9 +2,9 @@ import { __dbName__, __pgHost__, __pgPass__, __pgPort__, __pgUser__, __prod__, _
 
 import { MikroORM, ReflectMetadataProvider } from "@mikro-orm/core"
 import path from "path"
-import { User } from "./entites/User"
-import { Player } from "./entites/Player"
-import { Options } from "./entites/Options"
+import { User } from "./entities/User"
+import { Player } from "./entities/Player"
+import { Options } from "./entities/Options"
 
 export default {
   metadataProvider: ReflectMetadataProvider,

@@ -1,7 +1,7 @@
 
 import { Ctx, Field, InputType, ObjectType, Query, Resolver, UseMiddleware } from "type-graphql"
-import { Options } from "../entites/Options";
-import { Player } from "../entites/Player";
+import { Options } from "../entities/Options";
+import { Player } from "../entities/Player";
 import { isAuth } from "../middleware/isAuth";
 import { MyContext } from "../types";
 import { BasicError } from "../utils/errorsHelpers";

@@ -1,6 +1,6 @@
 import { Arg, Ctx, Field, InputType, Mutation, ObjectType, Query, Resolver, UseMiddleware } from "type-graphql"
 
-import { Options } from "../entites/Options"
+import { Options } from "../entities/Options"
 import { isAuth } from "../middleware/isAuth";
 import { MyContext } from "../types";
 import { createOpts, deleteOpts, validateUserOptionsInput } from "../utils/optionsHelpers";
@@ -51,17 +51,17 @@ export class OptionsResolver {
   ): Promise<Options | OptionsError> {
     const userOptions = await em.findOne(Options, { userId: ctx.state.user?.id })
     if (userOptions) {
-      const validOptionsorError = validateUserOptionsInput(ctx.state.user?.id!, input, userOptions)
-      if (validOptionsorError.options !== undefined) {
-        await em.persistAndFlush(validOptionsorError.options)
-        return validOptionsorError.options
+      const validOptionsOrError = validateUserOptionsInput(ctx.state.user?.id!, input, userOptions)
+      if (validOptionsOrError.options !== undefined) {
+        await em.persistAndFlush(validOptionsOrError.options)
+        return validOptionsOrError.options
       } else {
         const unknownError = { type: "unknownErr", message: "unknown error occurred" }
-        return validOptionsorError.error ? validOptionsorError.error : unknownError
+        return validOptionsOrError.error ? validOptionsOrError.error : unknownError
       }
     } else {
       return {
-        type: "dbErorr",
+        type: "dbError",
         message: "database did not find record"
       }
     }

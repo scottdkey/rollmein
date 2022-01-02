@@ -1,6 +1,6 @@
 import { Connection, EntityManager, IDatabaseDriver } from "@mikro-orm/core"
-import { Options } from "../entites/Options";
-import { User } from "../entites/User";
+import { Options } from "../entities/Options";
+import { User } from "../entities/User";
 import { UsernamePasswordInput } from "../resolvers/UsernamePasswordInput";
 import { signJwt } from "./jwtUtils";
 import argon2 from "argon2";

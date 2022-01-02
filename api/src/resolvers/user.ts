@@ -10,7 +10,7 @@ import {
   Root,
 } from "type-graphql";
 import { MyContext } from "../types";
-import { User } from "../entites/User";
+import { User } from "../entities/User";
 import { __forgetPasswordPrefix__, __secretKey__ } from "../constants";
 import { UsernamePasswordInput } from "./UsernamePasswordInput";
 import { changeUserPassword, checkError, createUser, forgotUserPassword, loginUser, validateRegister } from "../utils/userHelpers";

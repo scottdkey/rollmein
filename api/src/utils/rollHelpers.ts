@@ -1,4 +1,4 @@
-import { Player } from "../entites/Player";
+import { Player } from "../entities/Player";
 import { BasicError } from "./errorsHelpers";
 
 

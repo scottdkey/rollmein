@@ -1,5 +1,5 @@
 import { Connection, EntityManager, IDatabaseDriver } from "@mikro-orm/core"
-import { Options } from "../entites/Options"
+import { Options } from "../entities/Options"
 import { OptionsError, OptionsInput } from "../resolvers/options"
 
 

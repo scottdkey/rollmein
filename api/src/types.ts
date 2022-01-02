@@ -1,8 +1,8 @@
 import { IDatabaseDriver, EntityManager, Connection } from "@mikro-orm/core";
 import { Redis } from "ioredis"
 import { ParameterizedContext } from "koa"
-import { Options } from "./entites/Options";
-import { User } from "./entites/User";
+import { Options } from "./entities/Options";
+import { User } from "./entities/User";
 
 
 export type MyContext = {

@@ -17,7 +17,7 @@ import { MikroORM } from "@mikro-orm/core";
 import microConfig from "./mikro-orm.config"
 import { createDatabase } from './utils/createDatabase';
 import { kubeRouter } from './routes/kubernetesRoutes';
-import { User } from "./entites/User";
+import { User } from "./entities/User";
 
 
 export let serverOn = false

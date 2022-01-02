@@ -1,7 +1,7 @@
 
-import { User } from "../entites/User";
+import { User } from "../entities/User";
 import { Field, Resolver, Mutation, InputType, Query, Arg, UseMiddleware, Ctx, FieldResolver, Root } from "type-graphql";
-import { Player } from "../entites/Player";
+import { Player } from "../entities/Player";
 import { isAuth } from "../middleware/isAuth";
 import { MyContext } from "../types";
 import { BasicError } from "../utils/errorsHelpers";
