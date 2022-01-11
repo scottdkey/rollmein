@@ -8,7 +8,6 @@ export const isAuth: MiddlewareFn<MyContext> = ({ context }, next) => {
     throw new Error("not authenticated")
 
   }
-
   return next()
 }
 
