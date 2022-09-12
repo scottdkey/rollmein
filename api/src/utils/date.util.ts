@@ -1,0 +1,1 @@
+export const dbToIsoString = (input: string): string => new Date(input).toISOString()

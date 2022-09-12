@@ -5,8 +5,9 @@ import { Trash, Lock, OpenLock, Dice, Shield, Sword, FirstAid } from "../assets"
 import { useColorModeValue } from "@chakra-ui/react"
 import { IconWrapper } from "./IconWrapper"
 import { CheckCircleIcon, EditIcon } from "@chakra-ui/icons"
-import { useOptionsQuery } from "../generated/graphql"
 import { client } from "../lib/clients/graphqlRequestClient"
+import { useQuery } from "@apollo/client/react"
+import { gql } from "@apollo/client"
 
 
 
@@ -50,8 +51,18 @@ export type CardGenericType = {
   }
 }
 
+const getOptions = gql`
+query Options{
+  options{
+    lockAfterOut
+    rollType
+    theme
+  }
+}
+`;
+
 const CardGeneric = ({ locked, inTheRoll, editing, name, onSubmit, tank, dps, healer, deleteObject, hideDelete }: CardGenericType) => {
-  const optionsQuery = useOptionsQuery(client)
+  const { loading, error, data } = useQuery(getOptions);
   const textColor = useColorModeValue("gray.700", "gray:200")
   return (
     <Box position="relative" onKeyPress={e => {
@@ -109,7 +120,7 @@ const CardGeneric = ({ locked, inTheRoll, editing, name, onSubmit, tank, dps, he
         }} color={editing ? "green" : "gray"} selected={editing.state} Icon={editing.state ? CheckCircleIcon : EditIcon} />
       </HStack>
 
-      {optionsQuery.data?.options?.rollType === "role" ? <HStack align="center" justify="center">
+      {data?.options?.rollType === "role" ? <HStack align="center" justify="center">
         <IconWrapper selected={tank.selected} color="blue" Icon={Shield} onClick={() => tank.onClick()} />
         <IconWrapper selected={dps.selected} color="orange" Icon={Sword} onClick={() => dps.onClick()} />
         <IconWrapper selected={healer.selected} color="green" Icon={FirstAid} onClick={() => healer.onClick()} />

@@ -1,12 +1,15 @@
+import { ConfigService } from '../services/config.service';
+import { container } from '../container';
 
 import jwt, { JwtPayload } from "jsonwebtoken"
-import { __secretKey__ } from "../constants"
 
+const secretKey = container.get(ConfigService).ServerConfig().secretKey
 
 export interface TokenInterface {
   id: string
 }
 
 
-export const signJwt = (userId: String) => jwt.sign({ id: userId }, __secretKey__)
-export const verifyJwt = (token: string): JwtPayload | string => jwt.verify(token, __secretKey__)
+export const signJwt = (userId: string): string => jwt.sign({ id: userId }, secretKey, { expiresIn: '7d', algorithm: "ES512" })
+
+export const verifyJwt = (token: string): JwtPayload | string => jwt.verify(token, secretKey, { algorithms: ["ES512"] })
