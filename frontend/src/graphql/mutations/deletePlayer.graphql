@@ -1,3 +1,0 @@
-mutation DeletePlayer($id: Float!) {
-  deletePlayer(id: $id)
-}
