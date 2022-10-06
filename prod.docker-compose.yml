@@ -18,7 +18,7 @@ services:
     expose:
       - 6379
   api:
-    image: scottdkey/rollmein_api:latest
+    image: ghcr.io/scottdkey/rollmein:main
     pull_policy: always
     restart: on-failure
     env_file:
