@@ -9,6 +9,9 @@ on:
     branches: [main]
     paths:
       - "api/**"
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
 
 jobs:
   test:
@@ -19,7 +22,7 @@ jobs:
 
     strategy:
       matrix:
-        node: [12.x, 14.x, 16.x]
+        node: [16.x, 18.x]
 
     steps:
       - uses: actions/checkout@v2
@@ -33,7 +36,7 @@ jobs:
         id: yarn-cache-dir-path
         run: echo "::set-output name=dir::$(yarn config get cacheFolder)"
 
-      - name: Cache npm dependencies
+      - name: Cache yarn dependencies
         uses: actions/cache@v2
         id: yarn-cache
         with:
@@ -50,14 +53,21 @@ jobs:
   build:
     needs: [test]
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
     defaults:
       run:
         working-directory: ./api
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
 
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v1
+      - name: Log in to the Container registry
+        uses: docker/login-action@f054a8b539a109f9f41c372932f1ae047eff08c9
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Cache Docker layers
         uses: actions/cache@v2
@@ -72,18 +82,19 @@ jobs:
         with:
           length: 6
 
-      - name: Log into Docker Hub
-        uses: docker/login-action@v1.9.0
+      - name: Extract metadata (tags, labels) for Docker
+        id: meta
+        uses: docker/metadata-action@98669ae865ea3cffbcbaa878cf57c20bbf1c6c38
         with:
-          username: ${{secrets.DOCKERHUB_USERNAME}}
-          password: ${{secrets.DOCKERHUB_PASSWORD}}
-
-      - name: Build and Push to Docker Hub
-        uses: docker/build-push-action@v2
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ steps.short-sha.outputs.sha }}
+      
+      - name: Build and push Docker image
+        uses: docker/build-push-action@ad44023a93711e3deb337508980b4b5e9bcdc5dc
         with:
           context: ./api
           push: true
-          tags: scottdkey/rollmein_api:latest, scottdkey/rollmein_api:${{ steps.short-sha.outputs.sha }}
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=local,src=/tmp/.buildx-cache
           cache-to: type=local,dest=/tmp/.buildx-cache-new
 
@@ -91,34 +102,34 @@ jobs:
         run: |
           rm -rf /tmp/.buildx-cache
           mv /tmp/.buildx-cache-new /tmp/.buildx-cache
-  deploy:
-    needs: [build]
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
+  # deploy:
+   # needs: [build]
+   # runs-on: ubuntu-latest
+   # steps:
+    #  - uses: actions/checkout@v2
 
-      - uses: dorny/paths-filter@v2
-        id: changes
-        with:
-          filters: |
-            backend:
-            - 'api/**'
+     # - uses: dorny/paths-filter@v2
+      #  id: changes
+       # with:
+        #  filters: |
+         #   backend:
+          #  - 'api/**'
 
-      - uses: benjlevesque/short-sha@v1.2
-        id: short-sha
-        with:
-          length: 6
+     # - uses: benjlevesque/short-sha@v1.2
+      #  id: short-sha
+       # with:
+        #  length: 6
 
-      - name: Update Image
-        uses: actions-hub/kubectl@master
-        env:
-          KUBE_CONFIG: ${{ secrets.KUBECONFIG }}
-        with:
-          args: set image deployment/rollmein rollmein=scottdkey/rollmein_api:${{ steps.short-sha.outputs.sha }}
+     # - name: Update Image
+      #  uses: actions-hub/kubectl@master
+       # env:
+        #  KUBE_CONFIG: ${{ secrets.KUBECONFIG }}
+       # with:
+        #  args: set image deployment/rollmein rollmein=scottdkey/rollmein_api:${{ steps.short-sha.outputs.sha }}
 
-      - name: Verify Deployment
-        uses: actions-hub/kubectl@master
-        env:
-          KUBE_CONFIG: ${{ secrets.KUBECONFIG }}
-        with:
-          args: rollout status deployment/rollmein
+      #x- name: Verify Deployment
+        #uses: actions-hub/kubectl@master
+        #env:
+         # KUBE_CONFIG: ${{ secrets.KUBECONFIG }}
+       # with:
+        #  args: rollout status deployment/rollmein
