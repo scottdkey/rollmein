@@ -29,8 +29,6 @@ export class ConfigService {
         }
 
       ])
-    this.logger.info(`postgres: ${JSON.stringify(this.PgConfig())}`)
-    this.logger.info(`redis ${JSON.stringify(this.RedisConfig())}`)
   }
 
   SupabaseConfig(): {

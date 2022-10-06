@@ -9,7 +9,7 @@ import {MyContext} from "../types/context";
 
 const router = new Router({ prefix: '/user' })
 const userService = container.get(UserService)
-export type UserContext = MyContext<User>
+export type UserContext = MyContext<unknown, User>
 
 router.get('/me', isAuth, async (ctx: UserContext, next) => {
   if (ctx.state.user) {

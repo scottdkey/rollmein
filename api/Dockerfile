@@ -13,7 +13,6 @@ FROM node:18-alpine3.15
 WORKDIR /usr/app
 COPY package.json .
 COPY yarn.lock .
-COPY .env .
 
 RUN yarn install --production
 COPY --from=build /usr/app/dist ./dist

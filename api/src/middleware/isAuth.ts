@@ -7,7 +7,7 @@ import {MyContext} from "../types/context";
 import { container } from '../container';
 import { LoggerService } from '../services/logger.service';
 
-export async function isAuth<T>(ctx: MyContext<T>, next: Next): Promise<MiddlewareFn<MyContext<T>>> {
+export async function isAuth<T>(ctx: MyContext<unknown, T>, next: Next): Promise<MiddlewareFn<MyContext<unknown, T>>> {
   const authHeader = ctx.headers.authorization && ctx.headers.authorization?.split(' ')[1]
   const logger = container.get(LoggerService).getLogger('IndexLogger')
   if(authHeader){

@@ -11,7 +11,7 @@ const router = new Router({
   prefix: '/options'
 })
 
-type UserOptionsContext = MyContext<UserOptions>
+type UserOptionsContext = MyContext<unknown, UserOptions>
 
 router.get('/', isAuth, async (ctx: UserOptionsContext, next) => {
   if (ctx.state.user) {
