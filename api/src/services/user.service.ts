@@ -1,3 +1,4 @@
+import { Logger, LoggerService } from './logger.service';
 import { UnknownProblemResponse } from '../utils/errorsHelpers';
 import { signJwt } from '../utils/jwtUtils';
 import { ApplicationError } from '../utils/errorsHelpers';
@@ -13,11 +14,13 @@ import { DataServiceAbstract } from './dataService.abstract';
 export class UserService extends DataServiceAbstract<DbUser, User>{
   private readonly cookieName: string
   db: DatabaseService
+  private logger: Logger
 
-  constructor(private database: DatabaseService, private cs: ConfigService) {
+  constructor(private database: DatabaseService, private cs: ConfigService, private ls: LoggerService) {
     super()
     this.db = this.database
     this.cookieName = this.cs.ServerConfig().cookieName
+    this.logger = this.ls.getLogger(UserService.name)
   }
 
   mapToCamelCase = (data: DbUser): User => {
@@ -124,7 +127,7 @@ export class UserService extends DataServiceAbstract<DbUser, User>{
         return await this.addSupabaseId(supabaseId, userRes.data.id)
       }
       const error = new Error("something went wrong #UserService.register")
-      console.error(error)
+      this.logger.error(JSON.stringify(error))
       return UnknownProblemResponse(error)
     }
     catch (e) {
@@ -143,7 +146,7 @@ export class UserService extends DataServiceAbstract<DbUser, User>{
       const expires = new Date(now.setTime(now.getTime() + (30 * 24 * 60 * 60 * 1000)))
       ctx.cookies.set(this.cookieName, jwt, { domain: ctx.host, expires })
     } else {
-      console.error('something went wrong when logging in')
+      this.logger.error('something went wrong when logging in')
     }
     return ctx
   }

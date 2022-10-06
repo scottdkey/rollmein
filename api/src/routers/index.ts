@@ -5,10 +5,10 @@ import playerRouter from "./player.router"
 import userRouter from "./user.router"
 import Router from "koa-router";
 
-export const Routers: Router[] = [
-  indexRouter,
-  userRouter,
-  userOptionsRouter,
-  rollRouter,
-  playerRouter
+export const Routers: {router: Router, routerName: string}[] = [
+  {router: indexRouter, routerName: 'indexRouter' },
+  {router: userRouter, routerName: 'userRouter' },
+  {router: userOptionsRouter, routerName: 'userOptionsRouter' },
+  {router: rollRouter, routerName: 'rollRouter' },
+  {router: playerRouter, routerName: 'playerRouter' },
 ]

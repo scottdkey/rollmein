@@ -1,3 +1,4 @@
+import { Logger, LoggerService } from './logger.service';
 import { DatabaseService } from './database.service';
 import { DataResponse } from '../types/DataResponse';
 import { AuthorizationError, NullInputError, NotInDatabaseError } from '../utils/errorsHelpers';
@@ -7,9 +8,11 @@ import { DataServiceAbstract } from './dataService.abstract';
 @addToContainer()
 export class UserOptionsService extends DataServiceAbstract<DbUserOptions, UserOptions>{
   db: DatabaseService
-  constructor(private database: DatabaseService) {
+  logger: Logger
+  constructor(private database: DatabaseService, private ls: LoggerService) {
     super()
     this.db = this.database
+    this.logger = this.ls.getLogger("UserOptionsService")
   }
 
   mapToCamelCase = ({ user_id, theme, created_at, updated_at }: DbUserOptions): UserOptions => {
@@ -71,6 +74,7 @@ export class UserOptionsService extends DataServiceAbstract<DbUserOptions, UserO
 
   protected validateUserOptionsInput(userId: string, input: UserOptionsInput | null, userOptions: UserOptions): { input: UserOptionsInput | null; error: AppError | null } {
     if (userId !== userOptions.userId) {
+      this.logger.error(AuthorizationError.message)
       return {
         error: AuthorizationError,
         input: null
@@ -78,6 +82,7 @@ export class UserOptionsService extends DataServiceAbstract<DbUserOptions, UserO
 
     }
     if (input === null) {
+      this.logger.error('null input #validateUserOptionsInput')
       return {
         error: NullInputError,
         input: null

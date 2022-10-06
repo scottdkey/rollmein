@@ -1,3 +1,4 @@
+import { LoggerService } from './logger.service';
 import { DataResponse } from '../types/DataResponse';
 import { NotInRedisError, RedisError } from '../utils/errorsHelpers';
 import { ConfigService } from './config.service';
@@ -12,15 +13,16 @@ export enum RedisKeys {
 export class RedisService {
   redis: Redis
 
-  constructor(private cs: ConfigService) {
+  constructor(private cs: ConfigService, private ls: LoggerService) {
+    const logger = this.ls.getLogger("Redis Service")
     const config = this.cs.RedisConfig()
     try {
       this.redis = new IoRedis({
         host: config.host
       })
-      console.log('connected to redis')
+      logger.info("connected to redis")
     } catch (e) {
-      console.error('unable to connect to redis')
+      logger.error('unable to connect to redis')
     }
   }
   async get<T>(key: RedisKeys, id: string): Promise<DataResponse<T>> {

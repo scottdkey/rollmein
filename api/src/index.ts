@@ -4,13 +4,15 @@ import bodyParser from "koa-bodyparser";
 import cors from "koa-cors";
 import koaJwt from "koa-jwt";
 import { container } from "./container";
-import {Routers} from "./routers";
+import { Routers } from "./routers";
 import { ConfigService } from "./services/config.service";
+import { LoggerService } from "./services/logger.service";
 
 
 
 const app = new Koa();
 const config = container.get(ConfigService).ServerConfig()
+const logger = container.get(LoggerService).getLogger('IndexLogger')
 
 app.use(bodyParser())
 app.use(
@@ -20,13 +22,14 @@ app.use(
   })
 )
 app.use(koaJwt({ secret: config.secretKey, passthrough: true }))
-Routers.forEach(router => {
-  app.use(router.routes())
+Routers.forEach(({ router, routerName }) => {
+  logger.debug(`starting ${routerName}`)
+  app.use(router.routes()).use(router.allowedMethods())
 
 })
 
 
 export const server = app.listen(config.port, () => {
   const message = `server started on http://localhost:${config.port}`
-  !config.test ? console.log(message) : null
+  !config.test ? logger.info(message) : null
 });

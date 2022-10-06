@@ -1,7 +1,8 @@
-FROM node:16-slim
+FROM node:18-alpine3.15
+RUN apk update && apk add bash
 WORKDIR /usr/api
-COPY package.json .
-RUN yarn
 COPY . .
+RUN yarn
+
 
 CMD yarn dev

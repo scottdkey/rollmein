@@ -2,7 +2,6 @@ import { Button, Spinner } from "@chakra-ui/react";
 import dynamic from "next/dynamic";
 import React, { useState } from "react";
 import { useQueryClient } from "react-query";
-import { CreatePlayerMutation, CreatePlayerMutationVariables, useCreatePlayerMutation } from "../generated/graphql";
 import { client } from "../lib/clients/graphqlRequestClient";
 import CardWrapper from "./CardWrapper"
 import CardGeneric from "./CardGeneric";
@@ -18,32 +17,11 @@ const NewPlayerCard = () => {
   const [dps, setDps] = useState(false)
   const [inTheRoll, setInTheRoll] = useState(false)
   const [locked, setLocked] = useState(false)
+  const [isLoading, setIsLoading] = useState(false)
 
-  const { mutate, isLoading } = useCreatePlayerMutation<CreatePlayerMutation, Error>(client, {
-    onSuccess: (_data: CreatePlayerMutation, _variables: CreatePlayerMutationVariables, _context: unknown) => {
-      queryClient.invalidateQueries(["Players"])
-      queryClient.refetchQueries("Players")
-      setOpen(false)
-      setName("")
-      setTank(false)
-      setHealer(false)
-      setDps(false)
-      setInTheRoll(false)
-      setLocked(false)
-    }
-  })
 
   const handleSubmit = () => {
-    mutate({
-      input: {
-        name,
-        tank,
-        healer,
-        dps,
-        locked,
-        inTheRoll
-      }
-    })
+    console.log('submit')
   }
 
   if (!open) {

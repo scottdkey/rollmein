@@ -1,6 +1,5 @@
 import { Box, Button, Drawer, DrawerBody, DrawerCloseButton, DrawerContent, DrawerHeader, DrawerOverlay, Spinner, useDisclosure, Wrap, WrapItem, } from "@chakra-ui/react"
 import React, { useEffect, useLayoutEffect, useState } from "react"
-import { PlayersQuery, usePlayersQuery } from "../generated/graphql";
 
 import { client } from "../lib/clients/graphqlRequestClient";
 import NewPlayerCard from "./NewPlayerCard";
@@ -14,18 +13,12 @@ const PlayerCards: React.FC = (): JSX.Element => {
   const queryClient = useQueryClient()
   const { auth } = useAuth()
   const { isOpen, onOpen, onClose } = useDisclosure()
-  const { data, isLoading } = usePlayersQuery<PlayersQuery, Error>(client);
   const PlayerCard = dynamic(() => import('./PlayerCard'))
   const [players, setPlayers] = useState<number[] | undefined>()
+  const [isLoading, setIsLoading] = useState(false)
+  const [data, setData] = useState({})
 
-  useLayoutEffect(() => {
-    if (data?.players) {
-      const returnArray = data.players.map(p => {
-        return p.id
-      })
-      setPlayers(returnArray)
-    }
-  }, [data?.players, auth])
+
 
   const deletePlayer = (id: number) => {
     if (players) {

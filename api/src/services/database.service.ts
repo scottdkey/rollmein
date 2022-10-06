@@ -1,3 +1,4 @@
+import { Logger, LoggerService } from './logger.service';
 import { dbToIsoString } from '../utils/date.util';
 import { ApplicationError, DatabaseError } from '../utils/errorsHelpers';
 import { ConfigService } from './config.service';
@@ -8,7 +9,9 @@ import { DataResponse } from '../types/DataResponse';
 @addToContainer()
 export class DatabaseService {
   private pool: Pool
-  constructor(private cs: ConfigService) {
+  private logger: Logger
+  constructor(private cs: ConfigService, private ls: LoggerService) {
+    this.logger = this.ls.getLogger(DatabaseService.name)
     const { host, user, password, port, database } = this.cs.PgConfig()
     this.pool = new Pool({
       host,
@@ -20,7 +23,7 @@ export class DatabaseService {
       min: 3,
       idleTimeoutMillis: 600000,
       log: (messages: unknown[]) => {
-        console.info(messages)
+        this.logger.info(JSON.stringify(messages))
       }
     })
   }

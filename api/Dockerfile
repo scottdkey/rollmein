@@ -1,18 +1,21 @@
-FROM node:16-alpine3.11 as build
+FROM node:18-alpine3.15 as build
+RUN apk update && apk add bash
 WORKDIR /usr/app
 COPY package.json .
 COPY yarn.lock .
 RUN yarn
 COPY . .
-RUN yarn typescript
+RUN yarn tsc
 
 
 
-FROM node:16-alpine3.11
+FROM node:18-alpine3.15
 WORKDIR /usr/app
 COPY package.json .
 COPY yarn.lock .
+COPY .env .
+
 RUN yarn install --production
 COPY --from=build /usr/app/dist ./dist
-EXPOSE 5000
+EXPOSE ${PORT}
 CMD ["yarn", "start"]

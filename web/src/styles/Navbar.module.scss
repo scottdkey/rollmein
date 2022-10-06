@@ -1,0 +1,29 @@
+.SiteHeader {
+  text-decoration: none;
+}
+
+.ThemeToggleButton {
+  border: 0px solid;
+  &:hover {
+    border: 2px;
+    border-top: 2.5px;
+    border-style: solid;
+    border-color: rgba(0, 0, 0, 0.699);
+  }
+}
+
+.ActiveItem {
+  border-bottom: 1px;
+  border-color: rgb(148, 148, 148);
+  border-style: solid;
+}
+
+.InactiveItem {
+  border-bottom: 1px;
+  border-style: solid;
+  border-color: rgba(0, 0, 0, 0);
+  transition: all 0.4s;
+  &:hover {
+    border-color: beige;
+  }
+}

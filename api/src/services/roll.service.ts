@@ -39,7 +39,7 @@ export class RollService {
     }
   };
 
-  protected FFARoll(currentGroup: Player[]): { players: Player[]; remaining: Player[] } {
+  FFARoll(currentGroup: Player[]): { players: Player[]; remaining: Player[] } {
     let remaining = currentGroup
     const players: Player[] = []
     while (players.length > 5) {

@@ -1,8 +1,7 @@
 // eslint-disable-next-line
 import React, { createContext, useContext, useEffect, useState } from "react";
-import { useMeQuery, useOptionsQuery } from "../generated/graphql"
-import { client } from "../lib/clients/graphqlRequestClient"
-import { getCookie } from "../utils/cookieHelpers";
+import { supabase } from "../utils/supabase.client"
+
 
 export type OptionsType = {
   rollType: string
@@ -20,34 +19,55 @@ export type HeaderOptions = {
 export type AuthContextType = {
   auth: boolean
   setAuth: (value: boolean) => void;
-  user?: User
-  setUser: (value: User) => void;
+  user?: UserData
+  setUser: (value: React.SetStateAction<UserData | null>) => void;
 }
 
+interface UserData {
+  id: string;
+  email: string | null;
+  username: string | null;
+  anon: boolean;
+  refreshToken: string;
+  providerId: string;
+  providerData: ({} | null)[];
+}
 
 
 export const AuthContext = createContext<AuthContextType>({} as AuthContextType);
 
-type User = {
-  id: string,
-  username: string
-}
-
 export const AuthProvider = ({ children }: any) => {
-  const { data, isLoading } = useMeQuery(client)
   const [auth, setAuth] = useState<boolean>(false)
-  const [user, setUser] = useState<User>()
-  useEffect(() => {
-    if (!isLoading && data?.me) {
-      setAuth(true)
-      setUser(data.me)
-    } else {
-      setUser(undefined)
-      setAuth(false)
+  const [user, setUser] = useState<any>(null)
+
+  const userRes = supabase.auth.user()
+
+  supabase.auth.onAuthStateChange((e, session) => {
+    switch (e) {
+      case 'SIGNED_IN':
+        setUser(supabase.auth.user())
+        setAuth(true)
+        break
+      case 'SIGNED_OUT':
+        setUser(null)
+        setAuth(false)
+        break
+      case 'TOKEN_REFRESHED':
+        console.log(session)
+        break
+      default:
+        console.error('other unhandled event:', e)
     }
+  })
 
 
-  }, [isLoading])
+  useEffect(() => {
+    console.log(userRes)
+    if (userRes) {
+      setUser(userRes)
+      setAuth(true)
+    }
+  }, [userRes])
 
 
 

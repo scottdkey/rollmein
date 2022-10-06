@@ -3,7 +3,6 @@ import { ErrorTypes } from '../types/ErrorCodes.enum';
 import { HTTPCodes } from '../types/HttpCodes.enum';
 import { RedisKeys } from '../services/redis.service';
 
-
 export function HttpCodeFromErrorType(error: AppError): HTTPCodes {
   switch (error.type) {
     case ErrorTypes.APP_ERROR:
@@ -22,7 +21,6 @@ export function HttpCodeFromErrorType(error: AppError): HTTPCodes {
 }
 
 const createError = (type: ErrorTypes, message: string): AppError => {
-  console.error(type, message)
   return {
     type,
     message

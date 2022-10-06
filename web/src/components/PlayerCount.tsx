@@ -1,27 +1,15 @@
 import { Circle, effect, Flex, Heading, HStack, Icon, useColorModeValue, VStack } from "@chakra-ui/react"
 import React, { FC, useLayoutEffect, useState } from "react"
 import { Lock, Dice, Shield, Sword, FirstAid } from "../assets"
-import { PlayersQuery, useOptionsQuery, usePlayersQuery } from "../generated/graphql"
 import { client } from "../lib/clients/graphqlRequestClient"
 import { PlayerCounts, roll } from "../utils/rollHelpers"
 
 
 
 const PlayerCount = ({ }) => {
-  const { data } = usePlayersQuery<PlayersQuery, Error>(client);
+
   const [currentCounts, setCurrentCounts] = useState({ locked: 0, inTheRoll: 0, tanks: 0, dps: 0, healers: 0 })
-
-  const optionsQuery = useOptionsQuery(client)
-  const rollType = optionsQuery.data?.options?.rollType
-  const players = data?.players
-
-  useLayoutEffect(() => {
-
-    if (players && rollType) {
-      const counts = PlayerCounts(players, rollType)
-      setCurrentCounts(counts)
-    }
-  }, [rollType, players])
+  const [rollType, setRollType] = useState('roll')
 
 
 
@@ -47,7 +35,7 @@ const PlayerCount = ({ }) => {
       <HStack align="center" justify="center" position="relative">
         <CountItem count={currentCounts.locked} icon={Lock} color="yellow" />
         <CountItem count={currentCounts.inTheRoll} icon={Dice} color="teal" />
-        {optionsQuery.data?.options?.rollType === "role" ? <>
+        {rollType === "role" ? <>
           <CountItem count={currentCounts.tanks} icon={Shield} color="blue" />
           <CountItem count={currentCounts.dps} icon={Sword} color="orange" />
           <CountItem count={currentCounts.healers} icon={FirstAid} color="green" />

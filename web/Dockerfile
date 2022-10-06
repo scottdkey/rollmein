@@ -1,4 +1,4 @@
-FROM node:14-slim as build
+FROM node:18-alpine3.15 as build
 
 WORKDIR /usr/src/react_app
 COPY package.json ./

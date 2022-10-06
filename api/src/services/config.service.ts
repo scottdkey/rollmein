@@ -1,14 +1,64 @@
 import { addToContainer } from "../container";
 import dotenv from "dotenv"
+import { Logger, LoggerService } from "./logger.service";
 
 
 @addToContainer()
 export class ConfigService {
-  constructor() {
+  logger: Logger
+  constructor(private ls: LoggerService) {
+    this.logger = this.ls.getLogger(ConfigService.name)
     dotenv.config()
+    this.validateConfig(
+      [
+        {
+          configName: "SupabaseConfig",
+          configObject: this.SupabaseConfig()
+        },
+        {
+          configName: "ServerConfig",
+          configObject: this.ServerConfig()
+        },
+        {
+          configName: "PgConfig",
+          configObject: this.PgConfig()
+        },
+        {
+          configName: "RedisConfig",
+          configObject: this.RedisConfig()
+        }
+
+      ])
+    this.logger.info(`postgres: ${JSON.stringify(this.PgConfig())}`)
+    this.logger.info(`redis ${JSON.stringify(this.RedisConfig())}`)
+  }
+
+  SupabaseConfig(): {
+    url: string,
+    anonKey: string,
+    jwt: string
+  } {
+    return {
+      url: process.env.SUPABASE_URL as string,
+      anonKey: process.env.SUPABASE_ANON_KEY as string,
+      jwt: process.env.SUPABASE_JWT as string
+    }
+  }
+  private validateConfig(configObjects: { configObject: { [key: string]: any }, configName: string }[]): void {
+    configObjects.forEach(c => {
+      const { configObject, configName } = c
+      for (const key of Object.keys(configObject)) {
+        const value = configObject[key]
+        if (value === null || value === undefined) {
+          this.logger.error(`no undefined keys in ${configName} config -- key:${key} value:${value}`)
+        }
+      }
+    })
   }
 
   ServerConfig(): {
+    [key: string]: any
+    dev: boolean
     prod: boolean
     test: boolean
     uri: string
@@ -18,11 +68,12 @@ export class ConfigService {
   } {
     const { SECRETKEY, PORT, CORS_URL } = process.env
     return {
+      dev: process.env.NODE_ENV === 'development',
       prod: process.env.NODE_ENV === 'production',
       test: process.env.NODE_ENV === 'test',
-      uri: CORS_URL ? CORS_URL : "http://localhost:3000",
-      port: PORT ? parseInt(PORT) : 9000,
-      secretKey: SECRETKEY ? SECRETKEY : "developmentKey",
+      uri: CORS_URL as string,
+      port: parseInt(PORT as string),
+      secretKey: SECRETKEY as string,
       cookieName: 'qid',
     }
   }

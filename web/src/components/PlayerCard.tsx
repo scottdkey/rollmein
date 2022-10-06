@@ -1,7 +1,6 @@
 import dynamic from "next/dynamic"
 import React, { useLayoutEffect, useState } from "react"
 import { useQueryClient } from "react-query"
-import { DeletePlayerMutation, UpdatePlayerMutation, UpdatePlayerMutationVariables, useDeletePlayerMutation, usePlayerQuery, useUpdatePlayerMutation } from "../generated/graphql"
 import { client } from "../lib/clients/graphqlRequestClient"
 import CardGeneric from "./CardGeneric"
 import CardWrapper from "./CardWrapper"
@@ -27,23 +26,8 @@ const PlayerCard = ({ playerId, deletePlayer }: PlayerCardProps): JSX.Element =>
   const [player, setPlayer] = useState<Player>()
   const [name, setName] = useState(player?.name)
   const [editing, setEditing] = useState(false)
+  const [isLoading, setIsLoading] = useState(false)
 
-  const UpdatePlayerMutation = useUpdatePlayerMutation<UpdatePlayerMutation | Error>(client, {
-    onSuccess: (data: UpdatePlayerMutation, _variables: UpdatePlayerMutationVariables, _context: unknown) => {
-      queryClient.invalidateQueries(["Player", {
-        id: data.updatePlayer?.id
-      }])
-    }
-  })
-  const deletePlayerMutation = useDeletePlayerMutation<DeletePlayerMutation | Error>(client, {
-    onSuccess: () => {
-      deletePlayer(playerId)
-     
-    }
-  })
-  const { data, isLoading } = usePlayerQuery(client, {
-    id: playerId
-  })
 
   const handleSubmit = async () => {
     if (player && name) {
@@ -56,42 +40,18 @@ const PlayerCard = ({ playerId, deletePlayer }: PlayerCardProps): JSX.Element =>
         inTheRoll: player?.inTheRoll,
         name
       }
-      await UpdatePlayerMutation.mutateAsync({
-        input: playerInput
-      }).then(res => {
-        if (res.updatePlayer) {
-          setPlayer({ ...res.updatePlayer })
-        }
-        setEditing(false)
-      })
+      console.log('player input', playerInput)
 
     }
   }
 
 
-  useLayoutEffect(() => {
-    if (!isLoading && data?.player) {
-      setPlayer(data.player)
-      setName(data.player.name)
-    }
-  }, [data, isLoading])
-
 
   const updateField = async (field: string, changeValue: any) => {
     if (player) {
       setPlayer({ ...player, [field]: changeValue })
-      await UpdatePlayerMutation.mutateAsync({
-        input: {
-          ...player,
-          [field]: changeValue
-
-        }
-      }).then(({ updatePlayer }) => {
-        if (updatePlayer) {
-          setPlayer({ ...updatePlayer })
-        }
-
-      })
+      console.log('field', field)
+      console.log('changeValue', changeValue)
     }
 
   }
@@ -118,13 +78,13 @@ const PlayerCard = ({ playerId, deletePlayer }: PlayerCardProps): JSX.Element =>
           }
         }}
         onSubmit={() => handleSubmit()}
-        loading={UpdatePlayerMutation.isLoading}
+        loading={isLoading}
         name={{
           value: name || "",
           onChange: (name: string) => {
             setName(name)
           },
-          isLoading: UpdatePlayerMutation.isLoading
+          isLoading: isLoading
         }}
         tank={{
           selected: player?.tank || false,
@@ -140,7 +100,7 @@ const PlayerCard = ({ playerId, deletePlayer }: PlayerCardProps): JSX.Element =>
         }} deleteObject={{
           show: true,
           onClick: () => {
-            deletePlayerMutation.mutate({ id: playerId })
+            console.log('delete with id', playerId)
           }
         }} />
     </CardWrapper>

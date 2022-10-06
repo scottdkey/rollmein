@@ -1,0 +1,51 @@
+version: "3.9"
+services:
+  database:
+    image: postgres
+    restart: always
+    env_file:
+      - .env
+    environment:
+      - POSTGRES_DB=${POSTGRES_DATABASE}
+    volumes:
+      - postgres_db:/var/lib/postgresql/data
+    expose:
+      - 5423
+  redis:
+    image: redis:alpine
+    volumes:
+      - redis_data:/data
+    expose:
+      - 6379
+  api:
+    image: scottdkey/rollmein_api:latest
+    pull_policy: always
+    restart: on-failure
+    env_file:
+      - .env
+    environment:
+      - POSTGRES_HOST=database
+      - REDIS_HOST=redis
+    ports:
+      - $PORT:$PORT
+    depends_on:
+      database:
+        condition: service_started
+      redis:
+        condition: service_started
+    labels:
+      - traefik.enable=true
+
+      - traefik.http.routers.rollmein.rule=Host(`rollmein.scottkey.dev`)
+      - traefik.http.routers.my-app.entrypoints=websecure
+      - traefik.http.routers.my-app.tls=true
+
+      - traefik.http.routers.my-app.tls.certresolver=mydnschallenge
+    networks:
+      - traefik-public
+networks:
+  traefik-public:
+    external: true
+volumes:
+  postgres_db:
+  redis_data:

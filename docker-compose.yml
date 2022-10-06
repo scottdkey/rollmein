@@ -1,10 +1,10 @@
-version: '3.9'
+version: "3.9"
 services:
   database:
     image: postgres
     restart: always
     env_file:
-      - .env
+      - ./api/.env
     environment:
       - POSTGRES_DB=${POSTGRES_DATABASE}
     ports:
@@ -22,49 +22,43 @@ services:
       - 6379
     volumes:
       - redis_data:/data
+  api:
+    image: scottdkey/rollmein_api
+    build:
+      context: ./api
+      dockerfile: Dockerfile.dev
+    volumes:
+      - ./api/src:/usr/api/src
+      - ./api/node_modules:/usr/api/node_modules
+    env_file:
+      - ./api/.env
+    environment:
+      - POSTGRES_HOST=database
+      - REDIS_HOST=redis
+    ports:
+      - 8000:8000
+    expose:
+      - 8000
+    depends_on:
+      - database
+      - redis
+  frontend:
+    image: scottdkey/rollmein_frontend
+    build:
+      context: ./web
+      dockerfile: Dockerfile.dev
+    volumes:
+      - ./web/src:/usr/app/src
+      - ./web/node_modules:/usr/app/node_modules
+    env_file:
+      - ./web/.env.local
+    ports:
+      - 3000:3000
+    expose:
+      - 3000
+    depends_on:
+      - api
+  
 volumes:
   postgres_db:
   redis_data:
-  # api:
-  #   image: scottdkey/rollmein_api
-  #   build:
-  #     context: ./api
-  #     dockerfile: Dockerfile.dev
-  #   volumes:
-  #     - ./api/src:/usr/api/src
-  #   command: bash -c 'while !/dev/tcp/database/5432; do sleep 1; done; yarn dev'
-  #   env_file:
-  #     - .env
-  #   environment:
-  #     - NODE_ENV=${NODE_ENV}
-  #     - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
-  #     - POSTGRES_USER=${POSTGRES_USER}
-  #     - POSTGRES_PORT=${POSTGRES_PORT}
-  #     - PORT=${API_SERVER_PORT}
-  #     - POSTGRES_DATABASE=${POSTGRES_DATABASE}
-  #     - REDIS_HOST=redis
-  #     - POSTGRES_HOST=database
-  #   ports:
-  #     - 8000:8000
-  #   expose:
-  #     - 8000
-  #   depends_on:
-  #     - database
-  #     - redis
-  # frontend:
-  #   image: scottdkey/rollmein_frontend
-  #   build:
-  #     context: ./frontend
-  #     dockerfile: Dockerfile.dev
-  #   volumes:
-  #     - ./frontend/src:/usr/app/src
-  #   env_file:
-  #     - .env
-  #   environment:
-  #     - REACT_APP_API_HOST=${API_BASE_URL}
-  #   ports:
-  #     - 3000:3000
-  #   expose:
-  #     - 3000
-  #   depends_on:
-  #     - api

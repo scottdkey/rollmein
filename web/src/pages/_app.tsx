@@ -4,27 +4,23 @@ import { AuthProvider } from "../providers/AuthProvider"
 
 import { QueryClient, QueryClientProvider } from 'react-query'
 import { ReactQueryDevtools } from "react-query/devtools"
-import { ApolloClient, InMemoryCache, ApolloProvider, gql } from '@apollo/client';
 
 
 
-// const queryClient = new QueryClient()
-const client = new ApolloClient({
-  uri: process.env.NEXT_PUBLIC_API_URL,
-  cache: new InMemoryCache(),
-});
+const queryClient = new QueryClient()
 
 
 function App({ Component, pageProps }: AppProps) {
   return (
-    <ApolloProvider client={client}>
+    <QueryClientProvider client={queryClient}>
       <ChakraProvider>
-        <AuthProvider>
-          <CSSReset />
+        <CSSReset />
+        <AuthProvider >
           <Component {...pageProps} />
         </AuthProvider>
       </ChakraProvider>
-    </ApolloProvider >
+      <ReactQueryDevtools />
+    </QueryClientProvider>
   );
 }
 
