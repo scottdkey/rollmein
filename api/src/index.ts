@@ -12,6 +12,7 @@ const app = new Koa();
 const config = container.get(ConfigService).ServerConfig()
 const logger = container.get(LoggerService).getLogger('IndexLogger')
 
+
 app.use(bodyParser())
 app.use(
   cors({
