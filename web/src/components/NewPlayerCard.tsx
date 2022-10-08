@@ -2,7 +2,6 @@ import { Button, Spinner } from "@chakra-ui/react";
 import dynamic from "next/dynamic";
 import React, { useState } from "react";
 import { useQueryClient } from "react-query";
-import { client } from "../lib/clients/graphqlRequestClient";
 import CardWrapper from "./CardWrapper"
 import CardGeneric from "./CardGeneric";
 

@@ -1,7 +1,6 @@
 import { Circle, effect, Flex, Heading, HStack, Icon, useColorModeValue, VStack } from "@chakra-ui/react"
 import React, { FC, useLayoutEffect, useState } from "react"
 import { Lock, Dice, Shield, Sword, FirstAid } from "../assets"
-import { client } from "../lib/clients/graphqlRequestClient"
 import { PlayerCounts, roll } from "../utils/rollHelpers"
 
 

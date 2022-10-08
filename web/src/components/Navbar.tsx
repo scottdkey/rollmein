@@ -4,7 +4,6 @@ import React, { useState, useEffect } from 'react'
 import NextLink from "next/link"
 import { deleteCookie } from '../utils/cookieHelpers';
 import { useAuth } from '../providers/AuthProvider';
-import { client } from '../lib/clients/graphqlRequestClient';
 import { useQueryClient } from "react-query"
 import AuthMenu from './AuthMenu';
 import styles from "../styles/Navbar.module.scss"

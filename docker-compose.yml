@@ -4,7 +4,7 @@ services:
     image: postgres
     restart: always
     env_file:
-      - ./api/.env
+      - .env
     environment:
       - POSTGRES_DB=${POSTGRES_DATABASE}
     ports:
@@ -31,7 +31,7 @@ services:
       - ./api/src:/usr/api/src
       - ./api/node_modules:/usr/api/node_modules
     env_file:
-      - ./api/.env
+      - .env
     environment:
       - POSTGRES_HOST=database
       - REDIS_HOST=redis
@@ -50,8 +50,7 @@ services:
     volumes:
       - ./web/src:/usr/app/src
       - ./web/node_modules:/usr/app/node_modules
-    env_file:
-      - ./web/.env.local
+      - .env:/usr/app/.env.local
     ports:
       - 3000:3000
     expose:

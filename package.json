@@ -1,6 +1,9 @@
 {
   "license": "MIT",
   "scripts": {
+    "dev": "docker-compose up",
+    "dev:down": "docker-compose down",
+    "dev:clean": "docker-compose down -v",
     "prod": "docker-compose -f prod.docker-compose.yml up -d",
     "prod:down": "docker-compose -f prod.docker-compose.yml down",
     "prod:clean": "docker-compose -f prod.docker-compose.yml down -v"

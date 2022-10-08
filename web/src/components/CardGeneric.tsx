@@ -5,7 +5,6 @@ import { Trash, Lock, OpenLock, Dice, Shield, Sword, FirstAid } from "../assets"
 import { useColorModeValue } from "@chakra-ui/react"
 import { IconWrapper } from "./IconWrapper"
 import { CheckCircleIcon, EditIcon } from "@chakra-ui/icons"
-import { client } from "../lib/clients/graphqlRequestClient"
 import { useQuery } from "@apollo/client/react"
 import { gql } from "@apollo/client"
 
@@ -86,7 +85,6 @@ const CardGeneric = ({ locked, inTheRoll, editing, name, onSubmit, tank, dps, he
             textColor={textColor}
             fontWeight="800"
             placeholder="player name"
-            label="name"
             value={name.value}
             size="xsm"
             onChange={(e) => name.onChange(e.target.value)}

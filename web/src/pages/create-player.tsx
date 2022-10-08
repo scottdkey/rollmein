@@ -4,7 +4,6 @@ import Router, { useRouter } from 'next/router';
 import React from 'react';
 import { InputField } from '../components/InputField';
 import { Layout as Layout } from '../components/Layout';
-import { client } from '../lib/clients/graphqlRequestClient';
 import { useQueryClient } from 'react-query';
 import { useAuth } from '../providers/AuthProvider';
 

@@ -1,7 +1,6 @@
 import dynamic from "next/dynamic"
 import React, { useLayoutEffect, useState } from "react"
 import { useQueryClient } from "react-query"
-import { client } from "../lib/clients/graphqlRequestClient"
 import CardGeneric from "./CardGeneric"
 import CardWrapper from "./CardWrapper"
 

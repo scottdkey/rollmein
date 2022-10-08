@@ -26,16 +26,10 @@ function GoogleSignIn() {
   //   console.log(res)
   // }
 
-  async function signInWithGoogle() {
-    const res = await SignInWithGoogle()
-    if(res){
-      console.log(res)
-    }
-  }
   return (
     <>
       <Button
-        onClick={signInWithGoogle}
+        onClick={SignInWithGoogle}
         width="100%"
         alignItems={'center'}
         verticalAlign={'center'}

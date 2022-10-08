@@ -1,7 +1,6 @@
 import { Box, Button, Drawer, DrawerBody, DrawerCloseButton, DrawerContent, DrawerHeader, DrawerOverlay, Spinner, useDisclosure, Wrap, WrapItem, } from "@chakra-ui/react"
 import React, { useEffect, useLayoutEffect, useState } from "react"
 
-import { client } from "../lib/clients/graphqlRequestClient";
 import NewPlayerCard from "./NewPlayerCard";
 import dynamic from "next/dynamic";
 import PlayerCount from "./PlayerCount";
@@ -26,6 +25,7 @@ const PlayerCards: React.FC = (): JSX.Element => {
         if (p !== id) {
           return p
         }
+        return
 
       })
       setPlayers(newPlayers)

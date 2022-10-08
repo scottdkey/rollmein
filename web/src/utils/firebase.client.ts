@@ -15,7 +15,7 @@ export const SignInWithGoogle = async () => {
   try {
     const result = await signInWithPopup(auth, googleProvider)
     const user = result.user
-    return {
+    const object = {
       refreshToken: user.refreshToken,
       //@ts-ignore next line
       accessToken: user.accessToken,
@@ -23,6 +23,8 @@ export const SignInWithGoogle = async () => {
       firebaseUid: user?.uid,
       googleUid: user.providerData[0].uid
     }
+    console.log('object', object)
+    return object
   } catch (e) {
     console.error("error on google auth", e)
     return null
