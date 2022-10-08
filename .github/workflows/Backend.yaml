@@ -93,18 +93,6 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - name: Create File
-        run: mkdir ~/.ssh && touch ~/.ssh/id_rsa.pub
-
-      - name: Write SSH Key
-        run: echo ${{secrets.SSH_PRIVATE_KEY}} > ~/.ssh/id_rsa.pub
-
-      - name: Connect to remote host
-        run: ssh ${{secrets.SSH_HOST_USER}}@${{secrets.SSH_HOST}}
-
-      - name: Change to correct directory
-        run: cd ~/rollmein
-
       - name: Write .env
         uses: SpicyPizza/create-envfile@v1.3
         with:
@@ -119,14 +107,41 @@ jobs:
           envkey_POSTGRES_PORT: ${{secrets.POSTGRES_PORT}}
           envkey_POSTGRES_PASSWORD: ${{secrets.POSTGRES_PASSWORD}}
           envkey_POSTGRES_USER: ${{secrets.POSTGRES_USER}}
-          directory: ~/rollmein
+          directory: .
           file_name: .env
           fail_on_empty: true
 
       - name: Validate Env(test remove )
         run: cat .env
 
-      - name: Deploy latest
-        run: git pull && yarn prod
+      - name: Copy single file to remote
+        uses: garygrossgarten/github-action-scp@release
+        with:
+          local: .env
+          remote: ~/rollmein/.env
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_HOST_USER}}
+          privateKey: ${{ secrets. SSH_PRIVATE_KEY }}
+
+      - name: Copy single file to remote
+        uses: garygrossgarten/github-action-scp@release
+        with:
+          local: prod.docker-compose.yml
+          remote: ~/rollmein/prod.docker-compose.yml
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_HOST_USER}}
+          privateKey: ${{ secrets.SSH_PRIVATE_KEY }}
+      
+      - name: multiple command
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_HOST_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            whoami
+            ls -al
+            yarn prod
+      
 
       
