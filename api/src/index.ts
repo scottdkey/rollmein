@@ -15,11 +15,13 @@ const logger = container.get(LoggerService).getLogger('IndexLogger')
 app.use(bodyParser())
 app.use(
   cors({
-    origin: "*",
+    origin: config.cors_uri || 'localhost',
     credentials: true
   })
 )
+
 app.use(koaJwt({ secret: config.secretKey, passthrough: true }))
+
 Routers.forEach(({ router, routerName }) => {
   logger.debug(`starting ${routerName}`)
   app.use(router.routes()).use(router.allowedMethods())
