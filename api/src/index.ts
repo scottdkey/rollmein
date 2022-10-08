@@ -19,7 +19,14 @@ app.use(
     credentials: true
   })
 )
+
 app.use(koaJwt({ secret: config.secretKey, passthrough: true }))
+
+app.use(async(ctx, next) => {
+  ctx.body = ctx
+  next()
+})
+
 Routers.forEach(({ router, routerName }) => {
   logger.debug(`starting ${routerName}`)
   app.use(router.routes()).use(router.allowedMethods())
