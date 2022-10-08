@@ -1,9 +1,9 @@
 import { initializeApp } from "firebase/app";
 import { getAuth, GoogleAuthProvider, signInWithPopup } from 'firebase/auth'
 const firebaseConfig = {
-  apiKey: "AIzaSyAV7EA39WBi-xah1CBjK87-qsTfXIzVZf0",
-  authDomain: "rollmein-c1698.firebaseapp.com",
-  projectId: "rollmein-c1698",
+  apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
+  authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
+  projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
 };
 
 // Initialize Firebase
