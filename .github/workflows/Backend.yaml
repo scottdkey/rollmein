@@ -93,14 +93,14 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
+      - name: Connect to remote host
+        run: ssh ${{secrets.SSH_HOST_USER}}@${{secrets.SSH_HOST}}
+
       - name: Create File
         run: touch ~/.ssh/id_rsa.pub
 
       - name: Write SSH Key
         run: echo ${{secrets.SSH_PRIVATE_KEY}} > .ssh/id_rsa.pub
-
-      - name: Connect to remote host
-        run: ssh ${{secrets.SSH_HOST_USER}}@${{secrets.SSH_HOST}}
 
       - name: Change to correct directory
         run: cd ~/rollmein
