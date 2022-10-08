@@ -20,10 +20,6 @@ app.use(
   })
 )
 
-<<<<<<< HEAD
-
-=======
->>>>>>> 9e359560 (Staging (#8))
 app.use(koaJwt({ secret: config.secretKey, passthrough: true }))
 
 Routers.forEach(({ router, routerName }) => {
