@@ -92,14 +92,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - name: Deploy to Docker swarm
-        uses: wshihadeh/docker-deployment-action@v1
+      - name: executing remote ssh commands using ssh key
+        uses: appleboy/ssh-action@master
         with:
-          remote_docker_host: skey@scottkey.dev
-          ssh_private_key: ${{ secrets.DOCKER_SSH_PRIVATE_KEY }}
-          ssh_public_key: ${{ secrets.DOCKER_SSH_PUBLIC_KEY }}
-          copy_stack_file: true
-          deploy_path: ~/rollmein
-          stack_file_name: prod.docker-compose.yaml
-          keep_files: 5
-          args: my_applicaion
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_HOST_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: whoami
