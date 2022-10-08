@@ -44,7 +44,6 @@ jobs:
           key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
           restore-keys: |
             ${{ runner.os }}-yarn-
-
       - name: Install Dependencies
         run: yarn --prefer-offline
 
@@ -62,64 +61,21 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      # - name: Log in to the Container registry
-      #   uses: docker/login-action@f054a8b539a109f9f41c372932f1ae047eff08c9
-      #   with:
-      #     registry: ${{ env.REGISTRY }}
-      #     username: ${{ github.actor }}
-      #     password: ${{ secrets.GITHUB_TOKEN }}
-
-      # - uses: benjlevesque/short-sha@v1.2
-      #   id: short-sha
-      #   with:
-      #     length: 6
-
-      # - name: Extract metadata (tags, labels) for Docker
-      #   id: meta
-      #   uses: docker/metadata-action@98669ae865ea3cffbcbaa878cf57c20bbf1c6c38
-      #   with:
-      #     images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
-
-      # - name: Build and push Docker image
-      #   uses: docker/build-push-action@ad44023a93711e3deb337508980b4b5e9bcdc5dc
-      #   with:
-      #     context: ./api
-      #     push: true
-      #     tags: ${{ steps.meta.outputs.tags }}
-      #     labels: ${{ steps.meta.outputs.labels }}
-  deploy:
-    needs: [build]
-    runs-on: ubuntu-latest
-    environment:
-      name: Stage
-    steps:
-      - uses: actions/checkout@v3
-
-      - name: Write .env
-        uses: SpicyPizza/create-envfile@v1.3
+      - name: Log in to the Container registry
+        uses: docker/login-action@f054a8b539a109f9f41c372932f1ae047eff08c9
         with:
-          envkey_NODE_ENV: ${{secrets.NODE_ENV}}
-          envkey_PORT: ${{secrets.PORT}}
-          envkey_CORS_URL: ${{secrets.CORS_URL}}
-          envkey_SECRETKEY: ${{secrets.SECRETKEY}}
-          envkey_SUPABASE_URL: ${{secrets.SUPABASE_URL}}
-          envkey_SUPABASE_ANON_KEY: ${{secrets.SUPABASE_ANON_KEY}}
-          envkey_SUPABASE_JWT: ${{secrets.SUPABASE_JWT}}
-          envkey_POSTGRES_DATABASE: ${{secrets.POSTGRES_DATABASE}}
-          envkey_POSTGRES_PORT: ${{secrets.POSTGRES_PORT}}
-          envkey_POSTGRES_PASSWORD: ${{secrets.POSTGRES_PASSWORD}}
-          envkey_POSTGRES_USER: ${{secrets.POSTGRES_USER}}
-          directory: .
-          file_name: .env
-          fail_on_empty: false
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
 
-      # - uses: benjlevesque/short-sha@v1.2
-      #   id: short-sha
-      #   with:
-      #     length: 6
+      - uses: benjlevesque/short-sha@v1.2
+        id: short-sha
+        with:
+          length: 6
 
-      - name: copy env
-        uses: appleboy/scp-action@master
+      - name: Extract metadata (tags, labels) for Docker
+        id: meta
+        uses: docker/metadata-action@98669ae865ea3cffbcbaa878cf57c20bbf1c6c38
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
 
@@ -130,6 +86,7 @@ jobs:
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
+  
   # deploy:
   #   needs: [build]
   #   runs-on: ubuntu-latest
@@ -175,8 +132,3 @@ jobs:
 
       # - name: Deploy application
       #   run: ssh server 'cd ~/rollmein && git pull origin main && yarn prod' 
-
-
-
-
-
