@@ -87,54 +87,51 @@ jobs:
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
-  deploy:
-    needs: [build]
-    runs-on: ubuntu-latest
-    environment:
-      name: Stage
-    steps:
-      - uses: actions/checkout@v3
+  # deploy:
+  #   needs: [build]
+  #   runs-on: ubuntu-latest
+  #   environment:
+  #     name: Stage
+  #   steps:
+  #     - uses: actions/checkout@v3
 
-      - name: Configure SSH
-        run: |
-          mkdir -p ~/.ssh/
-          echo "$SSH_KEY" > ~/.ssh/server.key
-          chmod 600 ~/.ssh/server.key
-          cat >>~/.ssh/config <<END
-          Host server
-            HostName $SSH_HOST
-            User $SSH_USER
-            IdentityFile ~/.ssh/server.key
-            StrictHostKeyChecking no
-          END
-        env:
-          SSH_USER: ${{ secrets.SSH_HOST_USER }}
-          SSH_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
-          SSH_HOST: ${{ secrets.SSH_HOST }}
+      # - name: Configure SSH
+      #   run: |
+      #     mkdir -p ~/.ssh/
+      #     echo "$SSH_KEY" > ~/.ssh/server.key
+      #     chmod 600 ~/.ssh/server.key
+      #     cat >>~/.ssh/config <<END
+      #     Host server
+      #       HostName $SSH_HOST
+      #       User $SSH_USER
+      #       IdentityFile ~/.ssh/server.key
+      #       StrictHostKeyChecking no
+      #     END
+      #   env:
+      #     SSH_USER: ${{ secrets.SSH_HOST_USER }}
+      #     SSH_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+      #     SSH_HOST: ${{ secrets.SSH_HOST }}
 
-      - name: Write .env
-        uses: SpicyPizza/create-envfile@v1.3
-        with:
-          envkey_NODE_ENV: ${{secrets.NODE_ENV}}
-          envkey_PORT: ${{secrets.PORT}}
-          envkey_CORS_URL: ${{secrets.CORS_URL}}
-          envkey_SECRETKEY: ${{secrets.SECRETKEY}}
-          envkey_SUPABASE_URL: ${{secrets.SUPABASE_URL}}
-          envkey_SUPABASE_ANON_KEY: ${{secrets.SUPABASE_ANON_KEY}}
-          envkey_SUPABASE_JWT: ${{secrets.SUPABASE_JWT}}
-          envkey_POSTGRES_DATABASE: ${{secrets.POSTGRES_DATABASE}}
-          envkey_POSTGRES_PORT: ${{secrets.POSTGRES_PORT}}
-          envkey_POSTGRES_PASSWORD: ${{secrets.POSTGRES_PASSWORD}}
-          envkey_POSTGRES_USER: ${{secrets.POSTGRES_USER}}
-          directory: .
-          file_name: .env
-          fail_on_empty: false
+      # - name: Write .env
+      #   uses: SpicyPizza/create-envfile@v1.3
+      #   with:
+      #     envkey_NODE_ENV: ${{secrets.NODE_ENV}}
+      #     envkey_PORT: ${{secrets.PORT}}
+      #     envkey_CORS_URL: ${{secrets.CORS_URL}}
+      #     envkey_SECRETKEY: ${{secrets.SECRETKEY}}
+      #     envkey_SUPABASE_URL: ${{secrets.SUPABASE_URL}}
+      #     envkey_SUPABASE_ANON_KEY: ${{secrets.SUPABASE_ANON_KEY}}
+      #     envkey_SUPABASE_JWT: ${{secrets.SUPABASE_JWT}}
+      #     envkey_POSTGRES_DATABASE: ${{secrets.POSTGRES_DATABASE}}
+      #     envkey_POSTGRES_PORT: ${{secrets.POSTGRES_PORT}}
+      #     envkey_POSTGRES_PASSWORD: ${{secrets.POSTGRES_PASSWORD}}
+      #     envkey_POSTGRES_USER: ${{secrets.POSTGRES_USER}}
+      #     directory: .
+      #     file_name: .env
+      #     fail_on_empty: false
 
-      - name: Update Env Variables
-        run: scp .env ${{ secrets.SSH_HOST }}:~/rollmein
-
-      - name: Deploy application
-        run: ssh server 'cd ~/rollmein && git pull origin main && yarn prod' 
+      # - name: Deploy application
+      #   run: ssh server 'cd ~/rollmein && git pull origin main && yarn prod' 
 
 
 
