@@ -100,7 +100,7 @@ jobs:
         run: echo ${{secrets.SSH_PRIVATE_KEY}} > .ssh/id_rsa.pub
 
       - name: Connect to remote host
-        run: ssh ${{secrets.SSH_HOST_USER}}@${{SSH_HOST}}
+        run: ssh ${{secrets.SSH_HOST_USER}}@${{secrets.SSH_HOST}}
 
       - name: Change to correct directory
         run: cd ~/rollmein
