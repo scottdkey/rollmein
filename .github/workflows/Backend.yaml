@@ -88,15 +88,10 @@ jobs:
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
   deploy:
-   needs: [build]
-   runs-on: ubuntu-latest
-   steps:
-     - uses: actions/checkout@v2
-
-    #  - uses: benjlevesque/short-sha@v1.2
-    #    id: short-sha
-    #    with:
-    #      length: 6
+    needs: [build]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
       - name: Deploy to Docker swarm
         uses: wshihadeh/docker-deployment-action@v1
         with:
