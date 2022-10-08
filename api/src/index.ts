@@ -20,6 +20,7 @@ app.use(
   })
 )
 
+
 app.use(koaJwt({ secret: config.secretKey, passthrough: true }))
 
 Routers.forEach(({ router, routerName }) => {
