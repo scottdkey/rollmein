@@ -109,7 +109,7 @@ jobs:
           envkey_POSTGRES_USER: ${{secrets.POSTGRES_USER}}
           directory: .
           file_name: .env
-          fail_on_empty: true
+          fail_on_empty: false
 
       - name: Validate Env(test remove )
         run: cat .env
