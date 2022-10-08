@@ -5,8 +5,6 @@ import { Trash, Lock, OpenLock, Dice, Shield, Sword, FirstAid } from "../assets"
 import { useColorModeValue } from "@chakra-ui/react"
 import { IconWrapper } from "./IconWrapper"
 import { CheckCircleIcon, EditIcon } from "@chakra-ui/icons"
-import { useQuery } from "@apollo/client/react"
-import { gql } from "@apollo/client"
 
 
 
@@ -50,18 +48,8 @@ export type CardGenericType = {
   }
 }
 
-const getOptions = gql`
-query Options{
-  options{
-    lockAfterOut
-    rollType
-    theme
-  }
-}
-`;
-
 const CardGeneric = ({ locked, inTheRoll, editing, name, onSubmit, tank, dps, healer, deleteObject, hideDelete }: CardGenericType) => {
-  const { loading, error, data } = useQuery(getOptions);
+  const data: any = {}
   const textColor = useColorModeValue("gray.700", "gray:200")
   return (
     <Box position="relative" onKeyPress={e => {
