@@ -79,7 +79,7 @@ jobs:
         uses: docker/metadata-action@98669ae865ea3cffbcbaa878cf57c20bbf1c6c38
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
-      
+
       - name: Build and push Docker image
         uses: docker/build-push-action@ad44023a93711e3deb337508980b4b5e9bcdc5dc
         with:
@@ -92,10 +92,41 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - name: executing remote ssh commands using ssh key
-        uses: easingthemes/ssh-deploy@v2.2.11
+
+      - name: Create File
+        run: touch .ssh/id_rsa.pub
+
+      - name: Write SSH Key
+        run: echo ${{secrets.SSH_PRIVATE_KEY}} > .ssh/id_rsa.pub
+
+      - name: Connect to remote host
+        run: ssh ${{SSH_HOST_USER}}@${{SSH_HOST}}
+
+      - name: Change to correct directory
+        run: cd ~/rollmein
+
+      - name: Write .env
+        uses: SpicyPizza/create-envfile@v1.3
         with:
-          REMOTE_HOST: ${{ secrets.SSH_HOST }}
-          REMOTE_USER: ${{ secrets.SSH_HOST_USER }}
-          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
-          script: whoami
+          envkey_NODE_ENV: ${{secrets_NODE_ENV}}
+          envkey_PORT: ${{secrets.PORT}}
+          envkey_CORS_URL: ${{secrets.CORS_URL}}
+          envkey_SECRETKEY: ${{secrets.SECRETKEY}}
+          envkey_SUPABASE_URL: ${{secrets.SUPABASE_URL}}
+          envkey_SUPABASE_ANON_KEY: ${{secrets.SUPABASE_ANON_KEY}}
+          envkey_SUPABASE_JWT: ${{secrets.SUPABASE_JWT}}
+          envkey_POSTGRES_DATABASE: ${{secrets.POSTGRES_DATABASE}}
+          envkey_POSTGRES_PORT: ${{secrets.POSTGRES_PORT}}
+          envkey_POSTGRES_PASSWORD: ${{secrets:POSTGRES_PASSWORD}}
+          envkey_POSTGRES_USER: ${{secrets:POSTGRES_USER}}
+          directory: ~/rollmein
+          file_name: .env
+          fail_on_empty: true
+
+      - name: Validate Env(test remove )
+        run: cat .env
+
+      - name: Deploy latest
+        run: git pull && yarn prod
+
+      
