@@ -93,9 +93,9 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: executing remote ssh commands using ssh key
-        uses: appleboy/ssh-action@master
+        uses: easingthemes/ssh-deploy@v2.2.11
         with:
-          host: ${{ secrets.SSH_HOST }}
-          username: ${{ secrets.SSH_HOST_USER }}
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          REMOTE_HOST: ${{ secrets.SSH_HOST }}
+          REMOTE_USER: ${{ secrets.SSH_HOST_USER }}
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
           script: whoami
