@@ -100,7 +100,7 @@ jobs:
         run: echo ${{secrets.SSH_PRIVATE_KEY}} > .ssh/id_rsa.pub
 
       - name: Connect to remote host
-        run: ssh ${{SSH_HOST_USER}}@${{SSH_HOST}}
+        run: ssh ${{secrets.SSH_HOST_USER}}@${{SSH_HOST}}
 
       - name: Change to correct directory
         run: cd ~/rollmein
@@ -108,7 +108,7 @@ jobs:
       - name: Write .env
         uses: SpicyPizza/create-envfile@v1.3
         with:
-          envkey_NODE_ENV: ${{secrets_NODE_ENV}}
+          envkey_NODE_ENV: ${{secrets.NODE_ENV}}
           envkey_PORT: ${{secrets.PORT}}
           envkey_CORS_URL: ${{secrets.CORS_URL}}
           envkey_SECRETKEY: ${{secrets.SECRETKEY}}
@@ -117,8 +117,8 @@ jobs:
           envkey_SUPABASE_JWT: ${{secrets.SUPABASE_JWT}}
           envkey_POSTGRES_DATABASE: ${{secrets.POSTGRES_DATABASE}}
           envkey_POSTGRES_PORT: ${{secrets.POSTGRES_PORT}}
-          envkey_POSTGRES_PASSWORD: ${{secrets:POSTGRES_PASSWORD}}
-          envkey_POSTGRES_USER: ${{secrets:POSTGRES_USER}}
+          envkey_POSTGRES_PASSWORD: ${{secrets.POSTGRES_PASSWORD}}
+          envkey_POSTGRES_USER: ${{secrets.POSTGRES_USER}}
           directory: ~/rollmein
           file_name: .env
           fail_on_empty: true
