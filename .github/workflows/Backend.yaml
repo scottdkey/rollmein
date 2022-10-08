@@ -95,6 +95,23 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
+      - name: Configure SSH
+        run: |
+          mkdir -p ~/.ssh/
+          echo "$SSH_KEY" > ~/.ssh/server.key
+          chmod 600 ~/.ssh/server.key
+          cat >>~/.ssh/config <<END
+          Host server
+            HostName $SSH_HOST
+            User $SSH_USER
+            IdentityFile ~/.ssh/server.key
+            StrictHostKeyChecking no
+          END
+        env:
+          SSH_USER: ${{ secrets.SSH_HOST_USER }}
+          SSH_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+          SSH_HOST: ${{ secrets.SSH_HOST }}
+
       - name: Write .env
         uses: SpicyPizza/create-envfile@v1.3
         with:
@@ -113,16 +130,11 @@ jobs:
           file_name: .env
           fail_on_empty: false
 
-      - name: Deploy to VPS
-        uses: appleboy/ssh-action@master
-        with:
-          host: ${{ secrets.SSH_HOST}}
-          username: ${{ secrets.SSH_HOST_USER }})
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
-          script: |
-            cd ~/rollmein
-            git pull origin main
-            yarn prod
+      - name: Update Env Variables
+        run: scp .env server:~/rollmein
+
+      - name: Deploy application
+        run: ssh server 'cd ~/rollmein && git pull origin main && yarn prod' 
 
 
 

@@ -59,7 +59,7 @@ export class ConfigService {
     dev: boolean
     prod: boolean
     test: boolean
-    uri: string
+    cors_uri: string | undefined
     port: number
     secretKey: string
     cookieName: string
@@ -69,7 +69,7 @@ export class ConfigService {
       dev: process.env.NODE_ENV === 'development',
       prod: process.env.NODE_ENV === 'production',
       test: process.env.NODE_ENV === 'test',
-      uri: CORS_URL as string,
+      cors_uri: CORS_URL,
       port: parseInt(PORT as string),
       secretKey: SECRETKEY as string,
       cookieName: 'qid',
