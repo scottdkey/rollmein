@@ -2,11 +2,11 @@ name: Backend
 
 on:
   push:
-    branches: [main]
+    branches: [main, staging]
     paths:
       - "api/**"
   pull_request:
-    branches: [main]
+    branches: [main, staging]
     paths:
       - "api/**"
 env:
@@ -87,34 +87,24 @@ jobs:
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
-  # deploy:
-   # needs: [build]
-   # runs-on: ubuntu-latest
-   # steps:
-    #  - uses: actions/checkout@v2
+  deploy:
+   needs: [build]
+   runs-on: ubuntu-latest
+   steps:
+     - uses: actions/checkout@v2
 
-     # - uses: dorny/paths-filter@v2
-      #  id: changes
-       # with:
-        #  filters: |
-         #   backend:
-          #  - 'api/**'
-
-     # - uses: benjlevesque/short-sha@v1.2
-      #  id: short-sha
-       # with:
-        #  length: 6
-
-     # - name: Update Image
-      #  uses: actions-hub/kubectl@master
-       # env:
-        #  KUBE_CONFIG: ${{ secrets.KUBECONFIG }}
-       # with:
-        #  args: set image deployment/rollmein rollmein=scottdkey/rollmein_api:${{ steps.short-sha.outputs.sha }}
-
-      #x- name: Verify Deployment
-        #uses: actions-hub/kubectl@master
-        #env:
-         # KUBE_CONFIG: ${{ secrets.KUBECONFIG }}
-       # with:
-        #  args: rollout status deployment/rollmein
+    #  - uses: benjlevesque/short-sha@v1.2
+    #    id: short-sha
+    #    with:
+    #      length: 6
+      - name: Deploy to Docker swarm
+        uses: wshihadeh/docker-deployment-action@v1
+        with:
+          remote_docker_host: skey@scottkey.dev
+          ssh_private_key: ${{ secrets.DOCKER_SSH_PRIVATE_KEY }}
+          ssh_public_key: ${{ secrets.DOCKER_SSH_PUBLIC_KEY }}
+          copy_stack_file: true
+          deploy_path: ~/rollmein
+          stack_file_name: prod.docker-compose.yaml
+          keep_files: 5
+          args: my_applicaion
