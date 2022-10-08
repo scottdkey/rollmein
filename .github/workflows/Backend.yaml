@@ -114,23 +114,26 @@ jobs:
       - name: Validate Env(test remove )
         run: cat .env
 
-      - name: Copy single file to remote
-        uses: garygrossgarten/github-action-scp@release
+      - name: copy docker-compose
+        uses: appleboy/scp-action@master
         with:
-          local: .env
-          remote: ~/rollmein/.env
-          host: ${{ secrets.SSH_HOST }}
-          username: ${{ secrets.SSH_HOST_USER}}
-          privateKey: ${{ secrets. SSH_PRIVATE_KEY }}
+          host: ${{ secrets.SSH_HOST  }}
+          username: ${{ secrets.SSH_HOST_USER }}
+          port: ${{ secrets.PORT }}
+          key: ${{ secrets. SSH_PRIVATE_KEY }}
+          source: "prod.docker-compose.yml"
+          target: "~/rollmein"
 
-      - name: Copy single file to remote
-        uses: garygrossgarten/github-action-scp@release
+
+      - name: copy env
+        uses: appleboy/scp-action@master
         with:
-          local: prod.docker-compose.yml
-          remote: ~/rollmein/prod.docker-compose.yml
-          host: ${{ secrets.SSH_HOST }}
-          username: ${{ secrets.SSH_HOST_USER}}
-          privateKey: ${{ secrets.SSH_PRIVATE_KEY }}
+          host: ${{ secrets.SSH_HOST  }}
+          username: ${{ secrets.SSH_HOST_USER }}
+          port: ${{ secrets.PORT }}
+          key: ${{ secrets. SSH_PRIVATE_KEY }}
+          source: ".env"
+          target: "~/rollmein"
       
       - name: multiple command
         uses: appleboy/ssh-action@master
@@ -141,6 +144,7 @@ jobs:
           script: |
             whoami
             ls -al
+            cd ~/rollmein
             yarn prod
       
 
