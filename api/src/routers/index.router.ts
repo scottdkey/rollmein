@@ -4,9 +4,7 @@ import Router from 'koa-router'
 const indexRouter = new Router()
 
 indexRouter.get("/", async (ctx, next) => {
-  ctx.body = {
-    message: 'test'
-  }
+  ctx.body = ctx
   await next()
 })
 
