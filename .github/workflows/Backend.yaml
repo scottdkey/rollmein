@@ -131,7 +131,7 @@ jobs:
           fail_on_empty: false
 
       - name: Update Env Variables
-        run: scp .env server:~/rollmein
+        run: scp .env ${{ secrets.SSH_HOST }}:~/rollmein
 
       - name: Deploy application
         run: ssh server 'cd ~/rollmein && git pull origin main && yarn prod' 

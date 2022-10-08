@@ -8,7 +8,6 @@ import { Routers } from "./routers";
 import { ConfigService } from "./services/config.service";
 import { LoggerService } from "./services/logger.service";
 
-
 const app = new Koa();
 const config = container.get(ConfigService).ServerConfig()
 const logger = container.get(LoggerService).getLogger('IndexLogger')
