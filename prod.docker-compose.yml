@@ -18,6 +18,8 @@ services:
     expose:
       - 6379
   api:
+    hostname: rollmein-api
+    container_name: rollmein-api
     image: ghcr.io/scottdkey/rollmein:main
     pull_policy: always
     restart: on-failure
@@ -36,11 +38,11 @@ services:
     labels:
       - traefik.enable=true
 
-      - traefik.http.routers.rollmein.rule=Host(`rollmein.scottkey.dev`)
-      - traefik.http.routers.my-app.entrypoints=websecure
-      - traefik.http.routers.my-app.tls=true
+      - traefik.http.routers.rollmein-api.rule=Host(`rollmein-api.scottkey.dev`)
+      - traefik.http.routers.rollmein-api.entrypoints=websecure
+      - traefik.http.routers.rollmein-api.tls=true
 
-      - traefik.http.routers.my-app.tls.certresolver=mydnschallenge
+      - traefik.http.routers.rollmein-api.tls.certresolver=mydnschallenge
     networks:
       - traefik-public
 networks:
