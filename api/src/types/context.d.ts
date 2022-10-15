@@ -1,8 +1,10 @@
 import {DefaultContext, ParameterizedContext} from "koa";
 import {DataResponse} from "./DataResponse";
+import { DecodedIdToken } from 'firebase-admin/lib/auth/token-verifier';
 
 interface MyState {
-    user: { id: string } | null
+    user: DecodedIdToken
+    token: string | undefined
     validUser: boolean
     groupId: string | null
 }

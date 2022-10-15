@@ -87,30 +87,41 @@ jobs:
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
 
-  # deploy:
-  #   needs: [build]
-  #   runs-on: ubuntu-latest
-  #   environment:
-  #     name: Stage
-  #   steps:
-  #     - uses: actions/checkout@v3
+  deploy:
+    needs: [build]
+    runs-on: ubuntu-latest
+    environment:
+      name: Stage
+    steps:
+      - uses: actions/checkout@v3
 
-  # - name: Configure SSH
-  #   run: |
-  #     mkdir -p ~/.ssh/
-  #     echo "$SSH_KEY" > ~/.ssh/server.key
-  #     chmod 600 ~/.ssh/server.key
-  #     cat >>~/.ssh/config <<END
-  #     Host server
-  #       HostName $SSH_HOST
-  #       User $SSH_USER
-  #       IdentityFile ~/.ssh/server.key
-  #       StrictHostKeyChecking no
-  #     END
-  #   env:
-  #     SSH_USER: ${{ secrets.SSH_HOST_USER }}
-  #     SSH_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
-  #     SSH_HOST: ${{ secrets.SSH_HOST }}
+      - name: executing remote ssh
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{secrets.SSH_HOST}}
+          key: ${{secrets.SSH_PRIVATE_KEY}}
+          username: ${{secrets.SSH_HOST_USER}}
+          script: |
+            cd rollmein
+            git pull
+            docker-compose pull api
+            yarn prod
+    #   - name: Configure SSH
+    # run: |
+    #   mkdir -p ~/.ssh/
+    #   echo "$SSH_KEY" > ~/.ssh/server.key
+    #   chmod 600 ~/.ssh/server.key
+    #   cat >>~/.ssh/config <<END
+    #   Host server
+    #     HostName $SSH_HOST
+    #     User $SSH_USER
+    #     IdentityFile ~/.ssh/server.key
+    #     StrictHostKeyChecking no
+    #   END
+    # env:
+    #   SSH_USER: ${{ secrets.SSH_HOST_USER }}
+    #   SSH_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+    #   SSH_HOST: ${{ secrets.SSH_HOST }}
 
   # - name: Write .env
   #   uses: SpicyPizza/create-envfile@v1.3

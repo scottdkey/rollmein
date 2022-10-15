@@ -22,6 +22,7 @@
     "@emotion/core": "^10.0.27",
     "@emotion/react": "^11.4.1",
     "@emotion/styled": "^11.10.4",
+    "@reduxjs/toolkit": "^1.8.6",
     "@supabase/supabase-js": "^1.35.7",
     "dotenv": "^16.0.2",
     "firebase": "^9.10.0",

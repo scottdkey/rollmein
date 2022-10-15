@@ -4,6 +4,7 @@ import rollRouter from "./roll.router"
 import playerRouter from "./player.router"
 import userRouter from "./user.router"
 import Router from "koa-router";
+import authRouter from "./auth.router"
 
 export const Routers: {router: Router, routerName: string}[] = [
   {router: indexRouter, routerName: 'indexRouter' },
@@ -11,4 +12,5 @@ export const Routers: {router: Router, routerName: string}[] = [
   {router: userOptionsRouter, routerName: 'userOptionsRouter' },
   {router: rollRouter, routerName: 'rollRouter' },
   {router: playerRouter, routerName: 'playerRouter' },
+  {router: authRouter, routerName: 'authRouter'}
 ]

@@ -1,5 +1,4 @@
 import { Next } from "koa";
-import { MiddlewareFn } from "type-graphql";
 import { container } from "../container";
 import { LoggerService } from "../services/logger.service";
 import { MyContext } from "../types/context";
@@ -9,7 +8,7 @@ interface IPlayerRequest {
 }
 const logger = container.get(LoggerService).getLogger('FindGroupIdMiddleware')
 
-export async function HasGroupId<T>(ctx: MyContext<IPlayerRequest, T>, next: Next): Promise<MiddlewareFn<MyContext<IPlayerRequest, T>>> {
+export async function HasGroupId<T>(ctx: MyContext<IPlayerRequest, T>, next: Next): Promise<MyContext<IPlayerRequest, T>> {
   if (ctx.state.user && ctx.request.body) {
     const requestData = ctx.request.body
     logger.info(JSON.stringify(requestData))

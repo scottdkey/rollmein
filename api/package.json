@@ -21,18 +21,12 @@
   },
   "dependencies": {
     "@koa/router": "^10.1.0",
-    "@mikro-orm/cli": "^4.5.7",
-    "@mikro-orm/core": "^4.5.7",
-    "@mikro-orm/migrations": "^4.5.7",
-    "@mikro-orm/postgresql": "^4.5.7",
     "@supabase/supabase-js": "^1.35.7",
-    "apollo-server": "^3.10.2",
     "argon2": "^0.28.2",
     "class-validator": "^0.13.1",
-    "connect-redis": "^6.0.0",
+    "cookies": "^0.8.0",
     "dotenv": "^10.0.0",
-    "format": "^0.2.2",
-    "graphql": "^15.5.1",
+    "firebase-admin": "^11.1.0",
     "inversify": "^6.0.1",
     "ioredis": "^4.27.6",
     "jsonwebtoken": "^8.5.1",
@@ -42,12 +36,13 @@
     "koa-jwt": "^4.0.1",
     "koa-redis": "^4.0.1",
     "koa-router": "^12.0.0",
+    "pg": "^8.8.0",
     "reflect-metadata": "^0.1.13",
-    "type-graphql": "^1.1.1",
     "uuid": "^8.3.2",
     "winston": "^3.8.2"
   },
   "devDependencies": {
+    "@firebase/app-types": "^0.8.0",
     "@types/chai": "^4.2.14",
     "@types/connect-redis": "^0.0.16",
     "@types/cors": "^2.8.10",
@@ -56,11 +51,11 @@
     "@types/jsonwebtoken": "^8.5.4",
     "@types/koa": "^2.13.5",
     "@types/koa-bodyparser": "^4.3.7",
+    "@types/koa-cookie": "^1.0.0",
     "@types/koa-cors": "^0.0.2",
     "@types/koa-router": "^7.4.4",
     "@types/mocha": "^8.2.2",
     "@types/node": "^15.14.0",
-    "@types/nodemailer": "^6.4.2",
     "@types/pg": "^8.6.0",
     "@types/superagent": "^4.1.10",
     "@types/uuid": "^8.3.0",
@@ -77,12 +72,5 @@
     "sinon": "^11.1.1",
     "ts-node": "^10.0.0",
     "typescript": "^4.1.2"
-  },
-  "mikro-orm": {
-    "useTsNode": true,
-    "configPaths": [
-      "./src/mikro-orm.config.ts",
-      "./dist/mikro-orm.config.js"
-    ]
   }
 }

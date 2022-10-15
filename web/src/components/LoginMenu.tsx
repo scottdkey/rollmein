@@ -1,12 +1,13 @@
 import { Button, FormLabel, HStack, Input, VStack, Box, Heading, useToast, useColorMode, useColorModeValue } from "@chakra-ui/react"
 import { ApiError } from "@supabase/supabase-js"
+import { User } from "firebase/auth"
 
 import NextImage from "next/image"
 import { useEffect, useState } from "react"
 import googleImage from "../assets/images/Google.svg"
+import { apiValidateSignIn } from "../utils/authApi"
 import { SignInWithGoogle } from "../utils/firebase.client"
 import { supabase } from "../utils/supabase.client"
-
 const LoginMenu = () => {
   return (
     <VStack alignContent={"center"} alignItems={"center"} width="100%" >
@@ -18,18 +19,30 @@ const LoginMenu = () => {
 
 export default LoginMenu
 
+interface extendedUser extends User {
+  stsTokenManager?: {
+    accessToken: string
+    expirationTime: number
+    refreshToken: string
+    isExpired: () => boolean
+  }
+}
+
 function GoogleSignIn() {
-  // async function signInWithGoogle() {
-  //   const res = await supabase.auth.signIn({
-  //     provider: 'google'
-  //   }, { shouldCreateUser: true})
-  //   console.log(res)
-  // }
+
+
+  const signIn = async () => {
+    const res: extendedUser | null = await SignInWithGoogle()
+    const tokens = res?.stsTokenManager
+    tokens && await apiValidateSignIn(tokens)
+  }
+
+
 
   return (
     <>
       <Button
-        onClick={SignInWithGoogle}
+        onClick={signIn}
         width="100%"
         alignItems={'center'}
         verticalAlign={'center'}

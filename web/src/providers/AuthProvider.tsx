@@ -1,6 +1,9 @@
 // eslint-disable-next-line
+import { Session } from "@supabase/supabase-js";
 import React, { createContext, useContext, useEffect, useState } from "react";
+import { apiUrl } from "../utils/constants";
 import { supabase } from "../utils/supabase.client"
+import { apiValidateSignIn } from "../utils/authApi";
 
 
 export type OptionsType = {
@@ -39,35 +42,6 @@ export const AuthContext = createContext<AuthContextType>({} as AuthContextType)
 export const AuthProvider = ({ children }: any) => {
   const [auth, setAuth] = useState<boolean>(false)
   const [user, setUser] = useState<any>(null)
-
-  const userRes = supabase.auth.user()
-
-  supabase.auth.onAuthStateChange((e, session) => {
-    switch (e) {
-      case 'SIGNED_IN':
-        setUser(supabase.auth.user())
-        setAuth(true)
-        break
-      case 'SIGNED_OUT':
-        setUser(null)
-        setAuth(false)
-        break
-      case 'TOKEN_REFRESHED':
-        console.log(session)
-        break
-      default:
-        console.error('other unhandled event:', e)
-    }
-  })
-
-
-  useEffect(() => {
-    console.log(userRes)
-    if (userRes) {
-      setUser(userRes)
-      setAuth(true)
-    }
-  }, [userRes])
 
 
 

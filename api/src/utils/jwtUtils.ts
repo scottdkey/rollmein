@@ -10,6 +10,6 @@ export interface TokenInterface {
 }
 
 
-export const signJwt = (userId: string): string => jwt.sign({ id: userId }, secretKey, { expiresIn: '7d', algorithm: "ES512" })
+export const signJwt = (userId: string): string => jwt.sign({ id: userId }, secretKey, { expiresIn: '7d', algorithm: "RS256" })
 
-export const verifyJwt = (token: string): JwtPayload | string => jwt.verify(token, secretKey, { algorithms: ["ES512"] })
+export const verifyJwt = (token: string): JwtPayload | string => jwt.verify(token, secretKey, { algorithms: ["RS256"] })
