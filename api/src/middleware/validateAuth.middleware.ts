@@ -17,10 +17,11 @@ export const ValidateAuthMiddleware = async (ctx: MyContext<any, any>, next: Nex
     const authHeader = ctx.headers.authorization && ctx.headers.authorization as string
     const token = authHeader && authHeader.split('Bearer ')[1]
     if (token) {
-
-      ctx.state.token = token
       const payload = await fb.verifyToken(token)
       const valid = validPayload(payload)
+      ctx.state.token = token
+      ctx.state.user = payload
+      ctx.state.validUser = true
       valid && ctx.cookies.set(serverConfig.cookieName, token, {
         httpOnly: true,
         domain: serverConfig.prod ? serverConfig.cors_uri : 'localhost',
@@ -29,11 +30,10 @@ export const ValidateAuthMiddleware = async (ctx: MyContext<any, any>, next: Nex
         sameSite: "lax",
         expires: new Date(new Date().getTime() + 3600000),
       });
-      ctx.state.user = payload
-      ctx.state.validUser = true
     }
   } catch (e) {
     logger.error(AuthorizationError.message)
+    logger.error(e)
     ctx.status = HTTPCodes.UNAUTHORIZED
     ctx.body = {
       data: null,
@@ -52,7 +52,6 @@ const validPayload = (payload: DecodedIdToken) => {
   const issuer = payload.iss === 'https://securetoken.google.com/rollmein-c1698'
   const aud = payload.aud === 'rollmein-c1698'
   const exp = expirationDate > now
-  console.log(exp)
 
   return issuer && aud
 }
