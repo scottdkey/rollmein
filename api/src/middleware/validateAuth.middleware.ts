@@ -52,6 +52,7 @@ const validPayload = (payload: DecodedIdToken) => {
   const issuer = payload.iss === 'https://securetoken.google.com/rollmein-c1698'
   const aud = payload.aud === 'rollmein-c1698'
   const exp = expirationDate > now
+  console.log("expires at valid comparison", exp)
 
   return issuer && aud
 }
