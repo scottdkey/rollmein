@@ -22,9 +22,6 @@ export class DatabaseService {
       max: 15,
       min: 3,
       idleTimeoutMillis: 600000,
-      log: (messages: unknown[]) => {
-        this.logger.info(JSON.stringify(messages))
-      }
     })
   }
 
@@ -56,7 +53,7 @@ export class DatabaseService {
         error: DatabaseError("This query retrieved no rows")
       }
     } catch (e) {
-      console.error(e)
+      this.logger.error({...e, message: "db query failed", text})
       return {
         data: null,
         success: false,

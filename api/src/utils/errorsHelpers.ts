@@ -63,11 +63,20 @@ export const AuthorizationErrorResponse: DataResponse<never> = {
   error: AuthorizationError
 }
 
-export function UnknownProblemResponse(error: Error): DataResponse<never> {
-  return {
-    data: null,
-    success: false,
-    error: UnknownProblemError(error)
+export function UnknownProblemResponse(error: Error){
+  try{
+    return {
+      data: null,
+      success: false,
+      error: UnknownProblemError(error)
+    }
+  } catch(e){
+    console.error(e)
+    return {
+      data: null,
+      success: false,
+      error: null
+    }
   }
 }
 

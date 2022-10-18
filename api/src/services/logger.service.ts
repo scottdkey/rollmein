@@ -5,6 +5,7 @@ const { combine, label, printf, timestamp, prettyPrint } = format
 
 export interface MessageType {
     [key: string]: any
+    message: string
 }
 
 export enum LogType {
@@ -13,15 +14,12 @@ export enum LogType {
     WARN = 'warn',
     ERROR = 'error'
 }
-interface ParamsType {
-    [key: string]: any
-}
 
 export interface Logger {
-    info: (message: string, params?: ParamsType) => void;
-    debug: (message: string, params?: ParamsType) => void;
-    warn: (message: string, params?: ParamsType) => void;
-    error: (message: string, params?: ParamsType) => void;
+    info: (message: MessageType) => void;
+    debug: (message: MessageType) => void;
+    warn: (message: MessageType) => void;
+    error: (message: MessageType) => void;
 }
 
 
@@ -34,6 +32,13 @@ export class LoggerService {
     timestamp(): string {
         const now = new Date
         return now.toISOString()
+    }
+
+    private logMessage(message: MessageType, level: LogType) {
+        return {
+            level,
+            message: JSON.stringify(message)
+        }
     }
 
 
@@ -49,33 +54,17 @@ export class LoggerService {
             transports: [new transports.Console()]
         })
         return {
-            info: (message: string, params?: ParamsType) => {
-                logger.info({
-                    level: LogType.INFO,
-                    message,
-                    params
-                })
+            info: (message: MessageType) => {
+                logger.info(this.logMessage(message, LogType.INFO))
             },
-            debug: (message: string, params?: ParamsType) => {
-                logger.debug({
-                    level: LogType.DEBUG,
-                    message,
-                    params
-                })
+            debug: (message: MessageType) => {
+                logger.debug(this.logMessage(message, LogType.DEBUG))
             },
-            warn: (message: string, params?: ParamsType) => {
-                logger.warn({
-                    level: LogType.WARN,
-                    message,
-                    params
-                })
+            warn: (message: MessageType) => {
+                logger.warn(this.logMessage(message, LogType.WARN))
             },
-            error: (message: string, params?: ParamsType) => {
-                logger.error({
-                    level: LogType.ERROR,
-                    message,
-                    params
-                })
+            error: (message: MessageType) => {
+                logger.error(this.logMessage(message, LogType.ERROR))
             }
 
         }

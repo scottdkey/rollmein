@@ -74,19 +74,19 @@ export class ConfigService {
   }
 
   PgConfig(): {
-    user: string
-    password: string
-    host: string
-    port: number
-    database: string
+    user: string | undefined
+    password: string | undefined
+    host: string | undefined
+    port: number | undefined
+    database: string | undefined
   } {
     const { POSTGRES_DATABASE, POSTGRES_USER, POSTGRES_PASSWORD, POSTGRES_HOST, POSTGRES_PORT } = process.env
     return {
-      user: POSTGRES_USER ? POSTGRES_USER : 'postgres',
-      password: POSTGRES_PASSWORD ? POSTGRES_PASSWORD : 'postgres',
-      host: POSTGRES_HOST ? POSTGRES_HOST : '0.0.0.0',
-      port: POSTGRES_PORT ? parseInt(POSTGRES_PORT) : 5432,
-      database: POSTGRES_DATABASE ? POSTGRES_DATABASE : "rollmein_dev"
+      user: POSTGRES_USER,
+      password: POSTGRES_PASSWORD,
+      host: POSTGRES_HOST,
+      port: parseInt(POSTGRES_PORT || "0"),
+      database: POSTGRES_DATABASE
     }
   }
 
@@ -102,7 +102,7 @@ export class ConfigService {
       for (const key of Object.keys(configObject)) {
         const value = configObject[key]
         if (value === null || value === undefined) {
-          this.logger.error(`no undefined keys in ${configName} config -- key:${key} value:${value}`)
+          this.logger.error({ message: `no undefined keys in ${configName} config -- key:${key} value:${value}` })
         }
       }
     })

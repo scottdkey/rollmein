@@ -12,7 +12,8 @@ export const apiValidateSignIn = async (tokens: {
       method: RestMethods.POST,
       body: JSON.stringify(tokens),
       headers: {
-        Authorization: `Bearer ${tokens.accessToken}`
+        Authorization: `Bearer ${tokens.accessToken}`,
+        'content-type': 'application/json'
       },
       credentials: 'include',
     })

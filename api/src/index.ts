@@ -18,12 +18,12 @@ app.use(
   cors({
     origin: config.cors_uri,
     credentials: true,
-    headers: ['Authorization']
+    headers: ['Authorization', "content-type"]
   })
 )
 
 Routers.forEach(({ router, routerName }) => {
-  logger.info(`starting ${routerName}`)
+  logger.info({ message: `starting ${routerName}` })
   app.use(router.routes()).use(router.allowedMethods())
 
 })
@@ -32,5 +32,5 @@ export const server = app.listen(config.port, () => {
   const localDomain = `http://localhost:${config.port}`
   const serverDomain = 'https://rollmein-api.scottkey.dev'
   const message = `server started on ${config.prod ? serverDomain : localDomain}`
-  !config.test || config.prod ? logger.info(message) : null
+  !config.test || config.prod ? logger.info({ message}) : null
 });

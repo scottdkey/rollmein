@@ -20,9 +20,9 @@ export class RedisService {
       this.redis = new IoRedis({
         host: config.host
       })
-      logger.info("connected to redis")
+      logger.info({ message: "connected to redis" })
     } catch (e) {
-      logger.error('unable to connect to redis')
+      logger.error({ message: 'unable to connect to redis' })
     }
   }
   async get<T>(key: RedisKeys, id: string): Promise<DataResponse<T>> {

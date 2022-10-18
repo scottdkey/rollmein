@@ -74,7 +74,7 @@ export class UserOptionsService extends DataServiceAbstract<DbUserOptions, UserO
 
   protected validateUserOptionsInput(userId: string, input: UserOptionsInput | null, userOptions: UserOptions): { input: UserOptionsInput | null; error: AppError | null } {
     if (userId !== userOptions.userId) {
-      this.logger.error(AuthorizationError.message)
+      this.logger.error({ message: AuthorizationError.message })
       return {
         error: AuthorizationError,
         input: null
@@ -82,7 +82,7 @@ export class UserOptionsService extends DataServiceAbstract<DbUserOptions, UserO
 
     }
     if (input === null) {
-      this.logger.error('null input #validateUserOptionsInput')
+      this.logger.error({ message: 'null input #validateUserOptionsInput' })
       return {
         error: NullInputError,
         input: null
