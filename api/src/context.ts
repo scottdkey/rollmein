@@ -1,9 +1,9 @@
-import {DataResponse} from "./types/DataResponse"
-import {HTTPCodes} from "./types/HttpCodes.enum"
-import {ApplicationErrorResponse, HttpCodeFromErrorType} from "./utils/errorsHelpers"
+import { DataResponse } from "./types/DataResponse"
+import { HTTPCodes } from "./types/HttpCodes.enum"
+import { ApplicationErrorResponse, HttpCodeFromErrorType } from "./utils/errorsHelpers"
 
 
-export function HandleDataResponse<T>(res: DataResponse<T>,successCode: HTTPCodes): {body: DataResponse<T>, status: HTTPCodes} {
+export function HandleDataResponse<T>(res: DataResponse<T>, successCode: HTTPCodes): { body: DataResponse<T>, status: HTTPCodes } {
 
   if (!res.success && res.error) {
     return {
@@ -19,7 +19,7 @@ export function HandleDataResponse<T>(res: DataResponse<T>,successCode: HTTPCode
   }
   if (res.success && !res.data) {
     return {
-      body:res,
+      body: res,
       status: successCode
     }
   }

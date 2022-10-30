@@ -1,4 +1,4 @@
-import { PlayerService } from '../services/player.service';
+import { PlayerService } from './player.service';
 import { container } from '../container';
 import Router from "koa-router";
 import { isAuth } from "../middleware/isAuth";

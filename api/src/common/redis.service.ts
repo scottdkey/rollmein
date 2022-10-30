@@ -6,7 +6,7 @@ import { addToContainer } from "../container";
 import IoRedis, { Redis } from 'ioredis'
 
 export enum RedisKeys {
-
+  SESSION = 'session'
 }
 
 @addToContainer()
@@ -41,8 +41,8 @@ export class RedisService {
     }
   }
 
-  async set<T>(key: RedisKeys, id: string, data: T): Promise<DataResponse<T>> {
-    const res = await this.redis.set(`${key}-${id}`, JSON.stringify(data), 'ex', 3600)
+  async set<T>(key: RedisKeys, id: string, data: T, expireTime?: number): Promise<DataResponse<T>> {
+    const res = await this.redis.set(`${key}-${id}`, JSON.stringify(data), 'ex', expireTime || 3600)
     if (res) {
       return {
         data,
@@ -57,11 +57,11 @@ export class RedisService {
     }
   }
 
-  async setWithRetry<T>(key: RedisKeys, id: string, data: T, retry: number): Promise<DataResponse<T>> {
-    let res = this.set(key, id, data)
+  async setWithRetry<T>(key: RedisKeys, id: string, data: T, retry: number = 3, expireTime?: number): Promise<DataResponse<T>> {
+    let res = this.set(key, id, data, expireTime)
     let retryCount = 0
     while (!res && retryCount > retry) {
-      res = this.set(key, id, data)
+      res = this.set(key, id, data, expireTime)
       retryCount++
     }
     return res

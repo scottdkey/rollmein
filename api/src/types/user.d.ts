@@ -1,35 +1,28 @@
 import { DataResponse } from "./DataResponse"
 
-interface CreateUser {
-  username: string
-  email: string
-  googleId?: string
-  appleId?: string
-  firebaseId: string
-}
-
 interface DbUser {
   id: string
-  username: string
+  username: string | null
   email: string
-  google_id: string,
-  apple_id: string,
+  google_id: string | null,
+  apple_id: string | null,
   firebase_id: string,
+  refresh_token: string,
   created_at: string
   updated_at: string
 }
 
-interface User extends CreateUser {
+interface User extends RegisterUser {
   id: string
   createdAt: string
   updatedAt: string
 }
 interface ScrubbedUser {
   id: string
-  username: string
+  username: string | null
 }
 interface RegisterUser {
-  username: string,
+  username: string | null,
   email: string | null,
   googleId: string | null,
   appleId: string | null,

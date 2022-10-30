@@ -52,8 +52,8 @@ const NavBar: React.FC<NavBarProps> = ({ }) => {
           <Heading className={styles.SiteHeader}>Roll Me In</Heading>
           <HStack>
             <NextLink href={'/'}><div className={routerClassNameSwitch(["/", '/#'])}>Home</div></NextLink>
-            <NextLink href={'/groups'}>
-              <div className={routerClassNameSwitch(["/groups"])}>Groups</div></NextLink>
+            <NextLink href={'/profile'}>
+              <div className={routerClassNameSwitch(["/profile"])}>Profile</div></NextLink>
           </HStack>
         </VStack>
         <Box ml={'auto'}>

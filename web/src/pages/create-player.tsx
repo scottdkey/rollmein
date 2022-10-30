@@ -1,54 +1,38 @@
-import { Box, Button } from '@chakra-ui/react';
-import { Form, Formik } from 'formik';
+import { Box, Button, HStack, Input } from '@chakra-ui/react';
 import Router, { useRouter } from 'next/router';
 import React from 'react';
-import { InputField } from '../components/InputField';
 import { Layout as Layout } from '../components/Layout';
 import { useQueryClient } from 'react-query';
 import { useAuth } from '../providers/AuthProvider';
+import { SubmitHandler, useForm } from 'react-hook-form';
 
-
+interface ICreatePlayer {
+  name: string,
+  tank: boolean,
+  healer: boolean,
+  dps: boolean,
+  inTheRoll: boolean,
+  locked: boolean
+}
 
 const CreatePlayer: React.FC<{}> = ({ }) => {
+  const { register, handleSubmit, watch, formState: { errors } } = useForm<ICreatePlayer>({
+    defaultValues: { name: "", tank: false, healer: false, dps: false, inTheRoll: false, locked: false }
+  });
   const queryClient = useQueryClient()
   const { auth } = useAuth()
   const router = useRouter()
+
+  const onSubmit: SubmitHandler<ICreatePlayer> = (data) => {
+    console.log('create player submit')
+  }
   return (
-
     <Layout variant="small">
-      <Formik
-        initialValues={{ name: "", tank: false, healer: false, dps: false, inTheRoll: false, locked: false }}
-        onSubmit={async (values, { setErrors }) => {
-          console.log(values)
-
-        }}>
-
-        {({ isSubmitting }) => (
-          <Form>
-            <InputField
-              name="title"
-              placeholder="title"
-              label="Title"
-            />
-            <Box mt={4}>
-              <InputField
-                name="text"
-                placeholder="text..."
-                label="Body"
-                textArea={true}
-              />
-            </Box>
-            <Button
-              mt={4}
-              type="submit"
-              isLoading={isSubmitting}
-              colorScheme="teal"
-            >
-              create post
-            </Button>
-          </Form>
-        )}
-      </Formik>
+      <form onSubmit={handleSubmit(onSubmit)}>
+        <HStack>
+          <Input {...register('name')} />
+        </HStack>
+      </form>
     </Layout >
   )
 };

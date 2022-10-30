@@ -1,9 +1,6 @@
 // eslint-disable-next-line
-import { Session } from "@supabase/supabase-js";
 import React, { createContext, useContext, useEffect, useState } from "react";
-import { apiUrl } from "../utils/constants";
-import { supabase } from "../utils/supabase.client"
-import { apiValidateSignIn } from "../utils/authApi";
+import { useMeQuery } from "../utils/userApi";
 
 
 export type OptionsType = {
@@ -28,22 +25,28 @@ export type AuthContextType = {
 
 interface UserData {
   id: string;
-  email: string | null;
   username: string | null;
-  anon: boolean;
-  refreshToken: string;
-  providerId: string;
-  providerData: ({} | null)[];
 }
 
 
 export const AuthContext = createContext<AuthContextType>({} as AuthContextType);
 
 export const AuthProvider = ({ children }: any) => {
+  const { data, isLoading, error } = useMeQuery()
   const [auth, setAuth] = useState<boolean>(false)
   const [user, setUser] = useState<any>(null)
 
+  useEffect(() => {
+    if (data) {
+      setUser(data)
+      setAuth(true)
+    }
+    if (error) {
+      setUser(null)
+      setAuth(false)
+    }
 
+  }, [data, error, isLoading])
 
   return (
     <AuthContext.Provider value={{ auth, setAuth, user, setUser } as AuthContextType}>

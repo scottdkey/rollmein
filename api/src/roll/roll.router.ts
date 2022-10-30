@@ -1,4 +1,4 @@
-import { RollService } from '../services/roll.service';
+import { RollService } from './roll.service';
 import { container } from '../container';
 import Router from "koa-router";
 import { isAuth } from '../middleware/isAuth';

@@ -1,13 +1,15 @@
 {
   "license": "MIT",
   "scripts": {
-    "dev": "docker-compose up -d && yarn migrate up",
+    "dev": "docker-compose up -d && yarn migrate",
     "dev:down": "docker-compose down",
     "dev:clean": "docker-compose down -v",
-    "prod": "docker-compose -f prod.docker-compose.yml pull && yarn migrate up && docker-compose -f prod.docker-compose.yml up -d",
+    "prod": "docker-compose -f prod.docker-compose.yml pull && yarn migrate && docker-compose -f prod.docker-compose.yml up -d",
     "prod:down": "docker-compose -f prod.docker-compose.yml down",
     "prod:clean": "docker-compose -f prod.docker-compose.yml down -v",
-    "migrate": "node node_modules/db-migrate/bin/db-migrate -m ./migrations -e pg"
+    "migrate": "node node_modules/db-migrate/bin/db-migrate -m ./migrations -e pg up",
+    "migrate:down": "node node_modules/db-migrate/bin/db-migrate -m ./migrations -e pg down",
+    "migrate:create": "node node_modules/db-migrate/bin/db-migrate create addRefreshToken -e pg --sql-file"
   },
   "dependencies": {
     "db-migrate": "^0.11.13",

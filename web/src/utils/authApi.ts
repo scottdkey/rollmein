@@ -1,35 +1,33 @@
-import { supabase } from './supabase.client';
-import { apiUrl } from "./constants"
+import { MutationOptions, useMutation, UseMutationOptions, useQuery } from "react-query";
+import { RestMethods, ApiResponse, ApiRequest } from "./Rollmein.api";
 
-export const apiValidateSignIn = async (tokens: {
-  accessToken: string
-  expirationTime: number
-  refreshToken: string
-  isExpired: () => boolean
-}) => {
-  try {
-    return await fetch(`${apiUrl}auth/validate`, {
-      method: RestMethods.POST,
-      body: JSON.stringify(tokens),
-      headers: {
-        Authorization: `Bearer ${tokens.accessToken}`,
-        'content-type': 'application/json'
-      },
-      credentials: 'include',
-    })
-  } catch (e) {
-    console.error(e)
-    return
-  }
+export enum AuthRoutes {
+  VALIDATE = `auth/validate`,
+  LOGOUT = "auth/logout"
 }
 
-export enum RestMethods {
-  GET = "GET",
-  POST = "POST",
-  PUT = "PUT",
-  PATCH = "PATCH",
-  DELETE = "DELETE",
-  HEAD = "HEAD"
+export interface ITokens {
+  accessToken: string;
+  expirationTime: number;
+  refreshToken: string;
+  isExpired: () => boolean;
 }
+
+export interface ScrubbedUser {
+  id: string
+  username: string
+}
+export interface IValidateResponse extends ApiResponse<ScrubbedUser> { }
+
+
+export const useValidateSignInMutation = (options: UseMutationOptions<ScrubbedUser, unknown, ITokens, unknown>) => useMutation(async (tokens: ITokens) => {
+  return await ApiRequest<ITokens, ScrubbedUser>(AuthRoutes.VALIDATE, RestMethods.POST, tokens, tokens.accessToken)
+}, options)
+
+export const useLogoutMutation = (options: UseMutationOptions<unknown, unknown, unknown, unknown>) => useMutation(async () => {
+  return await ApiRequest(AuthRoutes.LOGOUT, RestMethods.DELETE)
+}, options)
+
+
 
 

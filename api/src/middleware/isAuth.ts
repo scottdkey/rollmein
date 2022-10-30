@@ -3,39 +3,32 @@ import { HTTPCodes } from '../types/HttpCodes.enum';
 import { Next } from "koa";
 import { MyContext } from "../types/context";
 import { container } from '../container';
-import { LoggerService } from '../services/logger.service';
-import { ConfigService } from '../services/config.service';
-import { FirebaseService } from '../services/firebase.service';
+import { LoggerService } from '../common/logger.service';
+import { ConfigService } from '../common/config.service';
+import { AuthService } from '../auth/auth.service';
 
 const serverConfig = container.get(ConfigService).ServerConfig()
-const fb = container.get(FirebaseService)
+const authService = container.get(AuthService)
 const logger = container.get(LoggerService).getLogger('IndexLogger')
 
-export async function isAuth<T>(ctx: MyContext<unknown, T>, next: Next): Promise<MyContext<unknown, T>> {
-  const cookie = ctx.cookies.get(serverConfig.cookieName)
-  if (cookie) {
-    const payload = await fb.verifyToken(cookie)
-    logger.debug({ message: `jwt ${payload}` })
-    ctx.state.user = {
-      email: payload.email || "undefined",
-      id: "",
-      googleId: payload.firebase.identities['google.com'].id || "undefined",
-      appleId: payload.firebase.identities['apple'] || "undefined",
-      username: "",
-      firebaseId: payload.uid,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString()
+export async function isAuth(ctx: MyContext<any, any>, next: Next) {
+  try {
+    const cookie = ctx.cookies.get(serverConfig.cookieName)
+    if (cookie) {
+      const user = await authService.getSession(cookie)
+      ctx.state.user = user.data
+      ctx.state.token = cookie
+      ctx.state.validUser = true
     }
-    ctx.state.validUser = true
-  }
-  if (!ctx.state.user && !ctx.state.validUser) {
-    logger.error({ message: AuthorizationError.message })
-    ctx.status = HTTPCodes.UNAUTHORIZED
+  } catch (e) {
+    logger.error({ message: AuthorizationError.message, error: e.message })
     ctx.body = {
       data: null,
       error: AuthorizationError,
       success: false
     }
+    ctx.status = HTTPCodes.UNAUTHORIZED
   }
-  return next()
+  await next()
+
 }

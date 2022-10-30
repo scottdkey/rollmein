@@ -18,7 +18,7 @@ interface MyState {
     validUser: boolean = false
     groupId: string | null
 }
-interface MyContext<RequestBody, ResponseBody> extends ParameterizedContext<MyState, DefaultContext, DataResponse<ResponseBody>> {
+interface MyContext<RequestBody, ResponseBody> extends ParameterizedContext<MyState, DefaultContext, ResponseBody> {
     request: {
         body: RequestBody
     }

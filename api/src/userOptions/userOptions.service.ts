@@ -1,9 +1,9 @@
-import { Logger, LoggerService } from './logger.service';
-import { DatabaseService } from './database.service';
+import { Logger, LoggerService } from '../common/logger.service';
+import { DatabaseService } from '../common/database.service';
 import { DataResponse } from '../types/DataResponse';
 import { AuthorizationError, NullInputError, NotInDatabaseError } from '../utils/errorsHelpers';
 import { addToContainer } from '../container';
-import { DataServiceAbstract } from './dataService.abstract';
+import { DataServiceAbstract } from '../common/dataService.abstract';
 
 @addToContainer()
 export class UserOptionsService extends DataServiceAbstract<DbUserOptions, UserOptions>{

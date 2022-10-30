@@ -32,5 +32,5 @@ export function deleteCookie() {
   const d = new Date();
   d.setTime(d.getTime() + (0));
   let expires = "expires=" + d.toUTCString();
-  document.cookie = cookieName + "=" + "" + ";" + expires + ";path=/";
+  document.cookie = cookieName + "=" + "" + ";" + expires + ";path=/;domain=localhost";
 }

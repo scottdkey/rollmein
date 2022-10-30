@@ -53,7 +53,7 @@ export class DatabaseService {
         error: DatabaseError("This query retrieved no rows")
       }
     } catch (e) {
-      this.logger.error({...e, message: "db query failed", text})
+      this.logger.error({ ...e, message: "db query failed", text })
       return {
         data: null,
         success: false,

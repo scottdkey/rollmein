@@ -1,12 +1,9 @@
 import { ChevronDownIcon, ChevronUpIcon } from "@chakra-ui/icons"
-import { HStack, Menu, MenuButton, Button, MenuList, MenuItem, Tabs, TabList, Tab, TabPanels, TabPanel, useColorModeValue, Box } from "@chakra-ui/react"
-import { useEffect, useState } from "react"
+import { Menu, MenuButton, MenuList, useColorModeValue } from "@chakra-ui/react"
+import dynamic from "next/dynamic"
+import { useState } from "react"
 import { useAuth } from "../providers/AuthProvider"
-import { deleteCookie } from "../utils/cookieHelpers"
 import styles from "../styles/AuthMenu.module.scss"
-import LoginMenu from "./LoginMenu"
-import RegisterMenu from "./RegisterMenu"
-import AuthComponents from "./AuthComponents"
 
 
 const AuthMenu = () => {
@@ -17,25 +14,8 @@ const AuthMenu = () => {
   const [logoutLoading, setLogoutLoading] = useState(false)
   const [keepMenuOpen, setKeepMenuOpen] = useState(true)
 
-
-  const UnAuthComponents = (): JSX.Element => {
-    return (
-      <Tabs margin={'0'}>
-        <TabList>
-          <Tab>Login</Tab>
-          <Tab >Register</Tab>
-        </TabList>
-        <TabPanels>
-          <TabPanel>
-            <LoginMenu />
-          </TabPanel>
-          <TabPanel>
-            <RegisterMenu />
-          </TabPanel>
-        </TabPanels>
-      </Tabs>
-    )
-  }
+  const AuthNav = dynamic(() => import('./AuthNavButtons'))
+  const UnAuthNav = dynamic(() => import('./UnAuthNavButtons'))
 
 
   const ToggleOpen = () => {
@@ -53,7 +33,7 @@ const AuthMenu = () => {
         </MenuButton>
         <MenuList className={styles.MenuList} margin={'0'}>
           {auth ?
-            <AuthComponents /> : <UnAuthComponents />}
+            <AuthNav /> : <AuthNav />}
         </MenuList>
       </Menu>
     </div>

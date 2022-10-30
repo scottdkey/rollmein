@@ -1,4 +1,4 @@
-import { ConfigService } from '../services/config.service';
+import { ConfigService } from '../common/config.service';
 import { container } from '../container';
 
 import jwt from "jsonwebtoken"

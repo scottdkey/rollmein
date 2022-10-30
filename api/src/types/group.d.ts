@@ -1,5 +1,5 @@
-import { RollType } from '../services/roll.service';
-import {DataResponse} from "./DataResponse";
+import { RollType } from '../roll/roll.service';
+import { DataResponse } from "./DataResponse";
 
 interface DbGroup {
   id: string
@@ -26,7 +26,7 @@ interface Group {
 }
 
 interface IGroupUpdateParams {
-  membersCanUpdate? : boolean,
+  membersCanUpdate?: boolean,
   rollType?: RollType,
   lockAfterOut?: boolean,
   memberId?: string,

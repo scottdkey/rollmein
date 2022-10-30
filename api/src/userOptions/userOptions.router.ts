@@ -1,10 +1,10 @@
 import { HTTPCodes } from '../types/HttpCodes.enum';
 import { container } from '../container';
 import Router from "koa-router";
-import { UserOptionsService } from '../services/userOptions.service';
+import { UserOptionsService } from './userOptions.service';
 import { HandleDataResponse } from '../context';
 import { isAuth } from '../middleware/isAuth';
-import {MyContext} from "../types/context";
+import { MyContext } from "../types/context";
 
 const optionsService = container.get(UserOptionsService)
 const router = new Router({
@@ -19,7 +19,7 @@ router.get('/', isAuth, async (ctx: UserOptionsContext, next) => {
     if (!res.data) {
       res = await optionsService.createOptions(ctx.state.user.id)
     }
-    const {body, status} = HandleDataResponse(res, HTTPCodes.OK)
+    const { body, status } = HandleDataResponse(res, HTTPCodes.OK)
     ctx.body = body
     ctx.status = status
   }
@@ -31,7 +31,7 @@ router.post('/', isAuth, async (ctx: UserOptionsContext, next) => {
     const userId: string = ctx.state.user.id
     const params: UserOptionsInput = ctx.params
     const res = await optionsService.updateOptions(userId, params)
-    const {body, status} = HandleDataResponse(res, HTTPCodes.CREATED)
+    const { body, status } = HandleDataResponse(res, HTTPCodes.CREATED)
     ctx.body = body
     ctx.status = status
   }

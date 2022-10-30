@@ -4,9 +4,12 @@ import { User } from "firebase/auth"
 
 import NextImage from "next/image"
 import { useEffect, useState } from "react"
+import { useMutation, useQueryClient } from "react-query"
 import googleImage from "../assets/images/Google.svg"
-import { apiValidateSignIn } from "../utils/authApi"
+import { useAuth } from "../providers/AuthProvider"
+import { AuthRoutes, ITokens, IValidateResponse, ScrubbedUser, useValidateSignInMutation } from "../utils/authApi"
 import { SignInWithGoogle } from "../utils/firebase.client"
+import { ApiRequest, RestMethods } from "../utils/Rollmein.api"
 import { supabase } from "../utils/supabase.client"
 const LoginMenu = () => {
   return (
@@ -29,12 +32,19 @@ interface extendedUser extends User {
 }
 
 function GoogleSignIn() {
-
-
+  const { setUser, setAuth } = useAuth()
+  const queryClient = useQueryClient()
+  const validateSignIn = useValidateSignInMutation({
+    onSuccess: (data) => {
+      setUser(data)
+      setAuth(true)
+      queryClient.invalidateQueries(['me'])
+    }
+  })
   const signIn = async () => {
     const res: extendedUser | null = await SignInWithGoogle()
     const tokens = res?.stsTokenManager
-    tokens && await apiValidateSignIn(tokens)
+    tokens && validateSignIn.mutate(tokens)
   }
 
 

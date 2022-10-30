@@ -1,7 +1,7 @@
 import { ErrorTypes } from '../types/ErrorCodes.enum';
 import { DataResponse } from '../types/DataResponse';
 import { addToContainer } from "../container";
-import {PlayerCounts, ValidRoll} from "../types/roll";
+import { PlayerCounts, ValidRoll } from "../types/roll";
 
 @addToContainer()
 export class RollService {

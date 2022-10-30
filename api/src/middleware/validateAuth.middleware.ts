@@ -1,7 +1,7 @@
-import { FirebaseService } from './../services/firebase.service';
+import { FirebaseService } from '../common/firebase.service';
 import { Next } from "koa"
 import { container } from "../container"
-import { LoggerService } from "../services/logger.service"
+import { LoggerService } from "../common/logger.service"
 import { MyContext } from "../types/context"
 import { DecodedIdToken } from 'firebase-admin/lib/auth/token-verifier';
 import { AuthorizationError } from '../utils/errorsHelpers';
@@ -10,16 +10,16 @@ import { HTTPCodes } from '../types/HttpCodes.enum';
 const logger = container.get(LoggerService).getLogger('validate auth middleware')
 const fb = container.get(FirebaseService)
 
-export const CheckAuthHeaderMiddleware = async (ctx: MyContext<any, any>, next: Next) => {
+export async function CheckAuthHeaderMiddleware(ctx: MyContext<any, any>, next: Next) {
   try {
     const authHeader = ctx.headers.authorization && ctx.headers.authorization as string
     const token = authHeader && authHeader.split('Bearer ')[1]
     if (!ctx.state.validUser && token) {
       const payload = await fb.verifyToken(token)
-      const valid = validPayload(payload)
+      const valid = await validPayload(payload)
 
       if (payload && valid) {
-        const transformPayload = transformJwtToUser(payload)
+        const transformPayload = await transformJwtToUser(payload)
         ctx.state.token = token
         ctx.state.firebaseInfo = transformPayload
         ctx.state.validUser = true
@@ -27,17 +27,16 @@ export const CheckAuthHeaderMiddleware = async (ctx: MyContext<any, any>, next: 
     }
   } catch (e) {
     logger.error({ message: AuthorizationError.message, error: e.message })
-    ctx.status = HTTPCodes.UNAUTHORIZED
-    ctx.body = {
+    ctx.throw(HTTPCodes.UNAUTHORIZED, {
       data: null,
       error: AuthorizationError,
       success: false
-    }
+    })
   }
-  next()
+  await next()
 }
 
-const transformJwtToUser = (payload: DecodedIdToken) => {
+const transformJwtToUser = async (payload: DecodedIdToken) => {
   const firebaseId = payload.uid
   const hasGoogleId = payload.firebase.identities.hasOwnProperty('google.com')
   const googleId: string | null = hasGoogleId && payload.firebase.identities['google.com'][0] || null
@@ -54,16 +53,16 @@ const transformJwtToUser = (payload: DecodedIdToken) => {
 }
 
 
-const validPayload = (payload: DecodedIdToken) => {
+const validPayload = async (payload: DecodedIdToken) => {
 
   const expirationDate = new Date(payload.exp)
 
   const now = new Date()
-  console.log("now", now)
   const issuer = payload.iss === 'https://securetoken.google.com/rollmein-c1698'
   const aud = payload.aud === 'rollmein-c1698'
   const exp = expirationDate > now
-  console.log("expires at valid comparison", exp)
+  console.log(exp, 'expiration valid')
+  console.log('expiration Date', expirationDate, 'now', now)
 
   return issuer && aud
 }
