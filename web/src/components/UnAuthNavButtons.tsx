@@ -1,7 +1,10 @@
 import { Tabs, TabList, Tab, TabPanels, TabPanel } from "@chakra-ui/react"
+import dynamic from "next/dynamic"
 
-import LoginMenu from "./LoginMenu"
 import RegisterMenu from "./RegisterMenu"
+const LoginMenu = dynamic(() => import('./LoginMenu'), {
+  suspense: true,
+})
 
 const UnAuthComponents = (): JSX.Element => {
   return (

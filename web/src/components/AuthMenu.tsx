@@ -4,6 +4,8 @@ import dynamic from "next/dynamic"
 import { useState } from "react"
 import { useAuth } from "../providers/AuthProvider"
 import styles from "../styles/AuthMenu.module.scss"
+import AuthNav from "./AuthNavButtons"
+import UnAuthNav from "./AuthNavButtons"
 
 
 const AuthMenu = () => {
@@ -13,9 +15,6 @@ const AuthMenu = () => {
   const buttonColor = useColorModeValue("blue.300", "blue.600")
   const [logoutLoading, setLogoutLoading] = useState(false)
   const [keepMenuOpen, setKeepMenuOpen] = useState(true)
-
-  const AuthNav = dynamic(() => import('./AuthNavButtons'))
-  const UnAuthNav = dynamic(() => import('./UnAuthNavButtons'))
 
 
   const ToggleOpen = () => {

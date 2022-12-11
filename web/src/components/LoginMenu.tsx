@@ -1,5 +1,6 @@
 import { Button, HStack, Input, VStack, Box, useToast } from "@chakra-ui/react"
 import { User } from "firebase/auth"
+import dynamic from "next/dynamic"
 
 import NextImage from "next/image"
 import { useState } from "react"
@@ -18,7 +19,6 @@ const LoginMenu = () => {
     </VStack >
   )
 }
-
 export default LoginMenu
 
 interface extendedUser extends User {
