@@ -22,12 +22,7 @@ export async function isAuth(ctx: MyContext<any, any>, next: Next) {
     }
   } catch (e) {
     logger.error({ message: AuthorizationError.message, error: e.message })
-    ctx.body = {
-      data: null,
-      error: AuthorizationError,
-      success: false
-    }
-    ctx.status = HTTPCodes.UNAUTHORIZED
+    ctx.state.validUser = false
   }
   await next()
 

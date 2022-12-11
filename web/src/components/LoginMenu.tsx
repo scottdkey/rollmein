@@ -1,16 +1,16 @@
-import { Button, FormLabel, HStack, Input, VStack, Box, Heading, useToast, useColorMode, useColorModeValue } from "@chakra-ui/react"
-import { ApiError } from "@supabase/supabase-js"
+import { Button, HStack, Input, VStack, Box, useToast } from "@chakra-ui/react"
 import { User } from "firebase/auth"
 
 import NextImage from "next/image"
-import { useEffect, useState } from "react"
-import { useMutation, useQueryClient } from "react-query"
+import { useState } from "react"
+import { useQueryClient } from "react-query"
 import googleImage from "../assets/images/Google.svg"
 import { useAuth } from "../providers/AuthProvider"
-import { AuthRoutes, ITokens, IValidateResponse, ScrubbedUser, useValidateSignInMutation } from "../utils/authApi"
+import { AuthRoutes, useValidateSignInMutation } from "../utils/authApi"
 import { SignInWithGoogle } from "../utils/firebase.client"
-import { ApiRequest, RestMethods } from "../utils/Rollmein.api"
+import { GroupRoutes } from "../utils/groupApi"
 import { supabase } from "../utils/supabase.client"
+import { UserRoutes } from "../utils/userApi"
 const LoginMenu = () => {
   return (
     <VStack alignContent={"center"} alignItems={"center"} width="100%" >
@@ -38,7 +38,7 @@ function GoogleSignIn() {
     onSuccess: (data) => {
       setUser(data)
       setAuth(true)
-      queryClient.invalidateQueries(['me'])
+      queryClient.invalidateQueries([UserRoutes.ME, GroupRoutes.GROUPS])
     }
   })
   const signIn = async () => {

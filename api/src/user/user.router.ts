@@ -12,13 +12,16 @@ const router = new Router({ prefix: '/user' })
 const userService = container.get(UserService)
 const authService = container.get(AuthService)
 
-router.get('/me', isAuth, async (ctx: MyContext<null, ScrubbedUser>, next: Next) => {
+router.get('/me', isAuth, async (ctx: MyContext<null, ScrubbedUser | { message: string }>, next: Next) => {
   if (ctx.state.user && ctx.state.validUser) {
     ctx.body = userService.scrubResponse(ctx.state.user)
     ctx.status = HTTPCodes.OK
   }
   if (!ctx.state.user) {
     ctx.status = HTTPCodes.UNAUTHORIZED
+    ctx.body = {
+      message: "not authorized to access this endpoint"
+    }
   }
   await next()
 

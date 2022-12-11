@@ -1,5 +1,6 @@
 CREATE TABLE IF NOT EXISTS public.group (
     id uuid DEFAULT public.uuid_generate_v4() NOT NULL,
+    name character varying NOT NULL,
     user_id uuid NOT NULL,
     players uuid[],
     members uuid[],

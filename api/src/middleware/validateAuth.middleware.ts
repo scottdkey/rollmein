@@ -1,5 +1,5 @@
 import { FirebaseService } from '../common/firebase.service';
-import { Next } from "koa"
+import { Middleware, Next } from "koa"
 import { container } from "../container"
 import { LoggerService } from "../common/logger.service"
 import { MyContext } from "../types/context"

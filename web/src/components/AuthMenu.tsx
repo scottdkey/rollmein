@@ -33,7 +33,7 @@ const AuthMenu = () => {
         </MenuButton>
         <MenuList className={styles.MenuList} margin={'0'}>
           {auth ?
-            <AuthNav /> : <AuthNav />}
+            <AuthNav /> : <UnAuthNav />}
         </MenuList>
       </Menu>
     </div>

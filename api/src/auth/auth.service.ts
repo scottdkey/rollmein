@@ -1,16 +1,15 @@
 import { SetOption } from "cookies";
 import { addToContainer } from "../container";
 import { ValidateRequestBody } from "./auth.router";
-import { IFirebaseInfo, MyContext } from "../types/context";
+import { IFirebaseInfo } from "../types/context";
 import { DataResponse } from "../types/DataResponse";
-import { RegisterUser, ScrubbedUser, User } from "../types/user";
+import { RegisterUser, User } from "../types/user";
 import { UnknownProblemError } from "../utils/errorsHelpers";
 import { ConfigService } from "../common/config.service";
 import { Logger, LoggerService } from "../common/logger.service";
 import { RedisKeys, RedisService } from "../common/redis.service";
 import { UserService } from "../user/user.service";
 import { v4 as uuid } from "uuid";
-import { Context, Next } from 'koa';
 
 
 @addToContainer()

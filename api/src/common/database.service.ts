@@ -27,6 +27,7 @@ export class DatabaseService {
 
   async query<D, T>(text: string, params: unknown[], mapToCamelCase: (data: D) => T): Promise<DataResponse<T[]>> {
     const client: PoolClient = await this.pool.connect()
+    this.logger.debug({message: 'performing query', text, params})
     try {
       const res = await client.query(text, params)
       if (res.rows.length > 0) {

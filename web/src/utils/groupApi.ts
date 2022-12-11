@@ -9,6 +9,7 @@ interface IGroupError {
 }
 
 export enum GroupRoutes {
+  GROUPS = "groups",
   GROUP = "group"
 }
 
@@ -45,11 +46,14 @@ interface IGroupDelete {
   id: string
 }
 
-export const useGroupsQuery = () => useQuery<IGroup[], IGroupError>("groups", async () => {
-  return await ApiRequest<{}, IGroup[]>(GroupRoutes.GROUP, RestMethods.GET)
-})
+export const useGroupsQuery = () => {
+  return useQuery<IGroup[], IGroupError>(GroupRoutes.GROUPS, async () => {
+    return await ApiRequest<{}, IGroup[]>(GroupRoutes.GROUP, RestMethods.GET)
+  })
+}
 
-export const useGetGroupByIdQuery = (groupId: string) => useQuery<IGroup, IGroupError>(GroupRoutes.GROUP, async () => {
+
+export const useGroupQuery = (groupId: string) => useQuery<IGroup, IGroupError>(GroupRoutes.GROUP, async () => {
   return await ApiRequest<{}, IGroup>(`${GroupRoutes.GROUP}/${groupId}`, RestMethods.GET)
 })
 

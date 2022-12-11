@@ -19,6 +19,7 @@ export interface IProfileUpdateBody {
 export const useMeQuery = () => useQuery<ScrubbedUser, IMeError>(UserRoutes.ME, async () => {
   return await ApiRequest<{}, ScrubbedUser>(UserRoutes.ME, RestMethods.GET)
 }, {
+  retry: false,
   staleTime: 3000,
   useErrorBoundary: (error) => error.response?.status >= 300
 })

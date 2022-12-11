@@ -3,6 +3,7 @@ import { DataResponse } from "./DataResponse";
 
 interface DbGroup {
   id: string
+  name: string
   user_id: string
   players: string[]
   members: string[]
@@ -13,14 +14,18 @@ interface DbGroup {
   updated_at: string
 }
 
-interface Group {
+interface ICreateGroup {
+  name: string
+  rollType: RollType
+  membersCanUpdate: boolean
+  lockAfterOut: boolean
+}
+
+interface Group extends ICreateGroup {
   id: string
   userId: string
   players: string[]
   members: string[]
-  rollType: RollType,
-  membersCanUpdate: boolean
-  lockAfterOut: boolean,
   createdAt: string
   updatedAt: string
 }

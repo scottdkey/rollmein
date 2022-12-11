@@ -1,7 +1,7 @@
 import { DatabaseService } from "../common/database.service";
 import { DataServiceAbstract } from "../common/dataService.abstract";
 import { addToContainer } from "../container";
-import { DbGroup, Group, GroupResponse, GroupsResponse } from "../types/group";
+import { DbGroup, Group, GroupResponse, GroupsResponse, ICreateGroup } from "../types/group";
 
 @addToContainer()
 export class GroupRepository extends DataServiceAbstract<DbGroup, Group>{
@@ -12,9 +12,10 @@ export class GroupRepository extends DataServiceAbstract<DbGroup, Group>{
     this.db = this.database
   }
 
-  mapToCamelCase = ({ id, user_id, players, members, roll_type, lock_after_out, members_can_update, created_at, updated_at }: DbGroup): Group => {
+  mapToCamelCase = ({ id, user_id, players, members, roll_type, lock_after_out, members_can_update, created_at, updated_at, name }: DbGroup): Group => {
     return {
       id,
+      name,
       userId: user_id,
       players,
       members,
@@ -26,26 +27,33 @@ export class GroupRepository extends DataServiceAbstract<DbGroup, Group>{
     }
   }
 
-  async getGroupById(id: string): Promise<GroupResponse> {
-    const query = `SELECT * FROM group WHERE id=$1`
+  async getGroups(){
+    const query = `SELECT * FROM public.group;`
+    const params: any[] = []
+    return await this.returnMany(query, params)
+
+  }
+
+  async getGroupById(id: string){
+    const query = `SELECT * FROM public.group WHERE id=$1`
     const params = [id]
     return this.returnOne(query, params)
   }
 
-  async getGroupsByUserId(userId: string): Promise<GroupsResponse> {
+  async getGroupsByUserId(userId: string) {
     const query = `SELECT * FROM public.group WHERE user_id=$1 OR $1=ANY(members);`
     const params = [userId]
     return this.returnMany(query, params)
   }
-  async getGroupsByPlayerId(playerId: string): Promise<GroupsResponse> {
-    const query = `SELECT * FROM group WHERE $1=ANY(players)`
+  async getGroupsByPlayerId(playerId: string) {
+    const query = `SELECT * FROM public.group WHERE $1=ANY(players)`
     const params = [playerId]
     return this.returnMany(query, params)
   }
 
-  async createGroup(userId: string): Promise<GroupResponse> {
-    const query = `INSERT INTO player_group (user_id) VALUES ($1) RETURNING *;`
-    const values = [userId]
+  async createGroup(userId: string, {name, rollType, membersCanUpdate, lockAfterOut}: ICreateGroup) {
+    const query = `INSERT INTO public.group (user_id, name, roll_type, members_can_update, lock_after_out) VALUES ($1, $2, $3, $4, $5) RETURNING *;`
+    const values = [userId, name, rollType, membersCanUpdate, lockAfterOut]
     return this.returnOne(query, values)
   }
 

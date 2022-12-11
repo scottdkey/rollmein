@@ -15,6 +15,7 @@ interface NavBarProps {
 
 const NavBar: React.FC<NavBarProps> = ({ }) => {
   const [theme, setTheme] = useState("dark")
+  const { auth } = useAuth()
   const { colorMode, setColorMode } = useColorMode()
   const [currentRoute, setCurrentRoute] = useState("")
   const themeButtonColor = useColorModeValue("orange.600", "orange.400")
@@ -52,8 +53,8 @@ const NavBar: React.FC<NavBarProps> = ({ }) => {
           <Heading className={styles.SiteHeader}>Roll Me In</Heading>
           <HStack>
             <NextLink href={'/'}><div className={routerClassNameSwitch(["/", '/#'])}>Home</div></NextLink>
-            <NextLink href={'/profile'}>
-              <div className={routerClassNameSwitch(["/profile"])}>Profile</div></NextLink>
+            {auth ? <NextLink href={'/profile'}>
+              <div className={routerClassNameSwitch(["/profile"])}>Profile</div></NextLink> : null}
           </HStack>
         </VStack>
         <Box ml={'auto'}>

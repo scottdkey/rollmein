@@ -8,6 +8,7 @@ import { ApplicationErrorResponse } from '../utils/errorsHelpers';
 import { UserService } from '../user/user.service';
 import { HTTPCodes } from '../types/HttpCodes.enum';
 import { isAuth } from '../middleware/isAuth';
+import { createSession } from '../middleware/createSession.middleware';
 
 const authService = container.get(AuthService)
 const userService = container.get(UserService)
@@ -19,6 +20,7 @@ export interface ValidateRequestBody {
   expirationTime: number
 }
 
+//@ts-ignore
 authRouter.post("/validate", CheckAuthHeaderMiddleware, async (ctx: MyContext<ValidateRequestBody, ScrubbedUser | AppError>, next) => {
   try {
     const tokenValid = ctx.state.token === ctx.request.body.accessToken
@@ -28,8 +30,7 @@ authRouter.post("/validate", CheckAuthHeaderMiddleware, async (ctx: MyContext<Va
     const res = tokenValid && firebaseInfo && await authService.ensureUserExists(body, firebaseInfo)
 
     if (res && res.success && res.data) {
-      const { cookieName, cookieOptions, sessionId } = await authService.login(res.data)
-      ctx.cookies.set(cookieName, sessionId, cookieOptions)
+      ctx.state.user = res.data
       ctx.body = userService.scrubResponse(res.data)
       ctx.status = HTTPCodes.OK
     }
@@ -45,7 +46,7 @@ authRouter.post("/validate", CheckAuthHeaderMiddleware, async (ctx: MyContext<Va
   }
   await next()
 
-})
+}, createSession)
 
 authRouter.delete('/logout', isAuth, async (ctx: MyContext<{}, { success: boolean }>, next) => {
   try {

@@ -1,19 +1,36 @@
+import { Logger, LoggerService } from "../common/logger.service";
 import { addToContainer } from "../container";
-import type { Group, GroupResponse, IGroupUpdateParams } from '../types/group';
-import { AuthorizationErrorResponse } from "../utils/errorsHelpers";
+import type { Group, GroupResponse, ICreateGroup, IGroupUpdateParams } from '../types/group';
+import { ApplicationError, ApplicationErrorResponse, AuthorizationErrorResponse } from "../utils/errorsHelpers";
 import { GroupRepository } from './group.repository';
 
 
 @addToContainer()
 export class GroupService {
-  constructor(private groupRepo: GroupRepository) {
-
+  private logger: Logger
+  constructor(private groupRepo: GroupRepository, private loggerService: LoggerService) {
+    this.logger = this.loggerService.getLogger(GroupService.name)
   }
 
+  async getGroups() {
+    return await this.groupRepo.getGroups()
+  }
 
-
-  async getGroups(userId: string) {
+  async getGroupsByUserId(userId: string) {
     return await this.groupRepo.getGroupsByUserId(userId)
+  }
+  async createGroup(userId: string, createParams: ICreateGroup) {
+    try {
+      const res = await this.groupRepo.createGroup(userId, createParams)
+      if (res.data || res.error) {
+        return res
+      }
+      return ApplicationErrorResponse(new Error("createGroup Error"))
+
+    } catch (e) {
+      this.logger.error({ message: "create group error", error: e })
+      return ApplicationErrorResponse(new Error(e.message))
+    }
   }
 
 
