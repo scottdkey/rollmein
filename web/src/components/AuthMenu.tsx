@@ -1,6 +1,5 @@
 import { ChevronDownIcon, ChevronUpIcon } from "@chakra-ui/icons"
 import { Menu, MenuButton, MenuList, useColorModeValue, Text, HStack, Skeleton } from "@chakra-ui/react"
-import dynamic from "next/dynamic"
 import { useState } from "react"
 import { useAuth } from "../providers/AuthProvider"
 import styles from "../styles/AuthMenu.module.scss"
