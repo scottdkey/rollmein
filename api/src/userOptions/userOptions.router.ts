@@ -3,17 +3,18 @@ import { container } from '../container';
 import Router from "koa-router";
 import { UserOptionsService } from './userOptions.service';
 import { HandleDataResponse } from '../context';
-import { isAuth } from '../middleware/isAuth';
 import { MyContext } from "../types/context";
+import { DefaultState } from 'koa';
+import { DataResponse } from '../types/DataResponse';
 
 const optionsService = container.get(UserOptionsService)
-const router = new Router({
+const router = new Router<DefaultState, MyContext<any, any>>({
   prefix: '/options'
 })
 
-type UserOptionsContext = MyContext<unknown, UserOptions>
+type UserOptionsContext = MyContext<unknown, DataResponse<UserOptions> | null>
 
-router.get('/', isAuth, async (ctx: UserOptionsContext, next) => {
+router.get('/', async (ctx: UserOptionsContext, next) => {
   if (ctx.state.user) {
     let res = await optionsService.getUserOptions(ctx.state.user.id)
     if (!res.data) {
@@ -26,7 +27,7 @@ router.get('/', isAuth, async (ctx: UserOptionsContext, next) => {
   await next()
 })
 
-router.post('/', isAuth, async (ctx: UserOptionsContext, next) => {
+router.post('/', async (ctx: UserOptionsContext, next) => {
   if (ctx.state.user) {
     const userId: string = ctx.state.user.id
     const params: UserOptionsInput = ctx.params

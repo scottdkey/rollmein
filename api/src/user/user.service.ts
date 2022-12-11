@@ -1,13 +1,16 @@
 import { Logger, LoggerService } from '../common/logger.service';
-import { ApplicationError } from '../utils/errorsHelpers';
+import { ApplicationError, UnknownProblemError } from '../utils/errorsHelpers';
 import { addToContainer } from "../container";
 import { DataResponse } from '../types/DataResponse';
 import { RegisterUser, User } from '../types/user';
 import { UserRepository } from './user.repository';
+import { ValidateRequestBody } from '../auth/auth.router';
+import { IFirebaseInfo } from '../types/context';
 
 @addToContainer()
 export class UserService {
   private logger: Logger
+  userService: any;
 
   constructor(private ls: LoggerService, private userRepo: UserRepository) {
     this.logger = this.ls.getLogger(UserService.name)
@@ -28,6 +31,50 @@ export class UserService {
 
   async getByFirebaseId(firebaseId: string) {
     return await this.userRepo.getUserByFirebaseId(firebaseId)
+  }
+
+  async ensureUserExists(body: ValidateRequestBody, payload: IFirebaseInfo): Promise<DataResponse<User>> {
+    try {
+      let returnError: AppError = UnknownProblemError(new Error('unknown problem ocurred in #ensureUserExists'))
+      const user = await this.getByFirebaseId(payload.firebaseId)
+
+      if (user.success) {
+        return user
+      }
+      if (user.error) {
+        returnError = user.error
+      }
+      if (!user.data && !user.success) {
+        const registerUser: RegisterUser = {
+          username: null,
+          email: payload.email,
+          googleId: payload.googleId || null,
+          appleId: payload.appleId || null,
+          firebaseId: payload.firebaseId,
+          refreshToken: body.refreshToken
+
+        }
+        const registeredUser = await this.register(registerUser)
+        if (registeredUser.success) {
+          return registeredUser
+        }
+        if (!registeredUser.success && registeredUser.error) {
+          returnError = registeredUser.error
+        }
+      }
+      return {
+        data: null,
+        success: false,
+        error: returnError
+      }
+    } catch (e) {
+      this.logger.error({ message: "error occurred on #ensureUserExists", ...e })
+      return {
+        data: null,
+        success: false,
+        error: e
+      }
+    }
   }
 
   async register(registerUser: RegisterUser): Promise<DataResponse<User>> {

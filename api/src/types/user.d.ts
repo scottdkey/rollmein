@@ -17,10 +17,16 @@ interface User extends RegisterUser {
   createdAt: string
   updatedAt: string
 }
+
+interface CacheUser extends User {
+  sessionExpires: string
+}
+
 interface ScrubbedUser {
   id: string
   username: string | null
 }
+
 interface RegisterUser {
   username: string | null,
   email: string | null,

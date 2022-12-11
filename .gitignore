@@ -5,7 +5,7 @@ postgresql/
 .env
 .css
 */dist/
-
+api/log
 tmp/
 */*.secrets.yaml
 */*.secrets.yml

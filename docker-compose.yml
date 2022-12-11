@@ -30,6 +30,7 @@ services:
     volumes:
       - ./api/src:/usr/api/src
       - ./api/node_modules:/usr/api/node_modules
+      - ./api/log:/usr/api/log
     env_file:
       - .env
     environment:

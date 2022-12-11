@@ -14,7 +14,7 @@ export class RedisService {
   redis: Redis
 
   constructor(private cs: ConfigService, private ls: LoggerService) {
-    const logger = this.ls.getLogger("Redis Service")
+    const logger = this.ls.getLogger(RedisService.name)
     const config = this.cs.RedisConfig()
     try {
       this.redis = new IoRedis({
@@ -41,6 +41,7 @@ export class RedisService {
     }
   }
 
+  //expire time is in seconds
   async set<T>(key: RedisKeys, id: string, data: T, expireTime?: number): Promise<DataResponse<T>> {
     const res = await this.redis.set(`${key}-${id}`, JSON.stringify(data), 'ex', expireTime || 3600)
     if (res) {
@@ -57,6 +58,8 @@ export class RedisService {
     }
   }
 
+
+  //expire time is in seconds
   async setWithRetry<T>(key: RedisKeys, id: string, data: T, retry: number = 3, expireTime?: number): Promise<DataResponse<T>> {
     let res = this.set(key, id, data, expireTime)
     let retryCount = 0

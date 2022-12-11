@@ -49,7 +49,7 @@ export const NullInputError = createError(ErrorTypes.INPUT_ERROR, "null input re
 
 export const AuthorizationError = createError(ErrorTypes.AUTH_ERROR, "not authorized to complete this action")
 
-export function ApplicationErrorResponse(error: Error): DataResponse<never> {
+export function ApplicationErrorResponse(error: { [key: string]: any }): DataResponse<never> {
   return {
     data: null,
     success: false,

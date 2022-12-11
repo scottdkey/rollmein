@@ -9,7 +9,8 @@
     "prod:clean": "docker-compose -f prod.docker-compose.yml down -v",
     "migrate": "node node_modules/db-migrate/bin/db-migrate -m ./migrations -e pg up",
     "migrate:down": "node node_modules/db-migrate/bin/db-migrate -m ./migrations -e pg down",
-    "migrate:create": "node node_modules/db-migrate/bin/db-migrate create addRefreshToken -e pg --sql-file"
+    "migrate:create": "node node_modules/db-migrate/bin/db-migrate create addRefreshToken -e pg --sql-file",
+    "logs": "docker-compose logs --follow"
   },
   "dependencies": {
     "db-migrate": "^0.11.13",

@@ -1,15 +1,14 @@
-import { UseMutationOptions, useQuery } from "react-query"
+import { useMutation, UseMutationOptions, useQuery } from "react-query"
 import { ApiRequest, Mutation, RestMethods } from "./Rollmein.api"
 
 
-interface IGroupError {
+export interface IGroupError {
   response: {
     status: number
   }
 }
 
 export enum GroupRoutes {
-  GROUPS = "groups",
   GROUP = "group"
 }
 
@@ -34,7 +33,8 @@ export interface IGroup extends ICreateGroup {
   updatedAt: string
 }
 
-interface IGroupUpdate {
+export interface IGroupUpdate {
+  id: string,
   membersCanUpdate?: boolean,
   rollType?: RollType,
   lockAfterOut?: boolean,
@@ -47,21 +47,25 @@ interface IGroupDelete {
 }
 
 export const useGroupsQuery = () => {
-  return useQuery<IGroup[], IGroupError>(GroupRoutes.GROUPS, async () => {
+  return useQuery<IGroup[], IGroupError>(GroupRoutes.GROUP, async () => {
     return await ApiRequest<{}, IGroup[]>(GroupRoutes.GROUP, RestMethods.GET)
   })
 }
 
+export const useGroupQuery = (groupId: string) => {
+  return useQuery<IGroup, IGroupError>({
+    queryKey: `${GroupRoutes.GROUP}-${groupId}`,
+    queryFn: () => {
+      return ApiRequest<{}, IGroup>(`${GroupRoutes.GROUP}/${groupId}`, RestMethods.GET)
 
-export const useGroupQuery = (groupId: string) => useQuery<IGroup, IGroupError>(GroupRoutes.GROUP, async () => {
-  return await ApiRequest<{}, IGroup>(`${GroupRoutes.GROUP}/${groupId}`, RestMethods.GET)
-})
+    }
+  })
+}
 
-export const useCreateGroupMutation = (options: UseMutationOptions<IGroup, IGroupError, ICreateGroup>) =>
-  Mutation(options, GroupRoutes.GROUP, RestMethods.POST)
+export const useCreateGroupMutation = (options: UseMutationOptions<IGroup, IGroupError, ICreateGroup>) => Mutation(options, GroupRoutes.GROUP, RestMethods.PATCH)
 
-export const useUpdateGroupMutation = (options: UseMutationOptions<IGroup, IGroupError, IGroupUpdate>) =>
-  Mutation(options, GroupRoutes.GROUP, RestMethods.PUT)
+
+export const useUpdateGroupMutation = (options: UseMutationOptions<IGroup, IGroupError, IGroupUpdate>) => Mutation(options, GroupRoutes.GROUP, RestMethods.PUT)
 
 export const useDeleteGroupMutation = (options: UseMutationOptions<{ success: boolean }, IGroupError, IGroupDelete>) =>
   Mutation(options, GroupRoutes.GROUP, RestMethods.DELETE)

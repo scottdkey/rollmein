@@ -9,7 +9,7 @@ import groupRouter from "./group/group.router"
 
 export const Routers: { router: Router, routerName: string }[] = [
   { router: indexRouter, routerName: 'indexRouter' },
-  { router: userRouter, routerName: 'userRouter' },
+  { router: userRouter as any, routerName: 'userRouter' },
   { router: groupRouter, routerName: 'groupRouter' },
   { router: userOptionsRouter, routerName: 'userOptionsRouter' },
   { router: rollRouter, routerName: 'rollRouter' },

@@ -12,7 +12,7 @@ const router = new Router({ prefix: '/roll' })
 
 const rollService = container.get(RollService)
 
-router.get('/inCount', isAuth, async (ctx: MyContext<IPlayerInCountRequestBody, number>, next) => {
+router.get('/inCount', isAuth, async (ctx: MyContext<IPlayerInCountRequestBody, any>, next) => {
   const requestBody = ctx.request.body
   const res = rollService.inCount(requestBody.data)
   ctx.body = {

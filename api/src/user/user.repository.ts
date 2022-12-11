@@ -31,7 +31,9 @@ export class UserRepository extends DataServiceAbstract<DbUser, User>{
   async getUserByFirebaseId(firebaseId: string) {
     const query = 'SELECT * FROM public.user WHERE firebase_id=$1'
     const params = [firebaseId]
-    return await this.returnOne(query, params)
+    const res = await this.returnOne(query, params)
+    this.logger.debug({ message: '#getUserByFirebaseId', res })
+    return res
   }
 
   async getUserById(userId: string) {
@@ -42,7 +44,9 @@ export class UserRepository extends DataServiceAbstract<DbUser, User>{
   async getUserByEmail(email: string) {
     const query = 'SELECT * FROM public.user WHERE email=$1'
     const params = [email]
-    return await this.returnOne(query, params)
+    const res = await this.returnOne(query, params)
+    this.logger.debug({ message: '#getUserByEmail', res })
+    return res
   }
 
   async userFuzzySearch(input: string) {

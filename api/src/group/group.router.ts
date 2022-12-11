@@ -1,27 +1,24 @@
+import { DefaultState, Next } from "koa";
 import Router from "koa-router";
 import { LoggerService } from "../common/logger.service";
 import { container } from "../container";
-import { isAuth } from "../middleware/isAuth";
 import { MyContext } from "../types/context";
-import { Group, ICreateGroup, IGroupUpdateParams } from "../types/group";
+import { Group, GroupResponse, ICreateGroup, IGroupUpdateParams } from "../types/group";
 import { HTTPCodes } from "../types/HttpCodes.enum";
 import { GroupService } from "./group.service";
 
 
-
-const groupRouter = new Router({ prefix: "/group" })
-
+const groupRouter = new Router<DefaultState, MyContext<any, any>>({ prefix: "/group" })
 const groupService = container.get(GroupService)
-const logger = container.get(LoggerService).getLogger('GroupRouter')
+const logger = container.get(LoggerService).getLogger('group router')
 
-
-
-groupRouter.get("/", isAuth, async (ctx: MyContext<{}, Group[] | AppError>, next) => {
+groupRouter.get("/", async (ctx: MyContext<{}, Group[] | AppError>, next: Next) => {
   let returnGroups: Group[] = []
   let error = false
-  if (ctx.state.user?.id) {
+  const user = ctx.state.user
+  if (user) {
     try {
-      const groups = await groupService.getGroupsByUserId(ctx.state.user.id)
+      const groups = await groupService.getGroupsByUserId(user.id)
       if (groups && groups.data) {
         returnGroups = [...groups.data]
       }
@@ -33,8 +30,6 @@ groupRouter.get("/", isAuth, async (ctx: MyContext<{}, Group[] | AppError>, next
     } catch (e) {
       logger.error({ message: 'get groups error', error: e })
       error = true
-      ctx.status = HTTPCodes.NOT_FOUND
-      ctx.body = []
     }
   }
   try {
@@ -44,31 +39,54 @@ groupRouter.get("/", isAuth, async (ctx: MyContext<{}, Group[] | AppError>, next
     }
     if (groups.error) {
       logger.error({ message: "get groups error", error: groups.error })
+      console.error(groups.error)
     }
   } catch (e) {
     logger.error({ message: 'get groups error', error: e })
     error = true
-    ctx.status = HTTPCodes.NOT_FOUND
-    ctx.body = []
   }
   if (!error) {
-    ctx.body = returnGroups
     ctx.status = HTTPCodes.OK
+  }
+  if (error) {
+    ctx.status = HTTPCodes.NOT_FOUND
+  }
+
+  ctx.body = [...new Map(returnGroups.map((group) => [group["id"], group])).values()]
+
+  await next()
+})
+
+groupRouter.get('/:groupId', async (ctx: MyContext<{}, Group | AppError>, next: Next) => {
+  const userId = ctx.state.user?.id
+
+  const groupId = ctx.params.groupId
+
+  if (groupId !== "undefined") {
+    let response: { auth: boolean, data: GroupResponse } = await groupService.getGroup(groupId, userId)
+    if (response.data.data) {
+      ctx.body = response.data.data
+      ctx.status = HTTPCodes.OK
+    }
+    if (response.data.error) {
+      ctx.body = response.data.error
+      ctx.status = HTTPCodes.BAD_REQUEST
+    }
   }
 
   await next()
 })
 
-groupRouter.post("/", isAuth, async (ctx: MyContext<ICreateGroup, Group | { message: string }>) => {
+groupRouter.post("/", async (ctx: MyContext<ICreateGroup, Group | { message: string }>, next: Next) => {
   logger.info({ message: "post route", body: ctx.request.body })
   try {
     if (ctx.state.user && ctx.state.validUser) {
       const res = await groupService.createGroup(ctx.state.user.id, ctx.request.body)
-      if(res.data && res.success){
+      if (res.data && res.success) {
         ctx.body = res.data
         ctx.status = HTTPCodes.CREATED
       }
-      if(res.error){
+      if (res.error) {
         ctx.body = {
           message: JSON.stringify(res.error)
         }
@@ -85,8 +103,34 @@ groupRouter.post("/", isAuth, async (ctx: MyContext<ICreateGroup, Group | { mess
     ctx.body = { message: e.message }
     ctx.status = HTTPCodes.SERVER_ERROR
   }
+  next()
 })
 
+groupRouter.put("/", async (ctx: MyContext<IGroupUpdateParams, Group | AppError>, next: Next) => {
+  const handle = ctx.state.user?.id
+  if (handle && ctx.state.validUser) {
+    const res = await groupService.updateGroup(handle, ctx.request.body)
+    if(res.data){
+      ctx.body = res.data
+    }
+    if(res.error){
+      ctx.status = 400
+      ctx.body = res.error
+    }
+  }
 
+
+  next()
+})
+
+groupRouter.delete('/', async (ctx: MyContext<{}, {}>, next: Next) => {
+  console.log(ctx.request.body)
+
+  ctx.body = {
+    message: 'received'
+  }
+
+  next()
+})
 
 export default groupRouter

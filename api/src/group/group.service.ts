@@ -1,19 +1,48 @@
+import { Next } from "koa";
 import { Logger, LoggerService } from "../common/logger.service";
 import { addToContainer } from "../container";
+import { MyContext } from "../types/context";
 import type { Group, GroupResponse, ICreateGroup, IGroupUpdateParams } from '../types/group';
-import { ApplicationError, ApplicationErrorResponse, AuthorizationErrorResponse } from "../utils/errorsHelpers";
+import { HTTPCodes } from "../types/HttpCodes.enum";
+import { ApplicationErrorResponse, AuthorizationErrorResponse } from "../utils/errorsHelpers";
 import { GroupRepository } from './group.repository';
 
 
 @addToContainer()
 export class GroupService {
   private logger: Logger
-  constructor(private groupRepo: GroupRepository, private loggerService: LoggerService) {
-    this.logger = this.loggerService.getLogger(GroupService.name)
+  constructor(private groupRepo: GroupRepository, private ls: LoggerService) {
+    this.logger = this.ls.getLogger(GroupService.name)
+  }
+
+  async getGroup(groupId: string, userId?: string) {
+    const res = await this.groupRepo.getGroupById(groupId)
+    let auth: boolean = false
+    if (res.data && userId) {
+      auth = await this.checkIfAuthorized(res.data, userId)
+    }
+    return {
+      auth,
+      data: res
+    }
+
   }
 
   async getGroups() {
-    return await this.groupRepo.getGroups()
+    const res = await this.groupRepo.getGroups()
+    if (res.data && res.data.length > 0) {
+      return {
+        ...res,
+        data: res.data.sort((a, b) => {
+          const date1 = new Date(a.createdAt).getMilliseconds()
+
+          const date2 = new Date(b.createdAt).getMilliseconds()
+          return date1 - date2
+        })
+      }
+    }
+
+    return res
   }
 
   async getGroupsByUserId(userId: string) {
@@ -35,9 +64,39 @@ export class GroupService {
 
 
   async updateGroup(
-    groupId: string,
     userId: string,
     updateValueInput: IGroupUpdateParams): Promise<GroupResponse> {
+
+    const groupQuery = await this.setupUpdateGeneric(updateValueInput.id, userId)
+
+
+    if (groupQuery.success && groupQuery.data) {
+      const group = groupQuery.data
+
+      group.members = this.setFromStringArray(group.members, updateValueInput.memberId)
+
+      group.players = this.setFromStringArray(group.players, updateValueInput.playerId)
+
+      group.name = updateValueInput.name ? updateValueInput.name : group.name
+
+      group.rollType = updateValueInput.rollType ? updateValueInput.rollType : group.rollType
+
+      group.lockAfterOut = updateValueInput.lockAfterOut !== undefined ? updateValueInput.lockAfterOut : group.lockAfterOut
+
+      console.log(updateValueInput.membersCanUpdate)
+      group.membersCanUpdate = updateValueInput.membersCanUpdate !== undefined ? updateValueInput.membersCanUpdate : group.membersCanUpdate
+
+      const res = await this.groupRepo.updateGroup(group)
+      return res
+    }
+    return groupQuery
+  }
+
+  setFromStringArray(array: string[], value?: string) {
+    return value ? [...new Set([...array, value])] : array
+  }
+
+  async setupUpdateGeneric(groupId: string, userId: string) {
     const groupQuery = await this.groupRepo.getGroupById(groupId)
     if (groupQuery.success && groupQuery.data) {
       const group = groupQuery.data
@@ -45,14 +104,55 @@ export class GroupService {
       if (!authorized) {
         return AuthorizationErrorResponse
       }
-      group.members = updateValueInput.memberId ? [...new Set([...group.members, updateValueInput.memberId])] : group.members
-      group.players = updateValueInput.playerId ? [...new Set([...group.players, updateValueInput.playerId])] : group.players
-      group.rollType = updateValueInput.rollType ? updateValueInput.rollType : group.rollType
-      group.lockAfterOut = updateValueInput.lockAfterOut ? updateValueInput.lockAfterOut : group.lockAfterOut
-      group.membersCanUpdate = updateValueInput.membersCanUpdate ? updateValueInput.membersCanUpdate : group.membersCanUpdate
+      return groupQuery
+    }
+    return ApplicationErrorResponse({ message: "#addPlayer error", info: "no group found with id" })
+  }
+
+  async addPlayer(groupId: string, userId: string, playerId: string) {
+    const groupQuery = await this.setupUpdateGeneric(groupId, userId)
+    if (groupQuery.success && groupQuery.data) {
+      const group = groupQuery.data
+      group.players = this.setFromStringArray(group.players, playerId)
+
+      return await this.groupRepo.updateGroup(group)
     }
     return groupQuery
   }
+
+  async removePlayer(groupId: string, userId: string, playerId: string) {
+    const groupQuery = await this.setupUpdateGeneric(groupId, userId)
+    if (groupQuery.success && groupQuery.data) {
+      const group = groupQuery.data
+      group.players = group.players.filter(value => value === playerId)
+
+      return await this.groupRepo.updateGroup(group)
+    }
+    return groupQuery
+  }
+
+  async addMember(groupId: string, userId: string, memberId: string) {
+    const groupQuery = await this.setupUpdateGeneric(groupId, userId)
+    if (groupQuery.success && groupQuery.data) {
+      const group = groupQuery.data
+      group.members = this.setFromStringArray(group.members, memberId)
+
+      return await this.groupRepo.updateGroup(group)
+    }
+    return groupQuery
+  }
+
+  async removeMember(groupId: string, userId: string, memberId: string) {
+    const groupQuery = await this.setupUpdateGeneric(groupId, userId)
+    if (groupQuery.success && groupQuery.data) {
+      const group = groupQuery.data
+      group.members = group.members.filter(value => value === memberId)
+
+      return await this.groupRepo.updateGroup(group)
+    }
+    return groupQuery
+  }
+
   async deleteGroup(id: string, userId: string): Promise<GroupResponse> {
     const groupQuery = await this.groupRepo.getGroupById(id)
     const authorized = groupQuery.data && this.checkIfAuthorized(groupQuery.data, userId)
@@ -65,9 +165,58 @@ export class GroupService {
   }
 
   protected checkIfAuthorized(group: Group, userIdFromRequest: string) {
+    const groupOwner = group.userId === userIdFromRequest
+    const inGroupMembers = group.members.includes(userIdFromRequest)
     if (!group.membersCanUpdate) {
-      return group.userId === userIdFromRequest
+      return groupOwner
     }
-    return group.members.includes(userIdFromRequest)
+    return groupOwner || inGroupMembers
   }
+
+  async handleGroupsRoute(ctx: MyContext<{}, Group[] | AppError>, next: Next) {
+    let returnGroups: Group[] = []
+    let error = false
+    const user = ctx.state.user
+    if (user) {
+      try {
+        const groups = await this.getGroupsByUserId(user.id)
+        if (groups && groups.data) {
+          returnGroups = [...groups.data]
+        }
+
+        if (groups && groups.error) {
+          this.logger.error({ message: 'get groups error', error: groups.error })
+        }
+
+      } catch (e) {
+        this.logger.error({ message: 'get groups error', error: e })
+        error = true
+      }
+    }
+    try {
+      const groups = await this.getGroups()
+      if (groups.data) {
+        returnGroups = [...returnGroups, ...groups.data]
+      }
+      if (groups.error) {
+        this.logger.error({ message: "get groups error", error: groups.error })
+        console.error(groups.error)
+      }
+    } catch (e) {
+      this.logger.error({ message: 'get groups error', error: e })
+      error = true
+    }
+    if (!error) {
+      ctx.status = HTTPCodes.OK
+    }
+    if (error) {
+      ctx.status = HTTPCodes.NOT_FOUND
+    }
+
+    ctx.body = returnGroups
+
+    await next()
+  }
+
+
 }

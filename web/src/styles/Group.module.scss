@@ -1,0 +1,10 @@
+
+.groupContainer {
+  background: linear-gradient(0.40turn,  #f69d3c, #1D231AFF, #3f87a6);
+  border-radius: 10px;
+  padding: 0.5rem;
+  transition: background 2s ease-out 100ms;
+  &:hover {
+    background: linear-gradient(0.40turn, #3f87a6, #1d231a, #f69d3c);
+}
+}

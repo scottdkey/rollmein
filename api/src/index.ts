@@ -6,14 +6,13 @@ import { container } from "./container";
 import { Routers } from "./routers";
 import { ConfigService } from "./common/config.service";
 import { LoggerService } from "./common/logger.service";
+import { isAuth } from './middleware/isAuth';
+import { RefreshSession } from './middleware/refreshSession.middleware';
 
 const logger = container.get(LoggerService).getLogger('IndexLogger')
 const server = async () => {
   const app = new Koa();
   const config = container.get(ConfigService).ServerConfig()
-
-
-  console.log(config.cors_uri)
 
   app.use(bodyParser())
   app.use(
@@ -24,11 +23,16 @@ const server = async () => {
     })
   )
 
+  app.use(isAuth)
+  app.use(RefreshSession)
+
   Routers.forEach(({ router, routerName }) => {
     logger.info({ message: `starting ${routerName}` })
     app.use(router.routes()).use(router.allowedMethods())
 
   })
+
+
 
   return app.listen(config.port, () => {
     const localDomain = `http://localhost:${config.port}`

@@ -31,6 +31,8 @@ interface Group extends ICreateGroup {
 }
 
 interface IGroupUpdateParams {
+  id: string,
+  name?: string,
   membersCanUpdate?: boolean,
   rollType?: RollType,
   lockAfterOut?: boolean,

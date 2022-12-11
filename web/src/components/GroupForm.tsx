@@ -4,13 +4,31 @@ import { useState } from "react"
 import { Controller, SubmitHandler, useForm } from "react-hook-form"
 import { GroupRoutes, ICreateGroup, IGroup, RollType, useCreateGroupMutation, useUpdateGroupMutation } from "../utils/groupApi"
 import { useQueryClient } from "react-query"
+import { useAuth } from "../providers/AuthProvider";
 
 export const GroupForm = ({ group }: { group?: IGroup }) => {
   const queryClient = useQueryClient()
+  const { auth } = useAuth()
   const [modalOpen, setModalOpen] = useState(false)
-  const refetchGroups = () => queryClient.fetchQuery(GroupRoutes.GROUPS)
-  const createGroupMutation = useCreateGroupMutation({onSuccess: refetchGroups})
-  const updateGroupMutation = useUpdateGroupMutation({onSuccess: refetchGroups})
+
+  const successFunction = async (data: IGroup) => {
+    const groupKey = `${GroupRoutes.GROUP}-${data.id}`
+    
+    queryClient.setQueryData(groupKey, data)
+    queryClient.resetQueries(groupKey)
+    queryClient.resetQueries(GroupRoutes.GROUP)
+
+    setModalOpen(false)
+  }
+
+  const createGroup = useCreateGroupMutation({
+    onSuccess: successFunction
+  })
+  const updateGroup = useUpdateGroupMutation({
+    onSuccess: successFunction
+  })
+
+
 
   const { register, control, handleSubmit, watch, formState: { errors }, reset } = useForm<ICreateGroup>({
     defaultValues: {
@@ -22,23 +40,23 @@ export const GroupForm = ({ group }: { group?: IGroup }) => {
   });
 
 
-  const onSubmit: SubmitHandler<ICreateGroup> = data => {
+  const onSubmit: SubmitHandler<ICreateGroup> = async (data) => {
     if (group) {
-      console.log('update')
-      console.log(data)
+      await updateGroup.mutateAsync({ ...data, id: group.id })
     }
     if (!group) {
-      createGroupMutation.mutateAsync(data)
-      console.log(data)
+      await createGroup.mutateAsync(data)
+
     }
+    reset()
   }
 
   return (
     <>
       {group ?
-        <IconButton aria-label='Search database' icon={<EditIcon />} />
+        <IconButton disabled={!auth} onClick={() => setModalOpen(true)} aria-label='Search database' icon={<EditIcon />} />
         :
-        <Button onClick={() => setModalOpen(true)}>add a group</Button>
+        <Button disabled={!auth} onClick={() => setModalOpen(true)}>add a group</Button>
       }
 
 

@@ -9,7 +9,6 @@ import { useAuth } from "../providers/AuthProvider"
 import { AuthRoutes, useValidateSignInMutation } from "../utils/authApi"
 import { SignInWithGoogle } from "../utils/firebase.client"
 import { GroupRoutes } from "../utils/groupApi"
-import { supabase } from "../utils/supabase.client"
 import { UserRoutes } from "../utils/userApi"
 const LoginMenu = () => {
   return (
@@ -36,9 +35,11 @@ function GoogleSignIn() {
   const queryClient = useQueryClient()
   const validateSignIn = useValidateSignInMutation({
     onSuccess: (data) => {
-      setUser(data)
-      setAuth(true)
-      queryClient.invalidateQueries([UserRoutes.ME, GroupRoutes.GROUPS])
+      if(data){
+        setUser(data)
+        setAuth(true)
+        queryClient.invalidateQueries([UserRoutes.ME, GroupRoutes.GROUPS])
+      }
     }
   })
   const signIn = async () => {
@@ -108,33 +109,34 @@ function MagicLinkSignIn() {
   }
 
   async function signInRequest() {
-    if (email) {
-      const { error } = await supabase.auth.signIn({
-        email
-      }, { shouldCreateUser: true })
-      if (error) {
-        toast({
-          title: error.status,
-          description: error.message,
-          status: 'error',
-          duration: 9000,
-          isClosable: true
-        })
-        setError(true)
-      }
-      if (!error) {
-        toast({
-          title: 'email sent',
-          description: "please check your email to sign in",
-          status: 'success',
-          duration: 9000,
-          isClosable: true
-        })
-        setError(false)
-        setSignInWithMagicLink(false)
+    // if (email) {
+    //   const { error } = await supabase.auth.signIn({
+    //     email
+    //   }, { shouldCreateUser: true })
+    //   if (error) {
+    //     toast({
+    //       title: error.status,
+    //       description: error.message,
+    //       status: 'error',
+    //       duration: 9000,
+    //       isClosable: true
+    //     })
+    //     setError(true)
+    //   }
+    // if (!error) {
+    //   toast({
+    //     title: 'email sent',
+    //     description: "please check your email to sign in",
+    //     status: 'success',
+    //     duration: 9000,
+    //     isClosable: true
+    //   })
+    //   setError(false)
+    //   setSignInWithMagicLink(false)
 
-      }
-    }
+    // }
+    // }
+    return
   }
 
   async function magicLinkSignIn() {

@@ -49,13 +49,13 @@ export async function ApiRequest<T, Res>(route: string, method: RestMethods, bod
     }
   }
 
-
-  const res = await fetch(`${apiUrl}${route}`, options)
-  return res.json()
+  return await (await fetch(`${apiUrl}${route}`, options)).json() as Res
 }
 
 export function Mutation<ReturnType, ErrorType, Params>(options: UseMutationOptions<ReturnType, ErrorType, Params>, route: string, method: RestMethods) {
-  return useMutation(async (body: Params) => {
-    return await ApiRequest<Params, ReturnType>(route, method, body)
-  }, options)
+  return useMutation({
+    mutationFn: (body) => ApiRequest<Params, ReturnType>(route, method, body
+    ),
+    ...options
+  })
 }

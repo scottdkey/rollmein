@@ -16,15 +16,19 @@ export interface IProfileUpdateBody {
   username: string
 }
 
-export const useMeQuery = () => useQuery<ScrubbedUser, IMeError>(UserRoutes.ME, async () => {
-  return await ApiRequest<{}, ScrubbedUser>(UserRoutes.ME, RestMethods.GET)
+export const useMeQuery = () => useQuery<{ user: ScrubbedUser | null, success: boolean }, IMeError>(UserRoutes.ME, async () => {
+  return await ApiRequest<{}, { user: ScrubbedUser | null, success: boolean }>(UserRoutes.ME, RestMethods.GET)
 }, {
   retry: false,
   staleTime: 3000,
-  useErrorBoundary: (error) => error.response?.status >= 300
+  onError: (error) => { console.error(error) },
+  useErrorBoundary: (error) => {
+    console.error(error.response)
+    return error.response?.status >= 300
+  }
 })
 
 
 
-export const useProfileUpdateMutation = (options: UseMutationOptions<ScrubbedUser, IMeError, IProfileUpdateBody>) =>
+export const useProfileUpdateMutation = (options: UseMutationOptions<ScrubbedUser | undefined, IMeError, IProfileUpdateBody>) =>
   Mutation(options, UserRoutes.PROFILE, RestMethods.POST)

@@ -21,6 +21,8 @@ export type AuthContextType = {
   setAuth: (value: boolean) => void;
   user?: UserData
   setUser: (value: React.SetStateAction<UserData | null>) => void;
+  loading: boolean
+  setLoading: (value: boolean) => void;
 }
 
 interface UserData {
@@ -32,24 +34,26 @@ interface UserData {
 export const AuthContext = createContext<AuthContextType>({} as AuthContextType);
 
 export const AuthProvider = ({ children }: any) => {
-  const { data, isLoading, error } = useMeQuery()
+  const meQuery = useMeQuery()
   const [auth, setAuth] = useState<boolean>(false)
   const [user, setUser] = useState<any>(null)
+  const [loading, setLoading] = useState(false)
 
   useEffect(() => {
-    if (data) {
-      setUser(data)
-      setAuth(true)
+    setLoading(meQuery.isLoading)
+    if (meQuery.data && !meQuery.isLoading) {
+      setUser(meQuery.data.user)
+      setAuth(meQuery.data.success)
     }
-    if (error) {
+    if (meQuery.error) {
       setUser(null)
       setAuth(false)
     }
 
-  }, [data, error, isLoading])
+  }, [meQuery.data, meQuery.error, meQuery.isLoading])
 
   return (
-    <AuthContext.Provider value={{ auth, setAuth, user, setUser } as AuthContextType}>
+    <AuthContext.Provider value={{ auth, setAuth, user, setUser, loading, setLoading } as AuthContextType}>
       {children}
     </AuthContext.Provider>
   )

@@ -1,7 +1,7 @@
 import { addToContainer } from "../container";
 import winston from 'winston'
-const { format, transports } = winston
-const { combine, label, printf, timestamp, prettyPrint } = format
+import { DateService } from "./date.service";
+const { transports } = winston
 
 export interface MessageType {
     [key: string]: any
@@ -25,46 +25,28 @@ export interface Logger {
 
 @addToContainer()
 export class LoggerService {
-
-    myFormat = printf(({ level, message, label, timestamp }) => {
-        return `${timestamp} [${label}] ${level}: ${message}`;
-    });
+    constructor(private date: DateService) { }
     timestamp(): string {
-        const now = new Date
-        return now.toISOString()
+        return this.date.now().toISOString()
     }
-
-    private logMessage(message: MessageType, level: LogType) {
-        return {
-            level,
-            message: JSON.stringify(message)
-        }
-    }
-
-
 
     getLogger(context: string): Logger {
         const logger = winston.createLogger({
-            format: combine(
-                label({ label: context }),
-                timestamp(),
-                prettyPrint(),
-                this.myFormat,
-            ),
-            transports: [new transports.Console()]
+            format: winston.format.json(),
+            transports: [new transports.Console(), new transports.File({ filename: './log/error.log', level: 'error', format: winston.format.json() }), new transports.File({ filename: './log/combined.log', format: winston.format.json() })]
         })
         return {
             info: (message: MessageType) => {
-                logger.info(this.logMessage(message, LogType.INFO))
+                logger.info( {context, ...message, timestamp: this.timestamp() })
             },
             debug: (message: MessageType) => {
-                logger.debug(this.logMessage(message, LogType.DEBUG))
+                logger.debug({ context, ...message, timestamp: this.timestamp() })
             },
             warn: (message: MessageType) => {
-                logger.warn(this.logMessage(message, LogType.WARN))
+                logger.warn({ context, ...message, timestamp: this.timestamp() })
             },
             error: (message: MessageType) => {
-                logger.error(this.logMessage(message, LogType.ERROR))
+                logger.error({ context, ...message, timestamp: this.timestamp() })
             }
 
         }

@@ -28,6 +28,8 @@ services:
     environment:
       - POSTGRES_HOST=database
       - REDIS_HOST=redis
+    volumes:
+      - ./api/log:/usr/api/log
     ports:
       - $PORT:$PORT
     depends_on:

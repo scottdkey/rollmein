@@ -2,6 +2,16 @@ import { addToContainer } from "../container";
 import dotenv from "dotenv"
 import { Logger, LoggerService } from "./logger.service"
 
+export interface IServerConfig {
+  [key: string]: any
+  dev: boolean
+  prod: boolean
+  test: boolean
+  cors_uri: string | undefined
+  port: number
+  secretKey: string
+  cookieName: string
+}
 
 @addToContainer()
 export class ConfigService {
@@ -51,16 +61,7 @@ export class ConfigService {
     return config
   }
 
-  ServerConfig(): {
-    [key: string]: any
-    dev: boolean
-    prod: boolean
-    test: boolean
-    cors_uri: string | undefined
-    port: number
-    secretKey: string
-    cookieName: string
-  } {
+  ServerConfig(): IServerConfig  {
     const { SECRETKEY, PORT, CORS_URL } = process.env
     return {
       dev: process.env.NODE_ENV === 'development',
@@ -102,6 +103,7 @@ export class ConfigService {
       for (const key of Object.keys(configObject)) {
         const value = configObject[key]
         if (value === null || value === undefined) {
+          console.error({ message: `no undefined keys in ${configName} config -- key:${key} value:${value}` })
           this.logger.error({ message: `no undefined keys in ${configName} config -- key:${key} value:${value}` })
         }
       }

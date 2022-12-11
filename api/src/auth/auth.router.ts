@@ -3,16 +3,21 @@ import Router from 'koa-router'
 import { container } from '../container';
 import { AuthService } from './auth.service';
 import { MyContext } from '../types/context';
+
+import { DefaultState, Next } from 'koa';
+import { SessionService } from '../session/session.service';
 import { ScrubbedUser } from '../types/user';
+import { HTTPCodes } from '../types/HttpCodes.enum';
 import { ApplicationErrorResponse } from '../utils/errorsHelpers';
 import { UserService } from '../user/user.service';
-import { HTTPCodes } from '../types/HttpCodes.enum';
-import { isAuth } from '../middleware/isAuth';
-import { createSession } from '../middleware/createSession.middleware';
+import { DataResponse } from '../types/DataResponse';
+import { DateService } from '../common/date.service';
 
 const authService = container.get(AuthService)
 const userService = container.get(UserService)
-const authRouter = new Router({ prefix: '/auth' })
+const sessionService = container.get(SessionService)
+const date = container.get(DateService)
+const authRouter = new Router<DefaultState, MyContext<any, any>>({ prefix: '/auth' })
 
 export interface ValidateRequestBody {
   accessToken: string
@@ -20,51 +25,62 @@ export interface ValidateRequestBody {
   expirationTime: number
 }
 
-//@ts-ignore
-authRouter.post("/validate", CheckAuthHeaderMiddleware, async (ctx: MyContext<ValidateRequestBody, ScrubbedUser | AppError>, next) => {
-  try {
-    const tokenValid = ctx.state.token === ctx.request.body.accessToken
-    const firebaseInfo = ctx.state.firebaseInfo
-    const body = ctx.request.body
+authRouter.post("/validate",
+  CheckAuthHeaderMiddleware,
+  async (ctx: MyContext<ValidateRequestBody, DataResponse<ScrubbedUser>>, next: Next) => {
+    try {
+      const tokenValid = ctx.state.token === ctx.request.body.accessToken
+      const firebaseInfo = ctx.state.firebaseInfo
+      const body = ctx.request.body
 
-    const res = tokenValid && firebaseInfo && await authService.ensureUserExists(body, firebaseInfo)
+      if (tokenValid && firebaseInfo && body) {
+        const res = await authService.validateAuth(firebaseInfo, body)
+        if (res.success && res.user && res.sessionId) {
+          ctx.state.user = {
+            ...res.user,
+            sessionExpires: ""
+          }
+          ctx.state.validUser = res.success
+          ctx.body = {
+            success: res.success,
+            error: null,
+            data: userService.scrubResponse(res.user)
+          }
+          ctx.status = HTTPCodes.OK
+          ctx.cookies.set(res.cookieInfo.name, res.sessionId, res.cookieInfo.options)
+        }
 
-    if (res && res.success && res.data) {
-      ctx.state.user = res.data
-      ctx.body = userService.scrubResponse(res.data)
-      ctx.status = HTTPCodes.OK
+      } else {
+        ctx.status = HTTPCodes.FAILED_DEPENDENCY
+        ctx.body = ApplicationErrorResponse(new Error('failed to validate'))
+      }
+
+    } catch (e) {
+      ctx.body = ApplicationErrorResponse(new Error('application error occurred', e))
+      ctx.status = HTTPCodes.SERVER_ERROR
     }
 
-    if (res && !res.success && res.error) {
-      ctx.body = res.error
-      ctx.status = HTTPCodes.FAILED_DEPENDENCY
-    }
+    await next()
 
-  } catch (e) {
-    const error = ApplicationErrorResponse(new Error('application error occurred', e))
-    ctx.throw(HTTPCodes.SERVER_ERROR, error)
-  }
-  await next()
+  })
 
-}, createSession)
-
-authRouter.delete('/logout', isAuth, async (ctx: MyContext<{}, { success: boolean }>, next) => {
+authRouter.delete('/logout', async(ctx, next) => {
   try {
+    const cookieInfo = sessionService.getCookieInfo()
+    ctx.cookies.set(cookieInfo.name, null, { ...cookieInfo.options, expires: date.now() })
     if (ctx.state.token) {
-      authService.clearSession(ctx.state.token)
+      await sessionService.clearSession(ctx.state.token)
     }
-    const { cookieName, cookieOptions, sessionId } = authService.logout()
-    ctx.cookies.set(cookieName, sessionId, cookieOptions)
     ctx.body = {
       success: true
     }
     ctx.status = HTTPCodes.OK
   } catch (e) {
     ctx.body = {
-      success: false
+      success: false,
+      message: e.message
     }
     ctx.status = HTTPCodes.SERVER_ERROR
-
   }
   await next()
 })
