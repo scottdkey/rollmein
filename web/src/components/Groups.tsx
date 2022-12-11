@@ -1,4 +1,4 @@
-import { Spinner, Text, VStack } from "@chakra-ui/react"
+import { Spinner, Text, Tooltip, VStack } from "@chakra-ui/react"
 import { useEffect } from "react"
 import { useQueryClient } from "react-query"
 import { GroupRoutes, IGroup, useGroupsQuery } from "../utils/groupApi"
@@ -30,7 +30,11 @@ export const Groups = () => {
       <VStack>
         <GroupForm />
         {data.length > 0 ? data.map(group =>
-          <Group group={group} key={group.id} />) : <Text>No Group data found</Text>}
+          <Tooltip label="stuff">
+            <Group group={group} key={group.id} />
+          </Tooltip>) :
+          <Text>No Group data found</Text>}
+
       </VStack>
     )
   }

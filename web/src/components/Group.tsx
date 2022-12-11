@@ -42,7 +42,6 @@ export const Group = ({ group }: { group: IGroup }) => {
 
   return (
     <HStack>
-      <Tooltip>
         <Button variant={'solid'} colorScheme={'green'} disabled={!auth} onClick={async () => {
           await router.push(`/group/${data ? data.id : group.id}`)
         }}>
@@ -51,9 +50,9 @@ export const Group = ({ group }: { group: IGroup }) => {
             <Heading size={'small'}> Players: {playerCount}</Heading>
           </HStack>
         </Button>
-        <GroupForm group={data} />
-        <Button onClick={handleDelete} disabled={!auth}><DeleteIcon /></Button>
-      </Tooltip>
+      <GroupForm group={data} />
+      <Button onClick={handleDelete} disabled={!auth}><DeleteIcon /></Button>
+
     </HStack>
   )
 }
