@@ -1,10 +1,9 @@
 import { useEffect, useState } from "react"
 import { Layout } from "../components/Layout"
 import { useForm, SubmitHandler } from "react-hook-form";
-import { Box, Button, FormLabel, HStack, Input, TagLabel, VStack, Text } from "@chakra-ui/react"
+import { Button, FormLabel, HStack, Input, VStack, Text } from "@chakra-ui/react"
 import styles from "../styles/profile.module.scss"
-import { useQuery, useQueryClient } from "react-query";
-import { ApiRequest, RestMethods } from "../utils/Rollmein.api";
+import { useQueryClient } from "react-query";
 import { IProfileUpdateBody, useMeQuery, useProfileUpdateMutation, UserRoutes } from "../utils/userApi";
 import { useAuth } from "../providers/AuthProvider";
 import { useRouter } from "next/router";
@@ -17,12 +16,13 @@ const Profile = () => {
   const {setUser} = useAuth()
   const router = useRouter()
 
-  const { data: user } = useMeQuery()
+  const { data: meQuery } = useMeQuery()
 
   const profileUpdateMutation = useProfileUpdateMutation({
     onSuccess: (data) => {
+      const isData = data ? data : null
       queryClient.invalidateQueries(UserRoutes.ME)
-      setUser(data)
+      setUser(isData)
 
     }
   })
@@ -35,19 +35,19 @@ const Profile = () => {
   };
 
   useEffect(() => {
-    if (!user) {
+    if (!meQuery) {
       router.push("/")
     }
-  }, [user])
+  }, [meQuery?.success, meQuery, router])
 
-  if (user && editing) {
+  if (meQuery?.user && editing) {
     return (
       <Layout>
         <form onSubmit={handleSubmit(onSubmit)}>
           <VStack>
             <HStack>
               <FormLabel>Username: </FormLabel>
-              <Input className={styles.profileInput} defaultValue={user.username || ""} {...register("username")} />
+              <Input className={styles.profileInput} defaultValue={meQuery.user.username || ""} {...register("username")} />
             </HStack>
 
             <Button type='submit'>Save</Button>
@@ -61,7 +61,7 @@ const Profile = () => {
       <VStack>
         <HStack>
           <Text fontSize='2xl'>Username: </Text>
-          <Text fontSize='2xl'>{user?.username}</Text>
+          <Text fontSize='2xl'>{meQuery?.user?.username}</Text>
           <Button onClick={() => { setEditing(true) }}>Edit</Button>
         </HStack>
       </VStack>

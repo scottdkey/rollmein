@@ -23,15 +23,15 @@ export const Groups = () => {
         }
       })
     })
-  }, [data])
+  }, [data, queryClient])
 
   if (data) {
     return (
       <VStack>
         <GroupForm />
         {data.length > 0 ? data.map(group =>
-          <Tooltip label="stuff">
-            <Group group={group} key={group.id} />
+          <Tooltip label="stuff" key={group.id}>
+            <Group group={group} />
           </Tooltip>) :
           <Text>No Group data found</Text>}
 

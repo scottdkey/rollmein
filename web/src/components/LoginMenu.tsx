@@ -38,7 +38,7 @@ function GoogleSignIn() {
       if(data){
         setUser(data)
         setAuth(true)
-        queryClient.invalidateQueries([UserRoutes.ME, GroupRoutes.GROUPS])
+        queryClient.invalidateQueries([UserRoutes.ME, GroupRoutes.GROUP])
       }
     }
   })
