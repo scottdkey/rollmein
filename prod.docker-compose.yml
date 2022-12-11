@@ -11,6 +11,8 @@ services:
       - postgres_db:/var/lib/postgresql/data
     expose:
       - 5423
+    ports:
+      - 5432:5432
   redis:
     image: redis:alpine
     volumes:
@@ -39,17 +41,15 @@ services:
         condition: service_started
     labels:
       - traefik.enable=true
-
       - traefik.http.routers.rollmein-api.rule=Host(`rollmein-api.scottkey.dev`)
       - traefik.http.routers.rollmein-api.entrypoints=websecure
       - traefik.http.routers.rollmein-api.tls=true
-
       - traefik.http.routers.rollmein-api.tls.certresolver=mydnschallenge
-    networks:
-      - traefik-public
-networks:
-  traefik-public:
-    external: true
+    # networks:
+    #   - traefik-public
+# networks:
+#   traefik-public:
+#     external: true
 volumes:
   postgres_db:
   redis_data:
