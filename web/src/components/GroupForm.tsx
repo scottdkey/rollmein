@@ -13,7 +13,7 @@ export const GroupForm = ({ group }: { group?: IGroup }) => {
 
   const successFunction = async (data: IGroup) => {
     const groupKey = `${GroupRoutes.GROUP}-${data.id}`
-    
+
     queryClient.setQueryData(groupKey, data)
     queryClient.resetQueries(groupKey)
     queryClient.resetQueries(GroupRoutes.GROUP)
@@ -41,10 +41,11 @@ export const GroupForm = ({ group }: { group?: IGroup }) => {
 
 
   const onSubmit: SubmitHandler<ICreateGroup> = async (data) => {
-    if (group) {
+    console.log(group, 'submit')
+    if (group !== undefined) {
       await updateGroup.mutateAsync({ ...data, id: group.id })
     }
-    if (!group) {
+    if (group === undefined) {
       await createGroup.mutateAsync(data)
 
     }

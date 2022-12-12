@@ -45,11 +45,11 @@ services:
       - traefik.http.routers.rollmein-api.entrypoints=websecure
       - traefik.http.routers.rollmein-api.tls=true
       - traefik.http.routers.rollmein-api.tls.certresolver=mydnschallenge
-    # networks:
-    #   - traefik-public
-# networks:
-#   traefik-public:
-#     external: true
+    networks:
+      - traefik-public
+networks:
+  traefik-public:
+    external: true
 volumes:
   postgres_db:
   redis_data:

@@ -30,9 +30,7 @@ export const Groups = () => {
       <VStack>
         <GroupForm />
         {data.length > 0 ? data.map(group =>
-          <Tooltip label="stuff" key={group.id}>
-            <Group group={group} />
-          </Tooltip>) :
+          <Group group={group} key={group.id} />) :
           <Text>No Group data found</Text>}
 
       </VStack>

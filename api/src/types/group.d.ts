@@ -5,8 +5,7 @@ interface DbGroup {
   id: string
   name: string
   user_id: string
-  players: string[]
-  members: string[]
+  relations: { members: string[], players: [] }
   roll_type: RollType
   lock_after_out: boolean
   members_can_update: boolean
@@ -23,9 +22,8 @@ interface ICreateGroup {
 
 interface Group extends ICreateGroup {
   id: string
+  relations: { members: string[], players: string[] }
   userId: string
-  players: string[]
-  members: string[]
   createdAt: string
   updatedAt: string
 }

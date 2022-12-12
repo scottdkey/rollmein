@@ -62,7 +62,7 @@ export const useGroupQuery = (groupId: string) => {
   })
 }
 
-export const useCreateGroupMutation = (options: UseMutationOptions<IGroup, IGroupError, ICreateGroup>) => Mutation(options, GroupRoutes.GROUP, RestMethods.PATCH)
+export const useCreateGroupMutation = (options: UseMutationOptions<IGroup, IGroupError, ICreateGroup>) => Mutation(options, GroupRoutes.GROUP, RestMethods.POST)
 
 
 export const useUpdateGroupMutation = (options: UseMutationOptions<IGroup, IGroupError, IGroupUpdate>) => Mutation(options, GroupRoutes.GROUP, RestMethods.PUT)

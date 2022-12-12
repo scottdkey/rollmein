@@ -1,23 +1,25 @@
 import { ChevronDownIcon, ChevronUpIcon } from "@chakra-ui/icons"
 import { Menu, MenuButton, MenuList, useColorModeValue, Text, HStack, Skeleton } from "@chakra-ui/react"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { useAuth } from "../providers/AuthProvider"
 import styles from "../styles/AuthMenu.module.scss"
 import AuthNav from "./AuthNavButtons"
-import UnAuthNav from "./AuthNavButtons"
+import UnAuthNav from "./UnAuthNavButtons"
 
 
 const AuthMenu = () => {
-  const { auth, setAuth, user, loading } = useAuth()
+  const { auth, user, loading } = useAuth()
   const [loginOpen, setLoginOpen] = useState(false)
-  const textColor = useColorModeValue("gray.800", "gray.300")
-  const buttonColor = useColorModeValue("blue.300", "blue.600")
-  const [logoutLoading, setLogoutLoading] = useState(false)
-  const [keepMenuOpen, setKeepMenuOpen] = useState(true)
 
 
   const ToggleOpen = () => {
     setLoginOpen(!loginOpen)
+  }
+  const getDisplayUsername =(username: string | null | undefined) => {
+    if(username === null){
+      return 'No Username Set'
+    }
+    return username
   }
 
   return (
@@ -29,7 +31,7 @@ const AuthMenu = () => {
             className={styles.MenuButton} margin={'0'}>
             <HStack>
               <Text>
-                {auth ? user?.username : 'Signed Out'}
+                {auth ? getDisplayUsername(user?.username) : 'Signed Out'}
               </Text>
               {loginOpen ?
                 <ChevronUpIcon /> : <ChevronDownIcon />}

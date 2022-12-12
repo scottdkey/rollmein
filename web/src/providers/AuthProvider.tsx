@@ -41,9 +41,9 @@ export const AuthProvider = ({ children }: any) => {
 
   useEffect(() => {
     setLoading(meQuery.isLoading)
-    if (meQuery.data && !meQuery.isLoading) {
+    if (meQuery.data?.user && !meQuery.isLoading) {
       setUser(meQuery.data.user)
-      setAuth(meQuery.data.success)
+      setAuth(true)
     }
     if (meQuery.error) {
       setUser(null)

@@ -30,6 +30,7 @@ export class GroupService {
 
   async getGroups() {
     const res = await this.groupRepo.getGroups()
+    this.logger.info({ message: "groups res", res })
     if (res.data && res.data.length > 0) {
       return {
         ...res,
@@ -48,6 +49,7 @@ export class GroupService {
   async getGroupsByUserId(userId: string) {
     return await this.groupRepo.getGroupsByUserId(userId)
   }
+
   async createGroup(userId: string, createParams: ICreateGroup) {
     try {
       const res = await this.groupRepo.createGroup(userId, createParams)
@@ -73,9 +75,9 @@ export class GroupService {
     if (groupQuery.success && groupQuery.data) {
       const group = groupQuery.data
 
-      group.members = this.setFromStringArray(group.members, updateValueInput.memberId)
+      group.relations.members = this.setFromStringArray(group.relations.members, updateValueInput.memberId)
 
-      group.players = this.setFromStringArray(group.players, updateValueInput.playerId)
+      group.relations.players = this.setFromStringArray(group.relations.players, updateValueInput.playerId)
 
       group.name = updateValueInput.name ? updateValueInput.name : group.name
 
@@ -113,7 +115,7 @@ export class GroupService {
     const groupQuery = await this.setupUpdateGeneric(groupId, userId)
     if (groupQuery.success && groupQuery.data) {
       const group = groupQuery.data
-      group.players = this.setFromStringArray(group.players, playerId)
+      group.relations.players = this.setFromStringArray(group.relations.players, playerId)
 
       return await this.groupRepo.updateGroup(group)
     }
@@ -124,7 +126,7 @@ export class GroupService {
     const groupQuery = await this.setupUpdateGeneric(groupId, userId)
     if (groupQuery.success && groupQuery.data) {
       const group = groupQuery.data
-      group.players = group.players.filter(value => value === playerId)
+      group.relations.players = group.relations.players.filter(value => value === playerId)
 
       return await this.groupRepo.updateGroup(group)
     }
@@ -135,7 +137,7 @@ export class GroupService {
     const groupQuery = await this.setupUpdateGeneric(groupId, userId)
     if (groupQuery.success && groupQuery.data) {
       const group = groupQuery.data
-      group.members = this.setFromStringArray(group.members, memberId)
+      group.relations.members = this.setFromStringArray(group.relations.members, memberId)
 
       return await this.groupRepo.updateGroup(group)
     }
@@ -146,7 +148,7 @@ export class GroupService {
     const groupQuery = await this.setupUpdateGeneric(groupId, userId)
     if (groupQuery.success && groupQuery.data) {
       const group = groupQuery.data
-      group.members = group.members.filter(value => value === memberId)
+      group.relations.members = group.relations.members.filter(value => value === memberId)
 
       return await this.groupRepo.updateGroup(group)
     }
@@ -166,7 +168,7 @@ export class GroupService {
 
   protected checkIfAuthorized(group: Group, userIdFromRequest: string) {
     const groupOwner = group.userId === userIdFromRequest
-    const inGroupMembers = group.members.includes(userIdFromRequest)
+    const inGroupMembers = group.relations.members.includes(userIdFromRequest)
     if (!group.membersCanUpdate) {
       return groupOwner
     }
