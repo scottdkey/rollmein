@@ -49,6 +49,8 @@ services:
       - traefik.http.routers.rollmein-api.entrypoints=websecure
       - traefik.http.routers.rollmein-api.tls=true
       - traefik.http.routers.rollmein-api.tls.certresolver=mydnschallenge
+      - traefik.http.services.rollmein-api.loadBalencer.server.scheme=https
+      - traefik.http.services.rollmein-api.loadBalencer.server.port=443
     networks:
       - traefik-public
 networks:
