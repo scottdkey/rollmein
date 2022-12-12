@@ -10,15 +10,19 @@ services:
     volumes:
       - postgres_db:/var/lib/postgresql/data
     expose:
-      - 5423
-    ports:
+      - 5432
+    ports: 
       - 5432:5432
+    networks:
+      - traefik-private
   redis:
     image: redis:alpine
     volumes:
       - redis_data:/data
     expose:
       - 6379
+    networks:
+      - traefik-private
   api:
     hostname: rollmein-api
     container_name: rollmein-api
@@ -47,9 +51,12 @@ services:
       - traefik.http.routers.rollmein-api.tls.certresolver=mydnschallenge
     networks:
       - traefik-public
+      - traefik-private
 networks:
   traefik-public:
     external: true
+  traefik-private:
+    external: false
 volumes:
   postgres_db:
   redis_data:
