@@ -77,6 +77,7 @@ export class SessionService {
       const id = uuid()
       return await this.setSession(id, user)
     } catch (e) {
+      this.logger.error({ message: 'unable to create session', error: e.message, stacktrace: e.stacktrace })
       return {
         error: {
           message: JSON.stringify(e),

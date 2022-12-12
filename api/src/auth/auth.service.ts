@@ -17,25 +17,22 @@ export class AuthService {
   }
 
   async validateAuth(firebaseInfo: IFirebaseInfo, body: ValidateRequestBody) {
-    const cookieInfo = this.sessionService.getCookieInfo()
     try {
 
       const userRes = await this.userService.ensureUserExists(body, firebaseInfo)
       const session = userRes.data && await this.login(userRes.data)
-  
+
 
       if (userRes.data && session) {
         return {
           user: userRes.data,
           sessionId: session.data?.id,
-          cookieInfo,
           success: true
         }
       }
       return {
         user: null,
         sessionId: null,
-        cookieInfo,
         success: false
       }
     } catch (e) {
@@ -43,7 +40,6 @@ export class AuthService {
       return {
         user: null,
         sessionId: null,
-        cookieInfo,
         success: false
       }
     }
@@ -60,6 +56,7 @@ export class AuthService {
         success: res.success
       }
     } catch (e) {
+      this.logger.error({ message: 'unable to login', error: e.message, stacktrace: e.stacktrace })
       return ApplicationErrorResponse(new Error(e))
     }
 

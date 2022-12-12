@@ -36,6 +36,7 @@ authRouter.post("/validate",
       if (tokenValid && firebaseInfo && body) {
         const res = await authService.validateAuth(firebaseInfo, body)
         if (res.success && res.user && res.sessionId) {
+          const {name, options} = sessionService.getCookieInfo()
           ctx.state.user = {
             ...res.user,
             sessionExpires: ""
@@ -47,7 +48,7 @@ authRouter.post("/validate",
             data: userService.scrubResponse(res.user)
           }
           ctx.status = HTTPCodes.OK
-          ctx.cookies.set(res.cookieInfo.name, res.sessionId, res.cookieInfo.options)
+          ctx.cookies.set(name, res.sessionId, options)
         }
 
       } else {
@@ -66,8 +67,8 @@ authRouter.post("/validate",
 
 authRouter.delete('/logout', async(ctx, next) => {
   try {
-    const cookieInfo = sessionService.getCookieInfo()
-    ctx.cookies.set(cookieInfo.name, null, { ...cookieInfo.options, expires: date.now() })
+    const {name, options} = sessionService.getCookieInfo()
+    ctx.cookies.set(name, null, { ...options, expires: date.now() })
     if (ctx.state.token) {
       await sessionService.clearSession(ctx.state.token)
     }
