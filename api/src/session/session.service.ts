@@ -20,10 +20,10 @@ export class SessionService {
 
 
   cookieOptions(): SetOption {
-    const { prod, cors_uri } = this.serverConfig
+    const { prod } = this.serverConfig
     return {
       httpOnly: true,
-      domain: prod ? cors_uri : 'localhost',
+      domain: prod ? "rollmein.scottkey.dev" : 'localhost',
       path: '/',
       secure: prod,
       sameSite: "lax",
