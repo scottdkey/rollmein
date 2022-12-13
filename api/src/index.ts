@@ -13,6 +13,7 @@ const logger = container.get(LoggerService).getLogger('IndexLogger')
 const server = async () => {
   const app = new Koa();
   const config = container.get(ConfigService).ServerConfig()
+  app.proxy = config.prod
 
   app.use(bodyParser())
   app.use(

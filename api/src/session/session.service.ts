@@ -25,7 +25,7 @@ export class SessionService {
       httpOnly: true,
       domain: prod ? cors_uri : 'localhost',
       path: '/',
-      secure: false,
+      secure: prod,
       sameSite: "lax",
       expires: this.date.getDaysFromNow(7)
     }
