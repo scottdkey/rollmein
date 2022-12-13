@@ -23,7 +23,7 @@ export class SessionService {
     const { prod } = this.serverConfig
     return {
       httpOnly: true,
-      domain: prod ? "rollmein.scottkey.dev" : 'localhost',
+      domain: prod ? "scottkey.dev" : 'localhost',
       path: '/',
       secure: prod,
       sameSite: "lax",
