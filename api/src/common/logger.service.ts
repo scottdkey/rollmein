@@ -33,7 +33,7 @@ export class LoggerService {
     getLogger(context: string): Logger {
         const logger = winston.createLogger({
             format: winston.format.json(),
-            transports: [new transports.Console(), new transports.File({ filename: './log/error.log', level: 'error', format: winston.format.json() }), new transports.File({ filename: './log/combined.log', format: winston.format.json() })]
+            transports: [new transports.Console(), new transports.File({ filename: './log/error.json', level: 'error', format: winston.format.json() }), new transports.File({ filename: './log/combined.json', format: winston.format.json() })]
         })
         return {
             info: (message: MessageType) => {
