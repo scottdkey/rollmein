@@ -39,6 +39,7 @@ authRouter.post("/validate",
         const res = await authService.validateAuth(firebaseInfo, body)
         if (res.success && res.user && res.sessionId) {
           const { name, options } = sessionService.getCookieInfo()
+          logger.info({message: 'cookie options', options})
           ctx.state.user = {
             ...res.user,
             sessionExpires: ""
