@@ -1,13 +1,11 @@
 import { Box, Circle, Flex, Heading, HStack, Square, useColorMode, useColorModeValue, VStack } from '@chakra-ui/react';
 import { SunIcon, MoonIcon, ChevronDownIcon } from "@chakra-ui/icons"
 import React, { useState, useEffect } from 'react'
-import NextLink from "next/link"
-import { deleteCookie } from '../utils/cookieHelpers';
-import { useAuth } from '../providers/AuthProvider';
-import { useQueryClient } from "react-query"
+import NextLink from "next/link";
 import AuthMenu from './AuthMenu';
 import styles from "../styles/Navbar.module.scss"
 import { useRouter } from 'next/router';
+import { useSession } from 'next-auth/react';
 
 interface NavBarProps {
 
@@ -15,7 +13,7 @@ interface NavBarProps {
 
 const NavBar: React.FC<NavBarProps> = ({ }) => {
   const [theme, setTheme] = useState("dark")
-  const { auth } = useAuth()
+  const {data: session, status} = useSession()
   const { colorMode, setColorMode } = useColorMode()
   const [currentRoute, setCurrentRoute] = useState("")
   const themeButtonColor = useColorModeValue("orange.600", "orange.400")
@@ -53,7 +51,7 @@ const NavBar: React.FC<NavBarProps> = ({ }) => {
           <Heading className={styles.SiteHeader}>Roll Me In</Heading>
           <HStack>
             <NextLink href={'/'}><div className={routerClassNameSwitch(["/", '/#'])}>Home</div></NextLink>
-            {auth ? <NextLink href={'/profile'}>
+            {status === "authenticated" ? <NextLink href={'/profile'}>
               <div className={routerClassNameSwitch(["/profile"])}>Profile</div></NextLink> : null}
           </HStack>
         </VStack>

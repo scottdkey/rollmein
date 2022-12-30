@@ -6,8 +6,7 @@ interface DbUser {
   email: string
   google_id: string | null,
   apple_id: string | null,
-  firebase_id: string,
-  refresh_token: string,
+  github_id: string | null,
   created_at: string
   updated_at: string
 }
@@ -32,11 +31,5 @@ interface RegisterUser {
   email: string | null,
   googleId: string | null,
   appleId: string | null,
-  firebaseId: string,
-  refreshToken: string
+  githubId: string | null
 }
-
-type UserResponse = DataResponse<Partial<User>>
-type UsersResponse = DataResponse<Partial<User[]>>
-type ScrubbedUserResponse = DataResponse<ScrubbedUser>
-type ScrubbedUsersResponse = DataResponse<ScrubbedUser[]>

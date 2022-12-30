@@ -1,9 +1,9 @@
 import { Logger, LoggerService } from '../common/logger.service';
 import { DatabaseService } from '../common/database.service';
-import { DataResponse } from '../types/DataResponse';
 import { AuthorizationError, NullInputError, NotInDatabaseError } from '../utils/errorsHelpers';
 import { addToContainer } from '../container';
 import { DataServiceAbstract } from '../common/dataService.abstract';
+import { DataResponse } from '../../../types/DataResponse';
 
 @addToContainer()
 export class UserOptionsService extends DataServiceAbstract<DbUserOptions, UserOptions>{
@@ -72,7 +72,7 @@ export class UserOptionsService extends DataServiceAbstract<DbUserOptions, UserO
   }
 
 
-  protected validateUserOptionsInput(userId: string, input: UserOptionsInput | null, userOptions: UserOptions): { input: UserOptionsInput | null; error: AppError | null } {
+  protected validateUserOptionsInput(userId: string, input: UserOptionsInput | null, userOptions: UserOptions): { input: UserOptionsInput | null; error: IApplicationError | null } {
     if (userId !== userOptions.userId) {
       this.logger.error({ message: AuthorizationError.message })
       return {

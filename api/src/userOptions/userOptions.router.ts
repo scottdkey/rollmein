@@ -1,11 +1,11 @@
-import { HTTPCodes } from '../types/HttpCodes.enum';
 import { container } from '../container';
 import Router from "koa-router";
 import { UserOptionsService } from './userOptions.service';
 import { HandleDataResponse } from '../context';
-import { MyContext } from "../types/context";
 import { DefaultState } from 'koa';
-import { DataResponse } from '../types/DataResponse';
+import { MyContext } from '../../../types/Context';
+import { DataResponse } from '../../../types/DataResponse';
+import { HTTPCodes } from '../../../types/HttpCodes.enum';
 
 const optionsService = container.get(UserOptionsService)
 const router = new Router<DefaultState, MyContext<any, any>>({

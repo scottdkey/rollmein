@@ -2,7 +2,9 @@ import { addToContainer } from "../container";
 import winston from 'winston'
 import { DateService } from "./date.service";
 const { transports } = winston
+import dotenv from "dotenv"
 
+dotenv.config()
 export interface MessageType {
     [key: string]: any
     message: string
@@ -25,7 +27,10 @@ export interface Logger {
 
 @addToContainer()
 export class LoggerService {
-    constructor(private date: DateService) { }
+    private prod: boolean
+    constructor(private date: DateService) {
+        this.prod = process.env.NODE_ENV === 'production'
+    }
     timestamp(): string {
         return this.date.now().toISOString()
     }
@@ -33,11 +38,12 @@ export class LoggerService {
     getLogger(context: string): Logger {
         const logger = winston.createLogger({
             format: winston.format.json(),
+            level: this.prod ? 'info' : 'debug',
             transports: [new transports.Console(), new transports.File({ filename: './log/error.json', level: 'error', format: winston.format.json() }), new transports.File({ filename: './log/combined.json', format: winston.format.json() })]
         })
         return {
             info: (message: MessageType) => {
-                logger.info( {context, ...message, timestamp: this.timestamp() })
+                logger.info({ context, ...message, timestamp: this.timestamp() })
             },
             debug: (message: MessageType) => {
                 logger.debug({ context, ...message, timestamp: this.timestamp() })

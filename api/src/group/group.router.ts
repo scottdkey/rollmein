@@ -2,29 +2,27 @@ import { DefaultState, Next } from "koa";
 import Router from "koa-router";
 import { LoggerService } from "../common/logger.service";
 import { container } from "../container";
-import { MyContext } from "../types/context";
-import { Group, GroupResponse, ICreateGroup, IGroupUpdateParams } from "../types/group";
-import { HTTPCodes } from "../types/HttpCodes.enum";
 import { GroupService } from "./group.service";
+import { MyContext } from "../../../types/Context";
+import { IGroup, ICreateGroup, IGroupUpdate } from "../../../types/Group";
+import { HTTPCodes } from "../../../types/HttpCodes.enum";
+import { DataResponse } from "../../../types/DataResponse";
+
 
 
 const groupRouter = new Router<DefaultState, MyContext<any, any>>({ prefix: "/group" })
 const groupService = container.get(GroupService)
 const logger = container.get(LoggerService).getLogger('group router')
 
-groupRouter.get("/", async (ctx: MyContext<{}, Group[] | AppError>, next: Next) => {
-  let returnGroups: Group[] = []
+groupRouter.get("/", async (ctx: MyContext<{}, IGroup[] | IApplicationError>, next: Next) => {
+  let returnGroups: IGroup[] = []
   let error = false
   const user = ctx.state.user
   if (user) {
     try {
       const groups = await groupService.getGroupsByUserId(user.id)
-      if (groups && groups.data) {
-        returnGroups = [...groups.data]
-      }
-
-      if (groups && groups.error) {
-        logger.error({ message: 'get groups error', error: groups.error })
+      if (groups) {
+        returnGroups = [...groups]
       }
 
     } catch (e) {
@@ -57,13 +55,13 @@ groupRouter.get("/", async (ctx: MyContext<{}, Group[] | AppError>, next: Next) 
   await next()
 })
 
-groupRouter.get('/:groupId', async (ctx: MyContext<{}, Group | AppError>, next: Next) => {
+groupRouter.get('/:groupId', async (ctx: MyContext<{}, IGroup | IApplicationError>, next: Next) => {
   const userId = ctx.state.user?.id
 
   const groupId = ctx.params.groupId
 
   if (groupId !== "undefined") {
-    let response: { auth: boolean, data: GroupResponse } = await groupService.getGroup(groupId, userId)
+    let response: { auth: boolean, data: DataResponse<IGroup> } = await groupService.getGroup(groupId, userId)
     if (response.data.data) {
       ctx.body = response.data.data
       ctx.status = HTTPCodes.OK
@@ -77,7 +75,7 @@ groupRouter.get('/:groupId', async (ctx: MyContext<{}, Group | AppError>, next: 
   await next()
 })
 
-groupRouter.post("/", async (ctx: MyContext<ICreateGroup, Group | { message: string }>, next: Next) => {
+groupRouter.post("/", async (ctx: MyContext<ICreateGroup, IGroup | { message: string }>, next: Next) => {
   logger.info({ message: "post route", body: ctx.request.body })
   try {
     if (ctx.state.user && ctx.state.validUser) {
@@ -106,7 +104,7 @@ groupRouter.post("/", async (ctx: MyContext<ICreateGroup, Group | { message: str
   next()
 })
 
-groupRouter.put("/", async (ctx: MyContext<IGroupUpdateParams, Group | AppError>, next: Next) => {
+groupRouter.put("/", async (ctx: MyContext<IGroupUpdate, IGroup | IApplicationError>, next: Next) => {
   const handle = ctx.state.user?.id
   if (handle && ctx.state.validUser) {
     const res = await groupService.updateGroup(handle, ctx.request.body)

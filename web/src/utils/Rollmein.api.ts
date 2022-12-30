@@ -1,27 +1,11 @@
-import { useMutation, UseMutationOptions, useQuery, UseQueryOptions } from "react-query";
+import { useMutation, UseMutationOptions } from "react-query";
 import { apiUrl } from "./constants";
+import { RestMethods } from "../types/RestMethods.enum";
+import { useSession } from "next-auth/react";
 
-export enum RestMethods {
-  GET = "GET",
-  POST = "POST",
-  PUT = "PUT",
-  PATCH = "PATCH",
-  DELETE = "DELETE",
-  HEAD = "HEAD"
-}
 
-interface AppError {
-  type: string;
-  message: string;
-}
 
-export interface ApiResponse<T> {
-  data: T
-  success: boolean
-  error: AppError
-}
-
-export async function ApiRequest<T, Res>(route: string, method: RestMethods, body?: T, accessToken?: string) {
+export async function ApiRequest<T, Res>(route: string, method: RestMethods, params: { body?: T, sessionToken?: string }) {
   let options: RequestInit = {
     method,
     headers: {
@@ -30,8 +14,8 @@ export async function ApiRequest<T, Res>(route: string, method: RestMethods, bod
     credentials: 'include',
   }
 
-  if (method !== RestMethods.GET && body) {
-    const setupBody = body && JSON.stringify(body)
+  if (method !== RestMethods.GET && params.body) {
+    const setupBody = params.body && JSON.stringify(params.body)
     options = {
       ...options,
       body: setupBody
@@ -39,22 +23,28 @@ export async function ApiRequest<T, Res>(route: string, method: RestMethods, bod
 
   }
 
-  if (accessToken) {
+  if (params.sessionToken) {
     options = {
       ...options,
       headers: {
         ...options.headers,
-        Authorization: `Bearer ${accessToken}`,
+        Authorization: `Bearer stuff`,
       }
     }
   }
+  const res = await fetch(`${apiUrl}${route}`, options)
 
-  return await (await fetch(`${apiUrl}${route}`, options)).json() as Res
+  const json = await res.json() as Res
+  console.log({
+    body: json
+  })
+  return json
 }
 
 export function Mutation<ReturnType, ErrorType, Params>(options: UseMutationOptions<ReturnType, ErrorType, Params>, route: string, method: RestMethods) {
+  const { data: session } = useSession()
   return useMutation({
-    mutationFn: (body) => ApiRequest<Params, ReturnType>(route, method, body
+    mutationFn: (body) => ApiRequest<Params, ReturnType>(route, method, { body, sessionToken: session?.id }
     ),
     ...options
   })

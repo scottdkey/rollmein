@@ -1,26 +1,31 @@
 import { AuthorizationError } from '../utils/errorsHelpers';
 import { Next } from "koa";
-import { MyContext } from "../types/context";
 import { container } from '../container';
 import { LoggerService } from '../common/logger.service';
 import { ConfigService } from '../common/config.service';
 import { SessionService } from '../session/session.service';
+import { MyContext } from '../../../types/Context';
 
-const serverConfig = container.get(ConfigService).ServerConfig()
+const serverConfig = container.get(ConfigService).serverConfig
 const sessionService = container.get(SessionService)
 const logger = container.get(LoggerService).getLogger('isAuthLogger')
 
 export async function isAuth(ctx: MyContext<any, any>, next: Next) {
+  const sessionToken = ctx.headers.authorization
+  logger.debug({
+    message: "session",
+    sessionToken
+  })
   try {
-    const cookie = ctx.cookies.get(serverConfig.cookieName)
-    if (cookie) {
-      const session = await sessionService.getSession(cookie)
+
+    if (sessionToken) {
+      const session = await sessionService.getSession(sessionToken)
       const cookieName = serverConfig.cookieName
       const cookieOptions = sessionService.cookieOptions()
 
       if (session.data && session.success) {
         ctx.state.user = session.data
-        ctx.state.token = cookie
+        ctx.state.token = sessionToken
         ctx.state.validUser = session.success
       }
 

@@ -4,9 +4,9 @@ import { DateService } from "../common/date.service";
 import { Logger, LoggerService } from "../common/logger.service";
 import { RedisKeys, RedisService } from "../common/redis.service";
 import { addToContainer } from "../container";
-import { CacheUser, User } from "../types/user";
 import { v4 as uuid } from "uuid";
 import { ApplicationError } from "../utils/errorsHelpers";
+import { CacheUser, User } from "../../../types/user";
 
 
 @addToContainer()
@@ -15,7 +15,7 @@ export class SessionService {
   private serverConfig: IServerConfig
   constructor(private date: DateService, private config: ConfigService, private redis: RedisService, private loggerService: LoggerService) {
     this.logger = this.loggerService.getLogger(SessionService.name)
-    this.serverConfig = this.config.ServerConfig()
+    this.serverConfig = this.config.serverConfig
   }
 
 
@@ -50,21 +50,13 @@ export class SessionService {
       }
       const sessionExpireInSeconds = this.date.secondsFromNumberOfDays(7)
       await this.redis.setWithRetry(RedisKeys.SESSION, sessionId, cacheUser, 4, sessionExpireInSeconds)
-      return {
-        error: null,
-        success: true,
-        id: sessionId
-      }
+      return sessionId
     } catch (e) {
       this.logger.error({
         message: "error setting session",
-        error: e
+        error: e.message, stacktrace: e.stacktrace
       })
-      return {
-        error: ApplicationError(JSON.stringify(e.message)),
-        success: false,
-        id: null
-      }
+      throw ApplicationError(e.message)
     }
   }
 
@@ -72,20 +64,13 @@ export class SessionService {
     await this.redis.redis.del(RedisKeys.SESSION, sessionId)
   }
 
-  async createSession(user: User): Promise<{ error: AppError | null, success: boolean, id: string | null }> {
+  async createSession(user: User) {
     try {
       const id = uuid()
       return await this.setSession(id, user)
     } catch (e) {
       this.logger.error({ message: 'unable to create session', error: e.message, stacktrace: e.stacktrace })
-      return {
-        error: {
-          message: JSON.stringify(e),
-          type: "#createSession error"
-        },
-        success: false,
-        id: null
-      }
+      throw ApplicationError("unable to create session")
     }
   }
 }

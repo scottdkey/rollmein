@@ -1,8 +1,8 @@
 import { NotInDatabaseError, AuthorizationError } from '../utils/errorsHelpers';
 import { DatabaseService } from '../common/database.service';
 import { addToContainer } from '../container';
-import { DataResponse } from '../types/DataResponse';
 import { DataServiceAbstract } from '../common/dataService.abstract';
+import { DataResponse } from '../../../types/DataResponse';
 
 @addToContainer()
 export class PlayerService extends DataServiceAbstract<DbPlayer, Player>{

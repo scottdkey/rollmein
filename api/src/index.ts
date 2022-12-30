@@ -6,13 +6,11 @@ import { container } from "./container";
 import { Routers } from "./routers";
 import { ConfigService } from "./common/config.service";
 import { LoggerService } from "./common/logger.service";
-import { isAuth } from './middleware/isAuth';
-import { RefreshSession } from './middleware/refreshSession.middleware';
 
 const logger = container.get(LoggerService).getLogger('IndexLogger')
 const server = async () => {
   const app = new Koa();
-  const config = container.get(ConfigService).ServerConfig()
+  const config = container.get(ConfigService).serverConfig
   app.proxy = config.prod
 
   app.use(bodyParser())
@@ -24,11 +22,8 @@ const server = async () => {
     })
   )
 
-  app.use(isAuth)
-  app.use(RefreshSession)
-
   Routers.forEach(({ router, routerName }) => {
-    logger.info({ message: `starting ${routerName}` })
+    logger.debug({ message: `starting ${routerName}` })
     app.use(router.routes()).use(router.allowedMethods())
 
   })

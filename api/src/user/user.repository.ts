@@ -1,17 +1,14 @@
+import { DbUser, RegisterUser, User } from "../../../types/user";
 import { DatabaseService } from "../common/database.service";
 import { DataServiceAbstract } from "../common/dataService.abstract";
-import { Logger, LoggerService } from "../common/logger.service";
 import { addToContainer } from "../container";
-import { DbUser, RegisterUser, User } from "../types/user";
 
 @addToContainer()
 export class UserRepository extends DataServiceAbstract<DbUser, User>{
   db: DatabaseService
-  private logger: Logger
-  constructor(private database: DatabaseService, private ls: LoggerService) {
+  constructor(private database: DatabaseService) {
     super()
     this.db = this.database
-    this.logger = this.ls.getLogger(UserRepository.name)
   }
 
   mapToCamelCase = (data: DbUser): User => {
@@ -21,8 +18,7 @@ export class UserRepository extends DataServiceAbstract<DbUser, User>{
       email: data.email,
       googleId: data.google_id,
       appleId: data.apple_id,
-      firebaseId: data.firebase_id,
-      refreshToken: data.refresh_token,
+      githubId: data.github_id,
       createdAt: new Date(data.created_at).toISOString(),
       updatedAt: new Date(data.created_at).toISOString()
     }
@@ -31,9 +27,13 @@ export class UserRepository extends DataServiceAbstract<DbUser, User>{
   async getUserByFirebaseId(firebaseId: string) {
     const query = 'SELECT * FROM public.user WHERE firebase_id=$1'
     const params = [firebaseId]
-    const res = await this.returnOne(query, params)
-    this.logger.debug({ message: '#getUserByFirebaseId', res })
-    return res
+    return await this.returnOne(query, params)
+  }
+
+  async getUserByGoogleId(googleId: string) {
+    const query = 'SELECT * FROM public.user WHERE google_id=$1'
+    const params = [googleId]
+    return await this.returnOne(query, params)
   }
 
   async getUserById(userId: string) {
@@ -44,9 +44,7 @@ export class UserRepository extends DataServiceAbstract<DbUser, User>{
   async getUserByEmail(email: string) {
     const query = 'SELECT * FROM public.user WHERE email=$1'
     const params = [email]
-    const res = await this.returnOne(query, params)
-    this.logger.debug({ message: '#getUserByEmail', res })
-    return res
+    return await this.returnOne(query, params)
   }
 
   async userFuzzySearch(input: string) {
@@ -67,9 +65,9 @@ export class UserRepository extends DataServiceAbstract<DbUser, User>{
     return await this.returnOne(query, values)
   }
 
-  async createUser({ username, email, firebaseId, refreshToken }: RegisterUser) {
-    const query = `INSERT INTO public.user (email, username, firebase_id, refresh_token) VALUES ($1, $2, $3, $4) RETURNING *`
-    const values = [email, username, firebaseId, refreshToken]
+  async createUser({ username, email, googleId, githubId, appleId }: RegisterUser) {
+    const query = `INSERT INTO public.user (email, username, google_id, github_id, apple_id) VALUES ($1, $2, $3, $4) RETURNING *`
+    const values = [email, username, googleId, githubId, appleId]
     return await this.returnOne(query, values)
   }
   async updateUserProfile(username: string) {

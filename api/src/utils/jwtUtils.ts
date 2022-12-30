@@ -3,7 +3,7 @@ import { container } from '../container';
 
 import jwt from "jsonwebtoken"
 
-const secretKey = container.get(ConfigService).ServerConfig().secretKey
+const secretKey = container.get(ConfigService).serverConfig.secretKey
 
 export interface TokenInterface {
   id: string
@@ -12,4 +12,4 @@ export interface TokenInterface {
 
 export const signJwt = (userId: string): string => jwt.sign({ id: userId }, secretKey, { expiresIn: '7d', algorithm: "RS256" })
 
-// export const verifyJwt = (token: string): DecodedIdToken => jwt.verify(token, secretKey, { algorithms: ["RS256"] })
+export const verifyNextAuthToken = (token: string) => jwt.verify(token, secretKey, { algorithms: ["RS256"] })

@@ -13,55 +13,58 @@ export interface IServerConfig {
   cookieName: string
 }
 
+export interface IGoogleOauth2Config {
+  clientId: string
+  clientSecret: string
+  redirectUri: string
+}
+
 @addToContainer()
 export class ConfigService {
   logger: Logger
+  serverConfig = this.ServerConfig()
+  pgConfig = this.PgConfig()
+  redisConfig = this.RedisConfig()
+  googleOauth2Config = this.GoogleOauth2Config()
   constructor(private ls: LoggerService) {
     this.logger = this.ls.getLogger(ConfigService.name)
     dotenv.config()
+
 
     this.validateConfig(
       [
         {
           configName: "ServerConfig",
-          configObject: this.ServerConfig()
-        },
-        {
-          configName: "FirebaseConfig",
-          configObject: this.FirebaseConfig()
+          configObject: this.serverConfig
         },
         {
           configName: "PgConfig",
-          configObject: this.PgConfig()
+          configObject: this.pgConfig
         },
         {
           configName: "RedisConfig",
-          configObject: this.RedisConfig()
+          configObject: this.redisConfig
+        },
+        {
+          configName: "GoogleOauth2Config",
+          configObject: this.googleOauth2Config
         }
 
       ])
   }
 
-  FirebaseConfig() {
-    const { FIREBASE_PROJECT_ID, FIREBASE_KEY_ID, FIREBASE_PRIVATE_KEY, FIREBASE_CLIENT_EMAIL, FIREBASE_CLIENT_ID, FIREBASE_AUTH_URI, FIREBASE_TOKEN_URI, FIREBASE_AUTH_PROVIDER_x509_CERT_URL, FIREBASE_PROVIDER_CLIENT__x509_CERT_URL } = process.env
+  GoogleOauth2Config() {
+    const { GOOGLE_ID, GOOGLE_SECRET } = process.env
 
-
-    const config = {
-      type: 'service_account',
-      project_id: FIREBASE_PROJECT_ID,
-      private_key_id: FIREBASE_KEY_ID,
-      private_key: FIREBASE_PRIVATE_KEY,
-      client_email: FIREBASE_CLIENT_EMAIL,
-      client_id: FIREBASE_CLIENT_ID,
-      auth_uri: FIREBASE_AUTH_URI,
-      token_uri: FIREBASE_TOKEN_URI,
-      auth_provider_x509_cert_url: FIREBASE_AUTH_PROVIDER_x509_CERT_URL,
-      client_x509_cert_url: FIREBASE_PROVIDER_CLIENT__x509_CERT_URL
+    const config: IGoogleOauth2Config = {
+      clientId: GOOGLE_ID as string,
+      clientSecret: GOOGLE_SECRET as string,
+      redirectUri: `${this.ServerConfig().cors_uri}/api/auth/callback/google`
     }
     return config
   }
 
-  ServerConfig(): IServerConfig  {
+  private ServerConfig(): IServerConfig {
     const { SECRETKEY, PORT, CORS_URL } = process.env
     return {
       dev: process.env.NODE_ENV === 'development',
@@ -74,7 +77,7 @@ export class ConfigService {
     }
   }
 
-  PgConfig(): {
+  private PgConfig(): {
     user: string | undefined
     password: string | undefined
     host: string | undefined
@@ -91,7 +94,7 @@ export class ConfigService {
     }
   }
 
-  RedisConfig(): { host: string } {
+  private RedisConfig(): { host: string } {
     return {
       host: process.env.REDIS_HOST ? process.env.REDIS_HOST : 'localhost'
     }

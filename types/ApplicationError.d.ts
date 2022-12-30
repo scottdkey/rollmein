@@ -1,4 +1,4 @@
-interface AppError {
+interface IApplicationError {
   type: string;
   message: string;
 }

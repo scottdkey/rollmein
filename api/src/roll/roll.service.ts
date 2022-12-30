@@ -1,7 +1,7 @@
-import { ErrorTypes } from '../types/ErrorCodes.enum';
-import { DataResponse } from '../types/DataResponse';
+import { DataResponse } from "../../../types/DataResponse";
+import { ErrorTypes } from "../../../types/ErrorCodes.enum";
+import { PlayerCounts, ValidRoll } from "../../../types/Roll";
 import { addToContainer } from "../container";
-import { PlayerCounts, ValidRoll } from "../types/roll";
 
 @addToContainer()
 export class RollService {
@@ -130,7 +130,7 @@ export class RollService {
     return { remaining, players };
   }
 
-  protected createError(type: string, message: string): AppError {
+  protected createError(type: string, message: string): IApplicationError {
     return {
       type,
       message
@@ -139,7 +139,7 @@ export class RollService {
 
   private validRoll = (players: Player[], rollType: RollType): ValidRoll => {
     const playerCounts = this.playerCounts(players, rollType)
-    const errorArray: AppError[] = []
+    const errorArray: IApplicationError[] = []
     const invalidRollError = (message: string) => {
       errorArray.push(this.createError("invalidRoll", message))
     }

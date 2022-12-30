@@ -30,6 +30,7 @@
     "**/*.ts",
     "**/*.tsx",
     "utils/createWithApollo.js",
+    "src/pages/_document.js",
     "../types"
   ],
   "exclude": [

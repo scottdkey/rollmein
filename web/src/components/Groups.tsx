@@ -1,10 +1,13 @@
 import { Spinner, Text, Tooltip, VStack } from "@chakra-ui/react"
 import { useEffect } from "react"
 import { useQueryClient } from "react-query"
-import { GroupRoutes, IGroup, useGroupsQuery } from "../utils/groupApi"
-import { ApiRequest, RestMethods } from "../utils/Rollmein.api"
+import { useGroupsQuery } from "../utils/groupApi"
+import { ApiRequest } from "../utils/Rollmein.api"
 import { Group } from "./Group"
 import { GroupForm } from "./GroupForm"
+import { RestMethods } from "../types/RestMethods.enum"
+import { GroupRoutes } from "../../../types/Group.enum"
+import { IGroup } from "../../../types/Group"
 
 
 

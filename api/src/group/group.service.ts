@@ -1,11 +1,12 @@
 import { Next } from "koa";
 import { Logger, LoggerService } from "../common/logger.service";
 import { addToContainer } from "../container";
-import { MyContext } from "../types/context";
-import type { Group, GroupResponse, ICreateGroup, IGroupUpdateParams } from '../types/group';
-import { HTTPCodes } from "../types/HttpCodes.enum";
 import { ApplicationErrorResponse, AuthorizationErrorResponse } from "../utils/errorsHelpers";
 import { GroupRepository } from './group.repository';
+import { MyContext } from "../../../types/Context";
+import { ICreateGroup, IGroupUpdate, IGroup } from "../../../types/Group";
+import { HTTPCodes } from "../../../types/HttpCodes.enum";
+import { DataResponse } from "../../../types/DataResponse";
 
 
 @addToContainer()
@@ -34,7 +35,7 @@ export class GroupService {
     if (res.data && res.data.length > 0) {
       return {
         ...res,
-        data: res.data.sort((a, b) => {
+        data: res.data.sort((a: any, b: any) => {
           const date1 = new Date(a.createdAt).getMilliseconds()
 
           const date2 = new Date(b.createdAt).getMilliseconds()
@@ -67,7 +68,7 @@ export class GroupService {
 
   async updateGroup(
     userId: string,
-    updateValueInput: IGroupUpdateParams): Promise<GroupResponse> {
+    updateValueInput: IGroupUpdate): Promise<DataResponse<IGroup>> {
 
     const groupQuery = await this.setupUpdateGeneric(updateValueInput.id, userId)
 
@@ -85,11 +86,9 @@ export class GroupService {
 
       group.lockAfterOut = updateValueInput.lockAfterOut !== undefined ? updateValueInput.lockAfterOut : group.lockAfterOut
 
-      console.log(updateValueInput.membersCanUpdate)
       group.membersCanUpdate = updateValueInput.membersCanUpdate !== undefined ? updateValueInput.membersCanUpdate : group.membersCanUpdate
 
-      const res = await this.groupRepo.updateGroup(group)
-      return res
+      return await this.groupRepo.updateGroup(group)
     }
     return groupQuery
   }
@@ -126,7 +125,7 @@ export class GroupService {
     const groupQuery = await this.setupUpdateGeneric(groupId, userId)
     if (groupQuery.success && groupQuery.data) {
       const group = groupQuery.data
-      group.relations.players = group.relations.players.filter(value => value === playerId)
+      group.relations.players = group.relations.players.filter((value: string) => value === playerId)
 
       return await this.groupRepo.updateGroup(group)
     }
@@ -148,14 +147,14 @@ export class GroupService {
     const groupQuery = await this.setupUpdateGeneric(groupId, userId)
     if (groupQuery.success && groupQuery.data) {
       const group = groupQuery.data
-      group.relations.members = group.relations.members.filter(value => value === memberId)
+      group.relations.members = group.relations.members.filter((value: string) => value === memberId)
 
       return await this.groupRepo.updateGroup(group)
     }
     return groupQuery
   }
 
-  async deleteGroup(id: string, userId: string): Promise<GroupResponse> {
+  async deleteGroup(id: string, userId: string): Promise<DataResponse<IGroup>> {
     const groupQuery = await this.groupRepo.getGroupById(id)
     const authorized = groupQuery.data && this.checkIfAuthorized(groupQuery.data, userId)
     if (!authorized) {
@@ -166,28 +165,25 @@ export class GroupService {
 
   }
 
-  protected checkIfAuthorized(group: Group, userIdFromRequest: string) {
+  protected checkIfAuthorized(group: IGroup, userIdFromRequest: string) {
     const groupOwner = group.userId === userIdFromRequest
-    const inGroupMembers = group.relations.members.includes(userIdFromRequest)
+
+    const inGroupMembers = group.relations.members.length > 0 && group.relations.members.includes(userIdFromRequest)
     if (!group.membersCanUpdate) {
       return groupOwner
     }
     return groupOwner || inGroupMembers
   }
 
-  async handleGroupsRoute(ctx: MyContext<{}, Group[] | AppError>, next: Next) {
-    let returnGroups: Group[] = []
+  async handleGroupsRoute(ctx: MyContext<{}, IGroup[] | IApplicationError>, next: Next) {
+    let returnGroups: IGroup[] = []
     let error = false
     const user = ctx.state.user
     if (user) {
       try {
         const groups = await this.getGroupsByUserId(user.id)
-        if (groups && groups.data) {
-          returnGroups = [...groups.data]
-        }
-
-        if (groups && groups.error) {
-          this.logger.error({ message: 'get groups error', error: groups.error })
+        if (groups) {
+          returnGroups = [...groups]
         }
 
       } catch (e) {
@@ -202,7 +198,6 @@ export class GroupService {
       }
       if (groups.error) {
         this.logger.error({ message: "get groups error", error: groups.error })
-        console.error(groups.error)
       }
     } catch (e) {
       this.logger.error({ message: 'get groups error', error: e })

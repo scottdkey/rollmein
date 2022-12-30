@@ -2,13 +2,15 @@ import { EditIcon } from "@chakra-ui/icons"
 import { Button, FormControl, FormErrorMessage, FormLabel, IconButton, Input, Modal, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalHeader, ModalOverlay, Radio, RadioGroup, Stack, Switch } from "@chakra-ui/react"
 import { useState } from "react"
 import { Controller, SubmitHandler, useForm } from "react-hook-form"
-import { GroupRoutes, ICreateGroup, IGroup, RollType, useCreateGroupMutation, useUpdateGroupMutation } from "../utils/groupApi"
+import { useCreateGroupMutation, useUpdateGroupMutation } from "../utils/groupApi"
 import { useQueryClient } from "react-query"
-import { useAuth } from "../providers/AuthProvider";
+import { useSession } from "next-auth/react"
+import { ICreateGroup, IGroup } from "../../../types/Group"
+import { GroupRoutes, RollType } from "../../../types/Group.enum"
 
 export const GroupForm = ({ group }: { group?: IGroup }) => {
   const queryClient = useQueryClient()
-  const { auth } = useAuth()
+  const {status} = useSession()
   const [modalOpen, setModalOpen] = useState(false)
 
   const successFunction = async (data: IGroup) => {
@@ -55,9 +57,9 @@ export const GroupForm = ({ group }: { group?: IGroup }) => {
   return (
     <>
       {group ?
-        <IconButton disabled={!auth} onClick={() => setModalOpen(true)} aria-label='Search database' icon={<EditIcon />} />
+        <IconButton disabled={status !== "authenticated"} onClick={() => setModalOpen(true)} aria-label='Search database' icon={<EditIcon />} />
         :
-        <Button disabled={!auth} onClick={() => setModalOpen(true)}>add a group</Button>
+        <Button disabled={status !== "authenticated"} onClick={() => setModalOpen(true)}>add a group</Button>
       }
 
 

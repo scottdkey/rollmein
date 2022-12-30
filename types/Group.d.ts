@@ -20,7 +20,17 @@ interface ICreateGroup {
   lockAfterOut: boolean
 }
 
-interface Group extends ICreateGroup {
+interface IGroupError {
+  response: {
+    status: number
+  }
+}
+
+interface IGroupDelete {
+  id: string
+}
+
+interface IGroup extends ICreateGroup {
   id: string
   relations: { members: string[], players: string[] }
   userId: string
@@ -28,7 +38,7 @@ interface Group extends ICreateGroup {
   updatedAt: string
 }
 
-interface IGroupUpdateParams {
+interface IGroupUpdate {
   id: string,
   name?: string,
   membersCanUpdate?: boolean,
@@ -37,6 +47,3 @@ interface IGroupUpdateParams {
   memberId?: string,
   playerId?: string
 }
-
-type GroupResponse = DataResponse<Group>
-type GroupsResponse = DataResponse<Group[]>

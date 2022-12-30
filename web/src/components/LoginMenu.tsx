@@ -1,71 +1,38 @@
 import { Button, HStack, Input, VStack, Box, useToast } from "@chakra-ui/react"
-import { User } from "firebase/auth"
-import dynamic from "next/dynamic"
-
+import { signIn } from "next-auth/react"
 import NextImage from "next/image"
 import { useState } from "react"
-import { useQueryClient } from "react-query"
 import googleImage from "../assets/images/Google.svg"
-import { useAuth } from "../providers/AuthProvider"
-import { AuthRoutes, useValidateSignInMutation } from "../utils/authApi"
-import { SignInWithGoogle } from "../utils/firebase.client"
-import { GroupRoutes } from "../utils/groupApi"
-import { UserRoutes } from "../utils/userApi"
+import { useSession } from "next-auth/react"
 const LoginMenu = () => {
   return (
     <VStack alignContent={"center"} alignItems={"center"} width="100%" >
-      <GoogleSignIn />
-      <MagicLinkSignIn />
+      <OauthSignIn AuthType="google" image={googleImage} />
     </VStack >
   )
 }
 export default LoginMenu
 
-interface extendedUser extends User {
-  stsTokenManager?: {
-    accessToken: string
-    expirationTime: number
-    refreshToken: string
-    isExpired: () => boolean
-  }
-}
+function OauthSignIn(props: { AuthType: string, image: any, }) {
 
-function GoogleSignIn() {
-  const { setUser, setAuth } = useAuth()
-  const queryClient = useQueryClient()
-  const validateSignIn = useValidateSignInMutation({
-    onSuccess: (data) => {
-      if(data){
-        setUser(data)
-        setAuth(true)
-        queryClient.invalidateQueries([UserRoutes.ME, GroupRoutes.GROUP])
-      }
-    }
-  })
-  const signIn = async () => {
-    const res: extendedUser | null = await SignInWithGoogle()
-    const tokens = res?.stsTokenManager
-    tokens && validateSignIn.mutate(tokens)
-  }
-
-
+  const text = `Sign in with ${props.AuthType}`
 
   return (
     <>
       <Button
-        onClick={signIn}
+        onClick={() => signIn(props.AuthType)}
         width="100%"
         alignItems={'center'}
         verticalAlign={'center'}
       >
-        <Box ml='-1' mt='2.5' mb='auto' mr='auto'>
+        <Box ml='-1' mt='2.5' mb='auto' mr='5'>
           <NextImage
             width="20rem"
             height="20rem"
             src={googleImage}
-            alt="Google Logo" />
+            alt={`${props.AuthType} logo`} />
         </Box>
-        Sign in with google
+        {text}
       </Button>
     </>
   )

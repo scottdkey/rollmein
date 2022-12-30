@@ -1,9 +1,9 @@
 import { LoggerService } from './logger.service';
-import { DataResponse } from '../types/DataResponse';
 import { NotInRedisError, RedisError } from '../utils/errorsHelpers';
 import { ConfigService } from './config.service';
 import { addToContainer } from "../container";
 import IoRedis, { Redis } from 'ioredis'
+import { DataResponse } from '../../../types/DataResponse';
 
 export enum RedisKeys {
   SESSION = 'session'
@@ -15,7 +15,7 @@ export class RedisService {
 
   constructor(private cs: ConfigService, private ls: LoggerService) {
     const logger = this.ls.getLogger(RedisService.name)
-    const config = this.cs.RedisConfig()
+    const config = this.cs.redisConfig
     try {
       this.redis = new IoRedis({
         host: config.host

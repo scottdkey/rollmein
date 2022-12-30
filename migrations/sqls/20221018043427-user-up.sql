@@ -2,10 +2,9 @@ CREATE TABLE IF NOT EXISTS public.user (
     id uuid DEFAULT public.uuid_generate_v4() NOT NULL,
     username VARCHAR(20) default NULL,
     email VARCHAR(30) NOT NULL,
-    firebase_id TEXT UNIQUE NOT NULL,
-    refresh_token TEXT UNIQUE NOT NULL,
     google_id VARCHAR(40) UNIQUE,
     apple_id VARCHAR(40) UNIQUE,
+    github_id VARCHAR(40) UNIQUE,
     created_at timestamp without time zone DEFAULT now(),
     updated_at timestamp without time zone DEFAULT now()
 );

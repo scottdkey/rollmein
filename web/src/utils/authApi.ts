@@ -1,32 +1,14 @@
-import { useMutation, UseMutationOptions } from "react-query";
-import { RestMethods, ApiResponse, ApiRequest } from "./Rollmein.api";
+import { RestMethods } from "../types/RestMethods.enum";
+import { ApiRequest } from "./Rollmein.api";
 
 export enum AuthRoutes {
   VALIDATE = `auth/validate`,
-  LOGOUT = "auth/logout"
 }
 
-export interface ITokens {
-  accessToken: string;
-  expirationTime: number;
-  refreshToken: string;
-  isExpired: () => boolean;
+
+export const validateAuthRequest = async (body: IValidateAuthBody) => {
+  return await ApiRequest<IValidateAuthBody, IValidateAuthRes>(AuthRoutes.VALIDATE, RestMethods.POST, { body })
 }
-
-export interface ScrubbedUser {
-  id: string
-  username: string
-}
-export interface IValidateResponse extends ApiResponse<ScrubbedUser> { }
-
-
-export const useValidateSignInMutation = (options: UseMutationOptions<ScrubbedUser | undefined, unknown, ITokens, unknown>) => useMutation(async (tokens: ITokens) => {
-  return await ApiRequest<ITokens, ScrubbedUser>(AuthRoutes.VALIDATE, RestMethods.POST, tokens, tokens.accessToken)
-}, options)
-
-export const useLogoutMutation = (options: UseMutationOptions<unknown, unknown, unknown, unknown>) => useMutation(async () => {
-  return await ApiRequest(AuthRoutes.LOGOUT, RestMethods.DELETE)
-}, options)
 
 
 

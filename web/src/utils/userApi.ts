@@ -1,6 +1,8 @@
 import { UseMutationOptions, useQuery } from "react-query"
-import { ScrubbedUser } from "./authApi"
-import { ApiRequest, Mutation, RestMethods } from "./Rollmein.api"
+import { ApiRequest, Mutation } from "./Rollmein.api"
+import { ScrubbedUser } from "../../../types/User"
+import { RestMethods } from "../types/RestMethods.enum"
+import { useSession } from "next-auth/react"
 
 interface IMeError {
   response: {
@@ -16,8 +18,8 @@ export interface IProfileUpdateBody {
   username: string
 }
 
-export const useMeQuery = () => useQuery<{ user: ScrubbedUser | null, success: boolean }, IMeError>(UserRoutes.ME, async () => {
-  return await ApiRequest<{}, { user: ScrubbedUser | null, success: boolean }>(UserRoutes.ME, RestMethods.GET)
+export const useMeQuery = (sessionToken?: string) => useQuery<{ user: ScrubbedUser | null, success: boolean }, IMeError>(UserRoutes.ME, async () => {
+  return await ApiRequest<{}, { user: ScrubbedUser | null, success: boolean }>(UserRoutes.ME, RestMethods.GET, { sessionToken})
 }, {
   retry: false,
   staleTime: 3000,

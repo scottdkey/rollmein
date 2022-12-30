@@ -1,11 +1,8 @@
 import { Logger, LoggerService } from '../common/logger.service';
-import { ApplicationError, UnknownProblemError } from '../utils/errorsHelpers';
+import { ApplicationError } from '../utils/errorsHelpers';
 import { addToContainer } from "../container";
-import { DataResponse } from '../types/DataResponse';
-import { RegisterUser, User } from '../types/user';
 import { UserRepository } from './user.repository';
-import { ValidateRequestBody } from '../auth/auth.router';
-import { IFirebaseInfo } from '../types/context';
+import { RegisterUser, User } from '../../../types/user';
 
 @addToContainer()
 export class UserService {
@@ -16,93 +13,90 @@ export class UserService {
     this.logger = this.ls.getLogger(UserService.name)
   }
 
-  scrubResponse({ id, username }: User) {
+  scrubUser({ id, username }: User) {
     return {
       id,
       username
     }
   }
 
-  scrubManyResponse(users: User[]) {
+  scrubManyUsers(users: User[]) {
     return users.map(user => {
-      return this.scrubResponse(user)
+      return this.scrubUser(user)
     })
   }
 
-  async getByFirebaseId(firebaseId: string) {
-    return await this.userRepo.getUserByFirebaseId(firebaseId)
-  }
-
-  async ensureUserExists(body: ValidateRequestBody, payload: IFirebaseInfo): Promise<DataResponse<User>> {
+  async getOrCreateUserByGoogleId(googleId: string, email: string, username: string) {
     try {
-      let returnError: AppError = UnknownProblemError(new Error('unknown problem ocurred in #ensureUserExists'))
-      const user = await this.getByFirebaseId(payload.firebaseId)
+      const user = await this.getByGoogleId(googleId)
+      if (user.success === false) {
+        const registerRes = await this.register({ googleId, email, username, appleId: null, githubId: null })
+        return registerRes.data
 
-      if (user.success) {
-        return user
       }
-      if (user.error) {
-        returnError = user.error
+      if (user.success === true) {
+        return user.data
       }
-      if (!user.data && !user.success) {
-        const registerUser: RegisterUser = {
-          username: null,
-          email: payload.email,
-          googleId: payload.googleId || null,
-          appleId: payload.appleId || null,
-          firebaseId: payload.firebaseId,
-          refreshToken: body.refreshToken
-
-        }
-        const registeredUser = await this.register(registerUser)
-        if (registeredUser.success) {
-          return registeredUser
-        }
-        if (!registeredUser.success && registeredUser.error) {
-          returnError = registeredUser.error
-        }
-      }
-      return {
-        data: null,
-        success: false,
-        error: returnError
-      }
+      return null
     } catch (e) {
-      this.logger.error({ message: "error occurred on #ensureUserExists", ...e })
-      return {
-        data: null,
-        success: false,
-        error: e
-      }
+      const message = 'error #findOrCreateUserGoogleId'
+      this.logError(message, e)
+      throw ApplicationError(message)
     }
   }
 
-  async register(registerUser: RegisterUser): Promise<DataResponse<User>> {
-    try {
-      const userRes = await this.userRepo.createUser(registerUser)
-      const googleId = registerUser.googleId
-      const appleId = registerUser.appleId
-      if (userRes.data && googleId) {
-        const res = await this.userRepo.addGoogleId(googleId, userRes.data.id)
-        return res
-      }
-      if (userRes.data && appleId) {
-        return await this.userRepo.addAppleId(appleId, userRes.data.id)
-      }
-      return userRes
-    }
-    catch (e) {
-      this.logger.error(ApplicationError(e.message))
+  async getByGoogleId(googleId: string) {
+    return await this.userRepo.getUserByGoogleId(googleId)
+  }
+
+  async getById(id: string) {
+    return await this.userRepo.getUserById(id)
+  }
+
+  async getByEmail(email: string) {
+    const user = await this.userRepo.getUserByEmail(email)
+    if (user.success && user.data) {
       return {
-        data: null,
-        success: false,
-        error: ApplicationError(e.message)
+        ...user,
+        data: this.scrubUser(user.data)
       }
+    }
+    return user
+  }
+
+
+  async register(registerUser: RegisterUser) {
+    try {
+      return await this.userRepo.createUser(registerUser)
+    } catch (e) {
+      const message = "error creating user"
+      this.logError(message, e)
+      throw ApplicationError(message)
+
     }
   }
 
   async updateProfile(username: string) {
-    return await this.userRepo.updateUserProfile(username)
+    const user = await this.userRepo.updateUserProfile(username)
+    if (user.success && user.data) {
+      return {
+        ...user,
+        data: this.scrubUser(user.data),
+        user: user.data
+      }
+    }
+    return {
+      ...user,
+      user: null
+    }
+  }
+  logError(message: string, e: any) {
+    this.logger.error({
+      message,
+      error: e.message,
+      stacktrace: e.stacktrace
+    })
+    throw ApplicationError(message)
   }
 
 

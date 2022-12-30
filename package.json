@@ -14,6 +14,7 @@
     "logs": "docker-compose logs --follow"
   },
   "dependencies": {
+    "@types/koa": "^2.13.5",
     "db-migrate": "^0.11.13",
     "db-migrate-pg": "^1.2.2"
   }

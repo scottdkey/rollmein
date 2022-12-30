@@ -1,9 +1,10 @@
-import { DataResponse } from '../types/DataResponse';
-import { ErrorTypes } from '../types/ErrorCodes.enum';
-import { HTTPCodes } from '../types/HttpCodes.enum';
+
+import { DataResponse } from '../../../types/DataResponse';
+import { ErrorTypes } from '../../../types/ErrorCodes.enum';
+import { HTTPCodes } from '../../../types/HttpCodes.enum';
 import { RedisKeys } from '../common/redis.service';
 
-export function HttpCodeFromErrorType(error: AppError): HTTPCodes {
+export function HttpCodeFromErrorType(error: IApplicationError): HTTPCodes {
   switch (error.type) {
     case ErrorTypes.APP_ERROR:
       return HTTPCodes.SERVER_ERROR
@@ -20,28 +21,28 @@ export function HttpCodeFromErrorType(error: AppError): HTTPCodes {
   }
 }
 
-const createError = (type: ErrorTypes, message: string): AppError => {
+const createError = (type: ErrorTypes, message: string): IApplicationError => {
   return {
     type,
     message
   }
 }
 
-export function UnknownProblemError(error: Error): AppError {
+export function UnknownProblemError(error: Error): IApplicationError {
   return createError(ErrorTypes.APP_ERROR, `unknown application error occurred error:${error}`)
 }
 
-export function ApplicationError(message: string): AppError {
+export function ApplicationError(message: string): IApplicationError {
   return createError(ErrorTypes.APP_ERROR, message)
 }
 
-export const DatabaseError = (message: string): AppError => createError(ErrorTypes.DB_ERROR, message)
+export const DatabaseError = (message: string): IApplicationError => createError(ErrorTypes.DB_ERROR, message)
 
-export const NotInDatabaseError = (tableName: string, id: string): AppError => DatabaseError(`Table: ${tableName} not found. Nothing found matching id:${id}`)
+export const NotInDatabaseError = (tableName: string, id: string): IApplicationError => DatabaseError(`Table: ${tableName} not found. Nothing found matching id:${id}`)
 
-export const NotInRedisError = (key: RedisKeys, id: string): AppError => createError(ErrorTypes.REDIS_ERROR, `Data with not found from key: ${key}-${id}`)
+export const NotInRedisError = (key: RedisKeys, id: string): IApplicationError => createError(ErrorTypes.REDIS_ERROR, `Data with not found from key: ${key}-${id}`)
 
-export function RedisError<T>(key: RedisKeys, id: string, data: T): AppError {
+export function RedisError<T>(key: RedisKeys, id: string, data: T): IApplicationError {
   return createError(ErrorTypes.REDIS_ERROR, `Error Storing to redis. ${{ key: `${key}-${id}`, data }}`)
 }
 

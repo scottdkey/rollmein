@@ -1,20 +1,22 @@
 import { DeleteIcon } from "@chakra-ui/icons"
 import { HStack, Heading, Button } from "@chakra-ui/react"
 import { useRouter } from "next/router"
-import { GroupRoutes, IGroup, useDeleteGroupMutation, useGroupQuery } from "../utils/groupApi"
+import { useDeleteGroupMutation, useGroupQuery } from "../utils/groupApi"
 import { GroupForm } from "./GroupForm"
 import { Tooltip } from '@chakra-ui/react'
 import { useQueryClient } from "react-query"
-import { useAuth } from "../providers/AuthProvider"
+import { IGroup } from "../../../types/Group"
+import { GroupRoutes } from "../../../types/Group.enum"
+import { useSession } from "next-auth/react"
 
 
 export const Group = ({ group }: { group: IGroup }) => {
-
+  const { status } = useSession()
   const router = useRouter()
-  const playerCount = group.players ? group.players.length : 0
+  const playerCount = group.relations.players ? group.relations.players.length : 0
 
   const { data, isLoading } = useGroupQuery(group.id)
-  const { auth } = useAuth()
+
   const queryClient = useQueryClient()
   const deleteMutation = useDeleteGroupMutation({
     onSuccess: async (data) => {
@@ -42,16 +44,16 @@ export const Group = ({ group }: { group: IGroup }) => {
 
   return (
     <HStack>
-        <Button variant={'solid'} colorScheme={'green'} disabled={!auth} onClick={async () => {
-          await router.push(`/group/${data ? data.id : group.id}`)
-        }}>
-          <HStack >
-            <Heading>{data ? data.name : group.name}</Heading>
-            <Heading size={'small'}> Players: {playerCount}</Heading>
-          </HStack>
-        </Button>
+      <Button variant={'solid'} colorScheme={'green'} disabled={status !== "authenticated"} onClick={async () => {
+        await router.push(`/group/${data ? data.id : group.id}`)
+      }}>
+        <HStack >
+          <Heading>{data ? data.name : group.name}</Heading>
+          <Heading size={'small'}> Players: {playerCount}</Heading>
+        </HStack>
+      </Button>
       <GroupForm group={data} />
-      <Button onClick={handleDelete} disabled={!auth}><DeleteIcon /></Button>
+      <Button onClick={handleDelete} disabled={status !== "authenticated"}><DeleteIcon /></Button>
 
     </HStack>
   )

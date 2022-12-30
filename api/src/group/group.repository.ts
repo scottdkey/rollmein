@@ -1,11 +1,11 @@
+import { DbGroup, IGroup, ICreateGroup } from "../../../types/Group";
 import { DatabaseService } from "../common/database.service";
 import { DataServiceAbstract } from "../common/dataService.abstract";
 import { Logger, LoggerService } from "../common/logger.service";
 import { addToContainer } from "../container";
-import { DbGroup, Group, ICreateGroup } from "../types/group";
 
 @addToContainer()
-export class GroupRepository extends DataServiceAbstract<DbGroup, Group>{
+export class GroupRepository extends DataServiceAbstract<DbGroup, IGroup>{
   logger: Logger
   db: DatabaseService
   constructor(private database: DatabaseService, private ls: LoggerService) {
@@ -14,7 +14,7 @@ export class GroupRepository extends DataServiceAbstract<DbGroup, Group>{
     this.logger = this.ls.getLogger(GroupRepository.name)
   }
 
-  mapToCamelCase = ({ id, user_id, relations, roll_type, lock_after_out, members_can_update, created_at, updated_at, name }: DbGroup): Group => {
+  mapToCamelCase = ({ id, user_id, relations, roll_type, lock_after_out, members_can_update, created_at, updated_at, name }: DbGroup): IGroup => {
     return {
       id,
       name,
@@ -42,14 +42,30 @@ export class GroupRepository extends DataServiceAbstract<DbGroup, Group>{
   }
 
   async getGroupsByUserId(userId: string) {
-    const query = `SELECT * FROM public.group WHERE user_id=$1 OR $1=ANY(members);`
-    const params = [userId]
-    return this.returnMany(query, params)
+    const res = await this.getGroups()
+    if (res.error) {
+      this.logger.error({ message: '#getGroupsByUserId error', error: res.error })
+    }
+    return res.data?.filter((group: IGroup) => {
+      const includes = group.relations.members.includes(userId)
+      const isUser = group.userId !== userId
+      if (isUser || includes) {
+        return group
+      }
+      return
+    })
   }
   async getGroupsByPlayerId(playerId: string) {
-    const query = `SELECT * FROM public.group WHERE $1=ANY(players)`
-    const params = [playerId]
-    return this.returnMany(query, params)
+    const res = await this.getGroups()
+    if (res.error) {
+      this.logger.error({ message: '#getGroupsByPlayerId error', error: res.error })
+    }
+    return res.data?.filter((group: IGroup) => {
+      if (group.relations.players.includes(playerId)) {
+        return group
+      }
+      return
+    })
   }
 
   async createGroup(userId: string, { name, rollType, membersCanUpdate, lockAfterOut }: ICreateGroup) {
@@ -58,11 +74,10 @@ export class GroupRepository extends DataServiceAbstract<DbGroup, Group>{
     return await this.returnOne(query, values)
   }
 
-  async updateGroup(group: Group) {
-    const query = `UPDATE public.group SET members=$2, players=$3, roll_type=$4, lock_after_out=$5, members_can_update=$6, name=$7 WHERE id=$1 RETURNING *;`
-    const params = [group.id, group.relations.members, group.relations.players, group.rollType, group.lockAfterOut, group.membersCanUpdate, group.name]
-    const res = await this.returnOne(query, params)
-    return res
+  async updateGroup(group: IGroup) {
+    const query = `UPDATE public.group SET relations=$2, roll_type=$3, lock_after_out=$4, members_can_update=$5, name=$6 WHERE id=$1 RETURNING *;`
+    const params = [group.id, group.relations, group.rollType, group.lockAfterOut, group.membersCanUpdate, group.name]
+    return await this.returnOne(query, params)
   }
 
   async deleteByUserId(groupId: string, userId: string) {

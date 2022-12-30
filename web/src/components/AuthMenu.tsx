@@ -1,29 +1,29 @@
 import { ChevronDownIcon, ChevronUpIcon } from "@chakra-ui/icons"
-import { Menu, MenuButton, MenuList, useColorModeValue, Text, HStack, Skeleton } from "@chakra-ui/react"
+import { Menu, MenuButton, MenuList, Text, HStack, Skeleton } from "@chakra-ui/react"
 import { useEffect, useState } from "react"
-import { useAuth } from "../providers/AuthProvider"
 import styles from "../styles/AuthMenu.module.scss"
 import AuthNav from "./AuthNavButtons"
 import UnAuthNav from "./UnAuthNavButtons"
+import { useSession } from "next-auth/react"
 
 
 const AuthMenu = () => {
-  const { auth, user, loading } = useAuth()
+  const { data: session, status } = useSession()
   const [loginOpen, setLoginOpen] = useState(false)
-
 
   const ToggleOpen = () => {
     setLoginOpen(!loginOpen)
   }
-  const getDisplayUsername =(username: string | null | undefined) => {
-    if(username === null){
+  
+  const getDisplayUsername = (username: string | null | undefined) => {
+    if (username === null) {
       return 'No Username Set'
     }
     return username
   }
 
   return (
-    <Skeleton isLoaded={!loading}>
+    <Skeleton isLoaded={status !== 'loading'}>
       <div className={styles.Menu}>
         <Menu>
           <MenuButton
@@ -31,7 +31,7 @@ const AuthMenu = () => {
             className={styles.MenuButton} margin={'0'}>
             <HStack>
               <Text>
-                {auth ? getDisplayUsername(user?.username) : 'Signed Out'}
+                {status === "authenticated" ? getDisplayUsername(session.user.username) : 'Signed Out'}
               </Text>
               {loginOpen ?
                 <ChevronUpIcon /> : <ChevronDownIcon />}
@@ -39,7 +39,7 @@ const AuthMenu = () => {
 
           </MenuButton>
           <MenuList className={styles.MenuList} margin={'0'}>
-            {auth ?
+            {status === "authenticated" ?
               <AuthNav /> : <UnAuthNav />}
           </MenuList>
         </Menu>

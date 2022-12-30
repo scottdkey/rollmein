@@ -4,7 +4,7 @@ import { ApplicationError, DatabaseError } from '../utils/errorsHelpers';
 import { ConfigService } from './config.service';
 import { addToContainer } from "../container";
 import { Pool, PoolClient } from "pg"
-import { DataResponse } from '../types/DataResponse';
+import { DataResponse } from '../../../types/DataResponse';
 
 @addToContainer()
 export class DatabaseService {
@@ -12,7 +12,7 @@ export class DatabaseService {
   private logger: Logger
   constructor(private cs: ConfigService, private ls: LoggerService) {
     this.logger = this.ls.getLogger(DatabaseService.name)
-    const { host, user, password, port, database } = this.cs.PgConfig()
+    const { host, user, password, port, database } = this.cs.pgConfig
     this.pool = new Pool({
       host,
       user,
