@@ -22,7 +22,6 @@ services:
     volumes:
       - redis_data:/data
   api:
-    image: scottdkey/rollmein_api
     build:
       context: ./api
       dockerfile: Dockerfile.dev
@@ -43,7 +42,6 @@ services:
       - database
       - redis
   frontend:
-    image: scottdkey/rollmein_frontend
     build:
       context: ./web
       dockerfile: Dockerfile.dev
