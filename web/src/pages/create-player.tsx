@@ -1,10 +1,9 @@
-import { Box, Button, HStack, Input } from '@chakra-ui/react';
-import Router, { useRouter } from 'next/router';
+import { HStack, Input } from '@chakra-ui/react';
+import { useRouter } from 'next/router';
 import React from 'react';
-import { Layout as Layout } from '../components/Layout';
 import { useQueryClient } from 'react-query';
-import { useAuth } from '../providers/AuthProvider';
 import { SubmitHandler, useForm } from 'react-hook-form';
+import { Layout } from '../components/Layout';
 
 interface ICreatePlayer {
   name: string,
@@ -20,20 +19,19 @@ const CreatePlayer: React.FC<{}> = ({ }) => {
     defaultValues: { name: "", tank: false, healer: false, dps: false, inTheRoll: false, locked: false }
   });
   const queryClient = useQueryClient()
-  const { auth } = useAuth()
   const router = useRouter()
 
   const onSubmit: SubmitHandler<ICreatePlayer> = (data) => {
     console.log('create player submit')
   }
   return (
-    <Layout variant="small">
+    <>
       <form onSubmit={handleSubmit(onSubmit)}>
         <HStack>
           <Input {...register('name')} />
         </HStack>
       </form>
-    </Layout >
+    </>
   )
 };
 

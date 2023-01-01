@@ -7,6 +7,7 @@ import { QueryClient, QueryClientProvider } from 'react-query'
 import { ReactQueryDevtools } from "react-query/devtools"
 import { theme } from "./_document"
 import { Session } from "next-auth"
+import { Layout } from "../components/Layout"
 
 
 function App({ Component, pageProps: { session, ...pageProps } }: AppProps<{ session: Session }>) {
@@ -15,12 +16,12 @@ function App({ Component, pageProps: { session, ...pageProps } }: AppProps<{ ses
     <>
       <SessionProvider session={session}>
         <QueryClientProvider client={queryClient}>
-
           <ChakraProvider theme={theme}>
             <CSSReset />
-            <Component {...pageProps} />
+            <Layout>
+              <Component {...pageProps} />
+            </Layout>
           </ChakraProvider>
-
           <ReactQueryDevtools />
         </QueryClientProvider>
       </SessionProvider>

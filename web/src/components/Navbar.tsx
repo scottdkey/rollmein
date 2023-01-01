@@ -1,5 +1,5 @@
-import { Box, Circle, Flex, Heading, HStack, Square, useColorMode, useColorModeValue, VStack } from '@chakra-ui/react';
-import { SunIcon, MoonIcon, ChevronDownIcon } from "@chakra-ui/icons"
+import { Box, Heading, HStack, Square, useColorMode, useColorModeValue, VStack } from '@chakra-ui/react';
+import { SunIcon, MoonIcon } from "@chakra-ui/icons"
 import React, { useState, useEffect } from 'react'
 import NextLink from "next/link";
 import AuthMenu from './AuthMenu';
@@ -12,17 +12,18 @@ interface NavBarProps {
 }
 
 const NavBar: React.FC<NavBarProps> = ({ }) => {
-  const [theme, setTheme] = useState("dark")
-  const {data: session, status} = useSession()
+  const { status} = useSession()
+  
   const { colorMode, setColorMode } = useColorMode()
+
   const [currentRoute, setCurrentRoute] = useState("")
+
   const themeButtonColor = useColorModeValue("orange.600", "orange.400")
+
   const router = useRouter()
 
-  const textColor = useColorModeValue("gray.800", "gray.300")
   const toggleColorMode = () => {
     const changeTo = colorMode === 'dark' ? 'light' : 'dark'
-    setTheme(changeTo)
     setColorMode(changeTo)
   }
 
@@ -37,11 +38,8 @@ const NavBar: React.FC<NavBarProps> = ({ }) => {
   }
 
   useEffect(() => {
-    if (colorMode !== theme) {
-      setColorMode(theme)
-    }
     setCurrentRoute(router.asPath)
-  }, [theme, colorMode, setColorMode, router.asPath])
+  }, [colorMode, setColorMode, router.asPath])
 
   const headerBgColor = useColorModeValue("teal.600", "teal.800")
   return (

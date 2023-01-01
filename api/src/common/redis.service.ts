@@ -3,7 +3,7 @@ import { NotInRedisError, RedisError } from '../utils/errorsHelpers';
 import { ConfigService } from './config.service';
 import { addToContainer } from "../container";
 import IoRedis, { Redis } from 'ioredis'
-import { DataResponse } from '../../../types/DataResponse';
+import { DataResponse } from '../types/DataResponse';
 
 export enum RedisKeys {
   SESSION = 'session'
@@ -41,9 +41,18 @@ export class RedisService {
     }
   }
 
+  async refreshExpire<T>(key: RedisKeys, id: string, expireTime?: number) {
+    const data = await this.get<T>(key, id)
+    if (data.data) {
+      return data.data && await this.setWithRetry<T>(key, id, data.data, expireTime)
+    }
+    return data
+
+  }
+
   //expire time is in seconds
-  async set<T>(key: RedisKeys, id: string, data: T, expireTime?: number): Promise<DataResponse<T>> {
-    const res = await this.redis.set(`${key}-${id}`, JSON.stringify(data), 'ex', expireTime || 3600)
+  async set<T>(key: RedisKeys, id: string, data: T, expireTime: number = 7200): Promise<DataResponse<T>> {
+    const res = await this.redis.set(`${key}-${id}`, JSON.stringify(data), 'ex', expireTime)
     if (res) {
       return {
         data,

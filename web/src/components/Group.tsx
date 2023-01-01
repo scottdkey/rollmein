@@ -1,13 +1,12 @@
 import { DeleteIcon } from "@chakra-ui/icons"
 import { HStack, Heading, Button } from "@chakra-ui/react"
 import { useRouter } from "next/router"
-import { useDeleteGroupMutation, useGroupQuery } from "../utils/groupApi"
+import { GroupRoutes, useDeleteGroupMutation, useGroupQuery } from "../utils/groupApi"
 import { GroupForm } from "./GroupForm"
 import { Tooltip } from '@chakra-ui/react'
 import { useQueryClient } from "react-query"
-import { IGroup } from "../../../types/Group"
-import { GroupRoutes } from "../../../types/Group.enum"
 import { useSession } from "next-auth/react"
+import { IGroup } from "../../../api/src/types/Group"
 
 
 export const Group = ({ group }: { group: IGroup }) => {

@@ -6,6 +6,7 @@ import { container } from "./container";
 import { Routers } from "./routers";
 import { ConfigService } from "./common/config.service";
 import { LoggerService } from "./common/logger.service";
+import { isAuth } from './middleware/isAuth';
 
 const logger = container.get(LoggerService).getLogger('IndexLogger')
 const server = async () => {
@@ -14,6 +15,7 @@ const server = async () => {
   app.proxy = config.prod
 
   app.use(bodyParser())
+  console.log(config.cors_uri)
   app.use(
     cors({
       origin: `${config.cors_uri}`,
@@ -21,6 +23,8 @@ const server = async () => {
       headers: ['Authorization', "content-type"]
     })
   )
+
+  app.use(isAuth)
 
   Routers.forEach(({ router, routerName }) => {
     logger.debug({ message: `starting ${routerName}` })

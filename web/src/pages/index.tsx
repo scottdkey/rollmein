@@ -1,15 +1,15 @@
 import React from "react"
-import { Layout } from "../components/Layout";
 import { Groups } from "../components/Groups";
+import { getSession } from "next-auth/react";
+import { Layout } from "../components/Layout";
+import { Session } from "next-auth";
 
 
 const Index = () => {
-
-
   return (
-    <Layout>
-      {/* <Groups /> */}
-    </Layout>
+    <>
+      <Groups />
+    </>
   )
 }
 

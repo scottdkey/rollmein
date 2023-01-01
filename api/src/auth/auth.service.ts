@@ -4,7 +4,7 @@ import { UserService } from "../user/user.service";
 import { SessionService } from "../session/session.service";
 import { Logger, LoggerService } from "../common/logger.service";
 import { GoogleClientService } from "../googleClient/googleClient.service";
-import { User } from "../../../types/user";
+import { User } from "../types/user";
 
 @addToContainer()
 export class AuthService {

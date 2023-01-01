@@ -3,18 +3,15 @@ import { container } from '../container';
 import Router from 'koa-router'
 import { DefaultState, Next } from 'koa';
 import { SessionService } from '../session/session.service';
-import { MyContext } from '../../../types/Context';
-import { ScrubbedUser } from '../../../types/user';
-import { HTTPCodes } from '../../../types/HttpCodes.enum';
+import { MyContext } from '../types/Context';
+import { HTTPCodes } from '../types/HttpCodes.enum';
+import { ScrubbedUser } from '../types/user';
 
 const router = new Router<DefaultState, MyContext<any, any>>({ prefix: '/user' })
 const userService = container.get(UserService)
 const sessionService = container.get(SessionService)
 
-router.get('/me', async (ctx: MyContext<null, { user: ScrubbedUser | null, success: boolean }>, next: Next) => {
-  console.log({
-    ctx
-  })
+router.get('/me', async (ctx, next) => {
   if (ctx.state.user && ctx.state.validUser) {
     ctx.body = {
       user: userService.scrubUser(ctx.state.user),

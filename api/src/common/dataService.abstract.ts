@@ -1,5 +1,5 @@
-import { DataResponse } from "../../../types/DataResponse"
 import { addToContainer } from "../container"
+import { DataResponse } from "../types/DataResponse"
 import { DatabaseService } from "./database.service"
 
 

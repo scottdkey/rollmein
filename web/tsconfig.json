@@ -6,10 +6,12 @@
       "dom.iterable",
       "esnext"
     ],
+    "paths": { "@apiTypes/*": ["../api/src/types/*"], },
     "allowJs": true,
     "skipLibCheck": true,
     "strict": true,
     "noImplicitAny": true,
+    "experimentalDecorators": true,
     "strictNullChecks": true,
     "strictFunctionTypes": true,
     "noImplicitThis": true,
@@ -28,10 +30,7 @@
   "include": [
     "next-env.d.ts",
     "**/*.ts",
-    "**/*.tsx",
-    "utils/createWithApollo.js",
-    "src/pages/_document.js",
-    "../types"
+    "**/*.tsx"
   ],
   "exclude": [
     "node_modules"

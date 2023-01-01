@@ -3,10 +3,11 @@ import Router from "koa-router";
 import { LoggerService } from "../common/logger.service";
 import { container } from "../container";
 import { GroupService } from "./group.service";
-import { MyContext } from "../../../types/Context";
-import { IGroup, ICreateGroup, IGroupUpdate } from "../../../types/Group";
-import { HTTPCodes } from "../../../types/HttpCodes.enum";
-import { DataResponse } from "../../../types/DataResponse";
+import { MyContext } from "../types/Context";
+import { DataResponse } from "../types/DataResponse";
+import { IGroup, ICreateGroup, IGroupUpdate } from "../types/Group";
+import { HTTPCodes } from "../types/HttpCodes.enum";
+import { IApplicationError } from "../types/ApplicationError";
 
 
 

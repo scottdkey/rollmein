@@ -1,6 +1,6 @@
 // pages/_document.js
 
-import { ColorModeScript, StyleFunctionProps, extendTheme } from '@chakra-ui/react'
+import { ColorModeScript, extendTheme } from '@chakra-ui/react'
 import NextDocument, { Html, Head, Main, NextScript } from 'next/document'
 import { mode } from '@chakra-ui/theme-tools'
 
@@ -15,7 +15,7 @@ export const theme = extendTheme({
   }),
   config: {
     initialColorMode: 'light',
-    useSystemColorMode: false,
+    useSystemColorMode: true,
   },
 })
 export default class Document extends NextDocument {
@@ -24,7 +24,6 @@ export default class Document extends NextDocument {
       <Html lang='en'>
         <Head />
         <body>
-          {/* 👇 Here's the script */}
           <ColorModeScript initialColorMode={theme.config.initialColorMode} />
           <Main />
           <NextScript />

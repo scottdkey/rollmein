@@ -3,10 +3,10 @@ import { container } from '../container';
 import Router from "koa-router";
 import { isAuth } from "../middleware/isAuth";
 import { HandleDataResponse } from "../context";
-import { MyContext } from '../../../types/Context';
-import { DataResponse } from '../../../types/DataResponse';
-import { HTTPCodes } from '../../../types/HttpCodes.enum';
-
+import { MyContext } from '../types/Context';
+import { DataResponse } from '../types/DataResponse';
+import { HTTPCodes } from '../types/HttpCodes.enum';
+import { Player } from '../types/Player';
 
 const router = new Router({ prefix: '/player' })
 const playerService = container.get(PlayerService)

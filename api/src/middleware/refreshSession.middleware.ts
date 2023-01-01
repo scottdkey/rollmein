@@ -4,7 +4,7 @@ import { DateService } from "../common/date.service";
 import { LoggerService } from "../common/logger.service";
 import { container } from "../container";
 import { SessionService } from "../session/session.service";
-import { MyContext } from "../../../types/Context";
+import { MyContext } from "../types/Context";
 
 
 const sessionService = container.get(SessionService)

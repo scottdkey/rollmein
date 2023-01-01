@@ -1,7 +1,7 @@
-import { DbUser, RegisterUser, User } from "../../../types/user";
 import { DatabaseService } from "../common/database.service";
 import { DataServiceAbstract } from "../common/dataService.abstract";
 import { addToContainer } from "../container";
+import { DbUser, User, RegisterUser } from "../types/user";
 
 @addToContainer()
 export class UserRepository extends DataServiceAbstract<DbUser, User>{
@@ -66,7 +66,7 @@ export class UserRepository extends DataServiceAbstract<DbUser, User>{
   }
 
   async createUser({ username, email, googleId, githubId, appleId }: RegisterUser) {
-    const query = `INSERT INTO public.user (email, username, google_id, github_id, apple_id) VALUES ($1, $2, $3, $4) RETURNING *`
+    const query = `INSERT INTO public.user (email, username, google_id, github_id, apple_id) VALUES ($1, $2, $3, $4, $5) RETURNING *`
     const values = [email, username, googleId, githubId, appleId]
     return await this.returnOne(query, values)
   }

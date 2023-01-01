@@ -1,9 +1,9 @@
-interface Player {
+export interface Player {
   [key: string]: unknown
   id: string
   groupId: string
-  userId: string | null
-  name: string | null
+  userId: string
+  name: string
   tank: boolean
   healer: boolean
   dps: boolean

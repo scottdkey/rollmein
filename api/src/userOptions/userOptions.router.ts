@@ -3,9 +3,9 @@ import Router from "koa-router";
 import { UserOptionsService } from './userOptions.service';
 import { HandleDataResponse } from '../context';
 import { DefaultState } from 'koa';
-import { MyContext } from '../../../types/Context';
-import { DataResponse } from '../../../types/DataResponse';
-import { HTTPCodes } from '../../../types/HttpCodes.enum';
+import { MyContext } from '../types/Context';
+import { DataResponse } from '../types/DataResponse';
+import { HTTPCodes } from '../types/HttpCodes.enum';
 
 const optionsService = container.get(UserOptionsService)
 const router = new Router<DefaultState, MyContext<any, any>>({

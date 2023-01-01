@@ -1,7 +1,7 @@
 import { Next } from "koa";
 import { container } from "../container";
 import { LoggerService } from "../common/logger.service";
-import { MyContext } from "../../../types/Context";
+import { MyContext } from "../types/Context";
 
 interface IPlayerRequest {
   groupId: string

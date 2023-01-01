@@ -1,9 +1,9 @@
-interface IValidateAuthBody {
+export interface IValidateAuthBody {
   token: string | undefined
   authType: string
 }
 
-interface IValidateAuthRes {
+export interface IValidateAuthRes {
   user: SessionUser
   success: boolean
   sessionId: string

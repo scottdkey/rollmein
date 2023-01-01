@@ -3,11 +3,11 @@ import { Logger, LoggerService } from "../common/logger.service";
 import { addToContainer } from "../container";
 import { ApplicationErrorResponse, AuthorizationErrorResponse } from "../utils/errorsHelpers";
 import { GroupRepository } from './group.repository';
-import { MyContext } from "../../../types/Context";
-import { ICreateGroup, IGroupUpdate, IGroup } from "../../../types/Group";
-import { HTTPCodes } from "../../../types/HttpCodes.enum";
-import { DataResponse } from "../../../types/DataResponse";
-
+import { MyContext } from "../types/Context";
+import { DataResponse } from "../types/DataResponse";
+import { ICreateGroup, IGroupUpdate, IGroup } from "../types/Group";
+import { HTTPCodes } from "../types/HttpCodes.enum";
+import { IApplicationError } from "../types/ApplicationError";
 
 @addToContainer()
 export class GroupService {

@@ -45,6 +45,9 @@ export const authOptions: AuthOptions = {
           token.user = res.user
           token.sessionId = res.sessionId
         }
+        console.log({
+          res, token, account
+        })
       }
 
       return token

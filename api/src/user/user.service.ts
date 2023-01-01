@@ -2,7 +2,7 @@ import { Logger, LoggerService } from '../common/logger.service';
 import { ApplicationError } from '../utils/errorsHelpers';
 import { addToContainer } from "../container";
 import { UserRepository } from './user.repository';
-import { RegisterUser, User } from '../../../types/user';
+import { User, RegisterUser } from '../types/user';
 
 @addToContainer()
 export class UserService {

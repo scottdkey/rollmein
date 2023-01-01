@@ -1,7 +1,9 @@
-import { DataResponse } from "../../../types/DataResponse";
-import { ErrorTypes } from "../../../types/ErrorCodes.enum";
-import { PlayerCounts, ValidRoll } from "../../../types/Roll";
 import { addToContainer } from "../container";
+import { DataResponse } from "../types/DataResponse";
+import { ErrorTypes } from "../types/ErrorCodes.enum";
+import { Player } from "../types/Player";
+import { PlayerCounts, ValidRoll } from "../types/Roll";
+import {IApplicationError} from "../types/ApplicationError"
 
 @addToContainer()
 export class RollService {

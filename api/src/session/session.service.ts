@@ -6,7 +6,7 @@ import { RedisKeys, RedisService } from "../common/redis.service";
 import { addToContainer } from "../container";
 import { v4 as uuid } from "uuid";
 import { ApplicationError } from "../utils/errorsHelpers";
-import { CacheUser, User } from "../../../types/user";
+import { CacheUser, User } from "../types/user";
 
 
 @addToContainer()
@@ -40,6 +40,9 @@ export class SessionService {
 
   async getSession(sessionId: string) {
     return await this.redis.get<CacheUser>(RedisKeys.SESSION, sessionId)
+  }
+  async refreshSession(sessionId: string) {
+    return await this.redis.refreshExpire<CacheUser>(RedisKeys.SESSION, sessionId)
   }
 
   async setSession(sessionId: string, user: User) {

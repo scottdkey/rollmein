@@ -1,8 +1,8 @@
 import { Box, Button, Drawer, DrawerBody, DrawerCloseButton, DrawerContent, DrawerHeader, DrawerOverlay, Spinner, useDisclosure, Wrap, WrapItem, } from "@chakra-ui/react"
 import React, { useState } from "react"
 
-import dynamic from "next/dynamic";
 import PlayerCount from "./PlayerCount";
+import PlayerCard from "./PlayerCard"
 import { useQueryClient } from "react-query";
 
 
@@ -13,7 +13,6 @@ interface PlayerCardsProps {
 const PlayerCards = (props: PlayerCardsProps): JSX.Element => {
   const queryClient = useQueryClient()
   const { isOpen, onOpen, onClose } = useDisclosure()
-  const PlayerCard = dynamic(() => import('./PlayerCard'))
   const [players, setPlayers] = useState<string[] | undefined>()
   const [isLoading, setIsLoading] = useState(false)
   const [data, setData] = useState({})
@@ -53,7 +52,7 @@ const PlayerCards = (props: PlayerCardsProps): JSX.Element => {
               <Wrap spacing="5px" align="center" m="5px" justify="center">
                 {players?.map((player) =>
                   <WrapItem key={player} >
-                    <PlayerCard playerId={player} rollType={props.rollType}/>
+                    <PlayerCard id={player} rollType={props.rollType}/>
                   </WrapItem>)}
                 <WrapItem>
                 </WrapItem>

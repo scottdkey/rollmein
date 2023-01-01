@@ -1,8 +1,8 @@
 import { addToContainer } from "../container";
-import winston from 'winston'
+import pino from "pino"
 import { DateService } from "./date.service";
-const { transports } = winston
 import dotenv from "dotenv"
+
 
 dotenv.config()
 export interface MessageType {
@@ -36,23 +36,23 @@ export class LoggerService {
     }
 
     getLogger(context: string): Logger {
-        const logger = winston.createLogger({
-            format: winston.format.json(),
-            level: this.prod ? 'info' : 'debug',
-            transports: [new transports.Console(), new transports.File({ filename: './log/error.json', level: 'error', format: winston.format.json() }), new transports.File({ filename: './log/combined.json', format: winston.format.json() })]
+        const log = pino({
+            name: context,
+            level: this.prod ? "info" : "debug",
+            prettifier: require('pino-pretty'),
         })
         return {
             info: (message: MessageType) => {
-                logger.info({ context, ...message, timestamp: this.timestamp() })
+                log.info({ ...message, timestamp: this.timestamp() })
             },
             debug: (message: MessageType) => {
-                logger.debug({ context, ...message, timestamp: this.timestamp() })
+                log.debug({ ...message, timestamp: this.timestamp() })
             },
             warn: (message: MessageType) => {
-                logger.warn({ context, ...message, timestamp: this.timestamp() })
+                log.warn({ ...message, timestamp: this.timestamp() })
             },
             error: (message: MessageType) => {
-                logger.error({ context, ...message, timestamp: this.timestamp() })
+                log.error({ ...message, timestamp: this.timestamp() })
             }
 
         }
