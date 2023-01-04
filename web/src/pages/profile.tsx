@@ -3,10 +3,12 @@ import PlayerCard from "../components/PlayerCard";
 import { useSession } from "next-auth/react";
 import UserProfileForm from "../components/UserProfileForm";
 import { useMeQuery } from "../utils/userApi";
+import { usePlayerFromSignedInUserQuery } from "../utils/playerApi";
 
 const Profile = () => {
   const { data: session } = useSession()
   const { data: me } = useMeQuery()
+  const { data: player } = usePlayerFromSignedInUserQuery()
 
   return (
     <>
@@ -17,7 +19,7 @@ const Profile = () => {
             success: me?.success || false
           }
         }} />
-        <PlayerCard rollType="role" userId={session?.user.id} />
+        {player ? <PlayerCard rollType="role" id={player.id} userId={session?.user.id} profilePage={true} /> : null}
       </VStack>
     </>
   )

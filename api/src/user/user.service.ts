@@ -3,13 +3,14 @@ import { ApplicationError } from '../utils/errorsHelpers';
 import { addToContainer } from "../container";
 import { UserRepository } from './user.repository';
 import { User, RegisterUser } from '../types/user';
+import { PlayerService } from '../player/player.service';
 
 @addToContainer()
 export class UserService {
   private logger: Logger
   userService: any;
 
-  constructor(private ls: LoggerService, private userRepo: UserRepository) {
+  constructor(private ls: LoggerService, private userRepo: UserRepository, private playerService: PlayerService) {
     this.logger = this.ls.getLogger(UserService.name)
   }
 
@@ -67,7 +68,11 @@ export class UserService {
 
   async register(registerUser: RegisterUser) {
     try {
-      return await this.userRepo.createUser(registerUser)
+      const user = await this.userRepo.createUser(registerUser)
+      const userId = user?.data?.id as string
+      const username = user?.data?.username as string
+      await this.playerService.createPlayerForUser(userId, username)
+      return user
     } catch (e) {
       const message = "error creating user"
       this.logError(message, e)

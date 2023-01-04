@@ -12,16 +12,20 @@ const AuthMenu = () => {
 
   const { data: meQuery, isLoading, refetch } = useMeQuery()
   const [loginOpen, setLoginOpen] = useState(false)
+  const [username, setUsername] = useState("Signed Out")
 
   const ToggleOpen = () => {
     setLoginOpen(!loginOpen)
   }
 
   useEffect(() => {
-    if (!session || status !== "authenticated") {
+    if (status === "authenticated" && isLoading === false && meQuery === undefined) {
       refetch()
     }
-  }, [status])
+    if (session && status === "authenticated" && isLoading === false && meQuery?.user?.username) {
+      setUsername(meQuery.user.username)
+    }
+  }, [status, session, meQuery?.user, isLoading])
 
 
 
@@ -34,7 +38,7 @@ const AuthMenu = () => {
             className={styles.MenuButton} margin={'0'}>
             <HStack>
               <Text>
-                {status === "authenticated"  && isLoading === false ? `${meQuery?.user ? meQuery.user.username : session.user.username}` : 'Signed Out'}
+                {username}
               </Text>
               {loginOpen ?
                 <ChevronUpIcon /> : <ChevronDownIcon />}

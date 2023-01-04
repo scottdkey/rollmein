@@ -52,7 +52,7 @@ const PlayerCards = (props: PlayerCardsProps): JSX.Element => {
               <Wrap spacing="5px" align="center" m="5px" justify="center">
                 {players?.map((player) =>
                   <WrapItem key={player} >
-                    <PlayerCard id={player} rollType={props.rollType}/>
+                    <PlayerCard id={player} rollType={props.rollType} profilePage={false}/>
                   </WrapItem>)}
                 <WrapItem>
                 </WrapItem>

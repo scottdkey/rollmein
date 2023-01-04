@@ -23,7 +23,6 @@ export class DatabaseService {
       min: 3,
       idleTimeoutMillis: 600000,
     })
-    this.logger.info({message: 'postgres connected', things: 'more things'})
   }
 
   async query<D, T>(text: string, params: unknown[], mapToCamelCase: (data: D) => T): Promise<DataResponse<T[]>> {

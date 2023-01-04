@@ -1,118 +1,111 @@
-import { NotInDatabaseError, AuthorizationError } from '../utils/errorsHelpers';
-import { DatabaseService } from '../common/database.service';
+import { ApplicationError } from '../utils/errorsHelpers';
 import { addToContainer } from '../container';
-import { DataServiceAbstract } from '../common/dataService.abstract';
 import { DataResponse } from '../types/DataResponse';
-import { DbPlayer, Player, UpdatePlayerInput, PlayerResponse, PlayerInput } from '../types/Player';
+import { ICreatePlayer, IDeletePlayerResponse, IUpdatePlayer } from '../types/Player';
+import { PlayerRepository } from './player.repository';
+import { GroupService } from '../group/group.service';
+import { Logger, LoggerService } from '../common/logger.service';
 
 @addToContainer()
-export class PlayerService extends DataServiceAbstract<DbPlayer, Player>{
-  db: DatabaseService
-  constructor(db: DatabaseService) {
-    super()
-    this.db = db
+export class PlayerService {
+  private logger: Logger
+  constructor(private playerRepo: PlayerRepository, private groupService: GroupService, private ls: LoggerService) {
+    this.logger = this.ls.getLogger(PlayerService.name)
   }
 
-  mapToCamelCase = ({ id, group_id, user_id, name, tank, healer, dps, locked, in_the_roll, created_at, updated_at }: DbPlayer): Player => {
-    return {
-      id,
-      groupId: group_id,
-      userId: user_id,
-      name,
-      tank,
-      healer,
-      dps,
-      locked,
-      inTheRoll: in_the_roll,
-      createdAt: created_at,
-      updatedAt: updated_at
-    }
+  async getPlayersByGroupId(groupId: string) {
+    return await this.playerRepo.getPlayersByGroupId(groupId)
   }
-
-  async getPlayersByGroupId(groupId: string): Promise<DataResponse<Player[]>> {
-    const query = 'SELECT * FROM player WHERE group_id=$1'
-    const params = [groupId]
-    return await this.returnMany(query, params)
-  }
-
-  async getPlayerById(id: string): Promise<DataResponse<Player>> {
-    const query = `SELECT * FROM player WHERE id=$1`
-    const params = [id]
-    return await this.returnOne(query, params)
-  }
-
-  async createPlayer({ groupId, userId, name, tank, healer, dps, locked, inTheRoll }: Player): Promise<DataResponse<Player>> {
-    const query = `INSERT INTO player (group_id, user_id, name, tank, healer, dps, locked, in_the_roll) VALUES($1, $2, $3, $4, $5, $6, $7, $8) RETURNING *`
-    const params = [groupId, userId, name, tank, healer, dps, locked, inTheRoll]
-    return await this.returnOne(query, params)
-  }
-  async updatePlayer(input: UpdatePlayerInput): Promise<PlayerResponse> {
-
-    const { error, data: currentPlayer } = await this.getPlayerById(input.id)
-    if (error) {
-      return {
-        success: false,
-        error: error
+  async getPlayerById(playerId: string) {
+    try {
+      const playerRes = await this.playerRepo.getPlayerById(playerId)
+      if (playerRes.success) {
+        return playerRes.data
       }
+      throw playerRes.error
+    } catch (e) {
+      throw e.message
     }
-    if (currentPlayer) {
-      const res = this.validateUpdate(input, currentPlayer)
-      if (res.error) {
-        return res
+  }
+  async getPlayerByUserId(userId: string) {
+    try {
+      const res = await this.playerRepo.getPlayerByUserId(userId)
+      if (res.success) {
+        return res.data
       }
-      if (res.data && res.success) {
-        const { userId, name, tank, healer, dps, locked, inTheRoll } = res.data
-        const query = 'UPDATE player SET user_id=$1, name=$2, tank=$3, healer=$4, dps=$5, locked=$6, in_the_roll=$7 WHERE id=$8 RETURNING *'
-        const params = [userId, name, tank, healer, dps, locked, inTheRoll, currentPlayer.id]
-        return await this.returnOne(query, params)
-      }
-    }
-    return {
-      success: false,
-      error: NotInDatabaseError('player', input.id)
+      throw res.error
+    } catch (e) {
+      throw e.message
     }
   }
 
-  async deletePlayer(id: string): Promise<PlayerResponse> {
-    const query = `DELETE FROM player WHERE id=$1`
-    const params = [id]
-    const res = await this.returnOne(query, params)
-    if (res.error) {
-      return {
-        success: false,
-        error: res.error
+  async createPlayer(player: ICreatePlayer) {
+    try {
+      const res = await this.playerRepo.createPlayer(player)
+      if(res.success){
+        return res.data
       }
-    }
-    return {
-      success: true,
-      error: null
+      throw res.error
+    } catch(e){
+      throw e.message
     }
   }
 
-  protected checkIfGroupIdMatchesInput(inputGroupId: string, groupId: string): boolean {
-    return inputGroupId === groupId
+  async createPlayerForUser(userId: string, username: string) {
+    try {
+      return await this.createPlayer({
+        userId,
+        name: username,
+        groupId: null,
+        tank: false,
+        healer: false,
+        dps: false,
+        inTheRoll: false,
+        locked: false
+      })
+    } catch (e) {
+      this.logger.error({
+        message: "Unable to create player",
+        error: e.message,
+        stacktrace: e.stacktrace
+      })
+      throw ApplicationError("Unable to create player")
+    }
+
   }
 
-  private validateUpdate(input: PlayerInput, currentPlayer: Player): DataResponse<Player> {
-    const validToProceed = this.checkIfGroupIdMatchesInput(input.groupId, currentPlayer.groupId)
-    if (validToProceed) {
-      const playerForUpdate = input as Player
-      for (const key in Object.keys(input)) {
-        if (input[key] === undefined) {
-          playerForUpdate[key] = currentPlayer[key]
-        }
-      }
-      return {
-        data: playerForUpdate,
-        success: false,
-        error: null
-      }
+  async updatePlayerIsValid(input: IUpdatePlayer, userId: string) {
+    const playerRes = await this.getPlayerById(input.id)
+    let valid = false
+
+    if (input.groupId !== null) {
+      const groupRes = await this.groupService.getGroup(input.groupId, userId)
+      const groupIdsMatch = input.groupId === playerRes?.groupId
+      valid = groupRes.auth && groupIdsMatch
     }
-    return {
-      data: null,
-      success: false,
-      error: AuthorizationError
+
+    if (input.userId !== null) {
+      const userIdsMatch = input.userId === playerRes?.userId
+      const userIsValid = userId === playerRes?.userId
+      valid = userIdsMatch && userIsValid
     }
+    return valid
+  }
+
+  async updatePlayer(input: IUpdatePlayer, userId: string) {
+    const valid = await this.updatePlayerIsValid(input, userId)
+    if (valid) {
+      const res = await this.playerRepo.updatePlayer(input)
+      if (res.success) {
+        return res.data
+      }
+      throw res.error.message
+    }
+    throw ApplicationError("update player error -- request body not valid")
+  }
+
+  async deletePlayer(id: string): Promise<DataResponse<IDeletePlayerResponse>> {
+    return await this.playerRepo.deletePlayer(id)
   }
 
 }

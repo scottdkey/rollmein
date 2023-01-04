@@ -1,6 +1,6 @@
 import { CheckCircleIcon, EditIcon } from "@chakra-ui/icons"
-import { Box, Center, Heading, HStack, Input, useColorModeValue } from "@chakra-ui/react"
-import React, { useState } from "react"
+import { border, Box, Center, Heading, HStack, Input, useColorModeValue } from "@chakra-ui/react"
+import React, { useEffect, useState } from "react"
 import Dice from "../assets/Dice"
 import FirstAid from "../assets/FirstAid"
 import OpenLock from "../assets/OpenLock"
@@ -10,14 +10,24 @@ import Sword from "../assets/Sword"
 import { IconWrapper } from "./IconWrapper"
 import { Trash } from "../assets/Trash"
 import { Player } from "@apiTypes/Player"
+import { usePlayerQuery, useUpdatePlayerMutation } from "../utils/playerApi"
+import { useToast } from "@chakra-ui/react"
+
 
 interface PlayerCardProps {
   id?: string,
   userId?: string,
   rollType: string,
   groupId?: string
+  profilePage: boolean
 }
-const PlayerCard = ({ id, userId, rollType = 'role', groupId }: PlayerCardProps): JSX.Element => {
+const PlayerCard = ({ id, userId, rollType = 'role', groupId, profilePage }: PlayerCardProps): JSX.Element => {
+  const { data: playerQuery, error: playerQueryError, refetch } = usePlayerQuery(id)
+  const playerMutation = useUpdatePlayerMutation({
+    onSuccess: async () => {
+      await refetch()
+    }
+  })
   const [player, setPlayer] = useState<Player>({
     id: id as string,
     userId: userId ? userId : "",
@@ -27,7 +37,9 @@ const PlayerCard = ({ id, userId, rollType = 'role', groupId }: PlayerCardProps)
     groupId: groupId ? groupId : "",
     dps: false,
     locked: false,
-    inTheRoll: false
+    inTheRoll: false,
+    createdAt: "",
+    updatedAt: ""
   })
   const [name, setName] = useState(player?.name ? player.name : "")
   const [editing, setEditing] = useState(false)
@@ -35,7 +47,20 @@ const PlayerCard = ({ id, userId, rollType = 'role', groupId }: PlayerCardProps)
   const primary = useColorModeValue(`gray.300`, `gray.600`)
   const inColor = useColorModeValue("teal.100", "teal.800")
   const lockedColor = useColorModeValue("yellow.500", "yellow.500")
-  const background = player.inTheRoll ? inColor : primary
+  const background = player.inTheRoll && !profilePage ? inColor : primary
+  const borderColor = !profilePage && player.locked ? lockedColor : "blackAlpha.100"
+  const toast = useToast()
+
+  useEffect(() => {
+    if (playerQuery) {
+      setPlayer(playerQuery)
+      setName(playerQuery.name)
+    }
+    if (playerQueryError) {
+      toast(playerQueryError)
+    }
+
+  }, [playerQuery?.data, playerQueryError])
 
 
   const handleSubmit = async () => {
@@ -51,7 +76,7 @@ const PlayerCard = ({ id, userId, rollType = 'role', groupId }: PlayerCardProps)
         name
       }
       setPlayer(playerInput)
-      console.log('player input', playerInput)
+      await playerMutation.mutateAsync(playerInput)
     }
     toggleEditing()
 
@@ -62,7 +87,12 @@ const PlayerCard = ({ id, userId, rollType = 'role', groupId }: PlayerCardProps)
   }
 
   const updatePlayerField = async (field: string, changeValue: any) => {
-    setPlayer({ ...player, [field]: changeValue })
+    const playerInput = {
+      ...player,
+      [field]: changeValue
+    }
+    setPlayer(playerInput)
+    await playerMutation.mutateAsync(playerInput)
   }
   const handleDelete = async () => {
     console.log('handle delete')
@@ -76,12 +106,13 @@ const PlayerCard = ({ id, userId, rollType = 'role', groupId }: PlayerCardProps)
 
 
   return (
-    <Box borderColor={player.locked ? lockedColor : "blackAlpha.100"} borderRadius={"md"} padding={2} w="200px" h="100%" shadow="base" borderWidth="10px" bg={background} position="relative" justifyContent="center" alignItems="center" onKeyPress={handleEnterPressed}>
+    <Box borderColor={borderColor} borderRadius={"md"} padding={2} w="200px" h="100%" shadow="base" borderWidth="10px" bg={background} position="relative" justifyContent="center" alignItems="center" onKeyPress={handleEnterPressed}>
       <Box position="relative">
         <Center>
-          <IconWrapper color="yellow" selected={player.locked} Icon={player.locked ? Lock : OpenLock} onClick={() => updatePlayerField('locked', !player.locked)} />
-          <IconWrapper color="teal" selected={player.inTheRoll} Icon={Dice} onClick={() => updatePlayerField('inTheRoll', !player.inTheRoll)} />
-          {userId === undefined && editing ?
+          {profilePage ? null : <IconWrapper color="yellow" selected={player.locked} Icon={player.locked ? Lock : OpenLock} onClick={() => updatePlayerField('locked', !player.locked)} />}
+          {profilePage ? null : <IconWrapper color="teal" selected={player.inTheRoll} Icon={Dice} onClick={() => updatePlayerField('inTheRoll', !player.inTheRoll)} />}
+
+          {!profilePage && editing ?
             <IconWrapper color="red" selected={true} Icon={Trash} onClick={handleDelete} />
             : null}
           <Box ml='auto'>
@@ -123,9 +154,16 @@ const PlayerCard = ({ id, userId, rollType = 'role', groupId }: PlayerCardProps)
 
         {rollType === "role" ?
           <HStack align="center" justify="center">
-            <IconWrapper selected={player.tank} color="blue" Icon={Shield} onClick={() => updatePlayerField("tank", !player.tank)} />
-            <IconWrapper selected={player.dps} color="orange" Icon={Sword} onClick={() => updatePlayerField("dps", !player.dps)} />
-            <IconWrapper selected={player.healer} color="green" Icon={FirstAid} onClick={() => updatePlayerField("healer", !player.healer)} />
+            <IconWrapper selected={player.tank} color="blue" Icon={Shield} onClick={async () => {
+              await updatePlayerField("tank", !player.tank)
+            }} />
+            <IconWrapper selected={player.dps} color="orange" Icon={Sword} onClick={async () => {
+              await updatePlayerField("dps", !player.dps)
+            }} />
+            <IconWrapper selected={player.healer} color="green" Icon={FirstAid} onClick={async () => {
+              await updatePlayerField("healer", !player.healer)
+
+            }} />
           </HStack>
           :
           null
