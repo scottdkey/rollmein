@@ -5,14 +5,14 @@ import { ApplicationErrorResponse, AuthorizationErrorResponse } from "../utils/e
 import { GroupRepository } from './group.repository';
 import { MyContext } from "../types/Context";
 import { DataResponse } from "../types/DataResponse";
-import { ICreateGroup, IGroupUpdate, IGroup } from "../types/Group";
 import { HTTPCodes } from "../types/HttpCodes.enum";
-import { IApplicationError } from "../types/ApplicationError";
+import { RedisKeys, RedisService } from "../common/redis.service";
+import { Redis } from "ioredis";
 
 @addToContainer()
 export class GroupService {
   private logger: Logger
-  constructor(private groupRepo: GroupRepository, private ls: LoggerService) {
+  constructor(private groupRepo: GroupRepository, private ls: LoggerService, private redisService: RedisService) {
     this.logger = this.ls.getLogger(GroupService.name)
   }
 
@@ -54,6 +54,9 @@ export class GroupService {
   async createGroup(userId: string, createParams: ICreateGroup) {
     try {
       const res = await this.groupRepo.createGroup(userId, createParams)
+      if (res.data) {
+
+      }
       if (res.data || res.error) {
         return res
       }
@@ -71,7 +74,6 @@ export class GroupService {
     updateValueInput: IGroupUpdate): Promise<DataResponse<IGroup>> {
 
     const groupQuery = await this.setupUpdateGeneric(updateValueInput.id, userId)
-
 
     if (groupQuery.success && groupQuery.data) {
       const group = groupQuery.data
@@ -165,7 +167,7 @@ export class GroupService {
 
   }
 
-  protected checkIfAuthorized(group: IGroup, userIdFromRequest: string) {
+  checkIfAuthorized(group: IGroup, userIdFromRequest: string) {
     const groupOwner = group.userId === userIdFromRequest
 
     const inGroupMembers = group.relations.members.length > 0 && group.relations.members.includes(userIdFromRequest)
@@ -213,6 +215,37 @@ export class GroupService {
     ctx.body = returnGroups
 
     await next()
+  }
+
+  groupSub = async (group: IGroup | null, sub: Redis) => {
+    if (group) {
+      const redisKey = `${RedisKeys.GROUP}-${group.id}`
+      const current = await this.redisService.get(RedisKeys.GROUP, group.id)
+
+      if (current.data === null) {
+        await this.redisService.set(RedisKeys.GROUP, group.id, group)
+      }
+      await sub.subscribe(redisKey, (err, count) => {
+        if (err) {
+          this.logger.error({
+            message: `Failed to subscribe: %s ${err.message}`
+          })
+        } else {
+          this.logger.info({
+            message:
+              `Subscribed successfully! This client is currently subscribed to ${count} channels.`
+          });
+        }
+      })
+    }
+  }
+  groupPub = async (message: {
+    group: IGroup | null
+  }) => {
+    console.log(`publishing to group-${message?.group?.id}`)
+    if (message.group) {
+      await this.redisService.publish(RedisKeys.GROUP, message.group.id, message)
+    }
   }
 
 

@@ -6,12 +6,14 @@ import IoRedis, { Redis } from 'ioredis'
 import { DataResponse } from '../types/DataResponse';
 
 export enum RedisKeys {
-  SESSION = 'session'
+  SESSION = 'session',
+  GROUP = 'group'
 }
 
 @addToContainer()
 export class RedisService {
   redis: Redis
+  pub: Redis
 
   constructor(private cs: ConfigService, private ls: LoggerService) {
     const logger = this.ls.getLogger(RedisService.name)
@@ -20,7 +22,11 @@ export class RedisService {
       this.redis = new IoRedis({
         host: config.host
       })
+      this.pub = new IoRedis({
+        host: config.host
+      })
       logger.info({ message: "connected to redis" })
+
     } catch (e) {
       logger.error({ message: 'unable to connect to redis' })
     }
@@ -77,5 +83,8 @@ export class RedisService {
       retryCount++
     }
     return res
+  }
+  async publish<T>(key: RedisKeys, id: string, data: T) {
+    await this.pub.publish(`${key}-${id}`, JSON.stringify(data))
   }
 }

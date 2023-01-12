@@ -1,5 +1,3 @@
-import { DataResponse } from "./DataResponse"
-
 interface DbUser {
   id: string
   username: string | null

@@ -1,5 +1,4 @@
 import { RedisKeys } from '../common/redis.service';
-import { IApplicationError } from '../types/ApplicationError';
 import { DataResponse } from '../types/DataResponse';
 import { ErrorTypes } from '../types/ErrorCodes.enum';
 import { HTTPCodes } from '../types/HttpCodes.enum';

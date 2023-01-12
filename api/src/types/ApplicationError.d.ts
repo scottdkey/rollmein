@@ -1,4 +1,4 @@
-export interface IApplicationError {
+interface IApplicationError {
   type: string;
   message: string;
 }

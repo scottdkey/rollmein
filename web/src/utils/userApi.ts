@@ -19,27 +19,19 @@ export interface IProfileUpdateBody {
 }
 
 
-export const getMe = (sessionToken: string) => ApiRequest<{ user: ScrubbedUser | null, success: boolean }, {}>(UserRoutes.ME, RestMethods.GET, { sessionToken })
-
-export const useMeQuery = (options?: UseQueryOptions<{ user: ScrubbedUser | null, success: boolean }, IMeError>) => {
-  const { data: session } = useSession()
-  const sessionToken = session?.id as string
-  return useQuery({
-    queryFn: async () => await getMe(sessionToken),
-    queryKey: UserRoutes.ME,
-    retry: false,
-    staleTime: 10000,
-    onError: (error) => { console.error(error) },
-    useErrorBoundary: (error) => {
-      console.error(error.response)
-      return error.response?.status >= 300
-    },
-    ...options
-  })
+export const getMe = async (sessionToken?: string) => {
+  if (sessionToken) {
+    return await ApiRequest<{ user: ScrubbedUser, success: boolean }, {}>(UserRoutes.ME, RestMethods.GET, { sessionToken })
+  }
+  return {
+    user: null,
+    success: false
+  }
 }
 
-export const useProfileUpdateMutation = (options: UseMutationOptions<ScrubbedUser | undefined, IMeError, IProfileUpdateBody>) =>
-  UseMutation(UserRoutes.PROFILE, RestMethods.POST, {
-    mutationKey: UserRoutes.PROFILE,
-    ...options
-  })
+export const useMeQuery = () => {
+  return UseQuery<{ user: ScrubbedUser | null, success: boolean }, IMeError>(UserRoutes.ME, UserRoutes.ME, UserRoutes.ME)
+}
+
+export const useProfileUpdateMutation = () =>
+  UseMutation<ScrubbedUser | undefined, IMeError, IProfileUpdateBody>(UserRoutes.PROFILE, RestMethods.POST, "updateProfile")

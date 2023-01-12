@@ -1,8 +1,6 @@
-import {MyContext} from "./Context";
-
 type ValidRoll = {
   valid: boolean,
-  errors: AppError[]
+  errors: IApplicationError[]
 }
 interface RollInputParam {
   rollType: string
@@ -19,19 +17,19 @@ type PlayerCounts = {
 }
 
 type RollByRoleReturn = {
-  tank: Player;
-  healer: Player;
-  dps: Player[]
+  tank: IPlayer;
+  healer: IPlayer;
+  dps: IPlayer[]
 }
 
 type RollReturn = {
-  players: Player[] | RollByRoleReturn,
-  remaining: Player[]
+  players: IPlayer[] | RollByRoleReturn,
+  remaining: IPlayer[]
 }
 
 interface DPSObject {
-  players: Player[];
-  remaining: Player[];
+  players: IPlayer[];
+  remaining: IPlayer[];
 }
 
-type RollRouteContext = MyContext<RollReturn>
+type RollRouteContext = MyContext<RollReturn, {}>

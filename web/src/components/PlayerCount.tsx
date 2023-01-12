@@ -2,13 +2,13 @@ import { Circle, effect, Flex, Heading, HStack, Icon, useColorModeValue, VStack 
 import React, { FC, useLayoutEffect, useState } from "react"
 import { Lock, Dice, Shield, Sword, FirstAid } from "../assets"
 import { PlayerCounts, roll } from "../utils/rollHelpers"
+import { RollType } from "../utils/groupApi"
 
 
 
-const PlayerCount = ({ }) => {
+const PlayerCount = ({ rollType = RollType.FFA }: { rollType: RollType }) => {
 
   const [currentCounts, setCurrentCounts] = useState({ locked: 0, inTheRoll: 0, tanks: 0, dps: 0, healers: 0 })
-  const [rollType, setRollType] = useState('roll')
 
 
 

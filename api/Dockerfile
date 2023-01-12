@@ -1,15 +1,15 @@
 FROM node:18-alpine3.15 as build
-RUN apk update && apk add bash
 WORKDIR /usr/app
 COPY package.json .
 COPY yarn.lock .
-RUN yarn
+COPY tsconfig.json .
+RUN yarn install
 COPY . .
 RUN yarn tsc
 
 
 
-FROM node:18-alpine3.15
+FROM node:18-alpine3.15 as prod
 WORKDIR /usr/app
 COPY package.json .
 COPY yarn.lock .

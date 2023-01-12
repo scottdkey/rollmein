@@ -5,14 +5,15 @@ import { container } from "../container";
 import { GroupService } from "./group.service";
 import { MyContext } from "../types/Context";
 import { DataResponse } from "../types/DataResponse";
-import { IGroup, ICreateGroup, IGroupUpdate } from "../types/Group";
 import { HTTPCodes } from "../types/HttpCodes.enum";
-import { IApplicationError } from "../types/ApplicationError";
+import { RequireAuth } from "../middleware/requireAuth.middleware";
+import { PlayerService } from "../player/player.service";
 
 
 
 const groupRouter = new Router<DefaultState, MyContext<any, any>>({ prefix: "/group" })
 const groupService = container.get(GroupService)
+const playerService = container.get(PlayerService)
 const logger = container.get(LoggerService).getLogger('group router')
 
 groupRouter.get("/", async (ctx: MyContext<{}, IGroup[] | IApplicationError>, next: Next) => {
@@ -109,10 +110,10 @@ groupRouter.put("/", async (ctx: MyContext<IGroupUpdate, IGroup | IApplicationEr
   const handle = ctx.state.user?.id
   if (handle && ctx.state.validUser) {
     const res = await groupService.updateGroup(handle, ctx.request.body)
-    if(res.data){
+    if (res.data) {
       ctx.body = res.data
     }
-    if(res.error){
+    if (res.error) {
       ctx.status = 400
       ctx.body = res.error
     }
@@ -131,5 +132,63 @@ groupRouter.delete('/', async (ctx: MyContext<{}, {}>, next: Next) => {
 
   next()
 })
+
+groupRouter.post('/addPlayer', RequireAuth, async (ctx: MyContext<ICreatePlayer, IPlayer | { message: string }>, next: Next) => {
+  const body = ctx.request.body
+  const groupId = body.groupId
+  if (groupId !== "") {
+
+    console.log(body)
+    ctx.body = { message: "test" }
+    ctx.status = HTTPCodes.OK
+
+  }
+
+  if (groupId === "") {
+    ctx.status = HTTPCodes.UNPROCESSABLE_ENTITY
+    ctx.body = {
+      message: 'groupId missing from request'
+    }
+  }
+
+  next()
+
+
+})
+
+groupRouter.post('/addUser', RequireAuth, async (ctx: MyContext<{ userId: string }, IPlayer | { message: string }>, _: Next) => {
+  try {
+    const userId = ctx.request.body.userId
+    console.log({
+      userId
+    })
+    if (userId !== "") {
+      const userPlayer = await playerService.getPlayerByUserId(userId)
+
+      console.log({
+        userPlayer
+      })
+      ctx.body = { message: "test" }
+      ctx.status = HTTPCodes.OK
+
+    }
+
+    if (userId === "") {
+      ctx.status = HTTPCodes.UNPROCESSABLE_ENTITY
+      ctx.body = {
+        message: 'groupId missing from request'
+      }
+    }
+  } catch(e){
+    ctx.status = HTTPCodes.SERVER_ERROR
+    ctx.body = {
+      message: "server error",
+      error: e.message,
+      stacktrace: e.stacktrace
+    }
+  }
+
+})
+
 
 export default groupRouter

@@ -1,4 +1,4 @@
-export interface Player {
+interface IPlayer {
   [key: string]: unknown
   id: string
   groupId: string | null

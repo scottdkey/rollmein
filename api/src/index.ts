@@ -7,15 +7,17 @@ import { Routers } from "./routers";
 import { ConfigService } from "./common/config.service";
 import { LoggerService } from "./common/logger.service";
 import { isAuth } from './middleware/isAuth';
+import websocket from "koa-websocket"
+import { GroupWebsocket } from "./websocket/websocket.router"
 
 const logger = container.get(LoggerService).getLogger('IndexLogger')
 const server = async () => {
-  const app = new Koa();
+  const app = websocket(new Koa());
   const config = container.get(ConfigService).serverConfig
   app.proxy = config.prod
 
   app.use(bodyParser())
-  console.log(config.cors_uri)
+
   app.use(
     cors({
       origin: `${config.cors_uri}`,
@@ -25,6 +27,7 @@ const server = async () => {
   )
 
   app.use(isAuth)
+  app.ws.use(GroupWebsocket)
 
   Routers.forEach(({ router, routerName }) => {
     logger.debug({ message: `starting ${routerName}` })

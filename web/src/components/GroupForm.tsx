@@ -1,103 +1,134 @@
 import { EditIcon } from "@chakra-ui/icons"
-import { Button, FormControl, FormErrorMessage, FormLabel, IconButton, Input, Modal, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalHeader, ModalOverlay, Radio, RadioGroup, Stack, Switch } from "@chakra-ui/react"
-import { useState } from "react"
+import { Button, FormControl, FormErrorMessage, FormLabel, IconButton, Input, Modal, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalHeader, ModalOverlay, Radio, RadioGroup, Stack, Switch, useToast } from "@chakra-ui/react"
+import { useEffect, useState } from "react"
 import { Controller, SubmitHandler, useForm } from "react-hook-form"
-import { GroupRoutes, RollType, useCreateGroupMutation, useUpdateGroupMutation } from "../utils/groupApi"
+import { GroupRoutes, RollType, useCreateGroupMutation, useGroupQuery, useUpdateGroupMutation } from "../utils/groupApi"
 import { useQueryClient } from "react-query"
 import { useSession } from "next-auth/react"
 import { ICreateGroup, IGroup } from "@apiTypes/Group"
 
 export const GroupForm = ({ group }: { group?: IGroup }) => {
   const queryClient = useQueryClient()
-  const {status} = useSession()
+  const { status } = useSession()
   const [modalOpen, setModalOpen] = useState(false)
+  const [name, setName] = useState("")
+  const [lockAfterOut, setLockAfterOut] = useState(false)
+  const [membersCanUpdate, setMembersCanUpdate] = useState(false)
+  const [rollType, setRollType] = useState(RollType.FFA)
+  const [nameError, setNameError] = useState({
+    error: false,
+    message: ""
+  })
 
-  const successFunction = async (data: IGroup) => {
-    const groupKey = `${GroupRoutes.GROUP}-${data.id}`
+  const createGroup = useCreateGroupMutation()
+  const updateGroup = useUpdateGroupMutation()
 
-    queryClient.setQueryData(groupKey, data)
-    queryClient.resetQueries(groupKey)
-    queryClient.resetQueries(GroupRoutes.GROUP)
+  useEffect(() => {
+    if (group) {
+      setName(group.name)
+      setLockAfterOut(group.lockAfterOut)
+      setMembersCanUpdate(group.membersCanUpdate)
+      setRollType(group.rollType)
+    }
+  }, [group])
 
-    setModalOpen(false)
+  const nameInputValid = () => {
+    if (name.length <= 1) {
+      setNameError({
+        error: true,
+        message: "name must exist"
+      })
+      return false
+    }
+    return true
   }
 
-  const createGroup = useCreateGroupMutation({
-    onSuccess: successFunction
-  })
-  const updateGroup = useUpdateGroupMutation({
-    onSuccess: successFunction
-  })
-
-
-
-  const { register, control, handleSubmit, watch, formState: { errors }, reset } = useForm<ICreateGroup>({
-    defaultValues: {
-      name: group?.name || "",
-      rollType: group?.rollType || RollType.FFA,
-      membersCanUpdate: group?.membersCanUpdate || false,
-      lockAfterOut: group?.lockAfterOut || false
+  const handleSubmit = async () => {
+    const data: ICreateGroup = {
+      name,
+      lockAfterOut,
+      membersCanUpdate,
+      rollType
     }
-  });
-
-
-  const onSubmit: SubmitHandler<ICreateGroup> = async (data) => {
-    console.log(group, 'submit')
-    if (group !== undefined) {
-      await updateGroup.mutateAsync({ ...data, id: group.id })
+    const isNameValid = nameInputValid()
+    if (isNameValid) {
+      setNameError({
+        error: false,
+        message: ""
+      })
     }
-    if (group === undefined) {
-      await createGroup.mutateAsync(data)
 
+
+    if (isNameValid && group !== undefined) {
+      await updateGroup.mutateAsync({ ...data, id: group.id }, {
+        onSuccess: (data) => {
+          queryClient.refetchQueries(`${GroupRoutes.GROUP}-${data.id}`)
+          setModalOpen(false)
+        }
+      })
     }
-    reset()
+    if (isNameValid && group === undefined) {
+      await createGroup.mutateAsync(data, {
+        onSuccess: (data) => {
+          queryClient.refetchQueries(`${GroupRoutes.GROUP}-${data.id}`)
+          setModalOpen(false)
+        }
+      })
+    }
+
   }
 
   return (
     <>
       {group ?
-        <IconButton disabled={status !== "authenticated"} onClick={() => setModalOpen(true)} aria-label='Search database' icon={<EditIcon />} />
+        <IconButton disabled={status !== "authenticated"} onClick={() =>
+          setModalOpen(true)
+        } aria-label='Search database' icon={<EditIcon />} />
         :
         <Button disabled={status !== "authenticated"} onClick={() => setModalOpen(true)}>add a group</Button>
       }
 
 
       <Modal isOpen={modalOpen} onClose={() => setModalOpen(false)}>
-        <form onSubmit={handleSubmit(onSubmit)}>
+        <form onSubmit={async (e) => {
+          e.preventDefault()
+          await handleSubmit()
+        }}>
           <ModalOverlay />
           <ModalContent w='30'>
             <ModalHeader>{group ? group.name : "New Group"}</ModalHeader>
             <ModalCloseButton />
             <ModalBody alignItems={'center'} alignContent='center'>
-              <FormControl mb="4" isInvalid={errors.name ? true : false}>
+              <FormControl mb="4" isInvalid={nameError.error}>
                 <FormLabel htmlFor="name">Group Name</FormLabel>
-                <Input {...register('name', { required: "This is required" })} />
-                <FormErrorMessage>{errors.name && errors.name.message}</FormErrorMessage>
+                <Input name="name" value={name} onChange={(e) => { setName(e.target.value) }} />
+                <FormErrorMessage>{nameError.error && nameError.message}</FormErrorMessage>
               </FormControl>
-              <Controller
-                name="rollType"
-                control={control}
-                rules={{ required: true }}
-                render={({ field: { onChange, value } }) => (
-                  <RadioGroup onChange={onChange} value={value} alignItems='center'>
-                    <Stack direction="row">
-                      <Radio value="ffa">Free For All</Radio>
-                      <Radio value="role">By Role</Radio>
-                    </Stack>
-                  </RadioGroup>
-                )}
-              />
+
+              <RadioGroup onChange={(value: RollType) => {
+                setRollType(value)
+              }} value={rollType} alignItems='center'>
+                <Stack direction="row">
+                  <Radio value={RollType.FFA}>Free For All</Radio>
+                  <Radio value={RollType.ROLE}>By Role</Radio>
+                </Stack>
+              </RadioGroup>
+
               <FormControl display='flex' alignItems='center' mt='2' mb='2'>
                 <FormLabel htmlFor='member-change-setting' mb='0'>
                   Members can Make Changes
                 </FormLabel>
-                <Switch ml={'auto'} {...register('membersCanUpdate')} />
+                <Switch ml={'auto'} isChecked={membersCanUpdate} onChange={() => {
+                  setMembersCanUpdate(!membersCanUpdate)
+                }} />
               </FormControl>
               <FormControl display='flex' alignItems='center'>
                 <FormLabel htmlFor='lock-after-out-setting' mb='0'>
                   Lock After Out
                 </FormLabel>
-                <Switch ml={'auto'} {...register('lockAfterOut')} />
+                <Switch ml={'auto'} isChecked={lockAfterOut} onChange={() => {
+                  setLockAfterOut(!lockAfterOut)
+                }} />
               </FormControl>
 
             </ModalBody>
@@ -106,7 +137,6 @@ export const GroupForm = ({ group }: { group?: IGroup }) => {
               <Button colorScheme='blue' mr="2" type="submit">Submit</Button>
               <Button colorScheme='red' onClick={() => {
                 setModalOpen(false)
-                reset()
               }}>Close</Button>
             </ModalFooter>
           </ModalContent>

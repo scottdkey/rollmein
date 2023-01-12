@@ -4,54 +4,59 @@ import { useEffect, useState } from "react"
 import styles from "../styles/AuthMenu.module.scss"
 import AuthNav from "./AuthNavButtons"
 import UnAuthNav from "./UnAuthNavButtons"
-import { useSession } from "next-auth/react"
 import { useMeQuery } from "../utils/userApi"
+import { useSession } from "next-auth/react"
 
 const AuthMenu = () => {
-  const { status, data: session } = useSession()
 
-  const { data: meQuery, isLoading, refetch } = useMeQuery()
+  const { status, data: session } = useSession()
   const [loginOpen, setLoginOpen] = useState(false)
-  const [username, setUsername] = useState("Signed Out")
+
+  const { data, isLoading } = useMeQuery()
+  const [username, setUsername] = useState(session?.user.username)
 
   const ToggleOpen = () => {
     setLoginOpen(!loginOpen)
   }
 
-  useEffect(() => {
-    if (status === "authenticated" && isLoading === false && meQuery === undefined) {
-      refetch()
+  useEffect((() => {
+    if (!data?.user && session?.user.username) {
+      setUsername(session.user.username)
     }
-    if (session && status === "authenticated" && isLoading === false && meQuery?.user?.username) {
-      setUsername(meQuery.user.username)
+    if (data?.user?.username) {
+      setUsername(data.user.username)
     }
-  }, [status, session, meQuery?.user, isLoading])
+  }), [data, session?.user])
 
-
+  if (isLoading) {
+    return (
+      <Box className={styles.Menu}>
+        loading
+      </Box>
+    )
+  }
 
   return (
-    <Skeleton isLoaded={!isLoading}>
-      <Box className={styles.Menu}>
-        <Menu>
-          <MenuButton
-            onClick={ToggleOpen}
-            className={styles.MenuButton} margin={'0'}>
-            <HStack>
-              <Text>
-                {username}
-              </Text>
-              {loginOpen ?
-                <ChevronUpIcon /> : <ChevronDownIcon />}
-            </HStack>
+    <Box className={styles.Menu}>
+      <Menu>
+        <MenuButton
+          onClick={ToggleOpen}
+          className={styles.MenuButton} margin={'0'}>
+          <HStack>
+            <Text maxW={'28'}>
+              {status === 'authenticated' ? username : "Signed out"}
+            </Text>
+            {loginOpen ?
+              <ChevronUpIcon /> : <ChevronDownIcon />}
+          </HStack>
 
-          </MenuButton>
-          <MenuList className={styles.MenuList} margin={'0'}>
-            {status === "authenticated" ?
-              <AuthNav /> : <UnAuthNav />}
-          </MenuList>
-        </Menu>
-      </Box>
-    </Skeleton>
+        </MenuButton>
+        <MenuList className={styles.MenuList} margin={'0'}>
+          {status === "authenticated" ?
+            <AuthNav /> : <UnAuthNav />}
+        </MenuList>
+      </Menu>
+    </Box>
   )
 }
 

@@ -6,7 +6,6 @@ import { RedisKeys, RedisService } from "../common/redis.service";
 import { addToContainer } from "../container";
 import { v4 as uuid } from "uuid";
 import { ApplicationError } from "../utils/errorsHelpers";
-import { CacheUser, User } from "../types/user";
 
 
 @addToContainer()

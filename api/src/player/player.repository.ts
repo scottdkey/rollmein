@@ -2,17 +2,16 @@ import { DataServiceAbstract } from "../common/dataService.abstract"
 import { DatabaseService } from "../common/database.service"
 import { addToContainer } from "../container"
 import { DataResponse } from "../types/DataResponse"
-import { DbPlayer, ICreatePlayer, IUpdatePlayer, Player } from "../types/Player"
 
 @addToContainer()
-export class PlayerRepository extends DataServiceAbstract<DbPlayer, Player> {
+export class PlayerRepository extends DataServiceAbstract<DbPlayer, IPlayer> {
   db: DatabaseService
   constructor(db: DatabaseService) {
     super()
     this.db = db
   }
 
-  mapToCamelCase = ({ id, group_id, user_id, name, tank, healer, dps, locked, in_the_roll, created_at, updated_at }: DbPlayer): Player => {
+  mapToCamelCase = ({ id, group_id, user_id, name, tank, healer, dps, locked, in_the_roll, created_at, updated_at }: DbPlayer): IPlayer => {
     return {
       id,
       groupId: group_id,
@@ -28,13 +27,13 @@ export class PlayerRepository extends DataServiceAbstract<DbPlayer, Player> {
     }
   }
 
-  async getPlayersByGroupId(groupId: string): Promise<DataResponse<Player[]>> {
+  async getPlayersByGroupId(groupId: string): Promise<DataResponse<IPlayer[]>> {
     const query = 'SELECT * FROM player WHERE group_id=$1'
     const params = [groupId]
     return await this.returnMany(query, params)
   }
 
-  async getPlayerById(id: string): Promise<DataResponse<Player>> {
+  async getPlayerById(id: string): Promise<DataResponse<IPlayer>> {
     const query = `SELECT * FROM player WHERE id=$1`
     const params = [id]
     return await this.returnOne(query, params)

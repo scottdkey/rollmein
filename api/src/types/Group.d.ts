@@ -1,5 +1,7 @@
-import { RollType } from '../roll/roll.service';
-import { DataResponse } from "./DataResponse";
+interface ITestMessageBody {
+  sessionToken: string
+  groupId: string
+}
 
 interface DbGroup {
   id: string
@@ -46,4 +48,15 @@ interface IGroupUpdate {
   lockAfterOut?: boolean,
   memberId?: string,
   playerId?: string
+}
+
+interface IGroupWs {
+  group: IGroup
+}
+
+interface IGroupWsRequest {
+  messageType: GroupWSMessageTypes
+  sessionToken: string
+  groupId: string
+  group: IGroup
 }

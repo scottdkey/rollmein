@@ -17,17 +17,17 @@ export const Group = ({ group }: { group: IGroup }) => {
   const { data, isLoading } = useGroupQuery(group.id)
 
   const queryClient = useQueryClient()
-  const deleteMutation = useDeleteGroupMutation({
-    onSuccess: async (data) => {
-      await queryClient.refetchQueries({
-        queryKey: [GroupRoutes.GROUP]
-      })
-    }
-  })
+  const deleteMutation = useDeleteGroupMutation()
 
 
   const handleDelete = async () => {
-    await deleteMutation.mutateAsync({ id: group.id })
+    await deleteMutation.mutateAsync({ id: group.id }, {
+      onSuccess: async (data) => {
+        await queryClient.refetchQueries({
+          queryKey: [GroupRoutes.GROUP]
+        })
+      }
+    })
   }
 
 

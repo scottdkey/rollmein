@@ -5,8 +5,6 @@ import { DefaultState, Next } from 'koa';
 import { SessionService } from '../session/session.service';
 import { MyContext } from '../types/Context';
 import { HTTPCodes } from '../types/HttpCodes.enum';
-import { ScrubbedUser } from '../types/user';
-import { Player } from '../types/Player';
 import { PlayerService } from '../player/player.service';
 import { RequireAuth } from '../middleware/requireAuth.middleware';
 
@@ -14,6 +12,7 @@ const router = new Router<DefaultState, MyContext<any, any>>({ prefix: '/user' }
 const userService = container.get(UserService)
 const sessionService = container.get(SessionService)
 const playerService = container.get(PlayerService)
+
 
 router.get('/me', async (ctx, next) => {
   if (ctx.state.user && ctx.state.validUser) {
@@ -25,10 +24,7 @@ router.get('/me', async (ctx, next) => {
   }
   if (!ctx.state.user) {
     ctx.status = HTTPCodes.UNAUTHORIZED
-    ctx.body = {
-      user: null,
-      success: false
-    }
+    throw { user: null, success: false }
   }
   await next()
 
@@ -53,11 +49,16 @@ router.post('/profile', async (ctx: MyContext<{ username: string }, ScrubbedUser
   await next()
 })
 
-router.get("/player", RequireAuth, async (ctx: MyContext<{}, Player | null>, next: Next) => {
+router.get("/player", RequireAuth, async (ctx: MyContext<{}, IPlayer | null>, next: Next) => {
   try {
     const userId = ctx.state.user?.id as string
     const player = await playerService.getPlayerByUserId(userId)
-    ctx.body = player
+    if (player) {
+      ctx.body = player
+    }
+    if (!player) {
+      ctx.body = null
+    }
 
     await next()
 
@@ -65,7 +66,7 @@ router.get("/player", RequireAuth, async (ctx: MyContext<{}, Player | null>, nex
     ctx.status = HTTPCodes.SERVER_ERROR
     ctx.body = e
   }
-
 })
+
 
 export default router

@@ -1,22 +1,24 @@
 import { addToContainer } from "../container";
 import { DataResponse } from "../types/DataResponse";
 import { ErrorTypes } from "../types/ErrorCodes.enum";
-import { Player } from "../types/Player";
-import { PlayerCounts, ValidRoll } from "../types/Roll";
-import {IApplicationError} from "../types/ApplicationError"
 
 @addToContainer()
 export class RollService {
 
-  lockedCount(players: Player[]): number {
+  async addPlayerToRoll(body: IAddPlayerRequestBody) {
+    console.log(body)
+    return true
+  }
+
+  lockedCount(players: IPlayer[]): number {
     return players.filter(p => p.inTheRoll).length
   }
 
-  inCount(players: Player[]): number {
+  inCount(players: IPlayer[]): number {
     return players.filter(p => p.inTheRoll).length
   }
 
-  playerCounts = (players: Player[], rollType: RollType): PlayerCounts => {
+  playerCounts = (players: IPlayer[], rollType: RollType): PlayerCounts => {
     const locked = players.filter(p => p.locked).length
     const inTheRoll = players.filter(p => p.inTheRoll)
     if (rollType === RollType.ROLE) {
@@ -41,9 +43,9 @@ export class RollService {
     }
   };
 
-  FFARoll(currentGroup: Player[]): { players: Player[]; remaining: Player[] } {
+  FFARoll(currentGroup: IPlayer[]): { players: IPlayer[]; remaining: IPlayer[] } {
     let remaining = currentGroup
-    const players: Player[] = []
+    const players: IPlayer[] = []
     while (players.length > 5) {
       const pickedPlayer = this.rollWithLocked(remaining)
       players.push(pickedPlayer)
@@ -52,13 +54,13 @@ export class RollService {
     return { players, remaining }
   }
 
-  rollByRole(currentGroup: Player[]): DataResponse<{
+  rollByRole(currentGroup: IPlayer[]): DataResponse<{
     players: {
-      tank: Player;
-      healer: Player;
-      dps: Player[];
+      tank: IPlayer;
+      healer: IPlayer;
+      dps: IPlayer[];
     };
-    remaining: Player[];
+    remaining: IPlayer[];
   }> {
     const validRoll = this.validRoll(currentGroup, RollType.ROLE)
     if (!validRoll.valid) {
@@ -83,21 +85,21 @@ export class RollService {
   }
 
 
-  protected randomFromArray(players: Player[]): Player {
+  protected randomFromArray(players: IPlayer[]): IPlayer {
     return players[Math.floor(Math.random() * players.length)];
   }
   private removeFromGroup(
-    pickedPlayer: Player,
-    remainingPlayers: Player[]
-  ): Player[] {
+    pickedPlayer: IPlayer,
+    remainingPlayers: IPlayer[]
+  ): IPlayer[] {
     return remainingPlayers.filter(
       (player) => player.id !== pickedPlayer.id
     );
   }
 
-  private rollForRole(role: string, players: Player[]): { player: Player, remaining: Player[] } {
-    const group: Player[] = players.filter(
-      (player) => player[role as keyof Player] === true
+  private rollForRole(role: string, players: IPlayer[]): { player: IPlayer, remaining: IPlayer[] } {
+    const group: IPlayer[] = players.filter(
+      (player) => player[role as keyof IPlayer] === true
     );
     const playerWithRole = this.rollWithLocked(group)
     const remaining = this.removeFromGroup(playerWithRole, players)
@@ -108,10 +110,10 @@ export class RollService {
     }
   }
 
-  protected rollWithLocked(players: Player[]): Player {
-    const locked = players.filter((p: Player) => p.locked);
-    const outGroup = players.filter((p: Player) => !p.locked)
-    let pickedPlayer: Player;
+  protected rollWithLocked(players: IPlayer[]): IPlayer {
+    const locked = players.filter((p: IPlayer) => p.locked);
+    const outGroup = players.filter((p: IPlayer) => !p.locked)
+    let pickedPlayer: IPlayer;
     if (locked.length > 0) {
       pickedPlayer = this.randomFromArray(locked);
     } else {
@@ -120,10 +122,10 @@ export class RollService {
     return pickedPlayer
   }
 
-  private rollForDps(currentGroup: Player[]): { remaining: Player[], players: Player[] } {
+  private rollForDps(currentGroup: IPlayer[]): { remaining: IPlayer[], players: IPlayer[] } {
     let remaining = currentGroup;
 
-    const players: Player[] = [];
+    const players: IPlayer[] = [];
     for (let dpsCount = 1; dpsCount < 4; dpsCount++) {
       const pickedDPS = this.rollForRole(PlayerRoles.DPS, remaining);
       players.push(pickedDPS.player);
@@ -139,7 +141,7 @@ export class RollService {
     }
   }
 
-  private validRoll = (players: Player[], rollType: RollType): ValidRoll => {
+  private validRoll = (players: IPlayer[], rollType: RollType): ValidRoll => {
     const playerCounts = this.playerCounts(players, rollType)
     const errorArray: IApplicationError[] = []
     const invalidRollError = (message: string) => {

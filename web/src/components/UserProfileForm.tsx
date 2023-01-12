@@ -1,58 +1,47 @@
 import { HStack, Input, Button, Text } from "@chakra-ui/react"
-import { Session } from "next-auth"
-import { useSession, getSession } from "next-auth/react"
-import { useRouter } from "next/router"
-import { useState, useEffect } from "react"
+import { useState } from "react"
 import { useForm, SubmitHandler } from "react-hook-form"
 import { useQueryClient } from "react-query"
-import { ScrubbedUser } from "../../../api/src/types/User"
 import styles from "../styles/profile.module.scss"
-import { IProfileUpdateBody, useMeQuery, useProfileUpdateMutation, UserRoutes, getMe } from "../utils/userApi"
+import { IProfileUpdateBody, useMeQuery, useProfileUpdateMutation, UserRoutes } from "../utils/userApi"
 
-interface IMe {
-  user: ScrubbedUser | null
-  success: boolean
-}
+const UserProfileForm = ({ id, sessionToken }: {
+  id: string,
+  sessionToken: string,
+}) => {
 
-interface UserProfileFormProps {
-  props: {
-    session: Session | null
-    me: IMe
-  }
-}
-
-const UserProfileForm = ({ props }: UserProfileFormProps) => {
-  const { register, handleSubmit, watch, formState: { errors } } = useForm<IProfileUpdateBody>();
   const queryClient = useQueryClient()
-  const router = useRouter()
-  const { status } = useSession()
 
   const { data: meQuery, refetch } = useMeQuery({
-    initialData: props.me
-  })
-
-
-
-  const profileUpdateMutation = useProfileUpdateMutation({
-    onSuccess: async () => {
-      queryClient.invalidateQueries(UserRoutes.ME)
-      await refetch()
+    onSuccess: (data) => {
+      if (data.user?.username) {
+        setValue("username", data.user?.username)
+      }
+      queryClient.setQueryData(UserRoutes.ME, data)
     }
   })
+  const { register, handleSubmit, setValue } = useForm<IProfileUpdateBody>({
+    defaultValues: {
+      username: meQuery?.user?.username || ""
+    }
+  });
+
+
+
+  const profileUpdateMutation = useProfileUpdateMutation()
 
   const [editing, setEditing] = useState(false)
 
   const onSubmit: SubmitHandler<IProfileUpdateBody> = data => {
 
-    profileUpdateMutation.mutate(data)
+    profileUpdateMutation.mutate(data, {
+      onSuccess: async () => {
+        queryClient.invalidateQueries(UserRoutes.ME)
+        await refetch()
+      }
+    })
     setEditing(false)
   };
-
-  useEffect(() => {
-    if (status !== "authenticated") {
-      router.push("/")
-    }
-  }, [meQuery?.success, meQuery, router, status])
 
   if (meQuery?.user && editing) {
     return (
@@ -74,22 +63,6 @@ const UserProfileForm = ({ props }: UserProfileFormProps) => {
       <Button onClick={() => { setEditing(true) }}>Edit</Button>
     </HStack>
   )
-}
-
-export async function getServerSideProps(context: any): Promise<UserProfileFormProps> {
-  // Fetch data from external API
-  const session = await getSession(context)
-  const sessionToken = session?.id as string
-  const me = await getMe(sessionToken)
-
-  // Pass data to the page via props
-  return {
-    props: {
-      session,
-      me
-    }
-
-  }
 }
 
 export default UserProfileForm

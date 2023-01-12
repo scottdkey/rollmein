@@ -1,11 +1,11 @@
 {
   "compilerOptions": {
-    "target": "ESNext",
-    "module": "CommonJS",
-    "lib": ["dom", "es6", "es2017", "esnext"],
+    "target": "es2017",
+    "module": "commonjs",
+    "lib": ["dom", "es6", "es2017", "esnext.asynciterable"],
+    "skipLibCheck": true,
     "sourceMap": true,
     "outDir": "./dist",
-    "skipLibCheck": true,
     "moduleResolution": "node",
     "removeComments": true,
     "noImplicitAny": true,
@@ -22,8 +22,8 @@
     "experimentalDecorators": true,
     "resolveJsonModule": true,
     "baseUrl": ".",
-    "types": ["node", "mocha", "chai"]
+    "typeRoots": ["./src/types", "./node_modules/@types"]
   },
   "exclude": ["node_modules"],
-  "include": ["./src/**/*.tsx", "./src/**/*.ts"]
+  "include": ["./src/**/*.ts"]
 }

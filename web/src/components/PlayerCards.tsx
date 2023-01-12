@@ -1,13 +1,15 @@
-import { Box, Button, Drawer, DrawerBody, DrawerCloseButton, DrawerContent, DrawerHeader, DrawerOverlay, Spinner, useDisclosure, Wrap, WrapItem, } from "@chakra-ui/react"
-import React, { useState } from "react"
+import { Box, Button, Center, Drawer, DrawerBody, DrawerCloseButton, DrawerContent, DrawerHeader, DrawerOverlay, HStack, Spinner, useDisclosure, VStack, Wrap, WrapItem, } from "@chakra-ui/react"
+import React, { useEffect, useState } from "react"
 
 import PlayerCount from "./PlayerCount";
 import PlayerCard from "./PlayerCard"
 import { useQueryClient } from "react-query";
+import { RollType } from "../../../api/src/roll/roll.service";
 
 
 interface PlayerCardsProps {
-  rollType: string
+  rollType: RollType,
+  groupId: string
 }
 
 const PlayerCards = (props: PlayerCardsProps): JSX.Element => {
@@ -33,7 +35,7 @@ const PlayerCards = (props: PlayerCardsProps): JSX.Element => {
             outline: "none"
           }}
         >
-          <PlayerCount />
+          <PlayerCount rollType={props.rollType} />
         </Button>
         <Drawer
           isOpen={isOpen}
@@ -49,14 +51,26 @@ const PlayerCards = (props: PlayerCardsProps): JSX.Element => {
             <DrawerCloseButton />
             <DrawerHeader>Players</DrawerHeader>
             <DrawerBody>
-              <Wrap spacing="5px" align="center" m="5px" justify="center">
-                {players?.map((player) =>
-                  <WrapItem key={player} >
-                    <PlayerCard id={player} rollType={props.rollType} profilePage={false}/>
-                  </WrapItem>)}
-                <WrapItem>
-                </WrapItem>
-              </Wrap>
+              <VStack>
+                <Button onClick={onClose} zIndex="0" padding="40px"
+                  variant="solid" _focus={{
+                    outline: "none"
+                  }}
+                >
+                  <PlayerCount rollType={props.rollType} />
+                </Button>
+
+                <Wrap spacing="5px" align="center" m="5px" justify="center">
+
+                  {players?.map((player) =>
+                    <WrapItem key={player} >
+                      <PlayerCard id={player} rollType={props.rollType} profilePage={false} />
+                    </WrapItem>)}
+                  <NewPlayerCard rollType={props.rollType} groupId={props.groupId} />
+                  <WrapItem>
+                  </WrapItem>
+                </Wrap>
+              </VStack>
             </DrawerBody>
           </DrawerContent>
         </Drawer>
@@ -64,6 +78,22 @@ const PlayerCards = (props: PlayerCardsProps): JSX.Element => {
     )
   }
 
+}
+
+const NewPlayerCard = (props: { rollType: RollType, groupId: string }) => {
+
+  const [addPlayer, setAddPlayer] = useState(false)
+  return (
+    <>
+      {addPlayer ?
+        <PlayerCard rollType={props.rollType} profilePage={false} closeCreate={() => setAddPlayer(false)} groupId={props.groupId}/> :
+
+        <Box borderRadius={"md"} padding={2} w="240px" h="180px" shadow="base" borderWidth="10px" position="relative" justifyContent="center" alignItems="center">
+          <Center>  <Button m='auto' onClick={() => { setAddPlayer(true) }}>Add a player</Button></Center>
+        </Box>}
+
+    </>
+  )
 }
 
 export default PlayerCards

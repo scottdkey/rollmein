@@ -1,7 +1,6 @@
 import { DatabaseService } from "../common/database.service";
 import { DataServiceAbstract } from "../common/dataService.abstract";
 import { addToContainer } from "../container";
-import { DbUser, User, RegisterUser } from "../types/user";
 
 @addToContainer()
 export class UserRepository extends DataServiceAbstract<DbUser, User>{

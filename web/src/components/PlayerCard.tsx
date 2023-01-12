@@ -1,17 +1,19 @@
 import { CheckCircleIcon, EditIcon } from "@chakra-ui/icons"
-import { border, Box, Center, Heading, HStack, Input, useColorModeValue } from "@chakra-ui/react"
+import { Box, Center, Heading, HStack, Input, useColorModeValue } from "@chakra-ui/react"
 import React, { useEffect, useState } from "react"
 import Dice from "../assets/Dice"
 import FirstAid from "../assets/FirstAid"
 import OpenLock from "../assets/OpenLock"
 import Lock from "../assets/Lock"
-import { Shield } from "../assets/Shield"
 import Sword from "../assets/Sword"
 import { IconWrapper } from "./IconWrapper"
 import { Trash } from "../assets/Trash"
-import { Player } from "@apiTypes/Player"
-import { usePlayerQuery, useUpdatePlayerMutation } from "../utils/playerApi"
+import { ICreatePlayer, IPlayer } from "@apiTypes/Player"
+import { useCreatePlayerMutation, usePlayerQuery, useUpdatePlayerMutation } from "../utils/playerApi"
 import { useToast } from "@chakra-ui/react"
+import { useQueryClient } from "react-query"
+import { Shield } from "../assets"
+import { useAddPlayerToGroupMutation } from "../utils/groupApi"
 
 
 interface PlayerCardProps {
@@ -20,16 +22,17 @@ interface PlayerCardProps {
   rollType: string,
   groupId?: string
   profilePage: boolean
+  closeCreate?: () => void
 }
-const PlayerCard = ({ id, userId, rollType = 'role', groupId, profilePage }: PlayerCardProps): JSX.Element => {
+const PlayerCard = ({ id, userId, rollType = 'role', groupId, profilePage, closeCreate }: PlayerCardProps): JSX.Element => {
+  const toast = useToast()
   const { data: playerQuery, error: playerQueryError, refetch } = usePlayerQuery(id)
-  const playerMutation = useUpdatePlayerMutation({
-    onSuccess: async () => {
-      await refetch()
-    }
-  })
-  const [player, setPlayer] = useState<Player>({
-    id: id as string,
+  const queryClient = useQueryClient()
+  const playerMutation = useUpdatePlayerMutation()
+  const addPlayerToGroupMutation = useAddPlayerToGroupMutation()
+  const createPlayerMutation = useCreatePlayerMutation()
+
+  const basePlayer = {
     userId: userId ? userId : "",
     name: '',
     tank: false,
@@ -38,52 +41,103 @@ const PlayerCard = ({ id, userId, rollType = 'role', groupId, profilePage }: Pla
     dps: false,
     locked: false,
     inTheRoll: false,
-    createdAt: "",
-    updatedAt: ""
-  })
-  const [name, setName] = useState(player?.name ? player.name : "")
-  const [editing, setEditing] = useState(false)
+  }
+
+  const [player, setPlayer] = useState<ICreatePlayer>(basePlayer)
+  const [name, setName] = useState(playerQuery?.name ? playerQuery.name : "")
+  const [editing, setEditing] = useState(id ? false : true)
   const textColor = useColorModeValue("gray.700", "gray:200")
   const primary = useColorModeValue(`gray.300`, `gray.600`)
   const inColor = useColorModeValue("teal.100", "teal.800")
   const lockedColor = useColorModeValue("yellow.500", "yellow.500")
   const background = player.inTheRoll && !profilePage ? inColor : primary
   const borderColor = !profilePage && player.locked ? lockedColor : "blackAlpha.100"
-  const toast = useToast()
 
   useEffect(() => {
-    if (playerQuery) {
+    if(playerQuery){
       setPlayer(playerQuery)
-      setName(playerQuery.name)
-    }
-    if (playerQueryError) {
-      toast(playerQueryError)
     }
 
-  }, [playerQuery?.data, playerQueryError])
-
+  }, [playerQuery])
 
   const handleSubmit = async () => {
-    if (editing && name) {
-      const playerInput = {
-        ...player,
-        id: player.id,
-        tank: player.tank,
-        dps: player.dps,
-        healer: player.healer,
-        locked: player.locked,
-        inTheRoll: player.inTheRoll,
-        name
+
+    if (name.length >= 1) {
+      if (editing && name && id) {
+        handleUpdatePlayer()
       }
-      setPlayer(playerInput)
-      await playerMutation.mutateAsync(playerInput)
+      if (editing && id === undefined) {
+        handleCreatePlayer()
+      }
+    } else {
+      toast({
+        status: "error",
+        title: "must include a name",
+        isClosable: true,
+      })
     }
-    toggleEditing()
+
+
+
+
+  }
+
+  const handleCreatePlayer = () => {
+    console.log({
+      groupId,
+      userId
+    })
+    const playerInput = {
+      ...player,
+      name
+    }
+    setPlayer(playerInput)
+    closeCreate && closeCreate()
+    if (groupId) {
+      console.log(`todo also update group ${groupId}`)
+    }
+    addPlayerToGroupMutation.mutateAsync(playerInput, {
+      onSuccess: (data) => {
+        if (data) {
+          setPlayer(data)
+        }
+      }
+    })
 
   }
 
   const toggleEditing = () => {
     setEditing(!editing)
+  }
+
+  const handleUpdatePlayer = async () => {
+    const playerInput = {
+      ...player,
+      name
+    }
+    setPlayer(playerInput)
+    if (id) {
+      await playerMutation.mutateAsync({ ...playerInput, id }, {
+        onSuccess: async (data) => {
+          if (data) {
+            setPlayer(data)
+          }
+          await refetch()
+          if (userId) {
+            await queryClient.refetchQueries("user/player")
+          }
+          toggleEditing()
+        },
+        onError: (error) => {
+          toast({
+            status: "error",
+            description: error,
+            title: "error updating player"
+
+          })
+        }
+      })
+    }
   }
 
   const updatePlayerField = async (field: string, changeValue: any) => {
@@ -92,21 +146,27 @@ const PlayerCard = ({ id, userId, rollType = 'role', groupId, profilePage }: Pla
       [field]: changeValue
     }
     setPlayer(playerInput)
-    await playerMutation.mutateAsync(playerInput)
+    if (id) {
+      await playerMutation.mutateAsync({ ...playerInput, id })
+    }
   }
   const handleDelete = async () => {
-    console.log('handle delete')
-  }
-
-  const handleEnterPressed = (e: React.KeyboardEvent<HTMLDivElement>) => {
-    if (e.key === "Enter") {
-      handleSubmit()
+    if (id) {
+      console.log('handle delete')
+    }
+    if (id === undefined) {
+      console.log("clear card")
+      closeCreate && closeCreate()
     }
   }
 
 
   return (
-    <Box borderColor={borderColor} borderRadius={"md"} padding={2} w="200px" h="100%" shadow="base" borderWidth="10px" bg={background} position="relative" justifyContent="center" alignItems="center" onKeyPress={handleEnterPressed}>
+    <Box borderColor={borderColor} borderRadius={"md"} padding={2} w="240px" h="180px" shadow="base" borderWidth="10px" bg={background} position="relative" justifyContent="center" alignItems="center" onKeyPress={(e) => {
+      if (e.key === "Enter") {
+        handleSubmit()
+      }
+    }}>
       <Box position="relative">
         <Center>
           {profilePage ? null : <IconWrapper color="yellow" selected={player.locked} Icon={player.locked ? Lock : OpenLock} onClick={() => updatePlayerField('locked', !player.locked)} />}
@@ -116,7 +176,7 @@ const PlayerCard = ({ id, userId, rollType = 'role', groupId, profilePage }: Pla
             <IconWrapper color="red" selected={true} Icon={Trash} onClick={handleDelete} />
             : null}
           <Box ml='auto'>
-            <IconWrapper onClick={handleSubmit} color={editing ? "green" : "gray"} selected={editing} Icon={editing ? CheckCircleIcon : EditIcon} />
+            <IconWrapper onClick={editing ? handleSubmit : toggleEditing} color={editing ? "green" : "gray"} selected={editing} Icon={editing ? CheckCircleIcon : EditIcon} />
           </Box>
         </Center>
         <Center padding="4" color={useColorModeValue("gray.100", "gray.200")}>

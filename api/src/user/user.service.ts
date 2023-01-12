@@ -2,7 +2,6 @@ import { Logger, LoggerService } from '../common/logger.service';
 import { ApplicationError } from '../utils/errorsHelpers';
 import { addToContainer } from "../container";
 import { UserRepository } from './user.repository';
-import { User, RegisterUser } from '../types/user';
 import { PlayerService } from '../player/player.service';
 
 @addToContainer()

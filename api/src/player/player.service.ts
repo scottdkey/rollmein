@@ -1,7 +1,6 @@
 import { ApplicationError } from '../utils/errorsHelpers';
 import { addToContainer } from '../container';
 import { DataResponse } from '../types/DataResponse';
-import { ICreatePlayer, IDeletePlayerResponse, IUpdatePlayer } from '../types/Player';
 import { PlayerRepository } from './player.repository';
 import { GroupService } from '../group/group.service';
 import { Logger, LoggerService } from '../common/logger.service';
@@ -33,7 +32,14 @@ export class PlayerService {
       if (res.success) {
         return res.data
       }
-      throw res.error
+      if (res.error) {
+        this.logger.error({
+          ...res.error,
+          message: "unable to get player by userId",
+ 
+        })
+      }
+      return
     } catch (e) {
       throw e.message
     }
@@ -42,11 +48,11 @@ export class PlayerService {
   async createPlayer(player: ICreatePlayer) {
     try {
       const res = await this.playerRepo.createPlayer(player)
-      if(res.success){
+      if (res.success) {
         return res.data
       }
       throw res.error
-    } catch(e){
+    } catch (e) {
       throw e.message
     }
   }
@@ -99,7 +105,7 @@ export class PlayerService {
       if (res.success) {
         return res.data
       }
-      throw res.error.message
+      throw res.error?.message
     }
     throw ApplicationError("update player error -- request body not valid")
   }

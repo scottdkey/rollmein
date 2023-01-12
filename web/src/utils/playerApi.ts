@@ -1,55 +1,63 @@
-import { UseMutationOptions, UseQueryOptions, useQueryClient } from "react-query"
-import { ICreatePlayer, IDeletePlayer, IUpdatePlayer, Player } from "../../../api/src/types/Player"
-import { UseMutation, UseQuery } from "./Rollmein.api"
+import { UseQueryOptions, useQuery, } from "react-query"
+import { ICreatePlayer, IDeletePlayer, IUpdatePlayer, IPlayer } from "../../../api/src/types/Player"
+import { ApiRequest, UseMutation, UseQuery } from "./Rollmein.api"
 import { RestMethods } from "../types/RestMethods.enum"
-import { DataResponse } from "../../../api/src/types/DataResponse"
+import { useSession } from "next-auth/react"
 
 
 export enum PlayerRoutes {
   PLAYERS = 'player',
   PLAYER = 'player',
-  PLAYER_BY_SIGNED_IN_USER = 'user/player'
+  PLAYER_BY_SIGNED_IN_USER = 'user/player',
+  PLAYER_BY_USER_ID = 'player/:userId'
 
+}
+
+const PlayerQueryById = async (id?: string, sessionToken?: string) => {
+  if (id !== undefined && sessionToken !== undefined) {
+    return await ApiRequest<IPlayer, {}>(`${PlayerRoutes.PLAYER}/${id}`, RestMethods.GET, { sessionToken })
+  }
+  return {
+    data: null,
+    error: `missing query id ${id}`
+  }
 }
 
 export const usePlayerQuery = (playerId?: string) => {
   const route = `${PlayerRoutes.PLAYER}/${playerId}`
-  const options: UseQueryOptions<Player, {}> = {
-    queryKey: `${PlayerRoutes.PLAYER}-${playerId}`
-  }
-  return UseQuery(route, options)
+  const queryKey = `${PlayerRoutes.PLAYER}-${playerId}`
+  return UseQuery<IPlayer, {}>(route, queryKey, playerId)
 }
 
 export const usePlayerFromSignedInUserQuery = () => {
   const route = PlayerRoutes.PLAYER_BY_SIGNED_IN_USER
-  const queryClient = useQueryClient()
-  const options: UseQueryOptions<Player, {}> = {
-    queryKey: PlayerRoutes.PLAYER_BY_SIGNED_IN_USER,
-    onSuccess: (data) => {
-      queryClient.setQueryData(`${PlayerRoutes.PLAYER}-${data.id}`, data)
-    }
-  }
-  return UseQuery(route, options)
+  return UseQuery<IPlayer, {}>(route, route, "signedInUser")
 }
+
+export const usePlayerFromUserIdQuery = (userId: string) => {
+  const route = PlayerRoutes.PLAYER_BY_USER_ID
+  const queryKey = `${route}-${userId}`
+  return UseQuery<IPlayer, {}>(route, queryKey, userId)
+
+}
+
 
 export const usePlayersQuery = (groupId: string) => {
   const route = `${PlayerRoutes.PLAYERS}/${groupId}`
-  const options: UseQueryOptions<Player[], {}> = {
-    queryKey: `${PlayerRoutes.PLAYERS}-${groupId}`
-  }
-  return UseQuery(route, options)
+  const queryKey = `${PlayerRoutes.PLAYERS}-${groupId}`
+  return UseQuery<IPlayer, {}>(route, queryKey, groupId)
 }
 
-export const useCreatePlayerMutation = (options: UseMutationOptions<Player, {}, ICreatePlayer>) => {
-  return UseMutation(PlayerRoutes.PLAYER, RestMethods.POST, options)
+export const useCreatePlayerMutation = () => {
+  return UseMutation<IPlayer, {}, ICreatePlayer>(PlayerRoutes.PLAYER, RestMethods.POST, "createPlayer")
 }
 
-export const useUpdatePlayerMutation = (options: UseMutationOptions<DataResponse<Player>, {}, IUpdatePlayer>) => {
-  return UseMutation(PlayerRoutes.PLAYER, RestMethods.PUT, options)
+export const useUpdatePlayerMutation = () => {
+  return UseMutation<IPlayer, {}, IUpdatePlayer>(PlayerRoutes.PLAYER, RestMethods.PUT, "updatePlayer")
 }
 
-export const useDeletePlayerMutation = (options: UseMutationOptions<Player, {}, IDeletePlayer>) => {
-  return UseMutation(PlayerRoutes.PLAYER, RestMethods.DELETE, options)
+export const useDeletePlayerMutation = () => {
+  return UseMutation<IPlayer, {}, IDeletePlayer>(PlayerRoutes.PLAYER, RestMethods.DELETE, "deletePlayer")
 }
 
 
