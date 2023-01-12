@@ -1,5 +1,4 @@
 import { UseQueryOptions, useQuery, } from "react-query"
-import { ICreatePlayer, IDeletePlayer, IUpdatePlayer, IPlayer } from "../../../api/src/types/Player"
 import { ApiRequest, UseMutation, UseQuery } from "./Rollmein.api"
 import { RestMethods } from "../types/RestMethods.enum"
 import { useSession } from "next-auth/react"

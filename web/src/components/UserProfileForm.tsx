@@ -4,6 +4,7 @@ import { useForm, SubmitHandler } from "react-hook-form"
 import { useQueryClient } from "react-query"
 import styles from "../styles/profile.module.scss"
 import { IProfileUpdateBody, useMeQuery, useProfileUpdateMutation, UserRoutes } from "../utils/userApi"
+import { useEffect } from "react"
 
 const UserProfileForm = ({ id, sessionToken }: {
   id: string,
@@ -12,19 +13,20 @@ const UserProfileForm = ({ id, sessionToken }: {
 
   const queryClient = useQueryClient()
 
-  const { data: meQuery, refetch } = useMeQuery({
-    onSuccess: (data) => {
-      if (data.user?.username) {
-        setValue("username", data.user?.username)
-      }
-      queryClient.setQueryData(UserRoutes.ME, data)
-    }
-  })
+  const { data: meQuery, refetch } = useMeQuery()
   const { register, handleSubmit, setValue } = useForm<IProfileUpdateBody>({
     defaultValues: {
       username: meQuery?.user?.username || ""
     }
   });
+
+  useEffect(() => {
+    if(meQuery && meQuery.user &&  meQuery.user.username){
+      setValue('username', meQuery.user.username)
+      queryClient.setQueryData(UserRoutes.ME, meQuery)
+    }
+
+  }, [meQuery])
 
 
 

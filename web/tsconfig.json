@@ -6,7 +6,6 @@
       "dom.iterable",
       "esnext"
     ],
-    "paths": { "@apiTypes/*": ["../api/src/types/*"], },
     "allowJs": true,
     "skipLibCheck": true,
     "strict": true,
@@ -25,13 +24,13 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "jsx": "preserve",
-    "incremental": true
+    "incremental": true,
+    "typeRoots": ["../api/src/types"]
   },
   "include": [
     "next-env.d.ts",
     "**/*.ts",
-    "**/*.tsx"
-, "src/components/ErrorBoundary.jsx"  ],
+    "**/*.tsx" ],
   "exclude": [
     "node_modules"
   ]

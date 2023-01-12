@@ -1,7 +1,6 @@
 import { UseMutationOptions, UseQueryOptions, useQuery } from "react-query"
 import { ApiRequest, UseMutation, UseQuery } from "./Rollmein.api"
 import { RestMethods } from "../types/RestMethods.enum"
-import { ScrubbedUser } from "@apiTypes/User"
 import { useSession } from "next-auth/react"
 
 interface IMeError {

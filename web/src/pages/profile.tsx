@@ -4,7 +4,6 @@ import { getSession } from "next-auth/react";
 import UserProfileForm from "../components/UserProfileForm";
 import { usePlayerFromSignedInUserQuery } from "../utils/playerApi";
 import { GetServerSideProps } from "next";
-import { ScrubbedUser } from "../../../api/src/types/User";
 import { Session } from "next-auth";
 import { useEffect } from "react";
 import { useRouter } from "next/router";

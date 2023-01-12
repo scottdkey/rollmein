@@ -6,7 +6,6 @@ import { GroupForm } from "./GroupForm"
 import { Tooltip } from '@chakra-ui/react'
 import { useQueryClient } from "react-query"
 import { useSession } from "next-auth/react"
-import { IGroup } from "../../../api/src/types/Group"
 
 
 export const Group = ({ group }: { group: IGroup }) => {
@@ -29,9 +28,6 @@ export const Group = ({ group }: { group: IGroup }) => {
       }
     })
   }
-
-
-
 
   if (isLoading) {
     return (

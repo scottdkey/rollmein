@@ -7,7 +7,6 @@ import { Group } from "./Group"
 import { GroupForm } from "./GroupForm"
 import { RestMethods } from "../types/RestMethods.enum"
 import { useSession } from "next-auth/react"
-import { IGroup } from "@apiTypes/Group"
 
 
 

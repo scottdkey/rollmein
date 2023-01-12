@@ -5,7 +5,6 @@ import { Controller, SubmitHandler, useForm } from "react-hook-form"
 import { GroupRoutes, RollType, useCreateGroupMutation, useGroupQuery, useUpdateGroupMutation } from "../utils/groupApi"
 import { useQueryClient } from "react-query"
 import { useSession } from "next-auth/react"
-import { ICreateGroup, IGroup } from "@apiTypes/Group"
 
 export const GroupForm = ({ group }: { group?: IGroup }) => {
   const queryClient = useQueryClient()
@@ -62,16 +61,20 @@ export const GroupForm = ({ group }: { group?: IGroup }) => {
     if (isNameValid && group !== undefined) {
       await updateGroup.mutateAsync({ ...data, id: group.id }, {
         onSuccess: (data) => {
-          queryClient.refetchQueries(`${GroupRoutes.GROUP}-${data.id}`)
-          setModalOpen(false)
+          if(data){
+            queryClient.refetchQueries(`${GroupRoutes.GROUP}-${data.id}`)
+            setModalOpen(false)
+          }
         }
       })
     }
     if (isNameValid && group === undefined) {
       await createGroup.mutateAsync(data, {
         onSuccess: (data) => {
-          queryClient.refetchQueries(`${GroupRoutes.GROUP}-${data.id}`)
-          setModalOpen(false)
+          if(data){
+            queryClient.refetchQueries(`${GroupRoutes.GROUP}-${data.id}`)
+            setModalOpen(false)
+          }
         }
       })
     }

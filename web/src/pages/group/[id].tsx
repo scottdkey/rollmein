@@ -5,10 +5,8 @@ import { GroupWSMessageTypes, RollType, useAddPlayerToGroupMutation, useAddUserT
 import { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
 import useWebSocket from "react-use-websocket";
-import { IGroup, IGroupWs } from "../../../../api/src/types/Group";
-import { ICreatePlayer } from "../../../../api/src/types/Player";
-import PlayerCards from "../../components/PlayerCards";
 
+import PlayerCards from "../../components/PlayerCards";
 
 export enum WebsocketReadyState {
   CONNECTING = 0,

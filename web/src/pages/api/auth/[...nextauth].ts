@@ -41,7 +41,7 @@ export const authOptions: AuthOptions = {
         const authType = account.provider
         const body = { token: account.id_token, authType }
         const res = await validateAuthRequest(body)
-        if (res.success) {
+        if (res && res.success) {
           token.user = res.user
           token.sessionId = res.sessionId
         }

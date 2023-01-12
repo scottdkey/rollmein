@@ -1,22 +1,22 @@
-export interface UserOptions {
+interface UserOptions {
   userId: string
   theme: Theme
   createdAt: string
   updatedAt: string
 }
 
-export interface DbUserOptions {
+interface DbUserOptions {
   user_id: string
   theme: Theme
   created_at: string
   updated_at: string
 }
 
-enum Theme {
+export enum Theme {
   DARK = 'dark',
   LIGHT = 'light'
 }
 
-export interface UserOptionsInput {
+interface UserOptionsInput {
   theme: Theme
 }

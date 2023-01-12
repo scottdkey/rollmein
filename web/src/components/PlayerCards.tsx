@@ -4,7 +4,7 @@ import React, { useEffect, useState } from "react"
 import PlayerCount from "./PlayerCount";
 import PlayerCard from "./PlayerCard"
 import { useQueryClient } from "react-query";
-import { RollType } from "../../../api/src/roll/roll.service";
+import { RollType } from "../types/Group.enum";
 
 
 interface PlayerCardsProps {
