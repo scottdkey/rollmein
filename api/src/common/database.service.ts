@@ -4,7 +4,6 @@ import { ApplicationError, DatabaseError } from '../utils/errorsHelpers';
 import { ConfigService } from './config.service';
 import { addToContainer } from "../container";
 import { Pool, PoolClient } from "pg"
-import { DataResponse } from '../types/DataResponse';
 
 @addToContainer()
 export class DatabaseService {

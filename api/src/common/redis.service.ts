@@ -3,7 +3,6 @@ import { NotInRedisError, RedisError } from '../utils/errorsHelpers';
 import { ConfigService } from './config.service';
 import { addToContainer } from "../container";
 import IoRedis, { Redis } from 'ioredis'
-import { DataResponse } from '../types/DataResponse';
 
 export enum RedisKeys {
   SESSION = 'session',

@@ -3,11 +3,10 @@ import { Logger, LoggerService } from "../common/logger.service";
 import { addToContainer } from "../container";
 import { ApplicationErrorResponse, AuthorizationErrorResponse } from "../utils/errorsHelpers";
 import { GroupRepository } from './group.repository';
-import { MyContext } from "../types/Context";
-import { DataResponse } from "../types/DataResponse";
-import { HTTPCodes } from "../types/HttpCodes.enum";
 import { RedisKeys, RedisService } from "../common/redis.service";
 import { Redis } from "ioredis";
+import { MyContext } from "../types/Context";
+import { HTTPCodes } from "../types/HttpCodes.enum";
 
 @addToContainer()
 export class GroupService {

@@ -11,7 +11,8 @@
     "migrate": "node node_modules/db-migrate/bin/db-migrate -m ./migrations -e pg up",
     "migrate:down": "node node_modules/db-migrate/bin/db-migrate -m ./migrations -e pg down",
     "migrate:create": "node node_modules/db-migrate/bin/db-migrate create addRefreshToken -e pg --sql-file",
-    "logs": "docker-compose logs --follow"
+    "logs": "docker-compose logs --follow",
+    "copyTypes": "cp -r ./types ./api/src && cp -r ./types ./web/src"
   },
   "dependencies": {
     "@types/koa": "^2.13.5",

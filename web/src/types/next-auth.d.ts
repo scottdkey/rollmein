@@ -1,5 +1,5 @@
 import NextAuth from "next-auth"
-import { ScrubbedUser } from "@apiTypes/User"
+
 
 declare module "next-auth" {
   /**

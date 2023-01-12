@@ -3,11 +3,10 @@ import Router from "koa-router";
 import { LoggerService } from "../common/logger.service";
 import { container } from "../container";
 import { GroupService } from "./group.service";
-import { MyContext } from "../types/Context";
-import { DataResponse } from "../types/DataResponse";
-import { HTTPCodes } from "../types/HttpCodes.enum";
 import { RequireAuth } from "../middleware/requireAuth.middleware";
 import { PlayerService } from "../player/player.service";
+import { MyContext } from "../types/Context";
+import { HTTPCodes } from "../types/HttpCodes.enum";
 
 
 

@@ -1,4 +1,4 @@
-export interface DataResponse<T> {
+interface DataResponse<T> {
   data: T | null,
   success: boolean,
   error: IApplicationError | null

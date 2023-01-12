@@ -1,4 +1,3 @@
-import { DataResponse } from "./types/DataResponse"
 import { HTTPCodes } from "./types/HttpCodes.enum"
 import { ApplicationErrorResponse, HttpCodeFromErrorType } from "./utils/errorsHelpers"
 

@@ -1,11 +1,11 @@
 import { PlayerService } from './player.service';
 import { container } from '../container';
 import Router from "koa-router";
-import { MyContext } from '../types/Context';
-import { HTTPCodes } from '../types/HttpCodes.enum';
 import { Next } from 'koa';
 import { RequireAuth } from '../middleware/requireAuth.middleware';
 import { LoggerService } from '../common/logger.service';
+import { MyContext } from '../types/Context';
+import { HTTPCodes } from '../types/HttpCodes.enum';
 
 const router = new Router({ prefix: '/player' })
 const playerService = container.get(PlayerService)

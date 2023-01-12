@@ -3,7 +3,7 @@ import { DatabaseService } from '../common/database.service';
 import { AuthorizationError, NullInputError, NotInDatabaseError } from '../utils/errorsHelpers';
 import { addToContainer } from '../container';
 import { DataServiceAbstract } from '../common/dataService.abstract';
-import { DataResponse } from '../types/DataResponse';
+import { DbUserOptions, UserOptions, UserOptionsInput } from '../types/UserOptions';
 
 @addToContainer()
 export class UserOptionsService extends DataServiceAbstract<DbUserOptions, UserOptions>{

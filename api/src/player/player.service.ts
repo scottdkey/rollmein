@@ -1,6 +1,5 @@
 import { ApplicationError } from '../utils/errorsHelpers';
 import { addToContainer } from '../container';
-import { DataResponse } from '../types/DataResponse';
 import { PlayerRepository } from './player.repository';
 import { GroupService } from '../group/group.service';
 import { Logger, LoggerService } from '../common/logger.service';

@@ -1,6 +1,5 @@
-import { addToContainer } from "../container";
-import { DataResponse } from "../types/DataResponse";
 import { ErrorTypes } from "../types/ErrorCodes.enum";
+import { addToContainer } from "../container";
 
 @addToContainer()
 export class RollService {

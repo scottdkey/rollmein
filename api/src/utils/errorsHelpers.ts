@@ -1,7 +1,6 @@
-import { RedisKeys } from '../common/redis.service';
-import { DataResponse } from '../types/DataResponse';
 import { ErrorTypes } from '../types/ErrorCodes.enum';
 import { HTTPCodes } from '../types/HttpCodes.enum';
+import { RedisKeys } from '../common/redis.service';
 
 export function HttpCodeFromErrorType(error: IApplicationError): HTTPCodes {
   switch (error.type) {
