@@ -1,34 +1,21 @@
-import { Spinner, Text, Tooltip, VStack } from "@chakra-ui/react"
-import { useEffect } from "react"
-import { useQueryClient } from "react-query"
-import { GroupRoutes, useGroupsQuery } from "../utils/groupApi"
-import { ApiRequest } from "../utils/Rollmein.api"
+import { Spinner, Text, VStack } from "@chakra-ui/react"
+import { useGroupsQuery } from "../utils/groupApi"
 import { Group } from "./Group"
 import { GroupForm } from "./GroupForm"
-import { RestMethods } from "../types/RestMethods.enum"
-import { useSession } from "next-auth/react"
+import { useEffect } from "react"
 
 
 
 
 export const Groups = () => {
-  const { data, isLoading } = useGroupsQuery()
-  const {data: session} = useSession()
-  const queryClient = useQueryClient()
+  const { data, isLoading, refetch } = useGroupsQuery()
 
   useEffect(() => {
-    if(data && data?.length > 0){
-      data?.forEach(group => {
-        queryClient.prefetchQuery({
-          queryKey: `${GroupRoutes.GROUP}-${group.id}`,
-          queryFn: () => {
-            return ApiRequest<{}, IGroup>(`${GroupRoutes.GROUP}/${group.id}`, RestMethods.GET, { sessionToken: session?.id })
-
-          }
-        })
-      })
+    if (!isLoading && data === undefined) {
+      refetch()
     }
-  }, [data, queryClient, session?.id])
+  }, [data])
+
 
   if (data) {
     return (

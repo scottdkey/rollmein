@@ -1,3 +1,6 @@
+import { RollType } from "./Group.enum"
+import { GroupWSMessageTypes } from "./GroupMessages.enum"
+
 interface ITestMessageBody {
   sessionToken: string
   groupId: string
@@ -20,6 +23,14 @@ interface ICreateGroup {
   rollType: RollType
   membersCanUpdate: boolean
   lockAfterOut: boolean
+}
+
+interface IJoinGroupReq {
+  groupId: string
+}
+
+interface IJoinGroupRes {
+  success: boolean
 }
 
 interface IGroupError {
@@ -58,5 +69,14 @@ interface IGroupWsRequest {
   messageType: GroupWSMessageTypes
   sessionToken: string
   groupId: string
-  group: IGroup
+}
+
+interface IGroupWsResponse {
+  group: IGroup | null
+  messageType: GroupWSMessageTypes
+  rollStarted?: boolean
+  data?: {
+    message: string
+    id: string
+  }
 }

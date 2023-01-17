@@ -26,7 +26,7 @@ const UserProfileForm = ({ id, sessionToken }: {
       queryClient.setQueryData(UserRoutes.ME, meQuery)
     }
 
-  }, [meQuery])
+  }, [meQuery, setValue, queryClient])
 
 
 

@@ -28,8 +28,8 @@ export const getMe = async (sessionToken?: string) => {
   }
 }
 
-export const useMeQuery = () => {
-  return UseQuery<{ user: ScrubbedUser | null, success: boolean }, IMeError>(UserRoutes.ME, UserRoutes.ME, UserRoutes.ME)
+export const useMeQuery = (enabled: boolean = true) => {
+  return UseQuery<{ user: ScrubbedUser | null, success: boolean }, IMeError>(UserRoutes.ME, UserRoutes.ME, enabled, UserRoutes.ME)
 }
 
 export const useProfileUpdateMutation = () =>

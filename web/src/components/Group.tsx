@@ -6,6 +6,8 @@ import { GroupForm } from "./GroupForm"
 import { Tooltip } from '@chakra-ui/react'
 import { useQueryClient } from "react-query"
 import { useSession } from "next-auth/react"
+import { IGroup } from "../types/Group"
+import { useEffect } from "react"
 
 
 export const Group = ({ group }: { group: IGroup }) => {
@@ -13,10 +15,14 @@ export const Group = ({ group }: { group: IGroup }) => {
   const router = useRouter()
   const playerCount = group.relations.players ? group.relations.players.length : 0
 
-  const { data, isLoading } = useGroupQuery(group.id)
+  const { data, isLoading } = useGroupQuery(group.id, group.id !== undefined)
 
   const queryClient = useQueryClient()
   const deleteMutation = useDeleteGroupMutation()
+
+  useEffect(() => {
+    queryClient.setQueryData(`group-${group.id}`, group)
+  }, [group])
 
 
   const handleDelete = async () => {

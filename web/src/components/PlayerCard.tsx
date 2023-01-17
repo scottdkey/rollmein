@@ -25,7 +25,7 @@ interface PlayerCardProps {
 }
 const PlayerCard = ({ id, userId, rollType = 'role', groupId, profilePage, closeCreate }: PlayerCardProps): JSX.Element => {
   const toast = useToast()
-  const { data: playerQuery, error: playerQueryError, refetch } = usePlayerQuery(id)
+  const { data: playerQuery, error: playerQueryError, refetch } = usePlayerQuery(id !== undefined, id)
   const queryClient = useQueryClient()
   const playerMutation = useUpdatePlayerMutation()
   const addPlayerToGroupMutation = useAddPlayerToGroupMutation()
@@ -53,7 +53,7 @@ const PlayerCard = ({ id, userId, rollType = 'role', groupId, profilePage, close
   const borderColor = !profilePage && player.locked ? lockedColor : "blackAlpha.100"
 
   useEffect(() => {
-    if(playerQuery){
+    if (playerQuery) {
       setPlayer(playerQuery)
     }
 

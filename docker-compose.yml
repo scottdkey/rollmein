@@ -41,20 +41,20 @@ services:
     depends_on:
       - database
       - redis
-  frontend:
-    build:
-      context: ./web
-      dockerfile: Dockerfile.dev
-    volumes:
-      - ./web/src:/usr/app/src
-      - ./web/node_modules:/usr/app/node_modules
-      - .env:/usr/app/.env.local
-    ports:
-      - 3000:3000
-    expose:
-      - 3000
-    depends_on:
-      - api
+  # frontend:
+  #   build:
+  #     context: ./web
+  #     dockerfile: Dockerfile.dev
+  #   volumes:
+  #     - ./web/src:/usr/app/src
+  #     - ./web/node_modules:/usr/app/node_modules
+  #     - .env:/usr/app/.env.local
+  #   ports:
+  #     - 3000:3000
+  #   expose:
+  #     - 3000
+  #   depends_on:
+  #     - api
   
 volumes:
   postgres_db:

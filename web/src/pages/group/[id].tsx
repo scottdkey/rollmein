@@ -1,12 +1,14 @@
-import { Button, Heading } from "@chakra-ui/react";
+import { Button, Center, Heading, Spinner } from "@chakra-ui/react";
 import { useRouter } from "next/router";
 import { GroupForm } from "../../components/GroupForm";
-import { GroupWSMessageTypes, RollType, useAddPlayerToGroupMutation, useAddUserToGroupMutation, useGroupQuery } from "../../utils/groupApi";
+import { RollType, useAddPlayerToGroupMutation, useAddUserToGroupMutation, useGroupQuery, useUserJoinGroupMutation } from "../../utils/groupApi";
 import { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
 import useWebSocket from "react-use-websocket";
 
 import PlayerCards from "../../components/PlayerCards";
+import { IGroup, IGroupWsResponse } from "../../types/Group";
+import { GroupWSMessageTypes } from "../../types/GroupMessages.enum";
 
 export enum WebsocketReadyState {
   CONNECTING = 0,
@@ -24,22 +26,27 @@ export default function Group() {
   const [players, setPlayers] = useState<string[]>([])
   const [members, setMembers] = useState<string[]>([])
   const [group, setGroup] = useState<IGroup | undefined>(undefined)
-  const { data, isLoading, isError, refetch } = useGroupQuery(id)
+  const { data, isLoading, isError, refetch } = useGroupQuery(id, id !== undefined)
   const addPlayerMutation = useAddPlayerToGroupMutation()
   const addMemberMutation = useAddUserToGroupMutation()
+  const joinGroupMutation = useUserJoinGroupMutation()
 
 
 
   const { sendJsonMessage, readyState } = useWebSocket(`${process.env.NEXT_PUBLIC_API_WS}`, {
     onMessage: (event) => {
-      const parsedData: IGroupWs = JSON.parse(event.data)
+      const parsedData: IGroupWsResponse = JSON.parse(event.data)
       if (Object.keys(event.data).length > 0 && parsedData.group) {
         const group = parsedData.group
         setGroup(group)
         setPlayers(group.relations.players)
         setMembers(group.relations.members)
       }
+    },
+    onOpen: () => {
+      joinGroup()
     }
+
   })
 
   useEffect(() => {
@@ -50,22 +57,28 @@ export default function Group() {
     if (data) {
       setGroup(data)
     }
-    readyStateHandler(readyState)
-  }, [readyState, data, status, isLoading, id, group?.rollType])
+    const ready = readyStateHandler(readyState)
 
+    if (session && session.id && id && ready) {
+      openGroup()
 
-
-  const sendBaseMessage = async () => {
-    if (session?.id && id) {
-      sendJsonMessage({
-        sessionToken: session.id,
-        groupId: id,
-        members: JSON.stringify(members),
-        players: JSON.stringify(players),
-        messageType: GroupWSMessageTypes.ADD_MEMBER
-      })
     }
+  }, [readyState, data, status, isLoading, id, group?.rollType, refetch])
 
+  const openGroup = async () => {
+    const message = {
+      messageType: GroupWSMessageTypes.Open,
+      sessionToken: session?.id,
+      groupId: id
+    }
+    sendJsonMessage(message)
+  }
+
+
+  const joinGroup = async () => {
+    await joinGroupMutation.mutateAsync({
+      groupId: id
+    })
   }
 
   const addPlayer = (player: ICreatePlayer) => {
@@ -75,24 +88,15 @@ export default function Group() {
       }
     })
   }
-  const addUser = (userId: string) => {
-    addMemberMutation.mutateAsync({
-      userId
-    }, {
-      onSuccess: (data) => {
-        if (data) {
-          console.log(data)
-        }
 
-      }
-    })
-  }
 
 
   if (isLoading) {
     return (
       <>
-        loading
+        <Center>
+          <Spinner size='xl' color='teal.200' />
+        </Center>
       </>
     )
   }
@@ -113,47 +117,27 @@ export default function Group() {
       <Heading size={'l'}>RollType: {group?.rollType === 'ffa' ? 'Free For All' : 'By Role'}</Heading>
       <GroupForm group={group} />
       <PlayerCards groupId={id} rollType={group?.rollType ? group.rollType : RollType.FFA} />
-      <Button onClick={sendBaseMessage}>Send base message</Button>
-      <Button onClick={() => {
-        addPlayer({
-          name: "",
-          groupId: id,
-          userId: null,
-          tank: false,
-          healer: false,
-          dps: false,
-          locked: false,
-          inTheRoll: false
-        })
-      }}>Add Player</Button>
-      <Button onClick={() => {
-        if (session?.user.id) {
-          addUser(session.user.id)
-        }
-      }}>Add User</Button>
+      <Button onClick={joinGroup}>Join Group</Button>
+      <Button onClick={openGroup}>Open connect</Button>
     </>
   )
 }
 
-const readyStateHandler = async (readyState: number) => {
+const readyStateHandler = (readyState: number) => {
   switch (readyState) {
     case WebsocketReadyState.CONNECTING:
-      console.info("connecting")
       break
     case WebsocketReadyState.OPEN:
-      console.info('open')
-      break
+      return true
     case WebsocketReadyState.CLOSED:
-      console.debug('closed')
       break
     case WebsocketReadyState.CLOSING:
-      console.debug('closing')
       break
     case WebsocketReadyState.UNINSTANTIATED:
-      console.debug('uninstantiated ws')
       break
     default:
       console.debug('unknown ready state for group websocket')
       break
   }
+  return false
 }

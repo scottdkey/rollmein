@@ -4,15 +4,14 @@ import { LoggerService } from "../common/logger.service";
 import { container } from "../container";
 import { GroupService } from "./group.service";
 import { RequireAuth } from "../middleware/requireAuth.middleware";
-import { PlayerService } from "../player/player.service";
 import { MyContext } from "../types/Context";
 import { HTTPCodes } from "../types/HttpCodes.enum";
+import { ICreateGroup, IGroup, IGroupUpdate, IJoinGroupReq, IJoinGroupRes } from "../types/Group";
 
 
 
 const groupRouter = new Router<DefaultState, MyContext<any, any>>({ prefix: "/group" })
 const groupService = container.get(GroupService)
-const playerService = container.get(PlayerService)
 const logger = container.get(LoggerService).getLogger('group router')
 
 groupRouter.get("/", async (ctx: MyContext<{}, IGroup[] | IApplicationError>, next: Next) => {
@@ -57,20 +56,26 @@ groupRouter.get("/", async (ctx: MyContext<{}, IGroup[] | IApplicationError>, ne
 })
 
 groupRouter.get('/:groupId', async (ctx: MyContext<{}, IGroup | IApplicationError>, next: Next) => {
-  const userId = ctx.state.user?.id
+  try {
+    const userId = ctx.state.user?.id
+    const groupId = ctx.params.groupId
+    if (groupId !== "undefined") {
+      const { group } = await groupService.getGroup(groupId, userId)
+      if (group) {
+        ctx.body = group
+        ctx.status = HTTPCodes.OK
+      }
+    } else {
+      ctx.status = HTTPCodes.NOT_FOUND
+      ctx.body = {
+        message: "unable to get group",
+        type: "not found"
 
-  const groupId = ctx.params.groupId
-
-  if (groupId !== "undefined") {
-    let response: { auth: boolean, data: DataResponse<IGroup> } = await groupService.getGroup(groupId, userId)
-    if (response.data.data) {
-      ctx.body = response.data.data
-      ctx.status = HTTPCodes.OK
+      }
     }
-    if (response.data.error) {
-      ctx.body = response.data.error
-      ctx.status = HTTPCodes.BAD_REQUEST
-    }
+  } catch (e) {
+    ctx.status = e.status
+    ctx.body = e.message
   }
 
   await next()
@@ -106,9 +111,9 @@ groupRouter.post("/", async (ctx: MyContext<ICreateGroup, IGroup | { message: st
 })
 
 groupRouter.put("/", async (ctx: MyContext<IGroupUpdate, IGroup | IApplicationError>, next: Next) => {
-  const handle = ctx.state.user?.id
-  if (handle && ctx.state.validUser) {
-    const res = await groupService.updateGroup(handle, ctx.request.body)
+  const userId = ctx.state.user?.id
+  if (userId && ctx.state.validUser) {
+    const res = await groupService.updateGroup(userId, ctx.request.body)
     if (res.data) {
       ctx.body = res.data
     }
@@ -121,6 +126,8 @@ groupRouter.put("/", async (ctx: MyContext<IGroupUpdate, IGroup | IApplicationEr
 
   next()
 })
+
+
 
 groupRouter.delete('/', async (ctx: MyContext<{}, {}>, next: Next) => {
   console.log(ctx.request.body)
@@ -137,7 +144,6 @@ groupRouter.post('/addPlayer', RequireAuth, async (ctx: MyContext<ICreatePlayer,
   const groupId = body.groupId
   if (groupId !== "") {
 
-    console.log(body)
     ctx.body = { message: "test" }
     ctx.status = HTTPCodes.OK
 
@@ -155,37 +161,21 @@ groupRouter.post('/addPlayer', RequireAuth, async (ctx: MyContext<ICreatePlayer,
 
 })
 
-groupRouter.post('/addUser', RequireAuth, async (ctx: MyContext<{ userId: string }, IPlayer | { message: string }>, _: Next) => {
+groupRouter.post('/joinGroup', RequireAuth, async (ctx: MyContext<IJoinGroupReq, IJoinGroupRes>, next: Next) => {
   try {
-    const userId = ctx.request.body.userId
-    console.log({
-      userId
-    })
-    if (userId !== "") {
-      const userPlayer = await playerService.getPlayerByUserId(userId)
+    const userId = ctx.state.user.id as string
+    const groupId = ctx.request.body.groupId
 
-      console.log({
-        userPlayer
-      })
-      ctx.body = { message: "test" }
-      ctx.status = HTTPCodes.OK
-
-    }
-
-    if (userId === "") {
-      ctx.status = HTTPCodes.UNPROCESSABLE_ENTITY
-      ctx.body = {
-        message: 'groupId missing from request'
-      }
-    }
-  } catch(e){
-    ctx.status = HTTPCodes.SERVER_ERROR
+    const res = await groupService.userJoinGroup(groupId, userId)
     ctx.body = {
-      message: "server error",
-      error: e.message,
-      stacktrace: e.stacktrace
+      success: res
     }
+  } catch (e) {
+    ctx.status = e.status
+    ctx.body = { success: false }
   }
+
+  next()
 
 })
 

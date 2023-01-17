@@ -1,4 +1,3 @@
-import Router from "koa-router"
 import { container } from "../container"
 import { GroupService } from "../group/group.service"
 import { validateSessionToken } from "../middleware/websocketIsAuth.middleware"
@@ -6,9 +5,9 @@ import { MiddlewareContext } from "koa-websocket"
 import { RedisKeys } from "../common/redis.service"
 import IORedis from "ioredis"
 import { ConfigService } from "../common/config.service"
+import { GroupWSMessageTypes } from "../types/GroupMessages.enum"
+import { IGroup, IGroupWsRequest, IGroupWsResponse } from "../types/Group"
 
-
-const router = new Router()
 const groupService = container.get(GroupService)
 const config = container.get(ConfigService).redisConfig
 
@@ -18,12 +17,11 @@ export async function GroupWebsocket(ctx: MiddlewareContext<{}>) {
   const sub = new IORedis({
     host: config.host
   })
-  ctx.websocket.on('open', () => {
-    ctx.websocket.send(JSON.stringify({ group: null, auth: false }))
-  })
+
   try {
     let redisKey = ""
     let group: IGroup | null = null
+    let userId: string | null
     let subbed = false
 
     const subToGroup = async () => {
@@ -32,6 +30,21 @@ export async function GroupWebsocket(ctx: MiddlewareContext<{}>) {
         subbed = true
       }
     }
+
+    ctx.websocket.on('open', () => {
+      const messageRes: IGroupWsResponse = {
+        group: null,
+        messageType: GroupWSMessageTypes.Open,
+        rollStarted: false
+      }
+      ctx.websocket.send(JSON.stringify(messageRes))
+    })
+    ctx.websocket.on('close', async () => {
+      if (userId && group) {
+        await groupService.removeMember(group, userId)
+      }
+      console.log("closed")
+    })
 
     sub.on('message', (channel, message) => {
       if (channel === redisKey) {
@@ -42,22 +55,36 @@ export async function GroupWebsocket(ctx: MiddlewareContext<{}>) {
     ctx.websocket.on("message", async (message: string) => {
       const parsed = JSON.parse(message) as IGroupWsRequest
       const groupId = parsed.groupId
-
       const token = parsed.sessionToken
       const { user, valid } = await validateSessionToken(token)
-      const { data: groupRes } = await groupService.getGroup(groupId, user?.id)
+
+
+
+      const { group: groupRes } = await groupService.getGroup(groupId, user?.id)
 
       redisKey = `${RedisKeys.GROUP}-${groupId}`
-      group = groupRes.data
-      await subToGroup()
-
-
-
-      if (valid && groupRes.data) {
-        groupService.groupPub({
-          group: groupRes.data
-        })
-
+      group = groupRes
+  
+      console.log({
+        valid, user, group, parsed
+      })
+      if(subbed === false){
+        console.log('new sub')
+        await subToGroup()
+      }
+ 
+      if (valid && user) {
+        switch (parsed.messageType) {
+          case GroupWSMessageTypes.Open:
+            userId = user.id
+            if (valid && groupRes) {
+              groupService.openWsConnection(groupRes)
+            }
+            break
+          default:
+            console.log(`unhandled message type: ${parsed.messageType}`)
+            break
+        }
       }
       if (!valid) {
         ctx.websocket.close()
@@ -69,7 +96,3 @@ export async function GroupWebsocket(ctx: MiddlewareContext<{}>) {
   }
 
 }
-
-
-
-export default router

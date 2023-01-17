@@ -1,10 +1,10 @@
 import { EditIcon } from "@chakra-ui/icons"
 import { Button, FormControl, FormErrorMessage, FormLabel, IconButton, Input, Modal, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalHeader, ModalOverlay, Radio, RadioGroup, Stack, Switch, useToast } from "@chakra-ui/react"
 import { useEffect, useState } from "react"
-import { Controller, SubmitHandler, useForm } from "react-hook-form"
-import { GroupRoutes, RollType, useCreateGroupMutation, useGroupQuery, useUpdateGroupMutation } from "../utils/groupApi"
+import { GroupRoutes, RollType, useCreateGroupMutation, useUpdateGroupMutation } from "../utils/groupApi"
 import { useQueryClient } from "react-query"
 import { useSession } from "next-auth/react"
+import { ICreateGroup, IGroup } from "../types/Group"
 
 export const GroupForm = ({ group }: { group?: IGroup }) => {
   const queryClient = useQueryClient()

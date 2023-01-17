@@ -1,13 +1,12 @@
 import { ApplicationError } from '../utils/errorsHelpers';
 import { addToContainer } from '../container';
 import { PlayerRepository } from './player.repository';
-import { GroupService } from '../group/group.service';
 import { Logger, LoggerService } from '../common/logger.service';
 
 @addToContainer()
 export class PlayerService {
   private logger: Logger
-  constructor(private playerRepo: PlayerRepository, private groupService: GroupService, private ls: LoggerService) {
+  constructor(private playerRepo: PlayerRepository, private ls: LoggerService) {
     this.logger = this.ls.getLogger(PlayerService.name)
   }
 
@@ -35,7 +34,7 @@ export class PlayerService {
         this.logger.error({
           ...res.error,
           message: "unable to get player by userId",
- 
+
         })
       }
       return
@@ -84,9 +83,7 @@ export class PlayerService {
     let valid = false
 
     if (input.groupId !== null) {
-      const groupRes = await this.groupService.getGroup(input.groupId, userId)
-      const groupIdsMatch = input.groupId === playerRes?.groupId
-      valid = groupRes.auth && groupIdsMatch
+      valid = input.groupId === playerRes?.groupId
     }
 
     if (input.userId !== null) {

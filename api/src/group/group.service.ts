@@ -1,17 +1,18 @@
-import { Next } from "koa";
 import { Logger, LoggerService } from "../common/logger.service";
 import { addToContainer } from "../container";
 import { ApplicationErrorResponse, AuthorizationErrorResponse } from "../utils/errorsHelpers";
 import { GroupRepository } from './group.repository';
 import { RedisKeys, RedisService } from "../common/redis.service";
 import { Redis } from "ioredis";
-import { MyContext } from "../types/Context";
 import { HTTPCodes } from "../types/HttpCodes.enum";
+import { ICreateGroup, IGroup, IGroupUpdate, IGroupWsResponse } from "../types/Group";
+import { PlayerService } from "../player/player.service";
+import { GroupWSMessageTypes } from "../types/GroupMessages.enum";
 
 @addToContainer()
 export class GroupService {
   private logger: Logger
-  constructor(private groupRepo: GroupRepository, private ls: LoggerService, private redisService: RedisService) {
+  constructor(private groupRepo: GroupRepository, private ls: LoggerService, private playerService: PlayerService, private redisService: RedisService) {
     this.logger = this.ls.getLogger(GroupService.name)
   }
 
@@ -23,7 +24,7 @@ export class GroupService {
     }
     return {
       auth,
-      data: res
+      group: res.data
     }
 
   }
@@ -133,24 +134,35 @@ export class GroupService {
     return groupQuery
   }
 
-  async addMember(groupId: string, userId: string, memberId: string) {
+  async addMember(groupId: string, userId: string, playerId: string) {
     const groupQuery = await this.setupUpdateGeneric(groupId, userId)
     if (groupQuery.success && groupQuery.data) {
       const group = groupQuery.data
-      group.relations.members = this.setFromStringArray(group.relations.members, memberId)
+      group.relations.members = this.setFromStringArray(group.relations.members, userId)
+      group.relations.players = this.setFromStringArray(group.relations.players, playerId)
 
       return await this.groupRepo.updateGroup(group)
     }
     return groupQuery
   }
 
-  async removeMember(groupId: string, userId: string, memberId: string) {
-    const groupQuery = await this.setupUpdateGeneric(groupId, userId)
-    if (groupQuery.success && groupQuery.data) {
+  async removeMember(group: IGroup, userId: string) {
+    const groupQuery = await this.setupUpdateGeneric(group.id, userId)
+    const player = await this.playerService.getPlayerByUserId(userId)
+    if (groupQuery.success && groupQuery.data && player) {
       const group = groupQuery.data
-      group.relations.members = group.relations.members.filter((value: string) => value === memberId)
+      group.relations.members = group.relations.members.filter((value: string) => value !== userId)
+      group.relations.players = group.relations.players.filter((value: string) => value !== player.id)
 
-      return await this.groupRepo.updateGroup(group)
+      const updateRes = await this.groupRepo.updateGroup(group)
+      this.groupPub({
+        group: updateRes.data,
+        messageType: GroupWSMessageTypes.RemoveMember,
+        data: {
+          message: `${player.name} left the group`,
+          id: player.id
+        }
+      })
     }
     return groupQuery
   }
@@ -176,44 +188,37 @@ export class GroupService {
     return groupOwner || inGroupMembers
   }
 
-  async handleGroupsRoute(ctx: MyContext<{}, IGroup[] | IApplicationError>, next: Next) {
-    let returnGroups: IGroup[] = []
-    let error = false
-    const user = ctx.state.user
-    if (user) {
-      try {
-        const groups = await this.getGroupsByUserId(user.id)
-        if (groups) {
-          returnGroups = [...groups]
-        }
-
-      } catch (e) {
-        this.logger.error({ message: 'get groups error', error: e })
-        error = true
-      }
-    }
+  async userJoinGroup(groupId: string, userId: string) {
     try {
-      const groups = await this.getGroups()
-      if (groups.data) {
-        returnGroups = [...returnGroups, ...groups.data]
+      const player = await this.playerService.getPlayerByUserId(userId)
+      const groupRes = await this.getGroup(groupId, userId)
+      if (player && groupRes.auth && groupRes.group) {
+        const res = await this.addMember(groupId, userId, player.id)
+        this.groupPub({
+          group: res.data,
+          messageType: GroupWSMessageTypes.JoinGroup,
+          data: {
+            message: `${player.name} joined the group.`,
+            id: player.id
+          }
+        })
+        return res.success
       }
-      if (groups.error) {
-        this.logger.error({ message: "get groups error", error: groups.error })
-      }
+      return false
+
     } catch (e) {
-      this.logger.error({ message: 'get groups error', error: e })
-      error = true
-    }
-    if (!error) {
-      ctx.status = HTTPCodes.OK
-    }
-    if (error) {
-      ctx.status = HTTPCodes.NOT_FOUND
+      this.logger.error({
+        message: "unable to join group",
+        groupId,
+        userId,
+        error: e.message,
+        stacktrace: e.stacktrace
+      })
+      throw {
+        status: HTTPCodes.SERVER_ERROR
+      }
     }
 
-    ctx.body = returnGroups
-
-    await next()
   }
 
   groupSub = async (group: IGroup | null, sub: Redis) => {
@@ -238,13 +243,19 @@ export class GroupService {
       })
     }
   }
-  groupPub = async (message: {
-    group: IGroup | null
-  }) => {
+  groupPub = async (message: IGroupWsResponse) => {
     console.log(`publishing to group-${message?.group?.id}`)
     if (message.group) {
       await this.redisService.publish(RedisKeys.GROUP, message.group.id, message)
     }
+  }
+
+  async openWsConnection(group: IGroup) {
+    this.groupPub({
+      group,
+      messageType: GroupWSMessageTypes.Open,
+    })
+
   }
 
 

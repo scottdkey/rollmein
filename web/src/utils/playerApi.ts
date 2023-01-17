@@ -22,29 +22,29 @@ const PlayerQueryById = async (id?: string, sessionToken?: string) => {
   }
 }
 
-export const usePlayerQuery = (playerId?: string) => {
+export const usePlayerQuery = (enabled: boolean = true, playerId?: string) => {
   const route = `${PlayerRoutes.PLAYER}/${playerId}`
   const queryKey = `${PlayerRoutes.PLAYER}-${playerId}`
-  return UseQuery<IPlayer, {}>(route, queryKey, playerId)
+  return UseQuery<IPlayer, {}>(route, queryKey, enabled, playerId)
 }
 
-export const usePlayerFromSignedInUserQuery = () => {
+export const usePlayerFromSignedInUserQuery = (enabled: boolean = true) => {
   const route = PlayerRoutes.PLAYER_BY_SIGNED_IN_USER
-  return UseQuery<IPlayer, {}>(route, route, "signedInUser")
+  return UseQuery<IPlayer, {}>(route, route, enabled, "signedInUser")
 }
 
-export const usePlayerFromUserIdQuery = (userId: string) => {
+export const usePlayerFromUserIdQuery = (userId: string, enabled: boolean = true) => {
   const route = PlayerRoutes.PLAYER_BY_USER_ID
   const queryKey = `${route}-${userId}`
-  return UseQuery<IPlayer, {}>(route, queryKey, userId)
+  return UseQuery<IPlayer, {}>(route, queryKey, enabled, userId)
 
 }
 
 
-export const usePlayersQuery = (groupId: string) => {
+export const usePlayersQuery = (groupId: string, enabled: boolean = true) => {
   const route = `${PlayerRoutes.PLAYERS}/${groupId}`
   const queryKey = `${PlayerRoutes.PLAYERS}-${groupId}`
-  return UseQuery<IPlayer, {}>(route, queryKey, groupId)
+  return UseQuery<IPlayer, {}>(route, queryKey, enabled, groupId)
 }
 
 export const useCreatePlayerMutation = () => {

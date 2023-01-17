@@ -1,4 +1,4 @@
-import { QueryFunction, useMutation, UseMutationOptions, useQuery, UseQueryOptions } from "react-query";
+import { useMutation, UseMutationOptions, useQuery, UseQueryOptions } from "react-query";
 import { apiUrl } from "./constants";
 import { RestMethods } from "../types/RestMethods.enum";
 import { useSession } from "next-auth/react";
@@ -9,14 +9,15 @@ export async function ApiRequest<Res, T>(route: string, method: RestMethods, par
   let options: RequestInit = {
     method,
     headers: {
-      'content-type': 'application/json',
-      Authorization: ""
+      Authorization: "",
+      'content-type': 'application/json'
     },
     credentials: 'include',
   }
 
   if (method !== RestMethods.GET && params.body) {
     const setupBody = params.body && JSON.stringify(params.body)
+
     options = {
       ...options,
       body: setupBody
@@ -28,8 +29,8 @@ export async function ApiRequest<Res, T>(route: string, method: RestMethods, par
     options = {
       ...options,
       headers: {
-        ...options.headers,
         Authorization: `Bearer ${params.sessionToken}`,
+        'content-type': 'application/json'
       }
     }
   }
@@ -37,7 +38,7 @@ export async function ApiRequest<Res, T>(route: string, method: RestMethods, par
 }
 
 export function UseQuery<ReturnType, ErrorType>(
-  route: string, queryKey: string, routeParam?: string) {
+  route: string, queryKey: string, enabled: boolean, routeParam?: string) {
   const { data: session } = useSession()
   const sessionToken = session?.id
 
@@ -49,24 +50,21 @@ export function UseQuery<ReturnType, ErrorType>(
       if (routeParamUndefined) {
         return undefined
       }
-      if (session?.id === undefined) {
-        return undefined
-      }
       const res = await ApiRequest<ReturnType, {}>(route, RestMethods.GET, { sessionToken })
       if (res.status < 400) {
         return await res.json() as ReturnType
       }
       return undefined
     },
+    enabled,
   }
-  return useQuery({
-    ...options
-  })
+  return useQuery({ ...options })
 }
 
 export function UseMutation<ReturnType, ErrorType, Body>(route: string, method: RestMethods, mutationKey: string) {
   const { data: session } = useSession()
   const sessionToken = session?.id
+
   const options: UseMutationOptions<ReturnType | undefined, ErrorType, Body> = {
     mutationKey,
     mutationFn: async (body) => {

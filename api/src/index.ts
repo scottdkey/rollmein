@@ -22,7 +22,7 @@ const server = async () => {
     cors({
       origin: `${config.cors_uri}`,
       credentials: true,
-      headers: ['Authorization', "content-type"]
+      headers: ['Authorization', "content-type", 'Access-Control-Allow-Origin' ]
     })
   )
 
