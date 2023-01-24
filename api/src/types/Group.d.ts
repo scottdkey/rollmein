@@ -72,11 +72,21 @@ interface IGroupWsRequest {
 }
 
 interface IGroupWsResponse {
-  group: IGroup | null
   messageType: GroupWSMessageTypes
   rollStarted?: boolean
-  data?: {
-    message: string
-    id: string
-  }
+  announceMessage?: string
+  refetchQueries?: string[]
+  invalidateQueries?: string[]
+}
+
+interface IGroupPlayerCountRequest {
+
+}
+
+interface IGroupPlayerCountResponse {
+  locked: number
+  inTheRoll: number
+  tanks: number
+  dps: number
+  healers: number
 }

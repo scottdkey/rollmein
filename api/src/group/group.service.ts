@@ -2,17 +2,16 @@ import { Logger, LoggerService } from "../common/logger.service";
 import { addToContainer } from "../container";
 import { ApplicationErrorResponse, AuthorizationErrorResponse } from "../utils/errorsHelpers";
 import { GroupRepository } from './group.repository';
-import { RedisKeys, RedisService } from "../common/redis.service";
-import { Redis } from "ioredis";
 import { HTTPCodes } from "../types/HttpCodes.enum";
-import { ICreateGroup, IGroup, IGroupUpdate, IGroupWsResponse } from "../types/Group";
+import { ICreateGroup, IGroup, IGroupUpdate } from "../types/Group";
 import { PlayerService } from "../player/player.service";
-import { GroupWSMessageTypes } from "../types/GroupMessages.enum";
+import { GroupWsService } from "./groupWs.service";
+import { RollService } from "../roll/roll.service";
 
 @addToContainer()
 export class GroupService {
   private logger: Logger
-  constructor(private groupRepo: GroupRepository, private ls: LoggerService, private playerService: PlayerService, private redisService: RedisService) {
+  constructor(private groupRepo: GroupRepository, private ls: LoggerService, private playerService: PlayerService, private groupWs: GroupWsService, private rollService: RollService) {
     this.logger = this.ls.getLogger(GroupService.name)
   }
 
@@ -68,6 +67,22 @@ export class GroupService {
     }
   }
 
+  async getGroupPlayerCounts(groupId: string) {
+    const group = await this.getGroup(groupId)
+    const players = await this.playerService.getPlayersByGroupId(groupId)
+    if (players.data && group.group?.rollType) {
+
+      const res = this.rollService.playerCounts(players.data, group.group.rollType)
+      console.log({locked: res.locked, true: res.locked > 5})
+      if (res.locked > 5) {
+        this.groupWs.tooManyLocked(groupId, res.locked)
+      }
+      return res
+    }
+    return null
+
+  }
+
 
   async updateGroup(
     userId: string,
@@ -89,8 +104,9 @@ export class GroupService {
       group.lockAfterOut = updateValueInput.lockAfterOut !== undefined ? updateValueInput.lockAfterOut : group.lockAfterOut
 
       group.membersCanUpdate = updateValueInput.membersCanUpdate !== undefined ? updateValueInput.membersCanUpdate : group.membersCanUpdate
-
-      return await this.groupRepo.updateGroup(group)
+      const res = await this.groupRepo.updateGroup(group)
+      this.groupWs.groupUpdated(group.id)
+      return res
     }
     return groupQuery
   }
@@ -117,10 +133,24 @@ export class GroupService {
     if (groupQuery.success && groupQuery.data) {
       const group = groupQuery.data
       group.relations.players = this.setFromStringArray(group.relations.players, playerId)
-
+      this.groupWs.playerWasAdded(groupId, playerId)
       return await this.groupRepo.updateGroup(group)
     }
     return groupQuery
+  }
+
+  async createGroupPlayer(input: ICreatePlayer, groupId: string, userId: string) {
+    const group = await this.getGroup(groupId, userId)
+    if (group.auth && group) {
+      const nulledUserInput = { ...input, userId: null }
+      const player = await this.playerService.createPlayer(nulledUserInput)
+      if (player) {
+        await this.addPlayer(groupId, userId, player.id)
+        return player
+      }
+    }
+    return null
+
   }
 
   async removePlayer(groupId: string, userId: string, playerId: string) {
@@ -134,13 +164,34 @@ export class GroupService {
     return groupQuery
   }
 
-  async addMember(groupId: string, userId: string, playerId: string) {
+  async addMember(groupId: string, userId: string, player: IPlayer) {
     const groupQuery = await this.setupUpdateGeneric(groupId, userId)
-    if (groupQuery.success && groupQuery.data) {
+    let playerId = ""
+    const existingPlayer = await this.playerService.getGroupPlayer(userId, groupId)
+
+    if (existingPlayer.data?.id) {
+      playerId = existingPlayer.data.id
+    } else {
+      const groupPlayer = await this.playerService.createPlayer({
+        groupId,
+        userId,
+        name: player.name,
+        tank: player.tank,
+        healer: player.healer,
+        dps: player.dps,
+        locked: false,
+        inTheRoll: false
+      })
+      if (groupPlayer?.id) {
+        playerId = groupPlayer?.id
+      }
+    }
+
+    if (groupQuery.success && groupQuery.data && playerId !== "") {
       const group = groupQuery.data
       group.relations.members = this.setFromStringArray(group.relations.members, userId)
       group.relations.players = this.setFromStringArray(group.relations.players, playerId)
-
+      this.groupWs.playerJoinedGroup(groupId, player.name, player.id)
       return await this.groupRepo.updateGroup(group)
     }
     return groupQuery
@@ -148,21 +199,16 @@ export class GroupService {
 
   async removeMember(group: IGroup, userId: string) {
     const groupQuery = await this.setupUpdateGeneric(group.id, userId)
-    const player = await this.playerService.getPlayerByUserId(userId)
-    if (groupQuery.success && groupQuery.data && player) {
+    const player = await this.playerService.getGroupPlayer(userId, group.id)
+    if (groupQuery.success && groupQuery.data && player.data) {
       const group = groupQuery.data
       group.relations.members = group.relations.members.filter((value: string) => value !== userId)
-      group.relations.players = group.relations.players.filter((value: string) => value !== player.id)
+      group.relations.players = group.relations.players.filter((value: string) => value !== player.data?.id)
 
-      const updateRes = await this.groupRepo.updateGroup(group)
-      this.groupPub({
-        group: updateRes.data,
-        messageType: GroupWSMessageTypes.RemoveMember,
-        data: {
-          message: `${player.name} left the group`,
-          id: player.id
-        }
-      })
+      await this.playerService.deletePlayer(player.data.id)
+
+      await this.groupRepo.updateGroup(group)
+      this.groupWs.playerLeftGroup(group.id, player.data.name)
     }
     return groupQuery
   }
@@ -193,15 +239,7 @@ export class GroupService {
       const player = await this.playerService.getPlayerByUserId(userId)
       const groupRes = await this.getGroup(groupId, userId)
       if (player && groupRes.auth && groupRes.group) {
-        const res = await this.addMember(groupId, userId, player.id)
-        this.groupPub({
-          group: res.data,
-          messageType: GroupWSMessageTypes.JoinGroup,
-          data: {
-            message: `${player.name} joined the group.`,
-            id: player.id
-          }
-        })
+        const res = await this.addMember(groupId, userId, player)
         return res.success
       }
       return false
@@ -221,42 +259,8 @@ export class GroupService {
 
   }
 
-  groupSub = async (group: IGroup | null, sub: Redis) => {
-    if (group) {
-      const redisKey = `${RedisKeys.GROUP}-${group.id}`
-      const current = await this.redisService.get(RedisKeys.GROUP, group.id)
 
-      if (current.data === null) {
-        await this.redisService.set(RedisKeys.GROUP, group.id, group)
-      }
-      await sub.subscribe(redisKey, (err, count) => {
-        if (err) {
-          this.logger.error({
-            message: `Failed to subscribe: %s ${err.message}`
-          })
-        } else {
-          this.logger.info({
-            message:
-              `Subscribed successfully! This client is currently subscribed to ${count} channels.`
-          });
-        }
-      })
-    }
-  }
-  groupPub = async (message: IGroupWsResponse) => {
-    console.log(`publishing to group-${message?.group?.id}`)
-    if (message.group) {
-      await this.redisService.publish(RedisKeys.GROUP, message.group.id, message)
-    }
-  }
 
-  async openWsConnection(group: IGroup) {
-    this.groupPub({
-      group,
-      messageType: GroupWSMessageTypes.Open,
-    })
-
-  }
 
 
 }

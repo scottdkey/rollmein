@@ -43,6 +43,12 @@ export class PlayerRepository extends DataServiceAbstract<DbPlayer, IPlayer> {
     return await this.returnOne(query, params)
   }
 
+  async getUserPlayerFromGroup(userId: string, groupId: string) {
+    const query = `SELECT * FROM player WHERE user_id=$1 AND group_id=$2`
+    const params = [userId, groupId]
+    return await this.returnOne(query, params)
+  }
+
   async createPlayer({ groupId, userId, name, tank, healer, dps, locked, inTheRoll }: ICreatePlayer) {
     const query = `INSERT INTO player (group_id, user_id, name, tank, healer, dps, locked, in_the_roll) VALUES($1, $2, $3, $4, $5, $6, $7, $8) RETURNING *`
     const params = [groupId, userId, name, tank, healer, dps, locked, inTheRoll]

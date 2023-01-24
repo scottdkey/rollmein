@@ -14,18 +14,12 @@ const sessionService = container.get(SessionService)
 const playerService = container.get(PlayerService)
 
 
-router.get('/me', async (ctx, next) => {
-  if (ctx.state.user && ctx.state.validUser) {
-    ctx.body = {
-      user: userService.scrubUser(ctx.state.user),
-      success: true
-    }
-    ctx.status = HTTPCodes.OK
+router.get('/me', RequireAuth, async (ctx, next) => {
+  ctx.body = {
+    user: userService.scrubUser(ctx.state.user),
+    success: true
   }
-  if (!ctx.state.user) {
-    ctx.status = HTTPCodes.UNAUTHORIZED
-    throw { user: null, success: false }
-  }
+  ctx.status = HTTPCodes.OK
   await next()
 
 })

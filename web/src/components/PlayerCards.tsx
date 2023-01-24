@@ -1,33 +1,26 @@
-import { Box, Button, Center, Drawer, DrawerBody, DrawerCloseButton, DrawerContent, DrawerHeader, DrawerOverlay, HStack, Spinner, useDisclosure, VStack, Wrap, WrapItem, } from "@chakra-ui/react"
-import React, { useEffect, useState } from "react"
+import { Box, Button, Center, Drawer, DrawerBody, DrawerCloseButton, DrawerContent, DrawerHeader, DrawerOverlay, Spinner, useDisclosure, VStack, Wrap, WrapItem, } from "@chakra-ui/react"
+import { useState } from "react"
 
 import PlayerCount from "./PlayerCount";
 import PlayerCard from "./PlayerCard"
 import { useQueryClient } from "react-query";
 import { RollType } from "../types/Group.enum";
+import { useGroupQuery } from "../utils/groupApi";
+import useGroupWs from "../providers/GroupWebsocketProvider";
 
 
-interface PlayerCardsProps {
-  rollType: RollType,
-  groupId: string
-}
-
-const PlayerCards = (props: PlayerCardsProps): JSX.Element => {
+const PlayerCards = (): JSX.Element => {
   const queryClient = useQueryClient()
   const { isOpen, onOpen, onClose } = useDisclosure()
-  const [players, setPlayers] = useState<string[] | undefined>()
-  const [isLoading, setIsLoading] = useState(false)
-  const [data, setData] = useState({})
+  const { groupId } = useGroupWs()
+  const { isLoading, data: group } = useGroupQuery(groupId, true)
 
 
 
   if (isLoading) {
     return <Box><Spinner /></Box>
-  } else if (!isLoading && !data) {
-    return (<Box bg="red">Query Failed<Button onClick={() => {
-      queryClient.refetchQueries("Players")
-    }}>Retry</Button></Box>)
-  } else {
+  }
+  if (group) {
     return (
       <>
         <Button onClick={onOpen} zIndex="0" padding="40px"
@@ -35,7 +28,7 @@ const PlayerCards = (props: PlayerCardsProps): JSX.Element => {
             outline: "none"
           }}
         >
-          <PlayerCount rollType={props.rollType} />
+          <PlayerCount />
         </Button>
         <Drawer
           isOpen={isOpen}
@@ -49,24 +42,29 @@ const PlayerCards = (props: PlayerCardsProps): JSX.Element => {
           <DrawerOverlay />
           <DrawerContent>
             <DrawerCloseButton />
-            <DrawerHeader>Players</DrawerHeader>
-            <DrawerBody>
-              <VStack>
+            <DrawerHeader>
+              <Center>
                 <Button onClick={onClose} zIndex="0" padding="40px"
                   variant="solid" _focus={{
                     outline: "none"
                   }}
                 >
-                  <PlayerCount rollType={props.rollType} />
+                  <PlayerCount />
                 </Button>
+              </Center>
+            </DrawerHeader>
+            <DrawerBody>
+              <VStack>
+
 
                 <Wrap spacing="5px" align="center" m="5px" justify="center">
 
-                  {players?.map((player) =>
+                  {group.relations.players.map((player) =>
                     <WrapItem key={player} >
-                      <PlayerCard id={player} rollType={props.rollType} profilePage={false} />
+                      <PlayerCard
+                        id={player} rollType={group.rollType} profilePage={false} />
                     </WrapItem>)}
-                  <NewPlayerCard rollType={props.rollType} groupId={props.groupId} />
+                  <NewPlayerCard rollType={group.rollType} groupId={groupId} />
                   <WrapItem>
                   </WrapItem>
                 </Wrap>
@@ -78,6 +76,7 @@ const PlayerCards = (props: PlayerCardsProps): JSX.Element => {
     )
   }
 
+  return (<> error </>)
 }
 
 const NewPlayerCard = (props: { rollType: RollType, groupId: string }) => {
@@ -86,7 +85,7 @@ const NewPlayerCard = (props: { rollType: RollType, groupId: string }) => {
   return (
     <>
       {addPlayer ?
-        <PlayerCard rollType={props.rollType} profilePage={false} closeCreate={() => setAddPlayer(false)} groupId={props.groupId}/> :
+        <PlayerCard rollType={props.rollType} profilePage={false} closeCreate={() => setAddPlayer(false)} groupId={props.groupId} /> :
 
         <Box borderRadius={"md"} padding={2} w="240px" h="180px" shadow="base" borderWidth="10px" position="relative" justifyContent="center" alignItems="center">
           <Center>  <Button m='auto' onClick={() => { setAddPlayer(true) }}>Add a player</Button></Center>

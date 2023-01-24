@@ -4,9 +4,11 @@ export enum GroupWSMessageTypes {
   PlayerUpdated = 'playerUpdated',
   AddMember = "addMember",
   RemoveMember = 'removeMember',
+  GroupUpdated = 'groupUpdated',
   JoinGroup = 'joinGroup',
   MemberUpdated = 'memberUpdated',
   RollStarted = 'rollStarted',
   RollEnded = 'rollEnded',
-  Open = 'open'
+  Open = 'open',
+  TooManyLocked = 'tooManyLocked'
 }

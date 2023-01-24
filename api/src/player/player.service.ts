@@ -2,11 +2,12 @@ import { ApplicationError } from '../utils/errorsHelpers';
 import { addToContainer } from '../container';
 import { PlayerRepository } from './player.repository';
 import { Logger, LoggerService } from '../common/logger.service';
+import { GroupWsService } from '../group/groupWs.service';
 
 @addToContainer()
 export class PlayerService {
   private logger: Logger
-  constructor(private playerRepo: PlayerRepository, private ls: LoggerService) {
+  constructor(private playerRepo: PlayerRepository, private ls: LoggerService, private groupWs: GroupWsService) {
     this.logger = this.ls.getLogger(PlayerService.name)
   }
 
@@ -38,6 +39,14 @@ export class PlayerService {
         })
       }
       return
+    } catch (e) {
+      throw e.message
+    }
+  }
+
+  async getGroupPlayer(userId: string, groupId: string) {
+    try {
+      return await this.playerRepo.getUserPlayerFromGroup(userId, groupId)
     } catch (e) {
       throw e.message
     }
@@ -94,16 +103,27 @@ export class PlayerService {
     return valid
   }
 
-  async updatePlayer(input: IUpdatePlayer, userId: string) {
+  async updateUserPlayer(input: IUpdatePlayer, userId: string) {
     const valid = await this.updatePlayerIsValid(input, userId)
     if (valid) {
-      const res = await this.playerRepo.updatePlayer(input)
-      if (res.success) {
-        return res.data
-      }
-      throw res.error?.message
+      return await this.updatePlayer(input)
+    } else {
+      console.log(!valid)
     }
     throw ApplicationError("update player error -- request body not valid")
+  }
+
+  async updatePlayer(input: IUpdatePlayer) {
+    const res = await this.playerRepo.updatePlayer(input)
+    
+    if (res.data && res.data.groupId !== null) {
+      this.groupWs.playerUpdated(res.data.groupId, res.data.id)
+    }
+    if (res.success) {
+      return res.data
+    }
+
+    throw res.error?.message
   }
 
   async deletePlayer(id: string): Promise<DataResponse<IDeletePlayerResponse>> {

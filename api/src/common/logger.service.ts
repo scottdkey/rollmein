@@ -10,13 +10,6 @@ export interface MessageType {
     message: string
 }
 
-export enum LogType {
-    INFO = 'info',
-    DEBUG = 'debug',
-    WARN = 'warn',
-    ERROR = 'error'
-}
-
 export interface Logger {
     info: (message: MessageType) => void;
     debug: (message: MessageType) => void;
@@ -27,7 +20,7 @@ export interface Logger {
 
 @addToContainer()
 export class LoggerService {
-    private prod: boolean
+    private readonly prod: boolean
     constructor(private date: DateService) {
         this.prod = process.env.NODE_ENV === 'production'
     }
@@ -38,7 +31,7 @@ export class LoggerService {
     getLogger(context: string): Logger {
         const log = pino({
             name: context,
-            level: this.prod ? "info" : "debug",
+            level: this.prod ? "info": "info",
             prettifier: require('pino-pretty'),
         })
         return {

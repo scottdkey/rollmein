@@ -6,7 +6,7 @@ import { GroupService } from "./group.service";
 import { RequireAuth } from "../middleware/requireAuth.middleware";
 import { MyContext } from "../types/Context";
 import { HTTPCodes } from "../types/HttpCodes.enum";
-import { ICreateGroup, IGroup, IGroupUpdate, IJoinGroupReq, IJoinGroupRes } from "../types/Group";
+import { ICreateGroup, IGroup, IGroupPlayerCountResponse, IGroupUpdate, IJoinGroupReq, IJoinGroupRes } from "../types/Group";
 
 
 
@@ -107,7 +107,7 @@ groupRouter.post("/", async (ctx: MyContext<ICreateGroup, IGroup | { message: st
     ctx.body = { message: e.message }
     ctx.status = HTTPCodes.SERVER_ERROR
   }
-  next()
+  await next()
 })
 
 groupRouter.put("/", async (ctx: MyContext<IGroupUpdate, IGroup | IApplicationError>, next: Next) => {
@@ -124,10 +124,8 @@ groupRouter.put("/", async (ctx: MyContext<IGroupUpdate, IGroup | IApplicationEr
   }
 
 
-  next()
+  await next()
 })
-
-
 
 groupRouter.delete('/', async (ctx: MyContext<{}, {}>, next: Next) => {
   console.log(ctx.request.body)
@@ -136,14 +134,18 @@ groupRouter.delete('/', async (ctx: MyContext<{}, {}>, next: Next) => {
     message: 'received'
   }
 
-  next()
+  await next()
 })
 
 groupRouter.post('/addPlayer', RequireAuth, async (ctx: MyContext<ICreatePlayer, IPlayer | { message: string }>, next: Next) => {
   const body = ctx.request.body
   const groupId = body.groupId
-  if (groupId !== "") {
-
+  const userId = ctx.state.user.id
+  if (groupId && userId) {
+    const player = await groupService.createGroupPlayer(body, groupId, userId)
+    console.log({
+      player
+    })
     ctx.body = { message: "test" }
     ctx.status = HTTPCodes.OK
 
@@ -156,9 +158,7 @@ groupRouter.post('/addPlayer', RequireAuth, async (ctx: MyContext<ICreatePlayer,
     }
   }
 
-  next()
-
-
+  await next()
 })
 
 groupRouter.post('/joinGroup', RequireAuth, async (ctx: MyContext<IJoinGroupReq, IJoinGroupRes>, next: Next) => {
@@ -175,8 +175,27 @@ groupRouter.post('/joinGroup', RequireAuth, async (ctx: MyContext<IJoinGroupReq,
     ctx.body = { success: false }
   }
 
-  next()
+  await next()
 
+})
+
+groupRouter.get('/count/:groupId', async (ctx: MyContext<{}, IGroupPlayerCountResponse>, next: Next) => {
+  try {
+    const groupId = ctx.params.groupId
+    const groupCounts = await groupService.getGroupPlayerCounts(groupId)
+    if (groupCounts) {
+      ctx.body = groupCounts
+    }
+    if (!groupCounts) {
+      ctx.status = HTTPCodes.NOT_FOUND
+      ctx.message = `group counts with groupId: ${groupId} not found`
+    }
+  } catch (e) {
+    console.error(e)
+    ctx.status = HTTPCodes.SERVER_ERROR
+    ctx.message = e.message
+  }
+  await next()
 })
 
 

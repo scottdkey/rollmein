@@ -36,8 +36,6 @@ export const authOptions: AuthOptions = {
     jwt: async ({ token, account }) => {
       if (account && token) {
 
-
-
         const authType = account.provider
         const body = { token: account.id_token, authType }
         const res = await validateAuthRequest(body)

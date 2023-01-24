@@ -8,12 +8,7 @@ export enum AuthRoutes {
 
 
 export const validateAuthRequest = async (body: IValidateAuthBody) => {
-  const res = await ApiRequest<IValidateAuthRes, IValidateAuthBody>(AuthRoutes.VALIDATE, RestMethods.POST, { body })
-  if (res.ok) {
-
-    return res.json() as unknown as IValidateAuthRes
-  }
-  return null
+  return await ApiRequest<IValidateAuthRes, IValidateAuthBody>(AuthRoutes.VALIDATE, RestMethods.POST, { body })
 }
 
 

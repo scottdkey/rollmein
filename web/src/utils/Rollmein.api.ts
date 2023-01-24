@@ -6,35 +6,46 @@ import { useSession } from "next-auth/react";
 
 
 export async function ApiRequest<Res, T>(route: string, method: RestMethods, params: { body?: T, sessionToken?: string }) {
-  let options: RequestInit = {
-    method,
-    headers: {
-      Authorization: "",
-      'content-type': 'application/json'
-    },
-    credentials: 'include',
-  }
-
-  if (method !== RestMethods.GET && params.body) {
-    const setupBody = params.body && JSON.stringify(params.body)
-
-    options = {
-      ...options,
-      body: setupBody
+  try {
+    let options: RequestInit = {
+      method,
+      headers: {
+        Authorization: "",
+        'content-type': 'application/json'
+      },
+      credentials: 'include',
     }
 
-  }
+    if (method !== RestMethods.GET && params.body) {
+      const setupBody = params.body && JSON.stringify(params.body)
 
-  if (params.sessionToken) {
-    options = {
-      ...options,
-      headers: {
-        Authorization: `Bearer ${params.sessionToken}`,
-        'content-type': 'application/json'
+      options = {
+        ...options,
+        body: setupBody
+      }
+
+    }
+
+    if (params.sessionToken) {
+      options = {
+        ...options,
+        headers: {
+          Authorization: `Bearer ${params.sessionToken}`,
+          'content-type': 'application/json'
+        }
       }
     }
+    const res = await fetch(`${apiUrl}${route}`, options)
+    if (res.ok) {
+      return await res.json() as Res
+    }
+    return
+  } catch (e: any) {
+    throw {
+      message: e.message,
+      status: e.status
+    }
   }
-  return await fetch(`${apiUrl}${route}`, options)
 }
 
 export function UseQuery<ReturnType, ErrorType>(
@@ -50,11 +61,7 @@ export function UseQuery<ReturnType, ErrorType>(
       if (routeParamUndefined) {
         return undefined
       }
-      const res = await ApiRequest<ReturnType, {}>(route, RestMethods.GET, { sessionToken })
-      if (res.status < 400) {
-        return await res.json() as ReturnType
-      }
-      return undefined
+      return await ApiRequest<ReturnType, {}>(route, RestMethods.GET, { sessionToken })
     },
     enabled,
   }
@@ -68,17 +75,12 @@ export function UseMutation<ReturnType, ErrorType, Body>(route: string, method: 
   const options: UseMutationOptions<ReturnType | undefined, ErrorType, Body> = {
     mutationKey,
     mutationFn: async (body) => {
-      const res = await ApiRequest(route, method, { body, sessionToken })
       if (sessionToken === undefined) {
         return undefined
       }
-      if (res.status < 400) {
-        return await res.json() as ReturnType
-      }
-      return undefined
+      return await ApiRequest<ReturnType, Body>(route, method, { body, sessionToken })
     }
 
   }
   return useMutation(options)
-
 }

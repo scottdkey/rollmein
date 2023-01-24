@@ -1,47 +1,49 @@
-import { Circle, effect, Flex, Heading, HStack, Icon, useColorModeValue, VStack } from "@chakra-ui/react"
-import React, { FC, useLayoutEffect, useState } from "react"
+import { Heading, HStack, Spinner, VStack, Text } from "@chakra-ui/react"
 import { Lock, Dice, Shield, Sword, FirstAid } from "../assets"
-import { PlayerCounts, roll } from "../utils/rollHelpers"
-import { RollType } from "../utils/groupApi"
+import { useGroupPlayerCountQuery, useGroupQuery } from "../utils/groupApi"
+import useGroupWs from "../providers/GroupWebsocketProvider"
+import { CountItem } from "./CountItem"
 
 
 
-const PlayerCount = ({ rollType = RollType.FFA }: { rollType: RollType }) => {
+const PlayerCount = () => {
 
-  const [currentCounts, setCurrentCounts] = useState({ locked: 0, inTheRoll: 0, tanks: 0, dps: 0, healers: 0 })
+  const { groupId } = useGroupWs()
+  const { isLoading: groupLoading, data: group } = useGroupQuery(groupId, true)
+  const { data: currentCounts, isLoading: countLoading, error } = useGroupPlayerCountQuery(groupId, true)
 
 
-
-  type CountItemType = {
-    count?: number
-    icon: typeof Icon
-    color: string
+  if (countLoading || groupLoading) {
+    return (<VStack>
+      <Heading size="sm">Players</Heading>
+      <Spinner></Spinner>
+    </VStack>)
   }
-  const CountItem: FC<CountItemType> = ({ count = 0, icon, color }: CountItemType): JSX.Element => {
-    const themeColor = useColorModeValue(`${color}.500`, `${color}.600`)
-    const glowColor = useColorModeValue("#FFFFFF", `#000000`)
+
+  if (currentCounts) {
     return (
-      <Flex justify="center" align="center" >
-        <Circle fontSize="xl" position="absolute" zIndex="1" textShadow={`0 0 3px ${glowColor}, 0 0 5px ${glowColor}`}>{count}</Circle>
-        <Icon as={icon} color={themeColor} opacity="70%" w="10" h="10" />
-      </Flex>
+      <VStack>
+        <Heading size="sm">Players</Heading>
+        <HStack align="center" justify="center" position="relative">
+          <CountItem count={currentCounts.locked} icon={Lock} color="yellow" />
+          <CountItem count={currentCounts.inTheRoll} icon={Dice} color="teal" />
+          {group?.rollType === "role" ? <>
+            <CountItem count={currentCounts.tanks} icon={Shield} color="blue" />
+            <CountItem count={currentCounts.dps} icon={Sword} color="orange" />
+            <CountItem count={currentCounts.healers} icon={FirstAid} color="green" />
+          </> : null}
+        </HStack>
+      </VStack>
     )
   }
+  return (<VStack>
+    <Heading size="sm">Players</Heading>
+    <Text>error</Text>
+  </VStack>)
 
-  return (
-    <VStack>
-      <Heading size="sm">Players</Heading>
-      <HStack align="center" justify="center" position="relative">
-        <CountItem count={currentCounts.locked} icon={Lock} color="yellow" />
-        <CountItem count={currentCounts.inTheRoll} icon={Dice} color="teal" />
-        {rollType === "role" ? <>
-          <CountItem count={currentCounts.tanks} icon={Shield} color="blue" />
-          <CountItem count={currentCounts.dps} icon={Sword} color="orange" />
-          <CountItem count={currentCounts.healers} icon={FirstAid} color="green" />
-        </> : null}
-      </HStack>
-    </VStack>
-  )
+
 }
+
+
 
 export default PlayerCount

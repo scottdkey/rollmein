@@ -31,14 +31,18 @@ authRouter.post("/validate",
 
     try {
       const body = ctx.request.body
-      let user: User | null
+      console.log({ body })
+      let user: User | null  = null
       switch (body.authType) {
         case AuthTypes.GOOGLE:
           user = await authService.validateGoogleOauth2(body.token)
+          console.log({ user })
           break
         default:
-          ctx.status = HTTPCodes.SERVER_ERROR
-          throw ApplicationError("No strategy specified")
+          logger.error({
+            message: "no strategy specified",
+            authType: body.authType
+          })
       }
       if (user) {
         const sessionId = await sessionService.createSession(user)
@@ -53,6 +57,13 @@ authRouter.post("/validate",
           success: true
         }
 
+      }
+      if(!user){
+        ctx.body = {
+          error: ApplicationError(`unable to validate auth`),
+          success: false
+        }
+        ctx.status = HTTPCodes.UNAUTHORIZED
       }
 
     } catch (e) {

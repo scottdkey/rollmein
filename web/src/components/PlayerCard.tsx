@@ -82,24 +82,13 @@ const PlayerCard = ({ id, userId, rollType = 'role', groupId, profilePage, close
   }
 
   const handleCreatePlayer = () => {
-    console.log({
-      groupId,
-      userId
-    })
     const playerInput = {
       ...player,
       name
     }
-    setPlayer(playerInput)
-    closeCreate && closeCreate()
-    if (groupId) {
-      console.log(`todo also update group ${groupId}`)
-    }
     addPlayerToGroupMutation.mutateAsync(playerInput, {
-      onSuccess: (data) => {
-        if (data) {
-          setPlayer(data)
-        }
+      onSuccess: (_) => {
+        resetCard()
       }
     })
 
@@ -107,6 +96,10 @@ const PlayerCard = ({ id, userId, rollType = 'role', groupId, profilePage, close
 
   const toggleEditing = () => {
     setEditing(!editing)
+  }
+  const resetCard = () => {
+    closeCreate && closeCreate()
+    setPlayer(basePlayer)
   }
 
   const handleUpdatePlayer = async () => {
@@ -144,6 +137,17 @@ const PlayerCard = ({ id, userId, rollType = 'role', groupId, profilePage, close
       ...player,
       [field]: changeValue
     }
+    if (playerInput.locked && field === 'inTheRoll' && changeValue === false) {
+      toast({
+        title: 'must lock player',
+        description: "if player is locked, they must be in the roll",
+        status: "warning",
+        isClosable: true
+      })
+    }
+    if (playerInput.locked === true) {
+      playerInput.inTheRoll = true
+    }
     setPlayer(playerInput)
     if (id) {
       await playerMutation.mutateAsync({ ...playerInput, id })
@@ -153,9 +157,27 @@ const PlayerCard = ({ id, userId, rollType = 'role', groupId, profilePage, close
     if (id) {
       console.log('handle delete')
     }
+    if (id && player.groupId && player.userId) {
+      console.log('remove player from group')
+    }
+    if (id && player.userId && player.groupId === null) {
+      toast({
+        title: "delete card error",
+        description: "unable to delete user default card",
+        status: "error"
+
+      })
+    }
+    if (id && player.groupId) {
+      toast({
+        title: "delete card error",
+        description: "unable to delete user default card",
+        status: "error"
+
+      })
+    }
     if (id === undefined) {
-      console.log("clear card")
-      closeCreate && closeCreate()
+      resetCard()
     }
   }
 

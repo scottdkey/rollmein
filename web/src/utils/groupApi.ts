@@ -1,13 +1,15 @@
 import { UseQuery, UseMutation, ApiRequest } from "./Rollmein.api"
 import { RestMethods } from "../types/RestMethods.enum"
 import { ICreateGroup, IGroup, IGroupDelete, IGroupError, IGroupUpdate, IJoinGroupReq, IJoinGroupRes } from "../types/Group"
+import { IGroupPlayerCountResponse } from "../../../types/Group"
 
 
 export enum GroupRoutes {
   GROUP = "group",
   ADD_PLAYER = 'group/addPlayer',
   ADD_USER = 'group/addUser',
-  USER_JOIN_GROUP = 'group/joinGroup'
+  USER_JOIN_GROUP = 'group/joinGroup',
+  COUNT = 'group/count'
 }
 
 export enum RollType {
@@ -19,6 +21,10 @@ export enum RollType {
 
 export const useGroupsQuery = () => {
   return UseQuery<IGroup[], {}>(GroupRoutes.GROUP, GroupRoutes.GROUP, true, 'group')
+}
+
+export const useGroupPlayerCountQuery = (groupId: string, enabled: boolean) => {
+  return UseQuery<IGroupPlayerCountResponse, {}>(`${GroupRoutes.COUNT}/${groupId}`, `groupCount-${groupId}`, enabled, GroupRoutes.COUNT)
 }
 
 export const useGroupQuery = (groupId: string, enabled: boolean) => {

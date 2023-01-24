@@ -3,7 +3,7 @@
 CREATE TABLE IF NOT EXISTS public.player (
     id uuid DEFAULT public.uuid_generate_v4() NOT NULL,
     group_id uuid,
-    user_id uuid UNIQUE,
+    user_id uuid,
     name character varying,
     tank boolean DEFAULT false NOT NULL,
     healer boolean DEFAULT false NOT NULL,

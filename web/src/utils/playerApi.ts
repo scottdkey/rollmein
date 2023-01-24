@@ -12,15 +12,6 @@ export enum PlayerRoutes {
 
 }
 
-const PlayerQueryById = async (id?: string, sessionToken?: string) => {
-  if (id !== undefined && sessionToken !== undefined) {
-    return await ApiRequest<IPlayer, {}>(`${PlayerRoutes.PLAYER}/${id}`, RestMethods.GET, { sessionToken })
-  }
-  return {
-    data: null,
-    error: `missing query id ${id}`
-  }
-}
 
 export const usePlayerQuery = (enabled: boolean = true, playerId?: string) => {
   const route = `${PlayerRoutes.PLAYER}/${playerId}`
@@ -41,10 +32,10 @@ export const usePlayerFromUserIdQuery = (userId: string, enabled: boolean = true
 }
 
 
-export const usePlayersQuery = (groupId: string, enabled: boolean = true) => {
-  const route = `${PlayerRoutes.PLAYERS}/${groupId}`
-  const queryKey = `${PlayerRoutes.PLAYERS}-${groupId}`
-  return UseQuery<IPlayer, {}>(route, queryKey, enabled, groupId)
+export const usePlayersQuery = (groupId: string) => {
+  const route = `${PlayerRoutes.PLAYERS}/group`
+  const mutationKey = `${PlayerRoutes.PLAYERS}-${groupId}`
+  return UseMutation<IPlayer[], {}, { playerIds: string[] }>(route, RestMethods.GET, mutationKey)
 }
 
 export const useCreatePlayerMutation = () => {

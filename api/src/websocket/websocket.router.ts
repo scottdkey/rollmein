@@ -7,8 +7,10 @@ import IORedis from "ioredis"
 import { ConfigService } from "../common/config.service"
 import { GroupWSMessageTypes } from "../types/GroupMessages.enum"
 import { IGroup, IGroupWsRequest, IGroupWsResponse } from "../types/Group"
+import { GroupWsService } from "../group/groupWs.service"
 
 const groupService = container.get(GroupService)
+const groupWsService = container.get(GroupWsService)
 const config = container.get(ConfigService).redisConfig
 
 
@@ -26,16 +28,14 @@ export async function GroupWebsocket(ctx: MiddlewareContext<{}>) {
 
     const subToGroup = async () => {
       if (subbed === false && group) {
-        await groupService.groupSub(group, sub)
+        await groupWsService.groupSub(group, sub)
         subbed = true
       }
     }
 
     ctx.websocket.on('open', () => {
       const messageRes: IGroupWsResponse = {
-        group: null,
         messageType: GroupWSMessageTypes.Open,
-        rollStarted: false
       }
       ctx.websocket.send(JSON.stringify(messageRes))
     })
@@ -43,7 +43,6 @@ export async function GroupWebsocket(ctx: MiddlewareContext<{}>) {
       if (userId && group) {
         await groupService.removeMember(group, userId)
       }
-      console.log("closed")
     })
 
     sub.on('message', (channel, message) => {
@@ -64,21 +63,17 @@ export async function GroupWebsocket(ctx: MiddlewareContext<{}>) {
 
       redisKey = `${RedisKeys.GROUP}-${groupId}`
       group = groupRes
-  
-      console.log({
-        valid, user, group, parsed
-      })
-      if(subbed === false){
-        console.log('new sub')
+
+      if (subbed === false) {
         await subToGroup()
       }
- 
+
       if (valid && user) {
         switch (parsed.messageType) {
           case GroupWSMessageTypes.Open:
             userId = user.id
             if (valid && groupRes) {
-              groupService.openWsConnection(groupRes)
+              groupWsService.openWsConnection(groupRes)
             }
             break
           default:

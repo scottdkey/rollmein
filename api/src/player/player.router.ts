@@ -37,9 +37,23 @@ router.get('/:playerId', RequireAuth, async (ctx: MyContext<unknown, IPlayer | n
 
 router.put("/", RequireAuth, async (ctx: MyContext<IUpdatePlayer, IPlayer | null>, next: Next) => {
     try {
-        const userId = ctx.state.user?.id as string
         const requestBody = ctx.request.body
-        const updateRes = await playerService.updatePlayer(requestBody, userId)
+        const updateRes = await playerService.updatePlayer(requestBody)
+        ctx.body = updateRes
+        ctx.status = HTTPCodes.OK
+        await next()
+    } catch (e) {
+        ctx.body = e.message
+        ctx.status = HTTPCodes.SERVER_ERROR
+        await next()
+    }
+})
+
+router.put("/userPlayer", RequireAuth, async (ctx: MyContext<IUpdatePlayer, IPlayer | null>, next: Next) => {
+    try {
+        const userId = ctx.state.user.id
+        const requestBody = ctx.request.body
+        const updateRes = await playerService.updateUserPlayer(requestBody, userId)
         ctx.body = updateRes
         ctx.status = HTTPCodes.OK
         await next()
