@@ -6,6 +6,10 @@ import { useAddPlayerToGroupMutation, useGroupQuery } from "../../utils/groupApi
 
 import PlayerCards from "../../components/PlayerCards";
 import { GroupWsProvider } from "../../providers/GroupWebsocketProvider";
+import { useEffect } from "react";
+import { usePlayerFromSignedInUserQuery } from "../../utils/playerApi";
+import { GetServerSideProps } from "next";
+import { getSession, useSession } from "next-auth/react";
 
 
 
@@ -13,6 +17,16 @@ export default function Group() {
   const router = useRouter()
   const params = router.query
   const id = params.id as string
+  const { data: session } = useSession()
+
+  useEffect(() => {
+    if (session && !session.id) {
+      router.push("/")
+    }
+    if (!session) {
+      router.push('/')
+    }
+  }, [router, session])
 
   if (id) {
     return (
@@ -68,4 +82,3 @@ const GroupStructure = ({ groupId }: { groupId: string }) => {
   )
 
 }
-

@@ -46,6 +46,16 @@ export const GroupWsProvider = ({ children, groupId }: { children: ReactNode, gr
             title: parsedData.announceMessage
           })
         }
+        if (parsedData.setData && parsedData.setData?.length > 0) {
+          parsedData.setData.forEach(({ id, data }) => {
+            queryClient.setQueryData(id, data)
+          })
+        }
+        if (parsedData.deleteData && parsedData.deleteData?.length > 0) {
+          parsedData.deleteData.forEach((key) => {
+            queryClient.removeQueries(key)
+          })
+        }
         switch (parsedData.messageType) {
           case GroupWSMessageTypes.Open:
             joinGroup()

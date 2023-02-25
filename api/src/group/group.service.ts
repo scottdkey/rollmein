@@ -73,7 +73,6 @@ export class GroupService {
     if (players.data && group.group?.rollType) {
 
       const res = this.rollService.playerCounts(players.data, group.group.rollType)
-      console.log({locked: res.locked, true: res.locked > 5})
       if (res.locked > 5) {
         this.groupWs.tooManyLocked(groupId, res.locked)
       }
@@ -84,6 +83,15 @@ export class GroupService {
   }
 
 
+  async updateActiveGroup(group: IGroup) {
+    const res = await this.groupRepo.updateGroup(group)
+    const counts = await this.getGroupPlayerCounts(group.id)
+    if (counts) {
+      await this.groupWs.updateGroupCount(group.id, counts)
+    }
+    await this.groupWs.groupUpdated(group)
+    return res
+  }
   async updateGroup(
     userId: string,
     updateValueInput: IGroupUpdate): Promise<DataResponse<IGroup>> {
@@ -105,7 +113,7 @@ export class GroupService {
 
       group.membersCanUpdate = updateValueInput.membersCanUpdate !== undefined ? updateValueInput.membersCanUpdate : group.membersCanUpdate
       const res = await this.groupRepo.updateGroup(group)
-      this.groupWs.groupUpdated(group.id)
+      this.groupWs.groupUpdated(group)
       return res
     }
     return groupQuery
@@ -128,13 +136,13 @@ export class GroupService {
     return ApplicationErrorResponse({ message: "#addPlayer error", info: "no group found with id" })
   }
 
-  async addPlayer(groupId: string, userId: string, playerId: string) {
+  async addPlayer(groupId: string, userId: string, player: IPlayer) {
     const groupQuery = await this.setupUpdateGeneric(groupId, userId)
     if (groupQuery.success && groupQuery.data) {
       const group = groupQuery.data
-      group.relations.players = this.setFromStringArray(group.relations.players, playerId)
-      this.groupWs.playerWasAdded(groupId, playerId)
-      return await this.groupRepo.updateGroup(group)
+      group.relations.players = this.setFromStringArray(group.relations.players, player.id)
+      this.groupWs.playerWasAdded(player)
+      return await this.updateActiveGroup(group)
     }
     return groupQuery
   }
@@ -145,7 +153,7 @@ export class GroupService {
       const nulledUserInput = { ...input, userId: null }
       const player = await this.playerService.createPlayer(nulledUserInput)
       if (player) {
-        await this.addPlayer(groupId, userId, player.id)
+        await this.addPlayer(groupId, userId, player)
         return player
       }
     }
@@ -159,7 +167,7 @@ export class GroupService {
       const group = groupQuery.data
       group.relations.players = group.relations.players.filter((value: string) => value === playerId)
 
-      return await this.groupRepo.updateGroup(group)
+      return await this.updateActiveGroup(group)
     }
     return groupQuery
   }
@@ -191,8 +199,9 @@ export class GroupService {
       const group = groupQuery.data
       group.relations.members = this.setFromStringArray(group.relations.members, userId)
       group.relations.players = this.setFromStringArray(group.relations.players, playerId)
-      this.groupWs.playerJoinedGroup(groupId, player.name, player.id)
-      return await this.groupRepo.updateGroup(group)
+      this.groupWs.playerJoinedGroup(player)
+    
+      return await this.updateActiveGroup(group)
     }
     return groupQuery
   }
@@ -207,8 +216,8 @@ export class GroupService {
 
       await this.playerService.deletePlayer(player.data.id)
 
-      await this.groupRepo.updateGroup(group)
-      this.groupWs.playerLeftGroup(group.id, player.data.name)
+      await this.updateActiveGroup(group)
+      await this.groupWs.playerLeftGroup(player.data)
     }
     return groupQuery
   }

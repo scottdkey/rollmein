@@ -115,9 +115,10 @@ export class PlayerService {
 
   async updatePlayer(input: IUpdatePlayer) {
     const res = await this.playerRepo.updatePlayer(input)
-    
+
     if (res.data && res.data.groupId !== null) {
-      this.groupWs.playerUpdated(res.data.groupId, res.data.id)
+      console.log('update player')
+      this.groupWs.playerUpdated(res.data)
     }
     if (res.success) {
       return res.data

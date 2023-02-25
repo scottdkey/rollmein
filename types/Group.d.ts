@@ -76,7 +76,12 @@ interface IGroupWsResponse {
   rollStarted?: boolean
   announceMessage?: string
   refetchQueries?: string[]
-  invalidateQueries?: string[]
+  invalidateQueries?: string[],
+  setData?: {
+    id: string,
+    data: any
+  }[],
+  deleteData?: string[]
 }
 
 interface IGroupPlayerCountRequest {

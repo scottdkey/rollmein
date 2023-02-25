@@ -12,7 +12,7 @@ import { useCreatePlayerMutation, usePlayerQuery, useUpdatePlayerMutation } from
 import { useToast } from "@chakra-ui/react"
 import { useQueryClient } from "react-query"
 import { Shield } from "../assets"
-import { useAddPlayerToGroupMutation } from "../utils/groupApi"
+import { useAddPlayerToGroupMutation, useGroupQuery } from "../utils/groupApi"
 
 
 interface PlayerCardProps {
@@ -29,7 +29,7 @@ const PlayerCard = ({ id, userId, rollType = 'role', groupId, profilePage, close
   const queryClient = useQueryClient()
   const playerMutation = useUpdatePlayerMutation()
   const addPlayerToGroupMutation = useAddPlayerToGroupMutation()
-  const createPlayerMutation = useCreatePlayerMutation()
+  const groupQuery = useGroupQuery(groupId as string, groupId !== undefined)
 
   const basePlayer = {
     userId: userId ? userId : "",
@@ -43,7 +43,7 @@ const PlayerCard = ({ id, userId, rollType = 'role', groupId, profilePage, close
   }
 
   const [player, setPlayer] = useState<ICreatePlayer>(basePlayer)
-  const [name, setName] = useState(playerQuery?.name ? playerQuery.name : "")
+  const [name, setName] = useState(basePlayer.name)
   const [editing, setEditing] = useState(id ? false : true)
   const textColor = useColorModeValue("gray.700", "gray:200")
   const primary = useColorModeValue(`gray.300`, `gray.600`)
@@ -55,6 +55,7 @@ const PlayerCard = ({ id, userId, rollType = 'role', groupId, profilePage, close
   useEffect(() => {
     if (playerQuery) {
       setPlayer(playerQuery)
+      setName(playerQuery.name)
     }
 
   }, [playerQuery])
@@ -133,31 +134,76 @@ const PlayerCard = ({ id, userId, rollType = 'role', groupId, profilePage, close
   }
 
   const updatePlayerField = async (field: string, changeValue: any) => {
-    const playerInput = {
+    let playerInput = {
       ...player,
       [field]: changeValue
     }
-    if (playerInput.locked && field === 'inTheRoll' && changeValue === false) {
+    const { locked, healer, dps, tank, inTheRoll } = playerInput
+    const hasRole = [dps, healer, tank].some(value => value === true)
+    const isRoleField = [field === 'tank', field === 'dps', field === 'healer'].some(value => value === true)
+    const roleIsRollType = rollType === 'role'
+
+    if (locked && field === 'locked' && !hasRole && roleIsRollType) {
       toast({
-        title: 'must lock player',
-        description: "if player is locked, they must be in the roll",
+        title: 'must have role if locking',
+        description: "if player is locked, they must have a role",
         status: "warning",
         isClosable: true
       })
     }
-    if (playerInput.locked === true) {
+    if (roleIsRollType && inTheRoll && !hasRole) {
+      playerInput.inTheRoll = false
+    }
+    if (roleIsRollType && locked && !hasRole) {
+      playerInput.locked = false
+    }
+    if (roleIsRollType && locked && hasRole) {
       playerInput.inTheRoll = true
     }
-    setPlayer(playerInput)
+    if (locked === true && field === 'inTheRoll' && changeValue === false) {
+      playerInput.inTheRoll = false
+      playerInput.locked = false
+    }
+
+
+
+    if (roleIsRollType && inTheRoll && !hasRole && field === 'inTheRoll') {
+      toast({
+        title: 'must have a role',
+        description: "in this type of role you have to have at least one active role to participate",
+        status: "warning",
+        isClosable: true
+      })
+    }
+
+    if (isRoleField && inTheRoll && !hasRole) {
+      toast({
+        title: 'must have a role',
+        description: "can't be in the roll and not a have a role",
+        status: "warning",
+        isClosable: true
+      })
+      playerInput = {
+        ...playerInput,
+        inTheRoll: true,
+        [field]: !changeValue
+      }
+    }
+
     if (id) {
-      await playerMutation.mutateAsync({ ...playerInput, id })
+      const idPlayer = { ...playerInput, id }
+      setPlayer(idPlayer)
+      await playerMutation.mutateAsync(idPlayer)
+    }
+    if (!id) {
+      setPlayer(playerInput)
     }
   }
   const handleDelete = async () => {
     if (id) {
       console.log('handle delete')
     }
-    if (id && player.groupId && player.userId) {
+    if (id && player.groupId) {
       console.log('remove player from group')
     }
     if (id && player.userId && player.groupId === null) {
@@ -167,14 +213,7 @@ const PlayerCard = ({ id, userId, rollType = 'role', groupId, profilePage, close
         status: "error"
 
       })
-    }
-    if (id && player.groupId) {
-      toast({
-        title: "delete card error",
-        description: "unable to delete user default card",
-        status: "error"
 
-      })
     }
     if (id === undefined) {
       resetCard()
@@ -214,7 +253,11 @@ const PlayerCard = ({ id, userId, rollType = 'role', groupId, profilePage, close
               placeholder="player name"
               value={name}
               size="sm"
-              onChange={(e) => setName(e.target.value)}
+              onChange={(e) => {
+                const value = e.target.value
+                setName(value)
+                setPlayer({ ...player, name: value })
+              }}
             >
             </Input>
             :
@@ -227,7 +270,7 @@ const PlayerCard = ({ id, userId, rollType = 'role', groupId, profilePage, close
               textAlign="center"
               justifyContent="center"
               alignContent="center">{
-                player.name}
+                name}
             </Heading>
           }
         </Center>
