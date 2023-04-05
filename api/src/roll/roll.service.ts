@@ -5,12 +5,14 @@ import { Logger, LoggerService } from "../common/logger.service";
 @addToContainer()
 export class RollService {
   private logger: Logger
-  constructor(private ls: LoggerService){
+  constructor(private ls: LoggerService) {
     this.logger = this.ls.getLogger(RollService.name)
+    this.logger.info({ message: "RollService created" })
 
   }
 
   async addPlayerToRoll(body: IAddPlayerRequestBody) {
+    this.logger.info({ message: "addPlayerToRoll", body })
     return true
   }
 
@@ -47,7 +49,8 @@ export class RollService {
     }
   };
 
-  async startRoll(groupId: string): Promise<RollStartResponse>{
+  async startRoll(groupId: string): Promise<RollStartResponse> {
+    this.logger.info({ message: groupId })
     return {
       success: true
     }

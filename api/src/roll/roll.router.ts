@@ -7,7 +7,6 @@ import { LoggerService } from '../common/logger.service';
 import { MyContext } from '../types/Context';
 import { HTTPCodes } from '../types/HttpCodes.enum';
 import { RequireAuth } from '../middleware/requireAuth.middleware';
-import { group } from 'console';
 
 const router = new Router({ prefix: '/roll' })
 
@@ -55,6 +54,7 @@ router.post('start', isAuth, RequireAuth, async (ctx: MyContext<RollStartRequest
 
    if(groupId && ctx.state.validUser){
      const userId = ctx.state.user.id as string
+     console.log({userId, groupId, logger})
      const res = await rollService.startRoll(groupId)
      ctx.body = res
    }
