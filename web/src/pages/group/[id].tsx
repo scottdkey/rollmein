@@ -1,15 +1,14 @@
-import { Center, HStack, Heading, Spinner, VStack } from "@chakra-ui/react";
+import { Button, Center, HStack, Heading, Spinner, VStack } from "@chakra-ui/react";
 import { useRouter } from "next/router";
 import { GroupForm } from "../../components/GroupForm";
-import { useAddPlayerToGroupMutation, useGroupQuery } from "../../utils/groupApi";
+import { useGroupQuery } from "../../utils/groupApi";
 
 
 import PlayerCards from "../../components/PlayerCards";
 import { GroupWsProvider } from "../../providers/GroupWebsocketProvider";
 import { useEffect } from "react";
-import { usePlayerFromSignedInUserQuery } from "../../utils/playerApi";
-import { GetServerSideProps } from "next";
-import { getSession, useSession } from "next-auth/react";
+import {  useSession } from "next-auth/react";
+import useGroupWs from "../../providers/GroupWebsocketProvider";
 
 
 
@@ -44,6 +43,7 @@ export default function Group() {
 
 const GroupStructure = ({ groupId }: { groupId: string }) => {
   const { data, isLoading, isError } = useGroupQuery(groupId, true)
+  const groupWs = useGroupWs()
 
   if (isLoading) {
     return (
@@ -71,6 +71,7 @@ const GroupStructure = ({ groupId }: { groupId: string }) => {
             <GroupForm group={data} />
           </HStack>
           <PlayerCards />
+          <Button>Start Roll</Button>
         </VStack>
       </Center>
     )

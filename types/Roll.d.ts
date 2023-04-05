@@ -1,4 +1,4 @@
-type ValidRoll = {
+interface ValidRoll {
   valid: boolean,
   errors: IApplicationError[]
 }
@@ -8,7 +8,7 @@ interface RollInputParam {
   theme: string
 }
 
-type PlayerCounts = {
+interface PlayerCounts {
   locked: number,
   inTheRoll: number,
   tanks: number,
@@ -16,13 +16,13 @@ type PlayerCounts = {
   dps: number,
 }
 
-type RollByRoleReturn = {
+interface RollByRoleReturn {
   tank: IPlayer;
   healer: IPlayer;
   dps: IPlayer[]
 }
 
-type RollReturn = {
+interface RollReturn {
   players: IPlayer[] | RollByRoleReturn,
   remaining: IPlayer[]
 }
@@ -31,5 +31,3 @@ interface DPSObject {
   players: IPlayer[];
   remaining: IPlayer[];
 }
-
-type RollRouteContext = MyContext<RollReturn, {}>

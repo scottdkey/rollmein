@@ -1,11 +1,16 @@
 import { ErrorTypes } from "../types/ErrorCodes.enum";
 import { addToContainer } from "../container";
+import { Logger, LoggerService } from "../common/logger.service";
 
 @addToContainer()
 export class RollService {
+  private logger: Logger
+  constructor(private ls: LoggerService){
+    this.logger = this.ls.getLogger(RollService.name)
+
+  }
 
   async addPlayerToRoll(body: IAddPlayerRequestBody) {
-    console.log(body)
     return true
   }
 
@@ -41,6 +46,12 @@ export class RollService {
       }
     }
   };
+
+  async startRoll(groupId: string): Promise<RollStartResponse>{
+    return {
+      success: true
+    }
+  }
 
   FFARoll(currentGroup: IPlayer[]): { players: IPlayer[]; remaining: IPlayer[] } {
     let remaining = currentGroup

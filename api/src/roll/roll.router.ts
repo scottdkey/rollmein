@@ -6,9 +6,8 @@ import { isAuth } from '../middleware/isAuth';
 import { LoggerService } from '../common/logger.service';
 import { MyContext } from '../types/Context';
 import { HTTPCodes } from '../types/HttpCodes.enum';
-
-
-
+import { RequireAuth } from '../middleware/requireAuth.middleware';
+import { group } from 'console';
 
 const router = new Router({ prefix: '/roll' })
 
@@ -45,6 +44,31 @@ router.get('/inCount', isAuth, async (ctx: MyContext<IPlayerInCountRequestBody, 
     data: res,
     error: null,
     success: false
+  }
+  await next()
+})
+
+//@ts-ignore
+router.post('start', isAuth, RequireAuth, async (ctx: MyContext<RollStartRequest, RollStartResponse>, next) => {
+  const groupId = ctx.request.body.groupId
+  try{
+
+   if(groupId && ctx.state.validUser){
+     const userId = ctx.state.user.id as string
+     const res = await rollService.startRoll(groupId)
+     ctx.body = res
+   }
+
+   if(!groupId){
+    ctx.body = {message: "must include a group id", success: false}
+    ctx.status = HTTPCodes.BAD_REQUEST
+
+   }
+  } catch(e){
+    logger.error({
+      message: "error on starting roll",
+      error: e
+    })
   }
   await next()
 })

@@ -1,11 +1,12 @@
-import { ReactNode, createContext, useContext, useEffect, useMemo, useState } from "react";
+import { ReactNode, createContext, useContext, useEffect, useMemo } from "react";
 import { GroupWSMessageTypes } from "../types/GroupMessages.enum";
 import { useToast } from "@chakra-ui/react";
 import { useSession } from "next-auth/react";
-import { IGroup, IGroupWsResponse } from "../types/Group";
+import { IGroupWsResponse } from "../types/Group";
 import { useGroupQuery, useUserJoinGroupMutation } from "../utils/groupApi";
 import useWebSocket from "react-use-websocket";
 import { useQueryClient } from "react-query";
+import { randomUUID } from "crypto";
 
 export enum WebsocketReadyState {
   CONNECTING = 0,
@@ -20,6 +21,7 @@ interface IGroupWsContext {
   joinGroup: () => void
   openGroup: () => void
   sendMessage: (messageType: GroupWSMessageTypes, body: any) => void
+  requestCode: string
 }
 
 export const GroupWSContext = createContext<IGroupWsContext>({} as IGroupWsContext)
@@ -30,6 +32,7 @@ export const GroupWsProvider = ({ children, groupId }: { children: ReactNode, gr
   const { data } = useGroupQuery(groupId, true)
   const joinGroupMutation = useUserJoinGroupMutation()
   const queryClient = useQueryClient()
+  const requestCode = randomUUID()
 
   const { sendJsonMessage, readyState } = useWebSocket(`${process.env.NEXT_PUBLIC_API_WS}`, {
     onMessage: (event) => {
@@ -103,7 +106,8 @@ export const GroupWsProvider = ({ children, groupId }: { children: ReactNode, gr
     groupId,
     joinGroup,
     openGroup,
-    sendMessage
+    sendMessage,
+    requestCode
   }), [groupId, data])
 
   const readyStateHandler = (readyState: number) => {
