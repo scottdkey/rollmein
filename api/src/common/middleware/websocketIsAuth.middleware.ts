@@ -1,6 +1,6 @@
-import { container } from "../container";
-import { SessionService } from "../session/session.service";
-import { LoggerService } from "../common/logger.service";
+import { container } from "../../container"
+import { LoggerService } from "../../logger/logger.service"
+import { SessionService } from "../../session/session.service"
 
 export interface WebsocketState {
   user: User | null

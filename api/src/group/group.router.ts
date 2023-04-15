@@ -1,12 +1,14 @@
 import { DefaultState, Next } from "koa";
 import Router from "koa-router";
-import { LoggerService } from "../common/logger.service";
+
 import { container } from "../container";
 import { GroupService } from "./group.service";
-import { RequireAuth } from "../middleware/requireAuth.middleware";
+
+import { RequireAuth } from "../common/middleware/requireAuth.middleware";
+import { LoggerService } from "../logger/logger.service";
 import { MyContext } from "../types/Context";
-import { HTTPCodes } from "../types/HttpCodes.enum";
 import { ICreateGroup, IGroup, IGroupPlayerCountResponse, IGroupUpdate, IJoinGroupReq, IJoinGroupRes } from "../types/Group";
+import { HTTPCodes } from "../types/HttpCodes.enum";
 
 
 

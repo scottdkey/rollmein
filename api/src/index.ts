@@ -4,11 +4,11 @@ import bodyParser from "koa-bodyparser";
 import cors from "koa-cors";
 import { container } from "./container";
 import { Routers } from "./routers";
-import { ConfigService } from "./common/config.service";
-import { LoggerService } from "./common/logger.service";
-import { isAuth } from './middleware/isAuth';
 import websocket from "koa-websocket"
 import { GroupWebsocket } from "./websocket/websocket.router"
+import { ConfigService } from './common/config/config.service';
+import { isAuth } from './common/middleware/isAuth';
+import { LoggerService } from './logger/logger.service';
 
 const logger = container.get(LoggerService).getLogger('IndexLogger')
 const server = async () => {

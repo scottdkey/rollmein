@@ -1,8 +1,9 @@
-import { Logger, LoggerService } from '../common/logger.service';
 import { ApplicationError } from '../utils/errorsHelpers';
 import { addToContainer } from "../container";
 import { UserRepository } from './user.repository';
 import { PlayerService } from '../player/player.service';
+import { Logger } from 'pino';
+import { LoggerService } from '../logger/logger.service';
 
 @addToContainer()
 export class UserService {

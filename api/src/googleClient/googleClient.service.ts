@@ -1,4 +1,5 @@
-import { ConfigService } from "../common/config.service";
+
+import { ConfigService } from "../common/config/config.service";
 import { addToContainer } from "../container";
 import { LoginTicket, OAuth2Client } from "google-auth-library";
 

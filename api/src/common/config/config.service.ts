@@ -1,6 +1,9 @@
-import { addToContainer } from "../container";
+
 import dotenv from "dotenv"
-import { Logger, LoggerService } from "./logger.service"
+import { Logger } from "pino"
+import { addToContainer } from "../../container"
+import { LoggerService } from "../../logger/logger.service"
+
 
 export interface IServerConfig {
   [key: string]: any

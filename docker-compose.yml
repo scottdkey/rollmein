@@ -21,26 +21,26 @@ services:
       - 6379
     volumes:
       - redis_data:/data
-  api:
-    build:
-      context: ./api
-      dockerfile: Dockerfile.dev
-    volumes:
-      - ./api/src:/usr/api/src
-      - ./api/node_modules:/usr/api/node_modules
-      - ./api/log:/usr/api/log
-    env_file:
-      - .env
-    environment:
-      - POSTGRES_HOST=database
-      - REDIS_HOST=redis
-    ports:
-      - 8000:8000
-    expose:
-      - 8000
-    depends_on:
-      - database
-      - redis
+  # api:
+  #   build:
+  #     context: ./api
+  #     dockerfile: Dockerfile.dev
+  #   volumes:
+  #     - ./api/src:/usr/api/src
+  #     - ./api/node_modules:/usr/api/node_modules
+  #     - ./api/log:/usr/api/log
+  #   env_file:
+  #     - .env
+  #   environment:
+  #     - POSTGRES_HOST=database
+  #     - REDIS_HOST=redis
+  #   ports:
+  #     - 8000:8000
+  #   expose:
+  #     - 8000
+  #   depends_on:
+  #     - database
+  #     - redis
   # frontend:
   #   build:
   #     context: ./web

@@ -2,8 +2,9 @@ import { addToContainer } from "../container";
 import { ApplicationError } from "../utils/errorsHelpers";
 import { UserService } from "../user/user.service";
 import { SessionService } from "../session/session.service";
-import { Logger, LoggerService } from "../common/logger.service";
 import { GoogleClientService } from "../googleClient/googleClient.service";
+import { Logger } from "pino";
+import { LoggerService } from "../logger/logger.service";
 
 @addToContainer()
 export class AuthService {

@@ -1,8 +1,9 @@
 import { ApplicationError } from '../utils/errorsHelpers';
 import { addToContainer } from '../container';
 import { PlayerRepository } from './player.repository';
-import { Logger, LoggerService } from '../common/logger.service';
 import { GroupWsService } from '../group/groupWs.service';
+import { Logger } from 'pino';
+import { LoggerService } from '../logger/logger.service';
 
 @addToContainer()
 export class PlayerService {

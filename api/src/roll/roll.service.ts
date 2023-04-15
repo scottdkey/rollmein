@@ -1,6 +1,7 @@
 import { ErrorTypes } from "../types/ErrorCodes.enum";
 import { addToContainer } from "../container";
-import { Logger, LoggerService } from "../common/logger.service";
+import { Logger } from "pino";
+import { LoggerService } from "../logger/logger.service";
 
 @addToContainer()
 export class RollService {

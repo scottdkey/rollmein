@@ -1,5 +1,5 @@
 CREATE TABLE IF NOT EXISTS public.user (
-    id uuid DEFAULT public.uuid_generate_v4() NOT NULL,
+    id uuid DEFAULT uuid_generate_v4() NOT NULL,
     username VARCHAR(20) default NULL,
     email VARCHAR(30) NOT NULL,
     google_id VARCHAR(40) UNIQUE,

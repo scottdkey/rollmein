@@ -1,14 +1,13 @@
-import Router from 'koa-router'
-import { container } from '../container';
-import { AuthService } from './auth.service';
-
 import { DefaultState, Next } from 'koa';
+import Router from 'koa-router';
+import { container } from '../container';
+import { LoggerService } from '../logger/logger.service';
 import { SessionService } from '../session/session.service';
-import { ApplicationError } from '../utils/errorsHelpers';
-import { LoggerService } from '../common/logger.service';
-import { UserService } from '../user/user.service';
 import { MyContext } from '../types/Context';
 import { HTTPCodes } from '../types/HttpCodes.enum';
+import { UserService } from '../user/user.service';
+import { ApplicationError } from '../utils/errorsHelpers';
+import { AuthService } from './auth.service';
 
 
 const authService = container.get(AuthService)

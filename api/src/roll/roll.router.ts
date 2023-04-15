@@ -1,12 +1,11 @@
 import { RollService } from './roll.service';
 import { container } from '../container';
 import Router from "koa-router";
-import { isAuth } from '../middleware/isAuth';
-
-import { LoggerService } from '../common/logger.service';
 import { MyContext } from '../types/Context';
 import { HTTPCodes } from '../types/HttpCodes.enum';
-import { RequireAuth } from '../middleware/requireAuth.middleware';
+import { isAuth } from '../common/middleware/isAuth';
+import { LoggerService } from '../logger/logger.service';
+import { RequireAuth } from '../common/middleware/requireAuth.middleware';
 
 const router = new Router({ prefix: '/roll' })
 

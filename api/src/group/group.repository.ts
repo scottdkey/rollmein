@@ -1,7 +1,8 @@
-import { DatabaseService } from "../common/database.service";
-import { DataServiceAbstract } from "../common/dataService.abstract";
-import { Logger, LoggerService } from "../common/logger.service";
+import { Logger } from "pino";
+import { DataServiceAbstract } from "../common/data/dataService.abstract";
+import { DatabaseService } from "../common/database/database.service";
 import { addToContainer } from "../container";
+import { LoggerService } from "../logger/logger.service";
 import { DbGroup, ICreateGroup, IGroup } from "../types/Group";
 
 @addToContainer()

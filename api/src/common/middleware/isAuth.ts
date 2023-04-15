@@ -1,8 +1,9 @@
 import { Next } from "koa";
-import { container } from '../container';
-import { LoggerService } from '../common/logger.service';
-import { SessionService } from '../session/session.service';
-import { MyContext } from "../types/Context";
+import { SessionService } from "../../session/session.service";
+import { LoggerService } from "../../logger/logger.service";
+import { MyContext } from "../../types/Context";
+import { container } from "../../container";
+
 
 const sessionService = container.get(SessionService)
 const logger = container.get(LoggerService).getLogger('isAuthLogger')

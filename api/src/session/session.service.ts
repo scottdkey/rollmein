@@ -1,11 +1,12 @@
 import { SetOption } from "cookies";
-import { ConfigService, IServerConfig } from "../common/config.service";
-import { DateService } from "../common/date.service";
-import { Logger, LoggerService } from "../common/logger.service";
-import { RedisKeys, RedisService } from "../common/redis.service";
 import { addToContainer } from "../container";
 import { v4 as uuid } from "uuid";
 import { ApplicationError } from "../utils/errorsHelpers";
+import { Logger } from "pino";
+import { IServerConfig, ConfigService } from "../common/config/config.service";
+import { DateService } from "../common/date/date.service";
+import { LoggerService } from "../logger/logger.service";
+import { RedisService, RedisKeys } from "../redis/redis.service";
 
 
 @addToContainer()

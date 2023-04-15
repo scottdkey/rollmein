@@ -1,7 +1,7 @@
 /* Replace with your SQL commands */
 
 CREATE TABLE IF NOT EXISTS public.player (
-    id uuid DEFAULT public.uuid_generate_v4() NOT NULL,
+    id uuid DEFAULT uuid_generate_v4() NOT NULL,
     group_id uuid,
     user_id uuid,
     name character varying,

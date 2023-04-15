@@ -1,9 +1,10 @@
-import { Logger, LoggerService } from './logger.service';
-import { dbToIsoString } from '../utils/date.util';
-import { ApplicationError, DatabaseError } from '../utils/errorsHelpers';
-import { ConfigService } from './config.service';
-import { addToContainer } from "../container";
 import { Pool, PoolClient } from "pg"
+import { Logger } from "pino"
+import { addToContainer } from "../../container"
+import { LoggerService } from "../../logger/logger.service"
+import { dbToIsoString } from "../../utils/date.util"
+import { ApplicationError, DatabaseError } from "../../utils/errorsHelpers"
+import { ConfigService } from "../config/config.service"
 
 @addToContainer()
 export class DatabaseService {
@@ -50,7 +51,7 @@ export class DatabaseService {
       return {
         data: null,
         success: false,
-        error: DatabaseError("This query retrieved no rows")
+        error:  DatabaseError("This query retrieved no rows")
       }
     } catch (e) {
       this.logger.error({ ...e, message: "db query failed", text })

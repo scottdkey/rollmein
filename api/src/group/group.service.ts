@@ -1,4 +1,3 @@
-import { Logger, LoggerService } from "../common/logger.service";
 import { addToContainer } from "../container";
 import { ApplicationErrorResponse, AuthorizationErrorResponse } from "../utils/errorsHelpers";
 import { GroupRepository } from './group.repository';
@@ -7,6 +6,8 @@ import { ICreateGroup, IGroup, IGroupUpdate } from "../types/Group";
 import { PlayerService } from "../player/player.service";
 import { GroupWsService } from "./groupWs.service";
 import { RollService } from "../roll/roll.service";
+import { LoggerService } from "../logger/logger.service";
+import { Logger } from "pino";
 
 @addToContainer()
 export class GroupService {

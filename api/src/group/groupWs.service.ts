@@ -1,9 +1,10 @@
 import { Redis } from "ioredis"
-import { RedisKeys, RedisService } from "../common/redis.service"
 import { IGroup, IGroupWsResponse } from "../types/Group"
-import { Logger, LoggerService } from "../common/logger.service"
 import { GroupWSMessageTypes } from "../types/GroupMessages.enum"
 import { addToContainer } from "../container"
+import { LoggerService } from "../logger/logger.service"
+import { RedisService, RedisKeys } from "../redis/redis.service"
+import { Logger } from "pino"
 
 
 @addToContainer()

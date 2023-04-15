@@ -1,9 +1,10 @@
-import { DataServiceAbstract } from "../common/dataService.abstract"
-import { DatabaseService } from "../common/database.service"
+import { DataServiceAbstract } from "../common/data/dataService.abstract"
+import { DatabaseService } from "../common/database/database.service"
 import { addToContainer } from "../container"
 
 @addToContainer()
 export class PlayerRepository extends DataServiceAbstract<DbPlayer, IPlayer> {
+  
   db: DatabaseService
   constructor(db: DatabaseService) {
     super()

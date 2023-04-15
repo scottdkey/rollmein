@@ -1,5 +1,6 @@
-import { addToContainer } from "../container"
-import { DatabaseService } from "./database.service"
+import { addToContainer } from "../../container"
+import { DatabaseService } from "../database/database.service"
+
 
 
 @addToContainer()

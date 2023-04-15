@@ -1,10 +1,10 @@
-
-import { MyContext } from "../types/Context";
-import { HTTPCodes } from "../types/HttpCodes.enum";
-import { AuthorizationErrorResponse } from "../utils/errorsHelpers";
 import { Next } from "koa";
-import { container } from "../container";
-import { LoggerService } from "../common/logger.service";
+import { container } from "../../container";
+import { LoggerService } from "../../logger/logger.service";
+import { MyContext } from "../../types/Context";
+import { HTTPCodes } from "../../types/HttpCodes.enum";
+import { AuthorizationErrorResponse } from "../../utils/errorsHelpers";
+
 
 
 const logger = container.get(LoggerService).getLogger('RequireAuth')

@@ -9,3 +9,4 @@ api/log
 tmp/
 */*.secrets.yaml
 */*.secrets.yml
+./node_modules

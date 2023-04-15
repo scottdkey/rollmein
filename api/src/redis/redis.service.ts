@@ -1,8 +1,8 @@
-import { LoggerService } from './logger.service';
 import { NotInRedisError, RedisError } from '../utils/errorsHelpers';
-import { ConfigService } from './config.service';
 import { addToContainer } from "../container";
 import IoRedis, { Redis } from 'ioredis'
+import { ConfigService } from '../common/config/config.service';
+import { LoggerService } from '../logger/logger.service';
 
 export enum RedisKeys {
   SESSION = 'session',

@@ -1,5 +1,4 @@
-import { addToContainer } from "../container";
-
+import { addToContainer } from "../../container"
 
 @addToContainer()
 export class DateService {
