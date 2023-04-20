@@ -1,4 +1,5 @@
 {
+  "extends": "../tsconfig.json",
   "compilerOptions": {
     "target": "es5",
     "lib": [
@@ -25,7 +26,8 @@
     "isolatedModules": true,
     "jsx": "preserve",
     "incremental": true,
-    "typeRoots": ["./src/types", "../types"]
+    "typeRoots": ["../types"],
+    "rootDir": "src"
   },
   "include": [
     "next-env.d.ts",

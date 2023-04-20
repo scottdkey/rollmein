@@ -11,13 +11,13 @@
     "dev": "run-p watch:*",
     "test": "mocha -r ts-node/register src/tests/**/*.test.ts --exit",
     "lint": "eslint",
-    "tsc": "tsc",
+    "build": "tsc",
     "watch:ts": "tsc -w",
     "watch:node": "nodemon ./dist/index.js | npx pino-pretty",
     "docker:build": "docker build -t scottdkey/rollmein_api:$(echo $npm_package_version) . -f ./Dockerfile",
     "docker:push": "docker push scottdkey/rollmein_api:$(echo $npm_package_version) && docker push scottdkey/rollmein_api:latest",
     "docker:run": "docker run -p 8000:8000 --name rollmein_api scottdkey/rollmein_api:latest",
-    "build": "run-s docker:build docker:push"
+    "docker:build-push": "run-s docker:build docker:push"
   },
   "dependencies": {
     "@koa/router": "^10.1.0",

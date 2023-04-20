@@ -1,6 +1,6 @@
-import { ApiRequest, UseMutation } from "./Rollmein.api"
+import { ApiRequest } from "./Rollmein.api"
 import { RestMethods } from "../types/RestMethods.enum"
-import { UseQueryOptions, useQuery } from "react-query"
+import { UseQueryOptions, useMutation, useQuery } from "react-query"
 import { useSession, signOut } from "next-auth/react"
 import { useToast } from "@chakra-ui/react"
 
@@ -21,7 +21,6 @@ export interface IProfileUpdateBody {
 
 
 export const getMe = async (sessionToken?: string) => {
-  console.log(sessionToken)
   if (sessionToken) {
     return await ApiRequest<IMeRes, {}>(UserRoutes.ME, RestMethods.GET, { sessionToken })
   }
@@ -42,10 +41,12 @@ export const useMeQuery = (enabled: boolean = true) => {
     signOut()
   }
 
-  const options: UseQueryOptions<IMeRes | undefined, IFetchError> = {
+  return useQuery({
     queryFn: async () => {
-      const res = await getMe(session.data?.id)
-      return res
+      if (session.data?.id) {
+        return await getMe(session.data?.id)
+      }
+      return null
     },
     queryKey: UserRoutes.ME,
     enabled: session.data?.id !== undefined || enabled,
@@ -58,9 +59,16 @@ export const useMeQuery = (enabled: boolean = true) => {
         unableToSignIn()
       }
     }
-  }
-  return useQuery(options)
+  })
 }
 
-export const useProfileUpdateMutation = () =>
-  UseMutation<ScrubbedUser | undefined, IFetchError, IProfileUpdateBody>(UserRoutes.PROFILE, RestMethods.POST, "updateProfile")
+export const useProfileUpdateMutation = () => useMutation({
+  mutationFn: async (params: IProfileUpdateBody, sessionToken?: string) => {
+    const res = await ApiRequest<IMeRes, IProfileUpdateBody>(UserRoutes.PROFILE, RestMethods.PUT, { body: params, sessionToken })
+    if(res){
+      return res
+    }
+    return null
+  }
+
+})

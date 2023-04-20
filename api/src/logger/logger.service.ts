@@ -18,7 +18,7 @@ export class LoggerService {
     getLogger(context: string): Logger {
         return pino({
             name: context,
-            level: this.prod ? "warn": "debug",
+            level: this.prod ? "warn": "info",
             prettifier: require('pino-pretty')
         })
     }

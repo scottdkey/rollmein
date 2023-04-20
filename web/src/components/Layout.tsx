@@ -1,6 +1,5 @@
 import { Wrapper, WrapperVariant } from "./Wrapper"
 import NavBar from "./Navbar"
-import { useGroupsQuery } from "../utils/groupApi"
 
 
 

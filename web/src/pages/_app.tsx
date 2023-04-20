@@ -14,6 +14,7 @@ import ErrorBoundary from '../components/ErrorBoundary'
 
 function App({ Component, pageProps: { session, ...pageProps } }: AppProps<{ session: Session }>) {
   const [queryClient] = useState(() => new QueryClient())
+
   return (
     <>
       <SessionProvider session={session}>

@@ -1,14 +1,11 @@
-import { Button, Center, HStack, Heading, Spinner, VStack } from "@chakra-ui/react";
+import { Button, Center, HStack, Heading, Spinner, VStack, Text } from "@chakra-ui/react";
 import { useRouter } from "next/router";
-import { GroupForm } from "../../components/GroupForm";
-import { useGroupQuery } from "../../utils/groupApi";
-
-
-import PlayerCards from "../../components/PlayerCards";
-import { GroupWsProvider } from "../../providers/GroupWebsocketProvider";
+import PlayerCards from "../../components/Player/PlayerCards";
 import { useEffect } from "react";
-import {  useSession } from "next-auth/react";
-import useGroupWs from "../../providers/GroupWebsocketProvider";
+import { useSession } from "next-auth/react";
+import { GroupForm } from "../../components/Group/GroupForm";
+import { useGroupSlice } from "../../components/Group/Group.slice";
+import { useGetGroup } from "../../utils/group.api";
 
 
 
@@ -29,9 +26,9 @@ export default function Group() {
 
   if (id) {
     return (
-      <GroupWsProvider groupId={id}>
+      <>
         <GroupStructure groupId={id} />
-      </GroupWsProvider>
+      </>
     )
   }
   return (
@@ -42,8 +39,19 @@ export default function Group() {
 }
 
 const GroupStructure = ({ groupId }: { groupId: string }) => {
-  const { data, isLoading, isError } = useGroupQuery(groupId, true)
-  const groupWs = useGroupWs()
+  const { data: session } = useSession()
+  const group = useGroupSlice(state => state.group)
+  const setGroup = useGroupSlice(state => state.setGroup)
+  const { isLoading } = useGetGroup({
+    onSuccess: (group) => {
+      if (group) {
+        setGroup(group)
+      }
+    },
+    groupId,
+    sessionToken: session?.id
+  })
+
 
   if (isLoading) {
     return (
@@ -54,32 +62,25 @@ const GroupStructure = ({ groupId }: { groupId: string }) => {
       </>
     )
   }
-  if (isError) {
-    return (
-      <>
-        error occurred
-      </>
-    )
-  }
 
-  if (data) {
+  if (group) {
     return (
       <Center>
         <VStack>
           <HStack>
-            <Heading size={'xl'}>{data.name}</Heading>
-            <GroupForm group={data} />
+            <Heading size={'xl'}>{group.name}</Heading>
+            <GroupForm group={group} />
           </HStack>
-          <PlayerCards />
+          <PlayerCards groupId={group.id} />
           <Button>Start Roll</Button>
         </VStack>
       </Center>
     )
   }
   return (
-    <>
+    <Text>
       error occurred
-    </>
+    </Text>
   )
 
 }

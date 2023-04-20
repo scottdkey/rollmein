@@ -31,7 +31,7 @@ export class GroupService {
 
   async getGroups() {
     const res = await this.groupRepo.getGroups()
-    this.logger.info({ message: "groups res", res })
+    this.logger.debug({ message: "groups res", res })
     if (res.data && res.data.length > 0) {
       return {
         ...res,

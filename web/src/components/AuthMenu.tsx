@@ -13,14 +13,14 @@ const AuthMenu = () => {
   const [loginOpen, setLoginOpen] = useState(false)
 
   const { data, isLoading } = useMeQuery()
-  const [username, setUsername] = useState(session?.user.username)
+  const [username, setUsername] = useState(session?.user?.username)
 
   const ToggleOpen = () => {
     setLoginOpen(!loginOpen)
   }
 
   useEffect((() => {
-    if (!data?.user && session?.user.username) {
+    if (!data?.user && session?.user?.username) {
       setUsername(session.user.username)
     }
     if (data?.user?.username) {

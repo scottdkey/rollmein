@@ -12,11 +12,27 @@
     "migrate:down": "node node_modules/db-migrate/bin/db-migrate -m ./migrations -e pg down",
     "migrate:create": "node node_modules/db-migrate/bin/db-migrate create addRefreshToken -e pg --sql-file",
     "logs": "docker-compose logs --follow",
-    "copyTypes": "cp -r ./types ./api/src && cp -r ./types ./web/src"
+    "start:api": "yarn --cwd ./packages/api start",
+    "dev:api": "yarn --cwd ./packages/api dev",
+    "lint:api": "yarn --cwd ./packages/api  lint",
+    "build:api": "yarn --cwd ./packages/api tsc",
+    "start:web": "yarn --cwd ./packages/web start",
+    "build:web": "yarn --cwd ./packages/web build",
+    "lint:web": "yarn --cwd ./packages/web lint",
+    "dev:web": "yarn --cwd ./packages/web dev",
+    "copyTypes": "cp -r ./packages/types ./api/src && cp -r ./types ./web/src"
   },
   "dependencies": {
-    "@types/koa": "^2.13.5",
     "db-migrate": "^0.11.13",
     "db-migrate-pg": "^1.2.2"
-  }
+  },
+  "devDependencies": {
+    "typescript": "^5.0.4"
+  },
+  "name": "rollmein",
+  "version": "1.0.0",
+  "main": "index.js",
+  "private": "true",
+  "repository": "git@github.com:scottdkey/rollmein.git",
+  "author": "Scott Key <scottdkey@gmail.com>"
 }

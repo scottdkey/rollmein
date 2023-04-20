@@ -189,11 +189,18 @@ groupRouter.get('/count/:groupId', async (ctx: MyContext<{}, IGroupPlayerCountRe
       ctx.body = groupCounts
     }
     if (!groupCounts) {
-      ctx.status = HTTPCodes.NOT_FOUND
+      const playerCounts: PlayerCounts = {
+        locked: 0,
+        inTheRoll:0,
+        tanks: 0,
+        healers: 0,
+        dps: 0,
+      }
       ctx.message = `group counts with groupId: ${groupId} not found`
+      ctx.body = playerCounts
     }
   } catch (e) {
-    console.error(e)
+    logger.error(e)
     ctx.status = HTTPCodes.SERVER_ERROR
     ctx.message = e.message
   }

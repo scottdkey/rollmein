@@ -1,5 +1,5 @@
 import React from "react"
-import { Groups } from "../components/Groups";
+import { Groups } from "../components/Group/Groups";
 
 
 const Index = () => {

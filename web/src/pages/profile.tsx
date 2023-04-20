@@ -1,18 +1,28 @@
 import { VStack } from "@chakra-ui/react"
-import PlayerCard from "../components/PlayerCard";
-import { getSession } from "next-auth/react";
+import PlayerCard from "../components/Player/PlayerCard";
+import { getSession, useSession } from "next-auth/react";
 import UserProfileForm from "../components/UserProfileForm";
-import { usePlayerFromSignedInUserQuery } from "../utils/playerApi";
+
 import { GetServerSideProps } from "next";
 import { Session } from "next-auth";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
+import { getSignedInUserPlayer } from "../utils/player.api";
 
 const Profile = (props: PageProps) => {
-  const { data: player } = usePlayerFromSignedInUserQuery()
+  const [player, setPlayer] = useState<IPlayer | null>(null)
+  const { data: session } = useSession()
   const router = useRouter()
 
   useEffect(() => {
+    if (player === null && session && session.id) {
+      getSignedInUserPlayer(session.id).then(res => {
+        if (res) {
+          setPlayer(res)
+        }
+
+      })
+    }
     if (props.sessionToken === null) {
       router.push("/")
     }
@@ -21,8 +31,8 @@ const Profile = (props: PageProps) => {
     return (
       <>
         <VStack>
-          {props.sessionToken ? 
-          <UserProfileForm id={props.user.id} sessionToken={props.sessionToken} /> : null}
+          {props.sessionToken ?
+            <UserProfileForm id={props.user.id} sessionToken={props.sessionToken} /> : null}
           {player ? <PlayerCard rollType="role" id={player.id} userId={props.user?.id} profilePage={true} /> : null}
         </VStack>
       </>
