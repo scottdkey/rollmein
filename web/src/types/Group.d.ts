@@ -73,15 +73,7 @@ interface IGroupWsRequest {
 
 interface IGroupWsResponse {
   messageType: GroupWSMessageTypes
-  rollStarted?: boolean
-  announceMessage?: string
-  refetchQueries?: string[]
-  invalidateQueries?: string[],
-  setData?: {
-    id: string,
-    data: any
-  }[],
-  deleteData?: string[]
+  data: any
 }
 
 interface IGroupPlayerCountRequest {

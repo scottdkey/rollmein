@@ -42,38 +42,27 @@ export const GroupWsProvider = ({ children, groupId }: { children: ReactNode, gr
     onMessage: async (event) => {
       try {
         const parsedData: IGroupWsResponse = JSON.parse(event.data)
-        console.log(parsedData)
-        if (Object.keys(event.data).length > 0) {
-          if (parsedData.refetchQueries && parsedData.refetchQueries.length > 0) {
-
-            parsedData.refetchQueries?.forEach(query => {
-              queryClient.refetchQueries(query)
-            })
-          }
-          if (parsedData.announceMessage) {
-            toast({
-              title: parsedData.announceMessage
-            })
-          }
-          if (parsedData.setData && parsedData.setData?.length > 0) {
-            parsedData.setData.forEach(({ id, data }) => {
-              console.log({ id, data })
-              queryClient.setQueryData(id, data)
-            })
-          }
-          if (parsedData && parsedData.deleteData && parsedData.deleteData?.length > 0) {
-            parsedData.deleteData.forEach((key) => {
-              console.log({ key })
-              queryClient.removeQueries(key)
-            })
-          }
-          setReadyState(rs)
-        }
+        handleMessageData(parsedData)
       } catch (e) {
         console.error(e)
       }
     }
   })
+
+  const handleMessageData = ({ messageType, data }: IGroupWsResponse) => {
+    switch (messageType) {
+      case GroupWSMessageTypes.Open:
+        console.log({ messageType, data })
+        break
+      case GroupWSMessageTypes.PlayerUpdated:
+        console.log({ messageType, data })
+        break
+      default:
+        console.error({ messageType, data })
+    }
+
+
+  }
 
 
 

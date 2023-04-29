@@ -1,11 +1,11 @@
 import { Redis } from "ioredis"
-import { IGroup, IGroupWsResponse } from "../types/Group"
-import { GroupWSMessageTypes } from "../types/GroupMessages.enum"
 import { addToContainer } from "../container"
 import { LoggerService } from "../logger/logger.service"
 import { RedisService } from "../redis/redis.service"
 import { Logger } from "pino"
 import { RedisKeys } from "../redis/redisKeys.enum"
+import { IGroupWsResponse, IGroup } from "../types/Group"
+import { GroupWSMessageTypes } from "../types/GroupMessages.enum"
 
 
 @addToContainer()
@@ -29,26 +29,23 @@ export class GroupWsService {
   async groupUpdated(group: IGroup) {
     await this.groupPub(group.id, {
       messageType: GroupWSMessageTypes.GroupUpdated,
-      refetchQueries: [`groupCount-${group.id}`],
-      setData: [{
-        id: `group-${group.id}`,
-        data: group
-      }]
+      data: group
     })
   }
   async tooManyLocked(groupId: string, count: number) {
     await this.groupPub(groupId, {
       messageType: GroupWSMessageTypes.TooManyLocked,
-      announceMessage: `Currently ${count} are locked in the roll, seems like too many`,
+      data: null,
+      announce: {
+        status: "info",
+        title: `Currently ${count} are locked in the roll, seems like too many`,
+      },
     })
   }
   async updateGroupCount(groupId: string, groupCount: PlayerCounts) {
     await this.groupPub(groupId, {
       messageType: GroupWSMessageTypes.CountUpdated,
-      setData: [{
-        id: `groupCount-${groupId}`,
-        data: groupCount
-      }]
+      data: groupCount
     })
   }
 
@@ -56,12 +53,11 @@ export class GroupWsService {
     const groupId = player.groupId as string
     await this.groupPub(groupId, {
       messageType: GroupWSMessageTypes.JoinGroup,
-      announceMessage: `${player.name} joined the group.`,
-      refetchQueries: [`groupCount-${groupId}`],
-      setData: [{
-        id: `player-${player.id}`,
-        data: player
-      }]
+      announce: {
+        title: `${player.name} joined the group.`,
+        status: 'info'
+      },
+      data: player
     })
   }
 
@@ -69,11 +65,7 @@ export class GroupWsService {
     const groupId = player.groupId as string
     await this.groupPub(groupId, {
       messageType: GroupWSMessageTypes.PlayerUpdated,
-      refetchQueries: [`groupCount-${groupId}`],
-      setData: [{
-        id: `player-${player.id}`,
-        data: player
-      }]
+      data: player
     })
   }
 
@@ -81,27 +73,21 @@ export class GroupWsService {
     const groupId = player.groupId as string
     await this.groupPub(groupId, {
       messageType: GroupWSMessageTypes.RemoveMember,
-      announceMessage: `${player.name} left the group`,
-      refetchQueries: [`group-${groupId}`, `groupCount-${groupId}`],
-      deleteData: [`player-${player.id}`]
+      data: player
     })
   }
   async playerWasAdded(player: IPlayer) {
     const groupId = player.groupId as string
     await this.groupPub(groupId, {
       messageType: GroupWSMessageTypes.AddPlayer,
-      announceMessage: `${player.name} was added to the group`,
-      refetchQueries: [`group-${groupId}`, `groupCount-${groupId}`],
-      setData: [{
-        id: `player-${player.id}`,
-        data: player
-      }]
+      data: player
     })
   }
 
   async openWsConnection(group: IGroup) {
     await this.groupPub(group.id, {
-      messageType: GroupWSMessageTypes.Open
+      messageType: GroupWSMessageTypes.Open,
+      data: group
     })
   }
 

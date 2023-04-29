@@ -71,17 +71,17 @@ interface IGroupWsRequest {
   groupId: string
 }
 
+type ToastStatus = "info" | "warning" | "success" | "error" | "loading" | undefined
+
 interface IGroupWsResponse {
   messageType: GroupWSMessageTypes
-  rollStarted?: boolean
-  announceMessage?: string
-  refetchQueries?: string[]
-  invalidateQueries?: string[],
-  setData?: {
-    id: string,
-    data: any
-  }[],
-  deleteData?: string[]
+  data: any
+  announce?: {
+    status: ToastStatus
+    title: string | undefined
+    description?: string | undefined
+    isClosable?: boolean
+  }
 }
 
 interface IGroupPlayerCountRequest {

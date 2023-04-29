@@ -22,8 +22,6 @@
     "experimentalDecorators": true,
     "resolveJsonModule": true,
     "baseUrl": ".",
-    "typeRoots": ["../types"],
-
     "paths": {
       "@/*": ["src/*"],
       "@/types/*": ["src/types/*"]

@@ -2,6 +2,7 @@ import { IApplicationError } from "../types/ApplicationError"
 import { ErrorTypes } from "../types/ErrorCodes.enum"
 import { HTTPCodes } from "../types/HttpCodes.enum"
 
+
 export function ErrorCodeMapping(error: IApplicationError): HTTPCodes {
   switch (error.type) {
     case ErrorTypes.APP_ERROR:

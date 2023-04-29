@@ -5,9 +5,9 @@ import IORedis from "ioredis"
 import { GroupWsService } from "../group/groupWs.service"
 import { ConfigService } from "../common/config/config.service"
 import { validateSessionToken } from "../common/middleware/websocketIsAuth.middleware"
+import { RedisKeys } from "../redis/redisKeys.enum"
 import { IGroup, IGroupWsResponse, IGroupWsRequest } from "../types/Group"
 import { GroupWSMessageTypes } from "../types/GroupMessages.enum"
-import { RedisKeys } from "../redis/redisKeys.enum"
 const groupService = container.get(GroupService)
 const groupWsService = container.get(GroupWsService)
 const config = container.get(ConfigService).redisConfig
@@ -35,6 +35,7 @@ export async function GroupWebsocket(ctx: MiddlewareContext<{}>) {
     ctx.websocket.on('open', () => {
       const messageRes: IGroupWsResponse = {
         messageType: GroupWSMessageTypes.Open,
+        data: null
       }
       ctx.websocket.send(JSON.stringify(messageRes))
     })
