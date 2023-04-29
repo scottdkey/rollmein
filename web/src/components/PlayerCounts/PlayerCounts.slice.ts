@@ -1,5 +1,4 @@
 import { create } from 'zustand'
-import { v4 } from "uuid"
 import { IGroupPlayerCountResponse } from '../../types/Group'
 
 interface PlayerCountsState {
@@ -8,7 +7,7 @@ interface PlayerCountsState {
 }
 
 
-export const usePlayerCountsSlice = create<PlayerCountsState>()((set) => {
+export const usePlayerCountsSlice = create<PlayerCountsState>((set) => {
   return ({
     playerCounts: {
       tanks: 0,

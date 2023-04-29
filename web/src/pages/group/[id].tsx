@@ -6,6 +6,7 @@ import { useSession } from "next-auth/react";
 import { GroupForm } from "../../components/Group/GroupForm";
 import { useGroupSlice } from "../../components/Group/Group.slice";
 import { useGetGroup } from "../../utils/group.api";
+import { IGroup } from "../../types/Group";
 
 
 
@@ -38,19 +39,39 @@ export default function Group() {
   )
 }
 
+
+
 const GroupStructure = ({ groupId }: { groupId: string }) => {
   const { data: session } = useSession()
-  const group = useGroupSlice(state => state.group)
-  const setGroup = useGroupSlice(state => state.setGroup)
+  const groups = useGroupSlice(state => state.groups)
+  const setGroups = useGroupSlice(state => state.setGroups)
+  const group = useGroupSlice(state => state.groups.find(group => group.id === groupId))
   const { isLoading } = useGetGroup({
-    onSuccess: (group) => {
-      if (group) {
-        setGroup(group)
-      }
+    onSuccess: (g) => {
+      handleGroupSuccess(g)
     },
     groupId,
     sessionToken: session?.id
   })
+
+  const handleGroupSuccess = (g: IGroup | null) => {
+    if (groups && g) {
+      const existing = groups.findIndex(item => item.id === g.id)
+      if (existing) {
+        groups[existing] = g
+        setGroups(groups)
+      }
+      if (!existing) {
+        setGroups([...groups, g])
+      }
+    }
+    if (!groups && g) {
+      setGroups([g])
+    }
+    if (!g && !groups) {
+      setGroups([])
+    }
+  }
 
 
   if (isLoading) {

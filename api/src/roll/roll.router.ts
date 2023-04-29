@@ -1,11 +1,11 @@
 import { RollService } from './roll.service';
 import { container } from '../container';
 import Router from "koa-router";
-import { MyContext } from '../types/Context';
-import { HTTPCodes } from '../types/HttpCodes.enum';
 import { isAuth } from '../common/middleware/isAuth';
 import { LoggerService } from '../logger/logger.service';
 import { RequireAuth } from '../common/middleware/requireAuth.middleware';
+import { MyContext } from '../types/Context';
+import { HTTPCodes } from '../types/HttpCodes.enum';
 
 const router = new Router({ prefix: '/roll' })
 
@@ -49,21 +49,21 @@ router.get('/inCount', isAuth, async (ctx: MyContext<IPlayerInCountRequestBody, 
 //@ts-ignore
 router.post('start', isAuth, RequireAuth, async (ctx: MyContext<RollStartRequest, RollStartResponse>, next) => {
   const groupId = ctx.request.body.groupId
-  try{
+  try {
 
-   if(groupId && ctx.state.validUser){
-     const userId = ctx.state.user.id as string
-     console.log({userId, groupId, logger})
-     const res = await rollService.startRoll(groupId)
-     ctx.body = res
-   }
+    if (groupId && ctx.state.validUser) {
+      const userId = ctx.state.user.id as string
+      console.log({ userId, groupId, logger })
+      const res = await rollService.startRoll(groupId)
+      ctx.body = res
+    }
 
-   if(!groupId){
-    ctx.body = {message: "must include a group id", success: false}
-    ctx.status = HTTPCodes.BAD_REQUEST
+    if (!groupId) {
+      ctx.body = { message: "must include a group id", success: false }
+      ctx.status = HTTPCodes.BAD_REQUEST
 
-   }
-  } catch(e){
+    }
+  } catch (e) {
     logger.error({
       message: "error on starting roll",
       error: e

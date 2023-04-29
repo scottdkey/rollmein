@@ -1,5 +1,5 @@
-import { apiUrl } from "./constants";
 import { RestMethods } from "../types/RestMethods.enum";
+import { apiUrl } from "./constants";
 
 
 

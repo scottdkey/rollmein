@@ -26,9 +26,8 @@ export const Groups = () => {
     return (
       <VStack>
         <GroupForm />
-        {groups.map(group =>
-          <Group group={group} key={group.id} />)}
-
+        {groups.map(group => { <Group group={group} key={group.id} /> }
+        )}
       </VStack>
     )
   }

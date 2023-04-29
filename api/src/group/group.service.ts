@@ -2,7 +2,7 @@ import { addToContainer } from "../container";
 import { ApplicationErrorResponse, AuthorizationErrorResponse } from "../utils/errorsHelpers";
 import { GroupRepository } from './group.repository';
 import { HTTPCodes } from "../types/HttpCodes.enum";
-import { ICreateGroup, IGroup, IGroupUpdate } from "../types/Group";
+import { ICreateGroup, IGroup, IUpdateGroup } from "../types/Group";
 import { PlayerService } from "../player/player.service";
 import { GroupWsService } from "./groupWs.service";
 import { RollService } from "../roll/roll.service";
@@ -95,7 +95,7 @@ export class GroupService {
   }
   async updateGroup(
     userId: string,
-    updateValueInput: IGroupUpdate): Promise<DataResponse<IGroup>> {
+    updateValueInput: IUpdateGroup): Promise<DataResponse<IGroup>> {
 
     const groupQuery = await this.setupUpdateGeneric(updateValueInput.id, userId)
 

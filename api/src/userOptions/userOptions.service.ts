@@ -1,12 +1,11 @@
 
 import { AuthorizationError, NullInputError, NotInDatabaseError } from '../utils/errorsHelpers';
 import { addToContainer } from '../container';
-
-import { DbUserOptions, UserOptions, UserOptionsInput } from '../types/UserOptions';
 import { Logger } from 'pino';
 import { DataServiceAbstract } from '../common/data/dataService.abstract';
 import { DatabaseService } from '../common/database/database.service';
 import { LoggerService } from '../logger/logger.service';
+import { DbUserOptions, UserOptions, UserOptionsInput } from '../types/UserOptions';
 
 @addToContainer()
 export class UserOptionsService extends DataServiceAbstract<DbUserOptions, UserOptions>{

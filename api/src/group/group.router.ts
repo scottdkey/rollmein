@@ -7,7 +7,7 @@ import { GroupService } from "./group.service";
 import { RequireAuth } from "../common/middleware/requireAuth.middleware";
 import { LoggerService } from "../logger/logger.service";
 import { MyContext } from "../types/Context";
-import { ICreateGroup, IGroup, IGroupPlayerCountResponse, IGroupUpdate, IJoinGroupReq, IJoinGroupRes } from "../types/Group";
+import { ICreateGroup, IGroup, IGroupPlayerCountResponse, IUpdateGroup, IJoinGroupReq, IJoinGroupRes } from "../types/Group";
 import { HTTPCodes } from "../types/HttpCodes.enum";
 
 
@@ -112,7 +112,7 @@ groupRouter.post("/", async (ctx: MyContext<ICreateGroup, IGroup | { message: st
   await next()
 })
 
-groupRouter.put("/", async (ctx: MyContext<IGroupUpdate, IGroup | IApplicationError>, next: Next) => {
+groupRouter.put("/", async (ctx: MyContext<IUpdateGroup, IGroup | IApplicationError>, next: Next) => {
   const userId = ctx.state.user?.id
   if (userId && ctx.state.validUser) {
     const res = await groupService.updateGroup(userId, ctx.request.body)

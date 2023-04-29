@@ -51,7 +51,7 @@ interface IGroup extends ICreateGroup {
   updatedAt: string
 }
 
-interface IGroupUpdate {
+interface IUpdateGroup {
   id: string,
   name?: string,
   membersCanUpdate?: boolean,

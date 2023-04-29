@@ -2,13 +2,12 @@ import { container } from "../container"
 import { GroupService } from "../group/group.service"
 import { MiddlewareContext } from "koa-websocket"
 import IORedis from "ioredis"
-import { GroupWSMessageTypes } from "../types/GroupMessages.enum"
-import { IGroup, IGroupWsRequest, IGroupWsResponse } from "../types/Group"
 import { GroupWsService } from "../group/groupWs.service"
 import { ConfigService } from "../common/config/config.service"
 import { validateSessionToken } from "../common/middleware/websocketIsAuth.middleware"
 import { RedisKeys } from "../redis/redis.service"
-
+import { IGroup, IGroupWsResponse, IGroupWsRequest } from "../types/Group"
+import { GroupWSMessageTypes } from "../types/GroupMessages.enum"
 const groupService = container.get(GroupService)
 const groupWsService = container.get(GroupWsService)
 const config = container.get(ConfigService).redisConfig

@@ -1,12 +1,14 @@
-import { ReactNode, createContext, useContext, useEffect, useMemo } from "react";
-import { GroupWSMessageTypes } from "../types/GroupMessages.enum";
-import { useToast } from "@chakra-ui/react";
+import { ReactNode, createContext, useContext, useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
-import { IGroupWsResponse } from "../types/Group";
-import { useGroupPlayerCountQuery, useGroupQuery, useUserJoinGroupMutation } from "../utils/group.api";
-import useWebSocket from "react-use-websocket";
+import { useGetGroup } from "../utils/group.api";
+import { useGroupSlice } from "../components/Group/Group.slice";
+import { useToast } from "@chakra-ui/react";
 import { useQueryClient } from "react-query";
-import { WebsocketReadyState, useGroupState } from "../components/Group/Group.slice";
+import useWebSocket, { ReadyState } from "react-use-websocket";
+import { IGroupWsResponse } from "../types/Group";
+import { GroupWSMessageTypes } from "../types/GroupMessages.enum";
+import { useGetPlayerCount } from "../utils/playerCounts.api";
+import { usePlayerCountsSlice } from "../components/PlayerCounts/PlayerCounts.slice";
 
 interface IGroupWsContext {
   ready: boolean
@@ -17,88 +19,110 @@ export const GroupWSContext = createContext<IGroupWsContext>({} as IGroupWsConte
 
 export const GroupWsProvider = ({ children, groupId }: { children: ReactNode, groupId: string }): JSX.Element => {
   const { status, data: session } = useSession()
-  const { data, isLoading: groupQueryLoading } = useGroupQuery(groupId, true)
+  const setGroup = useGroupSlice((state) => state.setGroup)
+  const [readyState, setReadyState] = useState<ReadyState>(ReadyState.UNINSTANTIATED)
+  const [loading, setLoadig] = useState(false)
+  const setPlayerCounts = usePlayerCountsSlice(state => state.setPlayerCounts)
 
-
-
-  const { data: currentCounts, isLoading: countLoading, error } = useGroupPlayerCountQuery(groupId, true)
-  const toggleGroupLoading = useGroupState((state) => state.toggleLoading)
-  const toggleWsOpen = useGroupState((state) => state.toggleWsOpen)
-  const togglePlayerCountLoading = useGroupState((state) => state.togglePlayerCountLoading)
-
-  const ready = useGroupState((state) => state.wsOpen)
-  const setGroup = useGroupState((state) => state.setGroup)
-  const setPlayerCounts = useGroupState((state) => state.setPlayerCounts)
-  const init = useGroupState((state) => state.init)
-
-
-
-
-
-
-  const readyStateHandler = (readyState: number) => {
-    try {
-      switch (readyState) {
-        case WebsocketReadyState.CONNECTING:
-          break
-        case WebsocketReadyState.OPEN:
-          return true
-        case WebsocketReadyState.CLOSED:
-          break
-        case WebsocketReadyState.CLOSING:
-          break
-        case WebsocketReadyState.UNINSTANTIATED:
-          break
-        default:
-          console.debug('unknown ready state for group websocket', readyState)
-          break
+  const toast = useToast()
+  const queryClient = useQueryClient()
+  const { data, isLoading: groupQueryLoading } = useGetGroup({
+    groupId,
+    sessionToken: session?.id,
+    onSuccess: (group) => {
+      if (group) {
+        setGroup(group)
       }
-      return false
+    }
+  })
+
+  const { sendJsonMessage, readyState: rs } = useWebSocket(`${process.env.NEXT_PUBLIC_API_WS}`, {
+    onMessage: async (event) => {
+      try {
+        const parsedData: IGroupWsResponse = JSON.parse(event.data)
+        if (Object.keys(event.data).length > 0) {
+          if (parsedData.refetchQueries && parsedData.refetchQueries.length > 0) {
+
+            parsedData.refetchQueries?.forEach(query => {
+              queryClient.refetchQueries(query)
+            })
+          }
+          if (parsedData.announceMessage) {
+            toast({
+              title: parsedData.announceMessage
+            })
+          }
+          if (parsedData.setData && parsedData.setData?.length > 0) {
+            parsedData.setData.forEach(({ id, data }) => {
+              console.log({ id, data })
+              queryClient.setQueryData(id, data)
+            })
+          }
+          if (parsedData && parsedData.deleteData && parsedData.deleteData?.length > 0) {
+            parsedData.deleteData.forEach((key) => {
+              console.log({ key })
+              queryClient.removeQueries(key)
+            })
+          }
+          setReadyState(rs)
+        }
+      } catch (e) {
+        console.error(e)
+      }
+    }
+  })
+
+
+
+  const { } = useGetPlayerCount({
+    groupId,
+    sessionToken: session?.id,
+    onSuccess: (counts) => {
+      if (counts) {
+        setPlayerCounts(counts)
+      }
+    }
+  })
+
+  const sendMessage = (messageType: GroupWSMessageTypes, body: any, sessionToken: string) => {
+    try {
+      const message = {
+        messageType,
+        sessionToken,
+        ...body
+      }
+      sendJsonMessage(message)
     } catch (e) {
       console.error(e)
-      return false
     }
   }
 
 
-
-
-
-
   useEffect(() => {
-    const ready = readyStateHandler(readyState)
+    const openGroup = async (groupId: string) => {
+      if (session && session.id) {
+        sendMessage(GroupWSMessageTypes.Open, { groupId }, session?.id)
+      } else {
+        toast({
+          title: 'You need to be logged in to do that'
+        })
+      }
+    }
+    setReadyState(readyState)
 
-    if (status === 'authenticated' && session && session.id && ready) {
+    if (status === 'authenticated' && session && session.id && readyState === ReadyState.OPEN) {
       openGroup(groupId)
     }
 
+  }, [readyState, status, session, groupId])
 
-  }, [readyState, status, session])
 
-  useEffect(() => {
-    if (data) {
-      toggleGroupLoading()
-      setGroup(data)
-      toggleGroupLoading()
-    }
-  }, [data])
-  useEffect(() => {
-    if (currentCounts) {
-      togglePlayerCountLoading()
-      setPlayerCounts(currentCounts)
-      togglePlayerCountLoading()
-    }
-  }, [currentCounts])
-
-  useEffect(() => {
-    init({ sendMessage, openGroup })
-  }, [])
 
 
 
 
   return (
-    <GroupWSContext.Provider value={{ ready }}>
+    <GroupWSContext.Provider value={{ ready: readyState === ReadyState.OPEN }}>
       {children}
     </GroupWSContext.Provider>
   )

@@ -1,8 +1,8 @@
 import { ApiRequest } from "./Rollmein.api"
-import { RestMethods } from "../types/RestMethods.enum"
-import { UseQueryOptions, useMutation, useQuery } from "react-query"
+import { useMutation, useQuery } from "react-query"
 import { useSession, signOut } from "next-auth/react"
 import { useToast } from "@chakra-ui/react"
+import { RestMethods } from "../types/RestMethods.enum"
 
 interface IFetchError {
   status: number,

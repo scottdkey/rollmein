@@ -1,4 +1,5 @@
 import { create } from 'zustand'
+import { IGroup } from '../../types/Group'
 
 interface GroupState {
   groups: IGroup[]

@@ -58,7 +58,7 @@
     "@types/koa-route": "^3.2.5",
     "@types/koa-router": "^7.4.4",
     "@types/koa-websocket": "^5.0.7",
-    "@types/mocha": "^8.2.2",
+    "@types/mocha": "^10.0.1",
     "@types/node": "^15.14.0",
     "@types/pg": "^8.6.0",
     "@types/superagent": "^4.1.10",

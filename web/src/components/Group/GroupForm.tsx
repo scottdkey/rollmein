@@ -2,28 +2,29 @@ import { EditIcon } from "@chakra-ui/icons"
 import { Button, FormControl, FormErrorMessage, FormLabel, IconButton, Input, Modal, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalHeader, ModalOverlay, Radio, RadioGroup, Stack, Switch } from "@chakra-ui/react"
 import { useEffect, useState } from "react"
 import { useSession } from "next-auth/react"
-import { IGroup, ICreateGroup, IUpdateGroup } from "../../types/Group"
-import { RollType } from "../../types/Group.enum"
 import { useGroupSlice } from "./Group.slice"
-import { useCreateGroup, useGetGroup, useUpdateGroup } from "../../utils/group.api"
+import { RollType, useCreateGroup, useGetGroup, useUpdateGroup } from "../../utils/group.api"
+import { ICreateGroup, IGroup, IUpdateGroup } from "../../types/Group"
 
 export const GroupForm = (params: { group?: IGroup }) => {
   const { status, data: session } = useSession()
   const [modalOpen, setModalOpen] = useState(false)
   const [name, setName] = useState("")
   const groups = useGroupSlice(state => state.groups)
-  const getGroup = useGroupSlice(state => state.getGroup)
+  const group = useGroupSlice(state => state.groups.find(group => group.id === params.group?.id))
   const setGroups = useGroupSlice(state => state.setGroups)
-  const [group, setGroup] = useState<IGroup | null>(params.group?.id ? getGroup(params.group.id) : null )
 
   const onSuccess = (data: IGroup | null) => {
-    setGroup(data)
+    const existing = groups.find(group => group.id === data?.id)
     const newGroups = groups.map(group => {
-      if (data && group.id === data.id) {
+      if (data && existing && existing.id === data?.id) {
         return data
       }
       return group
     })
+    if(!existing && data) {
+      newGroups.push(data)
+    }
     setGroups(newGroups)
     setModalOpen(false)
   }

@@ -26,7 +26,7 @@ const Profile = (props: PageProps) => {
     if (props.sessionToken === null) {
       router.push("/")
     }
-  }, [router, props])
+  }, [router, props, player])
   if (props.user?.id && props.user.username) {
     return (
       <>
