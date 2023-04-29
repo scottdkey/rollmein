@@ -38,8 +38,8 @@ const PlayerCard = ({ id, userId, rollType = 'role', groupId, profilePage, close
     dps: false,
     locked: false,
     inTheRoll: false,
-    createdat: new Date().toISOString(),
-    updatedat: new Date().toISOString()
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString()
   }
 
   const [player, setPlayer] = useState<ICreatePlayer>(basePlayer)

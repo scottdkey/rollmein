@@ -21,17 +21,19 @@ export const GroupWsProvider = ({ children, groupId }: { children: ReactNode, gr
   const { status, data: session } = useSession()
   const setGroup = useGroupSlice((state) => state.setGroup)
   const [readyState, setReadyState] = useState<ReadyState>(ReadyState.UNINSTANTIATED)
-  const [loading, setLoadig] = useState(false)
+  const [loading, setLoading] = useState(false)
   const setPlayerCounts = usePlayerCountsSlice(state => state.setPlayerCounts)
 
   const toast = useToast()
   const queryClient = useQueryClient()
-  const { data, isLoading: groupQueryLoading } = useGetGroup({
+  const { data, isLoading: groupQueryLoading } = useGetGroup({ groupId })
+
+  const { } = useGetPlayerCount({
     groupId,
     sessionToken: session?.id,
-    onSuccess: (group) => {
-      if (group) {
-        setGroup(group)
+    onSuccess: (counts) => {
+      if (counts) {
+        setPlayerCounts(counts)
       }
     }
   })
@@ -40,6 +42,7 @@ export const GroupWsProvider = ({ children, groupId }: { children: ReactNode, gr
     onMessage: async (event) => {
       try {
         const parsedData: IGroupWsResponse = JSON.parse(event.data)
+        console.log(parsedData)
         if (Object.keys(event.data).length > 0) {
           if (parsedData.refetchQueries && parsedData.refetchQueries.length > 0) {
 
@@ -74,15 +77,7 @@ export const GroupWsProvider = ({ children, groupId }: { children: ReactNode, gr
 
 
 
-  const { } = useGetPlayerCount({
-    groupId,
-    sessionToken: session?.id,
-    onSuccess: (counts) => {
-      if (counts) {
-        setPlayerCounts(counts)
-      }
-    }
-  })
+
 
   const sendMessage = (messageType: GroupWSMessageTypes, body: any, sessionToken: string) => {
     try {
@@ -108,13 +103,13 @@ export const GroupWsProvider = ({ children, groupId }: { children: ReactNode, gr
         })
       }
     }
-    setReadyState(readyState)
+    setReadyState(rs)
 
-    if (status === 'authenticated' && session && session.id && readyState === ReadyState.OPEN) {
+    if (status === 'authenticated' && session && session.id && rs === ReadyState.OPEN) {
       openGroup(groupId)
     }
 
-  }, [readyState, status, session, groupId])
+  }, [rs, status, session, groupId])
 
 
 

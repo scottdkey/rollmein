@@ -1,9 +1,7 @@
 import { Spinner, Text, VStack } from "@chakra-ui/react"
 import { Group } from "./Group"
 import { GroupForm } from "./GroupForm"
-import { useEffect } from "react"
 import { useGroupSlice } from "../../stores/Group.slice"
-import { useSession } from "next-auth/react"
 import { useGetGroups } from "../../utils/group.api"
 
 
@@ -11,14 +9,7 @@ import { useGetGroups } from "../../utils/group.api"
 
 export const Groups = () => {
   const groups = useGroupSlice(state => state.groups)
-  const setGroups = useGroupSlice(state => state.setGroups)
-  const { data: session } = useSession()
-  const { isLoading } = useGetGroups({
-    onSuccess: (groups) => {
-      setGroups(groups)
-    },
-    sessionToken: session?.id
-  })
+  const { isLoading } = useGetGroups()
 
 
 

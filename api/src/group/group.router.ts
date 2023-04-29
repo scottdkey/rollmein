@@ -159,14 +159,19 @@ groupRouter.delete('/', async (ctx: MyContext<{}, {}>, next: Next) => {
   await next()
 })
 
-groupRouter.post('/addPlayer', RequireAuth, async (ctx: MyContext<ICreatePlayer, IPlayer | { message: string }>, next: Next) => {
+groupRouter.post('/addPlayer', RequireAuth, async (ctx: MyContext<ICreatePlayer, {
+  player: IPlayer | null,
+  error: IApplicationError | null
+}>, next: Next) => {
   const body = ctx.request.body
   const groupId = body.groupId
   const userId = ctx.state.user.id
   if (groupId && userId) {
     const player = await groupService.createGroupPlayer(body, groupId, userId)
-    console.log(player, 'player placeholder on #addPlayer until implemented to prevent errors')
-    ctx.body = { message: "test" }
+    ctx.body = {
+      player,
+      error: null
+    }
     ctx.status = HTTPCodes.OK
 
   }
@@ -174,7 +179,13 @@ groupRouter.post('/addPlayer', RequireAuth, async (ctx: MyContext<ICreatePlayer,
   if (groupId === "") {
     ctx.status = HTTPCodes.UNPROCESSABLE_ENTITY
     ctx.body = {
-      message: 'groupId missing from request'
+      player: null,
+      error: {
+        message: ErrorMessages.GroupNotFound,
+        type: ErrorTypes.NOT_FOUND,
+        context: "group router add player",
+        detail: "group id is undefined"
+      }
     }
   }
 

@@ -7,6 +7,7 @@ import { useGetGroupPlayers } from "../../utils/player.api"
 import { useGroupSlice } from "../../stores/Group.slice"
 import { GroupForm } from "./GroupForm"
 import { IGroup } from "../../types/Group"
+import { GroupWsProvider } from "../../providers/GroupWebsocketProvider"
 
 
 export const Group = (params: { group: IGroup }) => {
@@ -19,31 +20,8 @@ export const Group = (params: { group: IGroup }) => {
   const deleteGroup = useDeleteGroup({
     onSuccess: () => { }
   })
-  const { data: players } = useGetGroupPlayers({
-    onSuccess: (_) => {
-      setGroups(groups)
-    },
-    groupId: params.group.id,
-    sessionToken: session?.id
-  })
-  const { isLoading } = useGetGroup({
-    onSuccess: (gr) => {
-      if (gr && group) {
-        const newGroups = groups.map(g => {
-          if (g.id === gr.id) {
-            return gr
-          }
-          return g
-        })
-        setGroups(newGroups)
-      }
-      if (gr && !group) {
-        setGroups([...groups, gr])
-      }
-    },
-    groupId: params.group.id,
-    sessionToken: session?.id
-  })
+  const { data: players } = useGetGroupPlayers({ groupId: params.group.id })
+  const { isLoading } = useGetGroup({ groupId: params.group.id, })
 
 
   const handleDelete = async () => {
@@ -92,7 +70,7 @@ export const Group = (params: { group: IGroup }) => {
   }
   return (
     <>
-      Somethign went wrong, unable to load group info
+      Something went wrong, unable to load group info
     </>
   )
 }

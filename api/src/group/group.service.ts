@@ -19,7 +19,6 @@ export class GroupService {
 
   async getGroup(groupId: string, userId?: string) {
     const res = await this.groupRepo.getGroupById(groupId)
-    this.logger.info({ message: "get group res", res })
     let auth: boolean = false
     if (res.data && userId) {
       auth = await this.checkIfAuthorized(res.data, userId)

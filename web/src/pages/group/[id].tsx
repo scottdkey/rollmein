@@ -7,7 +7,7 @@ import { GroupForm } from "../../components/Group/GroupForm";
 import { useGroupSlice } from "../../stores/Group.slice";
 import { useGetGroup } from "../../utils/group.api";
 import { IGroup } from "../../types/Group";
-
+import { GroupWsProvider } from "../../providers/GroupWebsocketProvider";
 
 
 export default function Group() {
@@ -15,6 +15,9 @@ export default function Group() {
   const params = router.query
   const id = params.id as string
   const { data: session } = useSession()
+
+  const group = useGroupSlice(state => state.groups.find(group => group.id === id))
+  const { isLoading } = useGetGroup({ groupId: id })
 
   useEffect(() => {
     if (session && !session.id) {
@@ -24,54 +27,6 @@ export default function Group() {
       router.push('/')
     }
   }, [router, session])
-
-  if (id) {
-    return (
-      <>
-        <GroupStructure groupId={id} />
-      </>
-    )
-  }
-  return (
-    <>
-      no group id
-    </>
-  )
-}
-
-
-
-const GroupStructure = ({ groupId }: { groupId: string }) => {
-  const { data: session } = useSession()
-  const groups = useGroupSlice(state => state.groups)
-  const setGroups = useGroupSlice(state => state.setGroups)
-  const group = useGroupSlice(state => state.groups.find(group => group.id === groupId))
-  const { isLoading } = useGetGroup({
-    onSuccess: (g) => {
-      handleGroupSuccess(g)
-    },
-    groupId,
-    sessionToken: session?.id
-  })
-
-  const handleGroupSuccess = (g: IGroup | null) => {
-    if (groups && g) {
-      const existing = groups.findIndex(item => item.id === g.id)
-      if (existing) {
-        groups[existing] = g
-        setGroups(groups)
-      }
-      if (!existing) {
-        setGroups([...groups, g])
-      }
-    }
-    if (!groups && g) {
-      setGroups([g])
-    }
-    if (!g && !groups) {
-      setGroups([])
-    }
-  }
 
 
   if (isLoading) {
@@ -86,16 +41,18 @@ const GroupStructure = ({ groupId }: { groupId: string }) => {
 
   if (group) {
     return (
-      <Center>
-        <VStack>
-          <HStack>
-            <Heading size={'xl'}>{group.name}</Heading>
-            <GroupForm group={group} />
-          </HStack>
-          <PlayerCards groupId={group.id} />
-          <Button>Start Roll</Button>
-        </VStack>
-      </Center>
+      <GroupWsProvider groupId={group.id}>
+        <Center>
+          <VStack>
+            <HStack>
+              <Heading size={'xl'}>{group.name}</Heading>
+              <GroupForm group={group} />
+            </HStack>
+            <PlayerCards groupId={group.id} />
+            <Button>Start Roll</Button>
+          </VStack>
+        </Center>
+      </GroupWsProvider>
     )
   }
   return (
@@ -103,5 +60,4 @@ const GroupStructure = ({ groupId }: { groupId: string }) => {
       error occurred
     </Text>
   )
-
 }

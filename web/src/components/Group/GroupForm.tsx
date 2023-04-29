@@ -14,24 +14,8 @@ export const GroupForm = (params: { group?: IGroup }) => {
   const group = useGroupSlice(state => state.groups.find(group => group.id === params.group?.id))
   const setGroups = useGroupSlice(state => state.setGroups)
 
-  const onSuccess = (data: IGroup | null) => {
-    const existing = groups.find(group => group.id === data?.id)
-    const newGroups = groups.map(group => {
-      if (data && existing && existing.id === data?.id) {
-        return data
-      }
-      return group
-    })
-    if (!existing && data) {
-      newGroups.push(data)
-    }
-    setGroups(newGroups)
-    setModalOpen(false)
-  }
-
   const { } = useGetGroup({
-    groupId: params.group?.id,
-    onSuccess,
+    groupId: params.group?.id
   })
   const [lockAfterOut, setLockAfterOut] = useState(false)
   const [membersCanUpdate, setMembersCanUpdate] = useState(false)
@@ -50,6 +34,7 @@ export const GroupForm = (params: { group?: IGroup }) => {
       setLockAfterOut(group.lockAfterOut)
       setMembersCanUpdate(group.membersCanUpdate)
       setRollType(group.rollType)
+      setModalOpen(false)
     }
   }, [group])
 
@@ -87,10 +72,7 @@ export const GroupForm = (params: { group?: IGroup }) => {
         id: group.id
       }
       await updateGroup.mutateAsync({
-        group: groupUpdate,
-        sessionToken
-      }, {
-        onSuccess
+        group: groupUpdate
       })
     }
     if (isNameValid && group === undefined && sessionToken) {
@@ -99,9 +81,6 @@ export const GroupForm = (params: { group?: IGroup }) => {
       }
       await createGroup.mutateAsync({
         group: groupCreate,
-        sessionToken
-      }, {
-        onSuccess
       })
     }
 
