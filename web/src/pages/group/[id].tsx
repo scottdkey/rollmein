@@ -4,7 +4,7 @@ import PlayerCards from "../../components/Player/PlayerCards";
 import { useEffect } from "react";
 import { useSession } from "next-auth/react";
 import { GroupForm } from "../../components/Group/GroupForm";
-import { useGroupSlice } from "../../components/Group/Group.slice";
+import { useGroupSlice } from "../../stores/Group.slice";
 import { useGetGroup } from "../../utils/group.api";
 import { IGroup } from "../../types/Group";
 

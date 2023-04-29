@@ -1,20 +1,20 @@
 import { Heading, HStack, Spinner, VStack, Text } from "@chakra-ui/react"
 import { Lock, Dice, Shield, Sword, FirstAid } from "../../assets"
 import { CountItem } from "../CountItem"
-import { useGroupSlice } from "../Group/Group.slice"
-import { usePlayerCountsSlice } from "../PlayerCounts/PlayerCounts.slice"
+import { useGroupSlice } from "../../stores/Group.slice"
+import { usePlayerCountsSlice } from "../../stores/PlayerCounts.slice"
 import { useGetPlayerCount } from "../../utils/playerCounts.api"
 import { useSession } from "next-auth/react"
-import  { FC } from "react"
+import { FC } from "react"
 
 
 
-const PlayerCount: FC<{groupId: string}> = ({groupId}) => {
+const PlayerCount: FC<{ groupId: string }> = ({ groupId }) => {
 
   const group = useGroupSlice(state => state.groups.find(group => group.id === groupId))
-  const {data: session} = useSession()
-  const { isLoading, data: playerCounts} = useGetPlayerCount({
-    onSuccess: (_) => {},
+  const { data: session } = useSession()
+  const { isLoading, data: playerCounts } = useGetPlayerCount({
+    onSuccess: (_) => { },
     onError: (e) => {
       console.log({
         error: e,

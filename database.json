@@ -1,0 +1,11 @@
+{
+  "pg": {
+    "driver": "pg",
+    "user": "postgres",
+    "password": "postgres",
+    "host": "localhost",
+    "database": "postgres",
+    "port": "5432",
+    "schema": "rollmein"
+  }
+}

@@ -9,6 +9,9 @@ import { LoggerService } from "../logger/logger.service";
 import { MyContext } from "../types/Context";
 import { ICreateGroup, IGroup, IGroupPlayerCountResponse, IUpdateGroup, IJoinGroupReq, IJoinGroupRes } from "../types/Group";
 import { HTTPCodes } from "../types/HttpCodes.enum";
+import { IApplicationError } from "../types/ApplicationError";
+import { ErrorTypes } from "../types/ErrorCodes.enum";
+import { ErrorMessages } from "../utils/ErrorTypes.enum";
 
 
 
@@ -39,7 +42,6 @@ groupRouter.get("/", async (ctx: MyContext<{}, IGroup[] | IApplicationError>, ne
     }
     if (groups.error) {
       logger.error({ message: "get groups error", error: groups.error })
-      console.error(groups.error)
     }
   } catch (e) {
     logger.error({ message: 'get groups error', error: e })
@@ -57,27 +59,45 @@ groupRouter.get("/", async (ctx: MyContext<{}, IGroup[] | IApplicationError>, ne
   await next()
 })
 
-groupRouter.get('/:groupId', async (ctx: MyContext<{}, IGroup | IApplicationError>, next: Next) => {
+groupRouter.get('/:groupId', async (ctx: MyContext<{}, {
+  group: IGroup | null,
+  error: IApplicationError | null
+}>, next: Next) => {
   try {
     const userId = ctx.state.user?.id
     const groupId = ctx.params.groupId
     if (groupId !== "undefined") {
       const { group } = await groupService.getGroup(groupId, userId)
       if (group) {
-        ctx.body = group
+        ctx.body = {
+          group,
+          error: null
+        }
         ctx.status = HTTPCodes.OK
       }
     } else {
       ctx.status = HTTPCodes.NOT_FOUND
       ctx.body = {
-        message: "unable to get group",
-        type: "not found"
-
+        group: null,
+        error: {
+          message: ErrorMessages.GroupNotFound,
+          type: ErrorTypes.NOT_FOUND,
+          context: "group router get group by id",
+          detail: "group id is undefined"
+        }
       }
     }
   } catch (e) {
     ctx.status = e.status
-    ctx.body = e.message
+    ctx.body = {
+      group: null,
+      error: {
+        message: ErrorMessages.GroupNotFound,
+        type: ErrorTypes.NOT_FOUND,
+        context: "group router get group by id",
+        detail: e.message
+      }
+    }
   }
 
   await next()
@@ -145,9 +165,7 @@ groupRouter.post('/addPlayer', RequireAuth, async (ctx: MyContext<ICreatePlayer,
   const userId = ctx.state.user.id
   if (groupId && userId) {
     const player = await groupService.createGroupPlayer(body, groupId, userId)
-    console.log({
-      player
-    })
+    console.log(player, 'player placeholder on #addPlayer until implemented to prevent errors')
     ctx.body = { message: "test" }
     ctx.status = HTTPCodes.OK
 
@@ -191,7 +209,7 @@ groupRouter.get('/count/:groupId', async (ctx: MyContext<{}, IGroupPlayerCountRe
     if (!groupCounts) {
       const playerCounts: PlayerCounts = {
         locked: 0,
-        inTheRoll:0,
+        inTheRoll: 0,
         tanks: 0,
         healers: 0,
         dps: 0,

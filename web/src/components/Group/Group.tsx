@@ -4,7 +4,7 @@ import { useSession } from "next-auth/react"
 import { useRouter } from "next/router"
 import { useDeleteGroup, useGetGroup } from "../../utils/group.api"
 import { useGetGroupPlayers } from "../../utils/player.api"
-import { useGroupSlice } from "./Group.slice"
+import { useGroupSlice } from "../../stores/Group.slice"
 import { GroupForm } from "./GroupForm"
 import { IGroup } from "../../types/Group"
 

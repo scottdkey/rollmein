@@ -1,9 +1,9 @@
-import { ApplicationError } from '../utils/errorsHelpers';
 import { addToContainer } from '../container';
 import { PlayerRepository } from './player.repository';
 import { GroupWsService } from '../group/groupWs.service';
 import { Logger } from 'pino';
 import { LoggerService } from '../logger/logger.service';
+import { DataResponse } from '../types/DataResponse';
 
 @addToContainer()
 export class PlayerService {
@@ -34,7 +34,7 @@ export class PlayerService {
       }
       if (res.error) {
         this.logger.error({
-          ...res.error,
+          ...res,
           message: "unable to get player by userId",
 
         })
@@ -78,12 +78,13 @@ export class PlayerService {
         locked: false
       })
     } catch (e) {
-      this.logger.error({
+      const error = {
         message: "Unable to create player",
         error: e.message,
         stacktrace: e.stacktrace
-      })
-      throw ApplicationError("Unable to create player")
+      }
+      this.logger.error(error)
+      throw error
     }
 
   }
@@ -105,27 +106,30 @@ export class PlayerService {
   }
 
   async updateUserPlayer(input: IUpdatePlayer, userId: string) {
-    const valid = await this.updatePlayerIsValid(input, userId)
-    if (valid) {
-      return await this.updatePlayer(input)
-    } else {
-      console.log(!valid)
+    try {
+      const valid = await this.updatePlayerIsValid(input, userId)
+      if (valid) {
+        return await this.updatePlayer(input)
+      } {
+        return null
+      }
+    } catch (e) {
+      throw e.message
     }
-    throw ApplicationError("update player error -- request body not valid")
+
   }
 
   async updatePlayer(input: IUpdatePlayer) {
     const res = await this.playerRepo.updatePlayer(input)
 
     if (res.data && res.data.groupId !== null) {
-      console.log('update player')
       this.groupWs.playerUpdated(res.data)
     }
     if (res.success) {
       return res.data
     }
 
-    throw res.error?.message
+    throw res.error
   }
 
   async deletePlayer(id: string): Promise<DataResponse<IDeletePlayerResponse>> {

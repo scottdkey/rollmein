@@ -1,11 +1,11 @@
-
-import { AuthorizationError, NullInputError, NotInDatabaseError } from '../utils/errorsHelpers';
 import { addToContainer } from '../container';
 import { Logger } from 'pino';
 import { DataServiceAbstract } from '../common/data/dataService.abstract';
 import { DatabaseService } from '../common/database/database.service';
 import { LoggerService } from '../logger/logger.service';
 import { DbUserOptions, UserOptions, UserOptionsInput } from '../types/UserOptions';
+import { ErrorMessages } from '../utils/ErrorTypes.enum';
+import { DataResponse } from '../types/DataResponse';
 
 @addToContainer()
 export class UserOptionsService extends DataServiceAbstract<DbUserOptions, UserOptions>{
@@ -56,7 +56,7 @@ export class UserOptionsService extends DataServiceAbstract<DbUserOptions, UserO
     return {
       data: null,
       success: false,
-      error: NotInDatabaseError('user_options', userId)
+      error: `unable to update user options for user ${userId}`
     }
   }
   async deleteOptions(userId: string): Promise<DataResponse<boolean | null>> {
@@ -69,16 +69,18 @@ export class UserOptionsService extends DataServiceAbstract<DbUserOptions, UserO
     }
     return {
       ...res,
-      data: null
+      data: null,
+      error: `unable to delete user options for user ${userId}`
     }
   }
 
 
-  protected validateUserOptionsInput(userId: string, input: UserOptionsInput | null, userOptions: UserOptions): { input: UserOptionsInput | null; error: IApplicationError | null } {
+  protected validateUserOptionsInput(userId: string, input: UserOptionsInput | null, userOptions: UserOptions): { input: UserOptionsInput | null; error: string | null } {
     if (userId !== userOptions.userId) {
-      this.logger.error({ message: AuthorizationError.message })
+      const error = { message: ErrorMessages.AuthorizationError, context: 'userId does not match userOptions.userId' }
+      this.logger.error(error)
       return {
-        error: AuthorizationError,
+        error: error.context,
         input: null
       }
 
@@ -86,7 +88,7 @@ export class UserOptionsService extends DataServiceAbstract<DbUserOptions, UserO
     if (input === null) {
       this.logger.error({ message: 'null input #validateUserOptionsInput' })
       return {
-        error: NullInputError,
+        error: ErrorMessages.NullInputError,
         input: null
       }
     }

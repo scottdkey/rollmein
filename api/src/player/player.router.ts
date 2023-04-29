@@ -97,7 +97,7 @@ router.get("/group/:groupId", RequireAuth, async(ctx: MyContext<{}, IPlayer[] | 
              if (players.error) {
                  const error = players.error
                  logger.warn(error)
-                 ctx.message = players.error.message
+                 ctx.message = players.error
                  ctx.body = []
              }
 

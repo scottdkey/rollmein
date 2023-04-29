@@ -1,4 +1,3 @@
-import { ApplicationError } from '../utils/errorsHelpers';
 import { addToContainer } from "../container";
 import { UserRepository } from './user.repository';
 import { PlayerService } from '../player/player.service';
@@ -42,7 +41,10 @@ export class UserService {
     } catch (e) {
       const message = 'error #findOrCreateUserGoogleId'
       this.logError(message, e)
-      throw ApplicationError(message)
+      throw {
+        ...e,
+        message
+      }
     }
   }
 
@@ -76,7 +78,10 @@ export class UserService {
     } catch (e) {
       const message = "error creating user"
       this.logError(message, e)
-      throw ApplicationError(message)
+      throw {
+        ...e,
+        message
+      }
 
     }
   }
@@ -101,7 +106,10 @@ export class UserService {
       error: e.message,
       stacktrace: e.stacktrace
     })
-    throw ApplicationError(message)
+    throw {
+      ...e,
+      message
+    }
   }
 
 

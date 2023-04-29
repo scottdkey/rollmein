@@ -3,17 +3,23 @@ import { container } from "../../container";
 import { LoggerService } from "../../logger/logger.service";
 import { MyContext } from "../../types/Context";
 import { HTTPCodes } from "../../types/HttpCodes.enum";
-import { AuthorizationErrorResponse } from "../../utils/errorsHelpers";
+import { IApplicationError } from "../../types/ApplicationError";
+import { ErrorMessages } from "../../utils/ErrorTypes.enum";
+import { ErrorTypes } from "../../types/ErrorCodes.enum";
 
 
 
 const logger = container.get(LoggerService).getLogger('RequireAuth')
 
 
-export async function RequireAuth(ctx: MyContext<any, any>, next: Next) {
+export async function RequireAuth(ctx: MyContext<any, IApplicationError | null>, next: Next) {
   try {
     if (ctx.state.validUser === false) {
-      ctx.body = AuthorizationErrorResponse
+      ctx.body = {
+        message: ErrorMessages.AuthorizationError,
+        type: ErrorTypes.AUTH_ERROR,
+        context: "RequireAuth"
+      }
       ctx.status = HTTPCodes.UNAUTHORIZED
     }
   } catch (e) {
@@ -22,7 +28,11 @@ export async function RequireAuth(ctx: MyContext<any, any>, next: Next) {
       error: e.message,
       stacktrace: e.stacktrace
     })
-    ctx.body = AuthorizationErrorResponse
+    ctx.body = {
+      message: ErrorMessages.AuthorizationError,
+      type: ErrorTypes.AUTH_ERROR,
+      context: "RequireAuth"
+    }
     ctx.status = HTTPCodes.UNAUTHORIZED
 
   }

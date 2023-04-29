@@ -6,8 +6,11 @@ import { SessionService } from '../session/session.service';
 import { MyContext } from '../types/Context';
 import { HTTPCodes } from '../types/HttpCodes.enum';
 import { UserService } from '../user/user.service';
-import { ApplicationError } from '../utils/errorsHelpers';
 import { AuthService } from './auth.service';
+import { IApplicationError } from '../types/ApplicationError';
+import { createError } from '../utils/CreateError';
+import { ErrorTypes } from '../types/ErrorCodes.enum';
+import { ErrorMessages } from '../utils/ErrorTypes.enum';
 
 
 const authService = container.get(AuthService)
@@ -26,16 +29,14 @@ export enum AuthTypes {
 }
 
 authRouter.post("/validate",
-  async (ctx: MyContext<ValidateRequestBody, { user: ScrubbedUser, sessionId: string, success: boolean } | { error: IApplicationError, success: boolean }>, next: Next) => {
+  async (ctx: MyContext<ValidateRequestBody, { user: ScrubbedUser | null, sessionId: string | null, success: boolean, error: IApplicationError| null }>, next: Next) => {
 
     try {
       const body = ctx.request.body
-      console.log({ body })
-      let user: User | null  = null
+      let user: User | null = null
       switch (body.authType) {
         case AuthTypes.GOOGLE:
           user = await authService.validateGoogleOauth2(body.token)
-          console.log({ user })
           break
         default:
           logger.error({
@@ -53,23 +54,44 @@ authRouter.post("/validate",
         ctx.body = {
           user: userService.scrubUser(user),
           sessionId,
-          success: true
+          success: true,
+          error: null
         }
 
       }
-      if(!user){
+      if (!user) {
+        const error = createError({
+          message: ErrorMessages.AuthorizationError,
+          type: ErrorTypes.USER_ERROR,
+          context: "authRouter.validate",
+          detail: "unable to validate auth"
+        })
         ctx.body = {
-          error: ApplicationError(`unable to validate auth`),
-          success: false
+          error,
+          success: false,
+          user: null,
+          sessionId: null
         }
         ctx.status = HTTPCodes.UNAUTHORIZED
       }
 
     } catch (e) {
-      logger.error({ message: 'unable to validate', error: e.message, stacktrace: e.stacktrace })
+
+
+      const error = createError({
+        message: ErrorMessages.AuthorizationError,
+        type: ErrorTypes.USER_ERROR,
+        context: "authRouter.validate",
+        detail: e.message,
+        stacktrace: e.stacktrace
+      })
+
+      logger.error(error)
       ctx.body = {
-        error: ApplicationError(`unable to validate auth -- ${e.message}`),
-        success: false
+        error,
+        success: false,
+        user: null,
+        sessionId: null
       }
       ctx.status = HTTPCodes.SERVER_ERROR
     }

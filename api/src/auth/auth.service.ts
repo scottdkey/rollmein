@@ -1,10 +1,12 @@
 import { addToContainer } from "../container";
-import { ApplicationError } from "../utils/errorsHelpers";
 import { UserService } from "../user/user.service";
 import { SessionService } from "../session/session.service";
 import { GoogleClientService } from "../googleClient/googleClient.service";
 import { Logger } from "pino";
 import { LoggerService } from "../logger/logger.service";
+import { ErrorMessages } from "../utils/ErrorTypes.enum";
+import { ErrorTypes } from "../types/ErrorCodes.enum";
+import { IApplicationError } from "../types/ApplicationError";
 
 @addToContainer()
 export class AuthService {
@@ -28,17 +30,24 @@ export class AuthService {
   }
 
 
-  async login(user: User) {
+  async login(user: User): Promise<{ sessionId: string | null, error: IApplicationError | null }> {
     try {
       return {
         sessionId: await this.sessionService.createSession(user),
         error: null
       }
     } catch (e) {
-      this.logger.error({ message: 'unable to login', error: e.message, stacktrace: e.stacktrace })
+      const error: IApplicationError = {
+        message: ErrorMessages.LoginError,
+        stacktrace: e.stacktrace,
+        context: '#authService.login',
+        detail: "unable to login",
+        type: ErrorTypes.APP_ERROR
+      }
+      this.logger.error(error)
       return {
         sessionId: null,
-        error: ApplicationError(e.message)
+        error
       }
     }
 

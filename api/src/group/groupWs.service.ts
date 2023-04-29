@@ -3,8 +3,9 @@ import { IGroup, IGroupWsResponse } from "../types/Group"
 import { GroupWSMessageTypes } from "../types/GroupMessages.enum"
 import { addToContainer } from "../container"
 import { LoggerService } from "../logger/logger.service"
-import { RedisService, RedisKeys } from "../redis/redis.service"
+import { RedisService } from "../redis/redis.service"
 import { Logger } from "pino"
+import { RedisKeys } from "../redis/redisKeys.enum"
 
 
 @addToContainer()

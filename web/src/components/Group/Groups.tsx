@@ -2,7 +2,7 @@ import { Spinner, Text, VStack } from "@chakra-ui/react"
 import { Group } from "./Group"
 import { GroupForm } from "./GroupForm"
 import { useEffect } from "react"
-import { useGroupSlice } from "./Group.slice"
+import { useGroupSlice } from "../../stores/Group.slice"
 import { useSession } from "next-auth/react"
 import { useGetGroups } from "../../utils/group.api"
 
@@ -26,8 +26,7 @@ export const Groups = () => {
     return (
       <VStack>
         <GroupForm />
-        {groups.map(group => { <Group group={group} key={group.id} /> }
-        )}
+        {groups.map(group => <Group group={group} key={group.id} />)}
       </VStack>
     )
   }

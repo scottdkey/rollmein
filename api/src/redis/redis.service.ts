@@ -1,33 +1,59 @@
-import { NotInRedisError, RedisError } from '../utils/errorsHelpers';
+import { RedisError } from '../utils/ErrorTypes.enum';
 import { addToContainer } from "../container";
 import IoRedis, { Redis } from 'ioredis'
 import { ConfigService } from '../common/config/config.service';
 import { LoggerService } from '../logger/logger.service';
+import { Logger } from 'pino';
+import { RedisKeys } from './redisKeys.enum';
+import { DataResponse } from '../types/DataResponse';
 
-export enum RedisKeys {
-  SESSION = 'session',
-  GROUP = 'group'
-}
+
 
 @addToContainer()
 export class RedisService {
   redis: Redis
   pub: Redis
+  private logger: Logger
+  private failureCount = 0
+  private config = this.cs.redisConfig
 
   constructor(private cs: ConfigService, private ls: LoggerService) {
-    const logger = this.ls.getLogger(RedisService.name)
-    const config = this.cs.redisConfig
+    this.logger = this.ls.getLogger(RedisService.name)
+    this.connectClients()
+  }
+  private connectClients = () => {
     try {
       this.redis = new IoRedis({
-        host: config.host
+        host: this.config.host
+      })
+      this.redis.on("error", (e) => {
+        this.logger.error({
+          message: e.message,
+          context: "redis had an error"
+        })
+        this.failureCount++
+        this.exitOnHighFailure()
       })
       this.pub = new IoRedis({
-        host: config.host
+        host: this.config.host
       })
-      logger.info({ message: "connected to redis" })
-
+      this.pub.on("error", (e) => {
+        this.logger.error({
+          message: e.message,
+          context: "redis publisher had an error"
+        })
+        this.failureCount++
+        this.exitOnHighFailure()
+      })
     } catch (e) {
-      logger.error({ message: 'unable to connect to redis' })
+      this.logger.error({ message: 'unable to connect to redis' })
+    }
+  }
+
+  private exitOnHighFailure = () => {
+    if (this.failureCount > 3) {
+
+      process.exit()
     }
   }
   async get<T>(key: RedisKeys, id: string): Promise<DataResponse<T>> {
@@ -42,7 +68,7 @@ export class RedisService {
     return {
       data: null,
       success: false,
-      error: NotInRedisError(key, id)
+      error: RedisError(key, id, null, "unable to get data from redis")
     }
   }
 
@@ -68,22 +94,37 @@ export class RedisService {
     return {
       data,
       success: false,
-      error: RedisError(key, id, data)
+      error: RedisError(key, id, data, 'unable to set data in redis')
     }
   }
 
 
   //expire time is in seconds
-  async setWithRetry<T>(key: RedisKeys, id: string, data: T, retry: number = 3, expireTime?: number): Promise<DataResponse<T>> {
-    let res = this.set(key, id, data, expireTime)
+  async setWithRetry<T>(key: RedisKeys, id: string, data: T, retry: number = 3, expireTime?: number) {
+    let res = await this.set(key, id, data, expireTime)
     let retryCount = 0
     while (!res && retryCount > retry) {
-      res = this.set(key, id, data, expireTime)
+      res = await this.set(key, id, data, expireTime)
       retryCount++
     }
-    return res
+    if(res){
+      return res
+    }
+    return {
+      data: null,
+      success: false,
+      error: RedisError(key, id, data, 'unable to setWithRetry in redis')
+    }
+    
   }
   async publish<T>(key: RedisKeys, id: string, data: T) {
-    await this.pub.publish(`${key}-${id}`, JSON.stringify(data))
+    try {
+      await this.pub.publish(`${key}-${id}`, JSON.stringify(data))
+    } catch(e){
+      this.logger.error({
+        message: e.message,
+        context: "redis publisher had an error"
+      })
+    }
   }
 }

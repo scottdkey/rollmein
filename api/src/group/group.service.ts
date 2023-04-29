@@ -1,5 +1,4 @@
 import { addToContainer } from "../container";
-import { ApplicationErrorResponse, AuthorizationErrorResponse } from "../utils/errorsHelpers";
 import { GroupRepository } from './group.repository';
 import { HTTPCodes } from "../types/HttpCodes.enum";
 import { ICreateGroup, IGroup, IUpdateGroup } from "../types/Group";
@@ -8,6 +7,8 @@ import { GroupWsService } from "./groupWs.service";
 import { RollService } from "../roll/roll.service";
 import { LoggerService } from "../logger/logger.service";
 import { Logger } from "pino";
+import { ErrorMessages } from "../utils/ErrorTypes.enum";
+import { DataResponse } from "../types/DataResponse";
 
 @addToContainer()
 export class GroupService {
@@ -18,6 +19,7 @@ export class GroupService {
 
   async getGroup(groupId: string, userId?: string) {
     const res = await this.groupRepo.getGroupById(groupId)
+    this.logger.info({ message: "get group res", res })
     let auth: boolean = false
     if (res.data && userId) {
       auth = await this.checkIfAuthorized(res.data, userId)
@@ -31,7 +33,6 @@ export class GroupService {
 
   async getGroups() {
     const res = await this.groupRepo.getGroups()
-    this.logger.debug({ message: "groups res", res })
     if (res.data && res.data.length > 0) {
       return {
         ...res,
@@ -60,11 +61,11 @@ export class GroupService {
       if (res.data || res.error) {
         return res
       }
-      return ApplicationErrorResponse(new Error("createGroup Error"))
+      return ErrorMessages.CreateGroup
 
     } catch (e) {
       this.logger.error({ message: "create group error", error: e })
-      return ApplicationErrorResponse(new Error(e.message))
+      return e.message
     }
   }
 
@@ -130,11 +131,11 @@ export class GroupService {
       const group = groupQuery.data
       const authorized = this.checkIfAuthorized(group, userId)
       if (!authorized) {
-        return AuthorizationErrorResponse
+        throw ErrorMessages.AuthorizationError
       }
       return groupQuery
     }
-    return ApplicationErrorResponse({ message: "#addPlayer error", info: "no group found with id" })
+    throw { message: "#addPlayer error", info: "no group found with id" }
   }
 
   async addPlayer(groupId: string, userId: string, player: IPlayer) {
@@ -159,7 +160,6 @@ export class GroupService {
       }
     }
     return null
-
   }
 
   async removePlayer(groupId: string, userId: string, playerId: string) {
@@ -201,7 +201,7 @@ export class GroupService {
       group.relations.members = this.setFromStringArray(group.relations.members, userId)
       group.relations.players = this.setFromStringArray(group.relations.players, playerId)
       this.groupWs.playerJoinedGroup(player)
-    
+
       return await this.updateActiveGroup(group)
     }
     return groupQuery
@@ -227,7 +227,17 @@ export class GroupService {
     const groupQuery = await this.groupRepo.getGroupById(id)
     const authorized = groupQuery.data && this.checkIfAuthorized(groupQuery.data, userId)
     if (!authorized) {
-      return AuthorizationErrorResponse
+      return {
+        data: null,
+        success: false,
+        error: {
+          message: ErrorMessages.AuthorizationError,
+          detail: "You are not authorized to delete this group"
+          
+
+        }
+        
+      }
     }
 
     return await this.groupRepo.deleteByUserId(id, userId)

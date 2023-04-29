@@ -1,14 +1,14 @@
 import { ReactNode, createContext, useContext, useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
 import { useGetGroup } from "../utils/group.api";
-import { useGroupSlice } from "../components/Group/Group.slice";
+import { useGroupSlice } from "../stores/Group.slice";
 import { useToast } from "@chakra-ui/react";
 import { useQueryClient } from "react-query";
 import useWebSocket, { ReadyState } from "react-use-websocket";
 import { IGroupWsResponse } from "../types/Group";
 import { GroupWSMessageTypes } from "../types/GroupMessages.enum";
 import { useGetPlayerCount } from "../utils/playerCounts.api";
-import { usePlayerCountsSlice } from "../components/PlayerCounts/PlayerCounts.slice";
+import { usePlayerCountsSlice } from "../stores/PlayerCounts.slice";
 
 interface IGroupWsContext {
   ready: boolean

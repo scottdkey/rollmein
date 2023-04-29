@@ -78,12 +78,11 @@ const PlayerCard = ({ id, userId, rollType = 'role', groupId, profilePage, close
 
 
   const handleSubmit = async () => {
-
-    if (name.length >= 1) {
-      if (editing && name && id) {
+    if (name.length >= 1 && editing) {
+      if (name && id) {
         handleUpdatePlayer()
       }
-      if (editing && id === undefined) {
+      if (id === undefined) {
         handleCreatePlayer()
       }
     } else {
@@ -93,10 +92,6 @@ const PlayerCard = ({ id, userId, rollType = 'role', groupId, profilePage, close
         isClosable: true,
       })
     }
-
-
-
-
   }
 
   const handleCreatePlayer = () => {
@@ -105,7 +100,6 @@ const PlayerCard = ({ id, userId, rollType = 'role', groupId, profilePage, close
       name
     }
     addPlayerToGroupMutation.mutateAsync(playerInput)
-
   }
 
   const toggleEditing = () => {

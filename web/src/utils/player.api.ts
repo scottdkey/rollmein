@@ -1,6 +1,7 @@
 import { ApiRequest } from "./Rollmein.api"
 import { RestMethods } from "../types/RestMethods.enum"
 import {  useMutation, useQuery } from "react-query"
+import { useSession } from "next-auth/react"
 
 
 
@@ -72,14 +73,18 @@ export const useCreatePlayer = (setterFunction?: (player: IPlayer | null) => any
 
 export const updatePlayer= async (params: IUpdatePlayer, sessionToken: string) => await ApiRequest<IPlayer, IUpdatePlayer>(PlayerRoutes.PLAYER, RestMethods.PUT, { body: params, sessionToken })
 
-export const useUpdatePlayer = () => useMutation({
-  mutationFn: async(params: IUpdatePlayer, sessionToken?: string) => {
-    if(sessionToken){
-      return await updatePlayer(params, sessionToken)
+export const useUpdatePlayer = () => {
+  const {data: session} = useSession()
+  const sessionToken = session?.id
+  return useMutation({
+    mutationFn: async (params: IUpdatePlayer) => {
+      if (sessionToken) {
+        return await updatePlayer(params, sessionToken)
+      }
+      return null
     }
-    return null
-  }
-})
+  })
+}
 
 export const deletePlayer = async (sessionToken: string) => await ApiRequest<IPlayer, IDeletePlayer>(PlayerRoutes.PLAYER, RestMethods.DELETE, { sessionToken })
 

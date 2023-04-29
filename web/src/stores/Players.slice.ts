@@ -1,5 +1,5 @@
 import { create } from 'zustand'
-import { getGroupPlayers, getPlayer } from '../../utils/player.api'
+import { getGroupPlayers, getPlayer } from '../utils/player.api'
 
 interface PlayersState {
   players: IPlayer[]

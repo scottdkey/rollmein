@@ -1,12 +1,12 @@
 import { SetOption } from "cookies";
 import { addToContainer } from "../container";
 import { v4 as uuid } from "uuid";
-import { ApplicationError } from "../utils/errorsHelpers";
 import { Logger } from "pino";
 import { IServerConfig, ConfigService } from "../common/config/config.service";
 import { DateService } from "../common/date/date.service";
 import { LoggerService } from "../logger/logger.service";
-import { RedisService, RedisKeys } from "../redis/redis.service";
+import { RedisService } from "../redis/redis.service";
+import { RedisKeys } from "../redis/redisKeys.enum";
 
 
 @addToContainer()
@@ -55,11 +55,13 @@ export class SessionService {
       await this.redis.setWithRetry(RedisKeys.SESSION, sessionId, cacheUser, 4, sessionExpireInSeconds)
       return sessionId
     } catch (e) {
-      this.logger.error({
+      const error = {
         message: "error setting session",
-        error: e.message, stacktrace: e.stacktrace
-      })
-      throw ApplicationError(e.message)
+        error: e.message,
+        stacktrace: e.stacktrace
+      }
+      this.logger.error(error)
+      throw error
     }
   }
 
@@ -72,8 +74,9 @@ export class SessionService {
       const id = uuid()
       return await this.setSession(id, user)
     } catch (e) {
-      this.logger.error({ message: 'unable to create session', error: e.message, stacktrace: e.stacktrace })
-      throw ApplicationError("unable to create session")
+      const error = { message: 'unable to create session', error: e.message, stacktrace: e.stacktrace }
+      this.logger.error(error)
+      throw error
     }
   }
 }

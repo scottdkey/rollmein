@@ -1,9 +1,11 @@
 export enum ErrorTypes {
   APP_ERROR = "application error",
-  DB_ERROR = "database Error",
+  DB_ERROR = "database error",
   REDIS_ERROR = 'redis error',
-  INPUT_ERROR = 'input Error',
+  INPUT_ERROR = 'input error',
   AUTH_ERROR = 'authorization error',
   PLAYER_ERROR = 'player table error',
-  INVALID_ROLL = 'invalid roll'
+  INVALID_ROLL = 'invalid roll',
+  NOT_FOUND = 'not found',
+  USER_ERROR = 'user error'
 }

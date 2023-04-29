@@ -5,9 +5,9 @@ import IORedis from "ioredis"
 import { GroupWsService } from "../group/groupWs.service"
 import { ConfigService } from "../common/config/config.service"
 import { validateSessionToken } from "../common/middleware/websocketIsAuth.middleware"
-import { RedisKeys } from "../redis/redis.service"
 import { IGroup, IGroupWsResponse, IGroupWsRequest } from "../types/Group"
 import { GroupWSMessageTypes } from "../types/GroupMessages.enum"
+import { RedisKeys } from "../redis/redisKeys.enum"
 const groupService = container.get(GroupService)
 const groupWsService = container.get(GroupWsService)
 const config = container.get(ConfigService).redisConfig
@@ -76,7 +76,6 @@ export async function GroupWebsocket(ctx: MiddlewareContext<{}>) {
             }
             break
           default:
-            console.log(`unhandled message type: ${parsed.messageType}`)
             break
         }
       }

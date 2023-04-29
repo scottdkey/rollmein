@@ -3,8 +3,10 @@ import { Logger } from "pino"
 import { addToContainer } from "../../container"
 import { LoggerService } from "../../logger/logger.service"
 import { dbToIsoString } from "../../utils/date.util"
-import { ApplicationError, DatabaseError } from "../../utils/errorsHelpers"
 import { ConfigService } from "../config/config.service"
+import { DataResponse } from "../../types/DataResponse"
+import { ErrorTypes } from "../../types/ErrorCodes.enum"
+import { ErrorMessages } from "../../utils/ErrorTypes.enum"
 
 @addToContainer()
 export class DatabaseService {
@@ -12,6 +14,10 @@ export class DatabaseService {
   private logger: Logger
   constructor(private cs: ConfigService, private ls: LoggerService) {
     this.logger = this.ls.getLogger(DatabaseService.name)
+    this.connect()
+  }
+
+  private connect() {
     const { host, user, password, port, database } = this.cs.pgConfig
     this.pool = new Pool({
       host,
@@ -22,6 +28,9 @@ export class DatabaseService {
       max: 15,
       min: 3,
       idleTimeoutMillis: 600000,
+    })
+    this.pool.on('error', (err) => {
+      this.logger.error({ message: 'idle client error', err })
     })
   }
 
@@ -51,14 +60,25 @@ export class DatabaseService {
       return {
         data: null,
         success: false,
-        error:  DatabaseError("This query retrieved no rows")
+        error: {
+          message: ErrorMessages.NoRowsReturned,
+          context: "#databaseService query",
+          type: ErrorTypes.DB_ERROR,
+          detail: "no rows returned"
+        }
       }
     } catch (e) {
       this.logger.error({ ...e, message: "db query failed", text })
       return {
         data: null,
         success: false,
-        error: DatabaseError(e.message)
+        error: {
+          message: ErrorMessages.DatabaseError,
+          stacktrace: e.stacktrace,
+          context: "#databaseService query",
+          type: ErrorTypes.DB_ERROR,
+          detail: e.message
+        }
       }
     } finally {
       client.release()
@@ -82,7 +102,7 @@ export class DatabaseService {
       return {
         data: null,
         success: false,
-        error: ApplicationError(e.message)
+        error: e.message
       }
     }
   }

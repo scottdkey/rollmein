@@ -1,9 +1,6 @@
 {
   "compilerOptions": {
     "typeRoots": ["types"],
-    "paths": {
-      "*": ["types"]
-    },
     "types": ["node", "react"]
   }
 }

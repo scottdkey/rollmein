@@ -2,6 +2,7 @@ import { ApiRequest } from "./Rollmein.api"
 import { RestMethods } from "../types/RestMethods.enum"
 import { ICreateGroup, IGroup, IGroupDelete, IJoinGroupReq, IJoinGroupRes, IUpdateGroup } from "../types/Group"
 import { useMutation, useQuery } from "react-query"
+import { useSession } from "next-auth/react"
 
 
 
@@ -93,15 +94,20 @@ export const useDeleteGroup = ({ onSuccess }: { onSuccess: (group: IGroup | null
 
 export const addPlayerToGroup = async (params: ICreatePlayer, sessionToken: string) => await ApiRequest<IPlayer, ICreatePlayer>(GroupRoutes.ADD_PLAYER, RestMethods.POST, { body: params, sessionToken })
 
-export const useAddPlayerToGroup = ({ onSuccess }: { onSuccess: (player: IPlayer | null) => any }) => useMutation({
-  mutationFn: async (params: ICreatePlayer, sessionToken?: string) => {
-    if (sessionToken) {
-      return await addPlayerToGroup(params, sessionToken)
-    }
-    return null
-  },
-  onSuccess
-})
+export const useAddPlayerToGroup = ({ onSuccess }: { onSuccess: (player: IPlayer | null) => any }) => {
+  const {data: session} = useSession()
+  const sessionToken = session?.id ? session.id : undefined
+  return useMutation({
+    mutationFn: async (params: ICreatePlayer) => {
+      if (sessionToken) {
+        const res = await addPlayerToGroup(params, sessionToken)
+        return res
+      }
+      return null
+    },
+    onSuccess
+  })
+}
 
 export const addUserToGroup = async (params: ICreatePlayer, sessionToken: string) => await ApiRequest<IPlayer, ICreatePlayer>(GroupRoutes.ADD_USER, RestMethods.POST, { body: params, sessionToken })
 

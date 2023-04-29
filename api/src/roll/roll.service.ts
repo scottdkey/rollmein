@@ -1,15 +1,17 @@
 import { addToContainer } from "../container";
 import { Logger } from "pino";
 import { LoggerService } from "../logger/logger.service";
+import { IApplicationError } from "../types/ApplicationError";
 import { ErrorTypes } from "../types/ErrorCodes.enum";
+import { createError } from "../utils/CreateError";
+import { ErrorMessages } from "../utils/ErrorTypes.enum";
+import { DataResponse } from "../types/DataResponse";
 
 @addToContainer()
 export class RollService {
   private logger: Logger
   constructor(private ls: LoggerService) {
     this.logger = this.ls.getLogger(RollService.name)
-    this.logger.info({ message: "RollService created" })
-
   }
 
   async addPlayerToRoll(body: IAddPlayerRequestBody) {
@@ -81,10 +83,7 @@ export class RollService {
       return {
         data: null,
         success: false,
-        error: {
-          type: ErrorTypes.INVALID_ROLL,
-          message: validRoll.errors.join()
-        }
+        error: validRoll.errors.join()
       }
     }
     const tankRoll = this.rollForRole(PlayerRoles.TANK, currentGroup);
@@ -148,34 +147,31 @@ export class RollService {
     return { remaining, players };
   }
 
-  protected createError(type: string, message: string): IApplicationError {
-    return {
-      type,
-      message
-    }
-  }
-
   private validRoll = (players: IPlayer[], rollType: RollType): ValidRoll => {
     const playerCounts = this.playerCounts(players, rollType)
     const errorArray: IApplicationError[] = []
-    const invalidRollError = (message: string) => {
-      errorArray.push(this.createError("invalidRoll", message))
+    const invalidRollError = (message: ErrorMessages) => {
+      errorArray.push(createError({
+        message,
+        type: ErrorTypes.INVALID_ROLL,
+        context: 'validRoll'
+      }))
     }
     const isRoleBased = rollType === RollType.ROLE
     if (isRoleBased && playerCounts.tanks === 0) {
-      invalidRollError("must have a tank")
+      invalidRollError(ErrorMessages.MustHaveTank)
 
     }
     if (isRoleBased && playerCounts.dps >= 3) {
-      invalidRollError("must have at least 3 dps")
+      invalidRollError(ErrorMessages.MustHaveCorrectDps)
 
     }
     if (isRoleBased && playerCounts.healers === 0) {
-      invalidRollError("must have a healer")
+      invalidRollError(ErrorMessages.MustHaveHealer)
 
     }
     if (playerCounts.inTheRoll > 5) {
-      invalidRollError("must have more than 5 players")
+      invalidRollError(ErrorMessages.MustCorrectPlayers)
     }
     return {
       valid: errorArray.length < 1,
