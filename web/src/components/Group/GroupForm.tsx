@@ -4,7 +4,7 @@ import { useEffect, useState } from "react"
 import { useSession } from "next-auth/react"
 import { useGroupSlice } from "../../stores/Group.slice"
 import { RollType, useCreateGroup, useGetGroup, useUpdateGroup } from "../../utils/group.api"
-import { ICreateGroup, IGroup, IUpdateGroup } from "../../types/Group"
+import { ICreateGroup, IGroup, IUpdateGroup } from "../../../../shared/types/Group"
 
 export const GroupForm = (params: { group?: IGroup }) => {
   const { status, data: session } = useSession()

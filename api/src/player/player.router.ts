@@ -2,13 +2,15 @@ import { PlayerService } from './player.service';
 import { container } from '../container';
 import Router from "koa-router";
 import { Next } from 'koa';
-import { MyContext } from '../types/Context';
-import { HTTPCodes } from '../types/HttpCodes.enum';
 import { RequireAuth } from '../common/middleware/requireAuth.middleware';
 import { LoggerService } from '../logger/logger.service';
+import { MyContext } from '../../../shared/types/Context';
+import { HTTPCodes } from '../../../shared/types/HttpCodes.enum';
+import { GroupCountService } from '../groupCount/groupCount.service';
 
 const router = new Router({ prefix: '/player' })
 const playerService = container.get(PlayerService)
+const groupCountService = container.get(GroupCountService)
 const logger = container.get(LoggerService).getLogger("playerRouter")
 
 router.get('/:playerId', RequireAuth, async (ctx: MyContext<unknown, IPlayer | null>, next) => {
@@ -19,7 +21,7 @@ router.get('/:playerId', RequireAuth, async (ctx: MyContext<unknown, IPlayer | n
             ctx.status = HTTPCodes.OK
 
         }
-        if(!ctx.params.playerId) {
+        if (!ctx.params.playerId) {
             ctx.throw(HTTPCodes.NOT_FOUND, `no player with id ${ctx.params.playerId}`)
         }
         await next()
@@ -33,6 +35,10 @@ router.put("/", RequireAuth, async (ctx: MyContext<IUpdatePlayer, IPlayer | null
     try {
         const requestBody = ctx.request.body
         const updateRes = await playerService.updatePlayer(requestBody)
+
+        if (updateRes && updateRes.groupId) {
+            await groupCountService.updateActiveGroupCounts(updateRes.groupId)
+        }
         ctx.body = updateRes
         ctx.status = HTTPCodes.OK
         await next()
@@ -78,35 +84,35 @@ router.get("/:userId", RequireAuth, async (ctx: MyContext<{}, IPlayer | null>, n
         }
 
         await next()
-    } catch(e){
+    } catch (e) {
         logger.error(e)
     }
 
 })
 
-router.get("/group/:groupId", RequireAuth, async(ctx: MyContext<{}, IPlayer[] | null>, next: Next) => {
- try {
-     const groupId = ctx.params.groupId
-     if (groupId) {
-         {
-             const players = await playerService.getPlayersByGroupId(groupId)
+router.get("/group/:groupId", RequireAuth, async (ctx: MyContext<{}, IPlayer[] | null>, next: Next) => {
+    try {
+        const groupId = ctx.params.groupId
+        if (groupId) {
+            {
+                const players = await playerService.getPlayersByGroupId(groupId)
 
-             if (players.data) {
-                 ctx.body = players.data
-             }
-             if (players.error) {
-                 const error = players.error
-                 logger.warn(error)
-                 ctx.message = players.error
-                 ctx.body = []
-             }
+                if (players.data) {
+                    ctx.body = players.data
+                }
+                if (players.error) {
+                    const error = players.error
+                    logger.warn(error)
+                    ctx.message = players.error
+                    ctx.body = []
+                }
 
-         }
-         await next()
-     }
- }   catch (e){
-    logger.error(e)
- }
+            }
+            await next()
+        }
+    } catch (e) {
+        logger.error(e)
+    }
 })
 
 

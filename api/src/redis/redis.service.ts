@@ -1,11 +1,11 @@
-import { RedisError } from '../utils/ErrorTypes.enum';
+import { RedisError } from '../../../shared/types/ErrorTypes.enum';
 import { addToContainer } from "../container";
 import IoRedis, { Redis } from 'ioredis'
 import { ConfigService } from '../common/config/config.service';
 import { LoggerService } from '../logger/logger.service';
 import { Logger } from 'pino';
-import { RedisKeys } from './redisKeys.enum';
-import { DataResponse } from '../types/DataResponse';
+import { RedisKeys } from '../../../shared/types/redisKeys.enum';
+import { DataResponse } from '../../../shared/types/DataResponse';
 
 
 
@@ -107,7 +107,7 @@ export class RedisService {
       res = await this.set(key, id, data, expireTime)
       retryCount++
     }
-    if(res){
+    if (res) {
       return res
     }
     return {
@@ -115,12 +115,12 @@ export class RedisService {
       success: false,
       error: RedisError(key, id, data, 'unable to setWithRetry in redis')
     }
-    
+
   }
   async publish<T>(key: RedisKeys, id: string, data: T) {
     try {
       await this.pub.publish(`${key}-${id}`, JSON.stringify(data))
-    } catch(e){
+    } catch (e) {
       this.logger.error({
         message: e.message,
         context: "redis publisher had an error"

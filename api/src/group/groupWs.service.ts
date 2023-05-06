@@ -3,9 +3,9 @@ import { addToContainer } from "../container"
 import { LoggerService } from "../logger/logger.service"
 import { RedisService } from "../redis/redis.service"
 import { Logger } from "pino"
-import { RedisKeys } from "../redis/redisKeys.enum"
-import { IGroupWsResponse, IGroup } from "../types/Group"
-import { GroupWSMessageTypes } from "../types/GroupMessages.enum"
+import { RedisKeys } from "../../../shared/types/redisKeys.enum"
+import { IGroupWsResponse, IGroup } from "../../../shared/types/Group"
+import { GroupWSMessageTypes } from "../../../shared/types/GroupMessages.enum"
 
 
 @addToContainer()
@@ -42,10 +42,10 @@ export class GroupWsService {
       },
     })
   }
-  async updateGroupCount(groupId: string, groupCount: PlayerCounts) {
+  async updateGroupCount(groupId: string, playerCounts: PlayerCounts) {
     await this.groupPub(groupId, {
       messageType: GroupWSMessageTypes.CountUpdated,
-      data: groupCount
+      data: playerCounts
     })
   }
 
@@ -79,7 +79,7 @@ export class GroupWsService {
   async playerWasAdded(player: IPlayer) {
     const groupId = player.groupId as string
     await this.groupPub(groupId, {
-      messageType: GroupWSMessageTypes.AddPlayer,
+      messageType: GroupWSMessageTypes.PlayerAdded,
       data: player
     })
   }
@@ -99,16 +99,11 @@ export class GroupWsService {
       if (current.data === null) {
         await this.redisService.set(RedisKeys.GROUP, group.id, group)
       }
-      await sub.subscribe(redisKey, (err, count) => {
+      await sub.subscribe(redisKey, (err, _) => {
         if (err) {
           this.logger.error({
             message: `Failed to subscribe: %s ${err.message}`
           })
-        } else {
-          this.logger.info({
-            message:
-              `Subscribed successfully! This client is currently subscribed to ${count} channels.`
-          });
         }
       })
     }

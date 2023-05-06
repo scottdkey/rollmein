@@ -6,8 +6,7 @@ import { useDeleteGroup, useGetGroup } from "../../utils/group.api"
 import { useGetGroupPlayers } from "../../utils/player.api"
 import { useGroupSlice } from "../../stores/Group.slice"
 import { GroupForm } from "./GroupForm"
-import { IGroup } from "../../types/Group"
-import { GroupWsProvider } from "../../providers/GroupWebsocketProvider"
+import { IGroup } from "@sharedTypes/Group"
 
 
 export const Group = (params: { group: IGroup }) => {

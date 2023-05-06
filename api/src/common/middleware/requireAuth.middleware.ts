@@ -1,11 +1,11 @@
 import { Next } from "koa";
 import { container } from "../../container";
 import { LoggerService } from "../../logger/logger.service";
-import { MyContext } from "../../types/Context";
-import { HTTPCodes } from "../../types/HttpCodes.enum";
-import { IApplicationError } from "../../types/ApplicationError";
-import { ErrorMessages } from "../../utils/ErrorTypes.enum";
-import { ErrorTypes } from "../../types/ErrorCodes.enum";
+import { IApplicationError } from "../../../../shared/types/ApplicationError";
+import { MyContext } from "../../../../shared/types/Context";
+import { ErrorTypes } from "../../../../shared/types/ErrorCodes.enum";
+import { ErrorMessages } from "../../../../shared/types/ErrorTypes.enum";
+import { HTTPCodes } from "../../../../shared/types/HttpCodes.enum";
 
 
 

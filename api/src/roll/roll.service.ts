@@ -1,11 +1,11 @@
 import { addToContainer } from "../container";
 import { Logger } from "pino";
 import { LoggerService } from "../logger/logger.service";
-import { IApplicationError } from "../types/ApplicationError";
-import { ErrorTypes } from "../types/ErrorCodes.enum";
 import { createError } from "../utils/CreateError";
-import { ErrorMessages } from "../utils/ErrorTypes.enum";
-import { DataResponse } from "../types/DataResponse";
+import { IApplicationError } from "../../../shared/types/ApplicationError";
+import { ErrorTypes } from "../../../shared/types/ErrorCodes.enum";
+import { DataResponse } from "../../../shared/types/DataResponse";
+import { ErrorMessages } from "../../../shared/types/ErrorTypes.enum";
 
 @addToContainer()
 export class RollService {

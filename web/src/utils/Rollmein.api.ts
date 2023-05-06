@@ -1,7 +1,5 @@
-import { RestMethods } from "../types/RestMethods.enum";
+import { RestMethods } from "../../../shared/types/RestMethods.enum";
 import { apiUrl } from "./constants";
-
-
 
 export async function ApiRequest<Res, T>(route: string, method: RestMethods, params: { body?: T, sessionToken?: string }) {
   try {
@@ -34,7 +32,7 @@ export async function ApiRequest<Res, T>(route: string, method: RestMethods, par
       }
     }
     const res = await fetch(`${apiUrl}${route}`, options)
-    if (res.status <= 400) {
+    if (res.status < 400) {
       return await res.json() as Res
     }
     return null

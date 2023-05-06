@@ -3,12 +3,16 @@ import { PlayerRepository } from './player.repository';
 import { GroupWsService } from '../group/groupWs.service';
 import { Logger } from 'pino';
 import { LoggerService } from '../logger/logger.service';
-import { DataResponse } from '../types/DataResponse';
+import { DataResponse } from '../../../shared/types/DataResponse';
 
 @addToContainer()
 export class PlayerService {
   private logger: Logger
-  constructor(private playerRepo: PlayerRepository, private ls: LoggerService, private groupWs: GroupWsService) {
+  constructor(
+    private playerRepo: PlayerRepository,
+    private ls: LoggerService,
+    private groupWs: GroupWsService,
+  ) {
     this.logger = this.ls.getLogger(PlayerService.name)
   }
 
@@ -114,6 +118,7 @@ export class PlayerService {
         return null
       }
     } catch (e) {
+      this.logger.error({ ...e })
       throw e.message
     }
 
@@ -121,7 +126,6 @@ export class PlayerService {
 
   async updatePlayer(input: IUpdatePlayer) {
     const res = await this.playerRepo.updatePlayer(input)
-
     if (res.data && res.data.groupId !== null) {
       this.groupWs.playerUpdated(res.data)
     }

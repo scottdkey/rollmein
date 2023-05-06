@@ -5,9 +5,11 @@ import IORedis from "ioredis"
 import { GroupWsService } from "../group/groupWs.service"
 import { ConfigService } from "../common/config/config.service"
 import { validateSessionToken } from "../common/middleware/websocketIsAuth.middleware"
-import { RedisKeys } from "../redis/redisKeys.enum"
-import { IGroup, IGroupWsResponse, IGroupWsRequest } from "../types/Group"
-import { GroupWSMessageTypes } from "../types/GroupMessages.enum"
+import { RedisKeys } from "../../../shared/types/redisKeys.enum"
+import { IGroup, IGroupWsResponse, IGroupWsRequest } from "../../../shared/types/Group"
+import { GroupWSMessageTypes } from "../../../shared/types/GroupMessages.enum"
+
+
 const groupService = container.get(GroupService)
 const groupWsService = container.get(GroupWsService)
 const config = container.get(ConfigService).redisConfig

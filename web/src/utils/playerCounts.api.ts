@@ -1,7 +1,7 @@
 import { useQuery } from "react-query";
-import { IGroupPlayerCountResponse } from "../types/Group";
-import { RestMethods } from "../types/RestMethods.enum";
 import { ApiRequest } from "./Rollmein.api";
+import { IGroupPlayerCountResponse } from "@sharedTypes/Group";
+import { RestMethods } from "@sharedTypes/RestMethods.enum";
 
 export enum PlayerCountRoutes {
   COUNT = 'group/count'

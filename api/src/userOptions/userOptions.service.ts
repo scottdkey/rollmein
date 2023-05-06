@@ -1,11 +1,11 @@
-import { addToContainer } from '../container';
 import { Logger } from 'pino';
 import { DataServiceAbstract } from '../common/data/dataService.abstract';
 import { DatabaseService } from '../common/database/database.service';
+import { addToContainer } from '../container';
 import { LoggerService } from '../logger/logger.service';
-import { DbUserOptions, UserOptions, UserOptionsInput } from '../types/UserOptions';
-import { ErrorMessages } from '../utils/ErrorTypes.enum';
-import { DataResponse } from '../types/DataResponse';
+import { ErrorMessages } from '../../../shared/types/ErrorTypes.enum';
+import { DataResponse } from '../../../shared/types/DataResponse';
+import { DbUserOptions, UserOptions, UserOptionsInput } from '../../../shared/types/UserOptions';
 
 @addToContainer()
 export class UserOptionsService extends DataServiceAbstract<DbUserOptions, UserOptions>{

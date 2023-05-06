@@ -1,7 +1,7 @@
+import { DataResponse } from "../../../shared/types/DataResponse"
 import { DataServiceAbstract } from "../common/data/dataService.abstract"
 import { DatabaseService } from "../common/database/database.service"
 import { addToContainer } from "../container"
-import { DataResponse } from "../types/DataResponse"
 
 @addToContainer()
 export class PlayerRepository extends DataServiceAbstract<DbPlayer, IPlayer> {

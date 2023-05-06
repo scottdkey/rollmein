@@ -5,10 +5,11 @@ import { useGroupSlice } from "../stores/Group.slice";
 import { useToast } from "@chakra-ui/react";
 import { useQueryClient } from "react-query";
 import useWebSocket, { ReadyState } from "react-use-websocket";
-import { IGroupWsResponse } from "../types/Group";
-import { GroupWSMessageTypes } from "../types/GroupMessages.enum";
 import { useGetPlayerCount } from "../utils/playerCounts.api";
 import { usePlayerCountsSlice } from "../stores/PlayerCounts.slice";
+import { IGroupWsResponse } from "@sharedTypes/Group";
+import { GroupWSMessageTypes } from "@sharedTypes/GroupMessages.enum";
+import { usePlayersSlice } from "../stores/Players.slice";
 
 interface IGroupWsContext {
   ready: boolean
@@ -23,6 +24,8 @@ export const GroupWsProvider = ({ children, groupId }: { children: ReactNode, gr
   const [readyState, setReadyState] = useState<ReadyState>(ReadyState.UNINSTANTIATED)
   const [loading, setLoading] = useState(false)
   const setPlayerCounts = usePlayerCountsSlice(state => state.setPlayerCounts)
+  const handlePlayerChange = usePlayersSlice(state => state.handlePlayerChange)
+  const removePlayer = usePlayersSlice(state => state.removePlayer)
 
   const toast = useToast()
   const queryClient = useQueryClient()
@@ -46,27 +49,31 @@ export const GroupWsProvider = ({ children, groupId }: { children: ReactNode, gr
       } catch (e) {
         console.error(e)
       }
-    }
+    },
+    shouldReconnect: (closeEvent) => true,
   })
 
   const handleMessageData = ({ messageType, data }: IGroupWsResponse) => {
+    console.log({ messageType, data })
     switch (messageType) {
       case GroupWSMessageTypes.Open:
-        console.log({ messageType, data })
         break
       case GroupWSMessageTypes.PlayerUpdated:
-        console.log({ messageType, data })
+        handlePlayerChange(data)
         break
+      case GroupWSMessageTypes.CountUpdated:
+        setPlayerCounts(data)
+        break
+      case GroupWSMessageTypes.PlayerAdded:
+        handlePlayerChange(data)
+        break
+
       default:
         console.error({ messageType, data })
     }
 
 
   }
-
-
-
-
 
   const sendMessage = (messageType: GroupWSMessageTypes, body: any, sessionToken: string) => {
     try {
@@ -80,6 +87,12 @@ export const GroupWsProvider = ({ children, groupId }: { children: ReactNode, gr
       console.error(e)
     }
   }
+
+  useEffect(() => { 
+    if(readyState !== ReadyState.OPEN && session && session.id) {
+      sendMessage(GroupWSMessageTypes.Open, { groupId }, session?.id)
+    }
+  }, [readyState, session, groupId])
 
 
   useEffect(() => {

@@ -1,6 +1,0 @@
-{
-  "compilerOptions": {
-    "typeRoots": ["types"],
-    "types": ["node", "react"]
-  }
-}

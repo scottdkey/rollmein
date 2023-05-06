@@ -1,5 +1,5 @@
 export enum GroupWSMessageTypes {
-  AddPlayer = "addPlayer",
+  PlayerAdded = "addPlayer",
   RemovePlayer = 'removePlayer',
   PlayerUpdated = 'playerUpdated',
   AddMember = "addMember",

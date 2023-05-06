@@ -1,9 +1,9 @@
 import { ApiRequest } from "./Rollmein.api"
-import { RestMethods } from "../types/RestMethods.enum"
-import { ICreateGroup, IGroup, IGroupDelete, IJoinGroupReq, IJoinGroupRes, IUpdateGroup } from "../types/Group"
 import { useMutation, useQuery } from "react-query"
 import { useSession } from "next-auth/react"
 import { useGroupSlice } from "../stores/Group.slice"
+import { IGroup, ICreateGroup, IUpdateGroup, IJoinGroupReq, IJoinGroupRes, IGroupDelete } from "@sharedTypes/Group"
+import { RestMethods } from "@sharedTypes/RestMethods.enum"
 
 
 

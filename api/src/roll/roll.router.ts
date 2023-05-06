@@ -4,8 +4,8 @@ import Router from "koa-router";
 import { isAuth } from '../common/middleware/isAuth';
 import { LoggerService } from '../logger/logger.service';
 import { RequireAuth } from '../common/middleware/requireAuth.middleware';
-import { MyContext } from '../types/Context';
-import { HTTPCodes } from '../types/HttpCodes.enum';
+import { MyContext } from '../../../shared/types/Context';
+import { HTTPCodes } from '../../../shared/types/HttpCodes.enum';
 
 const router = new Router({ prefix: '/roll' })
 

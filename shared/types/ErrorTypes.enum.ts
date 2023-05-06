@@ -1,4 +1,4 @@
-import { RedisKeys } from "../redis/redisKeys.enum"
+import { RedisKeys } from "./redisKeys.enum"
 
 
 export function RedisError<T>(key: RedisKeys, id: string, data: T, message: string) {

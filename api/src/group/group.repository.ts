@@ -3,7 +3,7 @@ import { DataServiceAbstract } from "../common/data/dataService.abstract";
 import { DatabaseService } from "../common/database/database.service";
 import { addToContainer } from "../container";
 import { LoggerService } from "../logger/logger.service";
-import { DbGroup, ICreateGroup, IGroup } from "../types/Group";
+import { DbGroup, IGroup, ICreateGroup } from "../../../shared/types/Group";
 
 @addToContainer()
 export class GroupRepository extends DataServiceAbstract<DbGroup, IGroup>{

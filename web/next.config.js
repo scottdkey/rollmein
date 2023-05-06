@@ -11,7 +11,19 @@ module.exports = withBundleAnalyzer({
   sassOptions: {
     includePaths: [path.join(__dirname, "styles")],
   },
-  async redirects(){
+  ssr: false,
+  webpack: (config) => {
+    config.module.rules.push({
+      test: /\.tsx?$/,
+      loader: "ts-loader",
+      options: {
+        transpileOnly: true,
+      },
+    });
+
+    return config;
+  },
+  async redirects() {
     return [
       {
         source: "/#",
@@ -19,5 +31,5 @@ module.exports = withBundleAnalyzer({
         permanent: true,
       },
     ];
-  }
-})
+  },
+});

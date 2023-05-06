@@ -5,31 +5,17 @@ import PlayerCard from "./PlayerCard"
 import { useQueryClient } from "react-query";
 import { useGroupSlice } from "../../stores/Group.slice";
 import { NewPlayerCard } from "./NewPlayerCard";
-
 import { usePlayersSlice } from "../../stores/Players.slice";
-import { useSession } from "next-auth/react";
 import { useGetGroupPlayers } from "../../utils/player.api";
 
 
 const PlayerCards = ({ groupId }: { groupId: string }): JSX.Element => {
   const queryClient = useQueryClient()
-  const { data: session } = useSession()
   const { isOpen, onOpen, onClose } = useDisclosure()
-  const groups = useGroupSlice(state => state.groups)
-  const group = groups.find(group => group.id === groupId)
+  const group = useGroupSlice(state => state.groups.find(g => g.id === groupId))
   const players = usePlayersSlice(state => state.players)
-  const setPlayers = usePlayersSlice(state => state.setPlayers)
 
-  const { isLoading } = useGetGroupPlayers({
-    onSuccess: (players) => {
-      setPlayers(players)
-    },
-    groupId,
-    sessionToken: session?.id
-  })
-
-
-
+  const { isLoading } = useGetGroupPlayers({ groupId })
 
   if (isLoading) {
     return <Box><Spinner /></Box>

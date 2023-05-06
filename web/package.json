@@ -7,9 +7,8 @@
   "license": "MIT",
   "homepage": "https://github.com/scottdkey/rollmein",
   "scripts": {
-    "copyTypes": "cp -r ../api/src/types ./src",
-    "dev": "yarn copyTypes && next dev",
-    "build": "yarn copyTypes && next build",
+    "dev": "next dev",
+    "build": "next build",
     "start": "next start",
     "lint": "next lint",
     "analyze": "cross-env ANALYZE=true next build"
@@ -47,6 +46,7 @@
     "eslint-config-next": "11.1.0",
     "eslint-config-prettier": "^8.3.0",
     "sass": "^1.54.9",
+    "ts-loader": "^9.4.2",
     "types": "*",
     "typescript": "4.8.3",
     "zukeeper": "^1.0.2"

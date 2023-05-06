@@ -1,19 +1,23 @@
 import { addToContainer } from "../container";
 import { GroupRepository } from './group.repository';
-import { HTTPCodes } from "../types/HttpCodes.enum";
-import { ICreateGroup, IGroup, IUpdateGroup } from "../types/Group";
 import { PlayerService } from "../player/player.service";
 import { GroupWsService } from "./groupWs.service";
-import { RollService } from "../roll/roll.service";
 import { LoggerService } from "../logger/logger.service";
 import { Logger } from "pino";
-import { ErrorMessages } from "../utils/ErrorTypes.enum";
-import { DataResponse } from "../types/DataResponse";
+import { ErrorMessages } from "../../../shared/types/ErrorTypes.enum";
+import { DataResponse } from "../../../shared/types/DataResponse";
+import { ICreateGroup, IGroup, IUpdateGroup } from "../../../shared/types/Group";
+import { HTTPCodes } from "../../../shared/types/HttpCodes.enum";
 
 @addToContainer()
 export class GroupService {
   private logger: Logger
-  constructor(private groupRepo: GroupRepository, private ls: LoggerService, private playerService: PlayerService, private groupWs: GroupWsService, private rollService: RollService) {
+  constructor(
+    private groupRepo: GroupRepository,
+    private ls: LoggerService,
+    private playerService: PlayerService,
+    private groupWs: GroupWsService
+  ) {
     this.logger = this.ls.getLogger(GroupService.name)
   }
 
@@ -68,31 +72,14 @@ export class GroupService {
     }
   }
 
-  async getGroupPlayerCounts(groupId: string) {
-    const group = await this.getGroup(groupId)
-    const players = await this.playerService.getPlayersByGroupId(groupId)
-    if (players.data && group.group?.rollType) {
-
-      const res = this.rollService.playerCounts(players.data, group.group.rollType)
-      if (res.locked > 5) {
-        this.groupWs.tooManyLocked(groupId, res.locked)
-      }
-      return res
-    }
-    return null
-
-  }
-
-
   async updateActiveGroup(group: IGroup) {
     const res = await this.groupRepo.updateGroup(group)
-    const counts = await this.getGroupPlayerCounts(group.id)
-    if (counts) {
-      await this.groupWs.updateGroupCount(group.id, counts)
+    if (res.success && res.data) {
+      await this.groupWs.groupUpdated(group)
     }
-    await this.groupWs.groupUpdated(group)
     return res
   }
+
   async updateGroup(
     userId: string,
     updateValueInput: IUpdateGroup): Promise<DataResponse<IGroup>> {
@@ -232,10 +219,10 @@ export class GroupService {
         error: {
           message: ErrorMessages.AuthorizationError,
           detail: "You are not authorized to delete this group"
-          
+
 
         }
-        
+
       }
     }
 

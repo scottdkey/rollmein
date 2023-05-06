@@ -4,9 +4,9 @@ import { SessionService } from "../session/session.service";
 import { GoogleClientService } from "../googleClient/googleClient.service";
 import { Logger } from "pino";
 import { LoggerService } from "../logger/logger.service";
-import { ErrorMessages } from "../utils/ErrorTypes.enum";
-import { ErrorTypes } from "../types/ErrorCodes.enum";
-import { IApplicationError } from "../types/ApplicationError";
+import { ErrorMessages } from "../../../shared/types/ErrorTypes.enum";
+import { IApplicationError } from "../../../shared/types/ApplicationError";
+import { ErrorTypes } from "../../../shared/types/ErrorCodes.enum";
 
 @addToContainer()
 export class AuthService {

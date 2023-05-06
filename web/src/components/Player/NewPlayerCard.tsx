@@ -1,8 +1,7 @@
 import { useState } from "react"
-
 import PlayerCard from "./PlayerCard"
 import { Box, Button, Center } from "@chakra-ui/react"
-import { RollType } from "../../types/Group.enum"
+import { RollType } from "@sharedTypes/Group.enum"
 
 export const NewPlayerCard = (props: { rollType: RollType, groupId: string }) => {
 

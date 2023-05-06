@@ -5,8 +5,8 @@ import { DefaultState, Next } from 'koa';
 import { SessionService } from '../session/session.service';
 import { PlayerService } from '../player/player.service';
 import { RequireAuth } from '../common/middleware/requireAuth.middleware';
-import { MyContext } from '../types/Context';
-import { HTTPCodes } from '../types/HttpCodes.enum';
+import { MyContext } from '../../../shared/types/Context';
+import { HTTPCodes } from '../../../shared/types/HttpCodes.enum';
 
 const router = new Router<DefaultState, MyContext<any, any>>({ prefix: '/user' })
 const userService = container.get(UserService)

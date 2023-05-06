@@ -3,14 +3,14 @@ import Router from 'koa-router';
 import { container } from '../container';
 import { LoggerService } from '../logger/logger.service';
 import { SessionService } from '../session/session.service';
-import { MyContext } from '../types/Context';
-import { HTTPCodes } from '../types/HttpCodes.enum';
 import { UserService } from '../user/user.service';
 import { AuthService } from './auth.service';
-import { IApplicationError } from '../types/ApplicationError';
 import { createError } from '../utils/CreateError';
-import { ErrorTypes } from '../types/ErrorCodes.enum';
-import { ErrorMessages } from '../utils/ErrorTypes.enum';
+import { ErrorMessages } from '../../../shared/types/ErrorTypes.enum';
+import { IApplicationError } from '../../../shared/types/ApplicationError';
+import { MyContext } from '../../../shared/types/Context';
+import { ErrorTypes } from '../../../shared/types/ErrorCodes.enum';
+import { HTTPCodes } from '../../../shared/types/HttpCodes.enum';
 
 
 const authService = container.get(AuthService)
@@ -29,7 +29,7 @@ export enum AuthTypes {
 }
 
 authRouter.post("/validate",
-  async (ctx: MyContext<ValidateRequestBody, { user: ScrubbedUser | null, sessionId: string | null, success: boolean, error: IApplicationError| null }>, next: Next) => {
+  async (ctx: MyContext<ValidateRequestBody, { user: ScrubbedUser | null, sessionId: string | null, success: boolean, error: IApplicationError | null }>, next: Next) => {
 
     try {
       const body = ctx.request.body

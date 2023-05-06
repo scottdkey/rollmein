@@ -2,22 +2,9 @@ import { ApiRequest } from "./Rollmein.api"
 import { useMutation, useQuery } from "react-query"
 import { useSession, signOut } from "next-auth/react"
 import { useToast } from "@chakra-ui/react"
-import { RestMethods } from "../types/RestMethods.enum"
+import { RestMethods } from "@sharedTypes/RestMethods.enum"
+import { UserRoutes } from "@sharedTypes/UserRoutes.enum"
 
-interface IFetchError {
-  status: number,
-  message: string
-}
-
-interface IMeRes { user: ScrubbedUser | null, success: boolean }
-export enum UserRoutes {
-  ME = 'user/me',
-  PROFILE = 'user/profile'
-}
-
-export interface IProfileUpdateBody {
-  username: string
-}
 
 
 export const getMe = async (sessionToken?: string) => {

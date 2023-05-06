@@ -1,8 +1,8 @@
 import { Next } from "koa";
 import { SessionService } from "../../session/session.service";
 import { LoggerService } from "../../logger/logger.service";
-import { MyContext } from "../../types/Context";
 import { container } from "../../container";
+import { MyContext } from "../../../../shared/types/Context";
 
 
 const sessionService = container.get(SessionService)

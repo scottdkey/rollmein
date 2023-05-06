@@ -1,8 +1,8 @@
 import { ApiRequest } from "./Rollmein.api"
-import { RestMethods } from "../types/RestMethods.enum"
 import { useMutation, useQuery } from "react-query"
 import { useSession } from "next-auth/react"
 import { usePlayersSlice } from "../stores/Players.slice"
+import { RestMethods } from "@sharedTypes/RestMethods.enum"
 
 
 
@@ -24,17 +24,25 @@ export const getPlayer = async (playerId?: string, sessionToken?: string) => {
   return null
 }
 
-export const useGetPlayer = ({ onSuccess, sessionId, playerId, onError }: { onSuccess: (data: IPlayer | null) => void, playerId?: string, sessionId?: string, onError?: (error: any) => void }) => useQuery({
-  queryKey: ["player", playerId],
-  queryFn: async () => {
-    if (playerId && sessionId) {
-      return await getPlayer(playerId, sessionId)
+export const useGetPlayer = ({ playerId, enabled = true }: { enabled?: boolean, playerId?: string }) => {
+  const { data: session } = useSession()
+  const sessionToken = session?.id
+  return useQuery({
+    enabled,
+    queryKey: ["player", playerId],
+    queryFn: async () => {
+      if (playerId && sessionToken) {
+        return await getPlayer(playerId, sessionToken)
+      }
+      return null
+    },
+    onSuccess: (res) => {
+      if (res) {
+        usePlayersSlice.getState().handlePlayerChange(res)
+      }
     }
-    return null
-  },
-  onSuccess,
-  onError
-})
+  })
+}
 
 export const getGroupPlayers = async (groupId: string, sessionToken: string) =>
   await ApiRequest<IPlayer[], undefined>(`${PlayerRoutes.PLAYERS}/${groupId}`, RestMethods.GET, { sessionToken })
@@ -64,6 +72,25 @@ export const useGetGroupPlayers = ({ groupId }: { groupId?: string }) => {
 
 export const getSignedInUserPlayer = async (sessionToken: string) => await ApiRequest<IPlayer, undefined>(`${PlayerRoutes.PLAYER_BY_SIGNED_IN_USER}`, RestMethods.GET, { sessionToken })
 
+export const useGetSignedInUserPlayer = () => {
+  const { data: session } = useSession()
+  const sessionToken = session?.id
+  return useQuery({
+    queryKey: ["user-player"],
+    queryFn: async (): Promise<IPlayer | null> => {
+      if (sessionToken) {
+        return await getSignedInUserPlayer(sessionToken)
+      }
+      return null
+    },
+    onSuccess: (res) => {
+      if (res) {
+        usePlayersSlice.getState().handlePlayerChange(res)
+      }
+    }
+  })
+}
+
 export const getPlayerFromUserId = async (userId: string, sessionToken: string) => await ApiRequest<IPlayer, undefined>(`${PlayerRoutes.PLAYER_BY_USER_ID}/${userId}`, RestMethods.GET, { sessionToken })
 
 export const createPlayer = async (params: ICreatePlayer, sessionToken: string) => await ApiRequest<IPlayer, ICreatePlayer>(PlayerRoutes.PLAYER, RestMethods.POST, { body: params, sessionToken })
@@ -79,10 +106,19 @@ export const useCreatePlayer = (setterFunction?: (player: IPlayer | null) => any
     if (setterFunction) {
       setterFunction(data)
     }
+    if (data) {
+      usePlayersSlice.getState().handlePlayerChange(data)
+    }
   }
 })
 
-export const updatePlayer = async (params: IUpdatePlayer, sessionToken: string) => await ApiRequest<IPlayer, IUpdatePlayer>(PlayerRoutes.PLAYER, RestMethods.PUT, { body: params, sessionToken })
+export const updatePlayer = async (params: IUpdatePlayer, sessionToken: string) => {
+  try {
+    await ApiRequest<IPlayer, IUpdatePlayer>(PlayerRoutes.PLAYER, RestMethods.PUT, { body: params, sessionToken })
+  } catch (e) {
+    console.log(e)
+  }
+}
 
 export const useUpdatePlayer = () => {
   const { data: session } = useSession()
@@ -93,6 +129,11 @@ export const useUpdatePlayer = () => {
         return await updatePlayer(params, sessionToken)
       }
       return null
+    },
+    onSuccess: (data) => {
+      if (data) {
+        usePlayersSlice.getState().handlePlayerChange(data)
+      }
     }
   })
 }

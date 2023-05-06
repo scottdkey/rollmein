@@ -9,11 +9,10 @@ import Sword from "../../assets/Sword"
 import { IconWrapper } from "../IconWrapper"
 import { Trash } from "../../assets/Trash"
 import { useToast } from "@chakra-ui/react"
-import { useQueryClient } from "react-query"
 import { Shield } from "../../assets"
-import { useSession } from "next-auth/react"
-import { useGetPlayer, useUpdatePlayer } from "../../utils/player.api"
-import { useAddPlayerToGroup, useGetGroup } from "../../utils/group.api"
+import { useGetPlayer, useGetSignedInUserPlayer, useUpdatePlayer } from "../../utils/player.api"
+import { useAddPlayerToGroup } from "../../utils/group.api"
+import { usePlayersSlice } from "../../stores/Players.slice"
 
 
 interface PlayerCardProps {
@@ -26,7 +25,6 @@ interface PlayerCardProps {
 }
 const PlayerCard = ({ id, userId, rollType = 'role', groupId, profilePage, closeCreate }: PlayerCardProps): JSX.Element => {
   const toast = useToast()
-  const { data: session } = useSession()
 
   const basePlayer = {
     userId: userId ? userId : "",
@@ -42,28 +40,23 @@ const PlayerCard = ({ id, userId, rollType = 'role', groupId, profilePage, close
     updatedAt: new Date().toISOString()
   }
 
-  const [player, setPlayer] = useState<ICreatePlayer>(basePlayer)
-  const { data: playerQuery, refetch } = useGetPlayer({
-    playerId: id ? id : undefined,
-    sessionId: session?.id,
-    onSuccess: (data) => {
-      try {
-        if (data) {
-          setPlayer(data)
-          setName(data.name)
-        }
-      } catch(e){
-        console.error(e)
-      }
-    }
-  })
-  const queryClient = useQueryClient()
   const updatePlayer = useUpdatePlayer()
   const addPlayerToGroupMutation = useAddPlayerToGroup({
     onSuccess: () => {
       resetCard()
     }
   })
+  const handlePlayerChange = usePlayersSlice(state => state.handlePlayerChange)
+
+  const storePlayer = usePlayersSlice(state => state.players.find(p => p.id === id))
+  const [player, setPlayer] = useState(storePlayer ? storePlayer : basePlayer)
+
+  useEffect(() => {
+    if (storePlayer) {
+      setPlayer(storePlayer)
+      setName(storePlayer.name)
+    }
+  }, [storePlayer])
 
 
   const [name, setName] = useState(basePlayer.name)
@@ -72,8 +65,8 @@ const PlayerCard = ({ id, userId, rollType = 'role', groupId, profilePage, close
   const primary = useColorModeValue(`gray.300`, `gray.600`)
   const inColor = useColorModeValue("teal.100", "teal.800")
   const lockedColor = useColorModeValue("yellow.500", "yellow.500")
-  const background = player.inTheRoll && !profilePage ? inColor : primary
-  const borderColor = !profilePage && player.locked ? lockedColor : "blackAlpha.100"
+  const background = player?.inTheRoll && !profilePage ? inColor : primary
+  const borderColor = !profilePage && player?.locked ? lockedColor : "blackAlpha.100"
 
 
 
@@ -115,16 +108,13 @@ const PlayerCard = ({ id, userId, rollType = 'role', groupId, profilePage, close
       ...player,
       name
     }
-    setPlayer(playerInput)
+
     if (id) {
       await updatePlayer.mutateAsync({ ...playerInput, id }, {
         onSuccess: async (data) => {
           if (data) {
             setPlayer(data)
-          }
-          await refetch()
-          if (userId) {
-            await queryClient.refetchQueries("user/player")
+            handlePlayerChange(data)
           }
           toggleEditing()
         },
@@ -133,7 +123,6 @@ const PlayerCard = ({ id, userId, rollType = 'role', groupId, profilePage, close
             status: "error",
             description: error,
             title: "error updating player"
-
           })
         }
       })
@@ -141,71 +130,70 @@ const PlayerCard = ({ id, userId, rollType = 'role', groupId, profilePage, close
   }
 
   const updatePlayerField = async (field: string, changeValue: any) => {
-    let playerInput = {
-      ...player,
-      [field]: changeValue
-    }
-    const { locked, healer, dps, tank, inTheRoll } = playerInput
-    const hasRole = [dps, healer, tank].some(value => value === true)
-    const isRoleField = [field === 'tank', field === 'dps', field === 'healer'].some(value => value === true)
-    const roleIsRollType = rollType === 'role'
-
-    if (locked && field === 'locked' && !hasRole && roleIsRollType) {
-      toast({
-        title: 'must have role if locking',
-        description: "if player is locked, they must have a role",
-        status: "warning",
-        isClosable: true
-      })
-    }
-    if (roleIsRollType && inTheRoll && !hasRole) {
-      playerInput.inTheRoll = false
-    }
-    if (roleIsRollType && locked && !hasRole) {
-      playerInput.locked = false
-    }
-    if (roleIsRollType && locked && hasRole) {
-      playerInput.inTheRoll = true
-    }
-    if (locked === true && field === 'inTheRoll' && changeValue === false) {
-      playerInput.inTheRoll = false
-      playerInput.locked = false
-    }
-
-
-
-    if (roleIsRollType && inTheRoll && !hasRole && field === 'inTheRoll') {
-      toast({
-        title: 'must have a role',
-        description: "in this type of role you have to have at least one active role to participate",
-        status: "warning",
-        isClosable: true
-      })
-    }
-
-    if (isRoleField && inTheRoll && !hasRole) {
-      toast({
-        title: 'must have a role',
-        description: "can't be in the roll and not a have a role",
-        status: "warning",
-        isClosable: true
-      })
-      playerInput = {
-        ...playerInput,
-        inTheRoll: true,
-        [field]: !changeValue
+    try {
+      let playerInput = {
+        ...player,
+        [field]: changeValue
       }
-    }
+      const { locked, healer, dps, tank, inTheRoll } = playerInput
+      const hasRole = [dps, healer, tank].some(value => value === true)
+      const isRoleField = [field === 'tank', field === 'dps', field === 'healer'].some(value => value === true)
+      const roleIsRollType = rollType === 'role'
 
-    if (id) {
-      const idPlayer = { ...playerInput, id }
-      setPlayer(idPlayer)
-      await updatePlayer.mutateAsync(idPlayer)
-    }
-    if (!id) {
+      if (locked && field === 'locked' && !hasRole && roleIsRollType) {
+        toast({
+          title: 'must have role if locking',
+          description: "if player is locked, they must have a role",
+          status: "warning",
+          isClosable: true
+        })
+      }
+      if (roleIsRollType && inTheRoll && !hasRole) {
+        playerInput.inTheRoll = false
+      }
+      if (roleIsRollType && locked && !hasRole) {
+        playerInput.locked = false
+      }
+      if (roleIsRollType && locked && hasRole) {
+        playerInput.inTheRoll = true
+      }
+      if (locked === true && field === 'inTheRoll' && changeValue === false) {
+        playerInput.inTheRoll = false
+        playerInput.locked = false
+      }
+      if (roleIsRollType && inTheRoll && !hasRole && field === 'inTheRoll') {
+        toast({
+          title: 'must have a role',
+          description: "in this type of role you have to have at least one active role to participate",
+          status: "warning",
+          isClosable: true
+        })
+      }
+
+      if (isRoleField && inTheRoll && !hasRole) {
+        toast({
+          title: 'must have a role',
+          description: "can't be in the roll and not a have a role",
+          status: "warning",
+          isClosable: true
+        })
+        playerInput = {
+          ...playerInput,
+          inTheRoll: true,
+          [field]: !changeValue
+        }
+      }
       setPlayer(playerInput)
+      
+      if (id !== undefined) {
+        const idPlayer = { ...playerInput, id }
+        await updatePlayer.mutateAsync(idPlayer)
+      }
+    } catch (e) {
+      console.error(e)
     }
   }
+
   const handleDelete = async () => {
     if (id) {
       console.log('handle delete')
@@ -220,13 +208,11 @@ const PlayerCard = ({ id, userId, rollType = 'role', groupId, profilePage, close
         status: "error"
 
       })
-
     }
     if (id === undefined) {
       resetCard()
     }
   }
-
 
   return (
     <Box borderColor={borderColor} borderRadius={"md"} padding={2} w="240px" h="180px" shadow="base" borderWidth="10px" bg={background} position="relative" justifyContent="center" alignItems="center" onKeyPress={(e) => {
@@ -263,7 +249,6 @@ const PlayerCard = ({ id, userId, rollType = 'role', groupId, profilePage, close
               onChange={(e) => {
                 const value = e.target.value
                 setName(value)
-                setPlayer({ ...player, name: value })
               }}
             >
             </Input>
@@ -299,7 +284,6 @@ const PlayerCard = ({ id, userId, rollType = 'role', groupId, profilePage, close
           :
           null
         }
-
       </Box >
     </Box >
   )

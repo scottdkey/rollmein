@@ -1,15 +1,12 @@
-import { HStack, Input, Button, Text } from "@chakra-ui/react"
-import { useState } from "react"
-import { useForm, SubmitHandler } from "react-hook-form"
+import { Button, HStack, Input, Text } from "@chakra-ui/react"
+import { UserRoutes } from "@sharedTypes/UserRoutes.enum"
+import { useEffect, useState } from "react"
+import { SubmitHandler, useForm } from "react-hook-form"
 import { useQueryClient } from "react-query"
 import styles from "../styles/profile.module.scss"
-import { IProfileUpdateBody, useMeQuery, useProfileUpdateMutation, UserRoutes } from "../utils/userApi"
-import { useEffect } from "react"
+import { useMeQuery, useProfileUpdateMutation } from "../utils/userApi"
 
-const UserProfileForm = ({ id, sessionToken }: {
-  id: string,
-  sessionToken: string,
-}) => {
+const UserProfileForm = () => {
 
   const queryClient = useQueryClient()
 

@@ -1,5 +1,5 @@
 import { create } from 'zustand'
-import { IGroup } from '../types/Group'
+import { IGroup } from '@sharedTypes/Group'
 
 interface GroupState {
   groups: IGroup[]

@@ -31,3 +31,9 @@ interface RegisterUser {
   appleId: string | null,
   githubId: string | null
 }
+
+interface IMeRes { user: ScrubbedUser | null, success: boolean }
+
+interface IProfileUpdateBody {
+  username: string
+}

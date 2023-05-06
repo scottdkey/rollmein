@@ -6,17 +6,19 @@ import { GroupService } from "./group.service";
 
 import { RequireAuth } from "../common/middleware/requireAuth.middleware";
 import { LoggerService } from "../logger/logger.service";
-import { MyContext } from "../types/Context";
-import { ICreateGroup, IGroup, IGroupPlayerCountResponse, IUpdateGroup, IJoinGroupReq, IJoinGroupRes } from "../types/Group";
-import { HTTPCodes } from "../types/HttpCodes.enum";
-import { IApplicationError } from "../types/ApplicationError";
-import { ErrorTypes } from "../types/ErrorCodes.enum";
-import { ErrorMessages } from "../utils/ErrorTypes.enum";
+import { ErrorMessages } from "../../../shared/types/ErrorTypes.enum";
+import { IApplicationError } from "../../../shared/types/ApplicationError";
+import { MyContext } from "../../../shared/types/Context";
+import { ErrorTypes } from "../../../shared/types/ErrorCodes.enum";
+import { IGroup, ICreateGroup, IUpdateGroup, IJoinGroupReq, IJoinGroupRes, IGroupPlayerCountResponse } from "../../../shared/types/Group";
+import { HTTPCodes } from "../../../shared/types/HttpCodes.enum";
+import { GroupCountService } from "../groupCount/groupCount.service";
 
 
 
 const groupRouter = new Router<DefaultState, MyContext<any, any>>({ prefix: "/group" })
 const groupService = container.get(GroupService)
+const groupCountService = container.get(GroupCountService)
 const logger = container.get(LoggerService).getLogger('group router')
 
 groupRouter.get("/", async (ctx: MyContext<{}, IGroup[] | IApplicationError>, next: Next) => {
@@ -213,7 +215,7 @@ groupRouter.post('/joinGroup', RequireAuth, async (ctx: MyContext<IJoinGroupReq,
 groupRouter.get('/count/:groupId', async (ctx: MyContext<{}, IGroupPlayerCountResponse>, next: Next) => {
   try {
     const groupId = ctx.params.groupId
-    const groupCounts = await groupService.getGroupPlayerCounts(groupId)
+    const groupCounts = await groupCountService.getGroupPlayerCounts(groupId)
     if (groupCounts) {
       ctx.body = groupCounts
     }

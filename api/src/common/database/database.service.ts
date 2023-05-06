@@ -4,9 +4,9 @@ import { addToContainer } from "../../container"
 import { LoggerService } from "../../logger/logger.service"
 import { dbToIsoString } from "../../utils/date.util"
 import { ConfigService } from "../config/config.service"
-import { DataResponse } from "../../types/DataResponse"
-import { ErrorTypes } from "../../types/ErrorCodes.enum"
-import { ErrorMessages } from "../../utils/ErrorTypes.enum"
+import { ErrorMessages } from "../../../../shared/types/ErrorTypes.enum"
+import { DataResponse } from "../../../../shared/types/DataResponse"
+import { ErrorTypes } from "../../../../shared/types/ErrorCodes.enum"
 
 @addToContainer()
 export class DatabaseService {

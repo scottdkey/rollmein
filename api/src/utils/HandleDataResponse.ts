@@ -1,6 +1,6 @@
-import { DataResponse } from "../types/DataResponse"
-import { ErrorTypes } from "../types/ErrorCodes.enum"
-import { HTTPCodes } from "../types/HttpCodes.enum"
+import { DataResponse } from "../../../shared/types/DataResponse"
+import { ErrorTypes } from "../../../shared/types/ErrorCodes.enum"
+import { HTTPCodes } from "../../../shared/types/HttpCodes.enum"
 import { ErrorCodeMapping } from "./ErrorCodeMapping"
 
 

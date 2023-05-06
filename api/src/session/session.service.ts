@@ -6,7 +6,7 @@ import { IServerConfig, ConfigService } from "../common/config/config.service";
 import { DateService } from "../common/date/date.service";
 import { LoggerService } from "../logger/logger.service";
 import { RedisService } from "../redis/redis.service";
-import { RedisKeys } from "../redis/redisKeys.enum";
+import { RedisKeys } from "../../../shared/types/redisKeys.enum";
 
 
 @addToContainer()

@@ -1,4 +1,6 @@
-import { IApplicationError } from "../types/ApplicationError";
+import { IApplicationError } from "../../../shared/types/ApplicationError";
+
+
 
 export function createError({type, message, context, stacktrace, detail}: IApplicationError): IApplicationError {
   return {

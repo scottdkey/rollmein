@@ -6,7 +6,6 @@ import { useSession } from "next-auth/react";
 import { GroupForm } from "../../components/Group/GroupForm";
 import { useGroupSlice } from "../../stores/Group.slice";
 import { useGetGroup } from "../../utils/group.api";
-import { IGroup } from "../../types/Group";
 import { GroupWsProvider } from "../../providers/GroupWebsocketProvider";
 
 
