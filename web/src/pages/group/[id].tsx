@@ -1,12 +1,13 @@
-import { Button, Center, HStack, Heading, Spinner, VStack, Text } from "@chakra-ui/react";
+import { Button, Center, HStack, Heading, VStack } from "@chakra-ui/react";
 import { useRouter } from "next/router";
 import PlayerCards from "../../components/Player/PlayerCards";
 import { useEffect } from "react";
 import { useSession } from "next-auth/react";
 import { GroupForm } from "../../components/Group/GroupForm";
 import { useGroupSlice } from "../../stores/Group.slice";
-import { useGetGroup } from "../../utils/group.api";
 import { GroupWsProvider } from "../../providers/GroupWebsocketProvider";
+import { useCurrentGroupSlice } from "../../stores/CurrentGroup.slice";
+import Rolls from "../../components/Roll/Roll";
 
 
 export default function Group() {
@@ -14,9 +15,15 @@ export default function Group() {
   const params = router.query
   const id = params.id as string
   const { data: session } = useSession()
+  const setGroup = useCurrentGroupSlice(state => state.setGroup)
 
-  const group = useGroupSlice(state => state.groups.find(group => group.id === id))
-  const { isLoading } = useGetGroup({ groupId: id })
+  const groups = useGroupSlice(state => state.groups)
+  const group = useCurrentGroupSlice(state => state.group)
+  const groupId = useCurrentGroupSlice(state => state.id)
+  const name = useCurrentGroupSlice(state => state.name)
+
+
+
 
   useEffect(() => {
     if (session && !session.id) {
@@ -27,36 +34,33 @@ export default function Group() {
     }
   }, [router, session])
 
-
-  if (isLoading) {
-    return (
-      <>
-        <Center>
-          <Spinner size='xl' color='teal.200' />
-        </Center>
-      </>
-    )
-  }
+  useEffect(() => {
+    if (groups) {
+      const group = groups.find(group => group.id === id)
+      if (group) {
+        setGroup(group)
+      }
+    }
+  }, [groups])
 
   if (group) {
     return (
-      <GroupWsProvider groupId={group.id}>
+      <GroupWsProvider groupId={groupId}>
         <Center>
           <VStack>
             <HStack>
-              <Heading size={'xl'}>{group.name}</Heading>
+              <Heading size={'xl'}>{name}</Heading>
               <GroupForm group={group} />
             </HStack>
-            <PlayerCards groupId={group.id} />
+            <PlayerCards groupId={groupId} />
             <Button>Start Roll</Button>
+            <Rolls />
           </VStack>
         </Center>
       </GroupWsProvider>
     )
   }
   return (
-    <Text>
-      error occurred
-    </Text>
+    <Heading>unknown error occurred</Heading>
   )
 }

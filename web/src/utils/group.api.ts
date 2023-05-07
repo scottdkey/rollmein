@@ -4,6 +4,7 @@ import { useSession } from "next-auth/react"
 import { useGroupSlice } from "../stores/Group.slice"
 import { IGroup, ICreateGroup, IUpdateGroup, IJoinGroupReq, IJoinGroupRes, IGroupDelete } from "@sharedTypes/Group"
 import { RestMethods } from "@sharedTypes/RestMethods.enum"
+import { IApplicationError } from "../../../shared/types/ApplicationError"
 
 
 
@@ -43,23 +44,27 @@ export const useGetGroups = () => {
   })
 }
 
-export const getGroup = async (groupId: string, sessionToken?: string) => await ApiRequest<IGroup, undefined>(`${GroupRoutes.GROUP}/${groupId}`, RestMethods.GET, { sessionToken })
+export const getGroup = async (groupId: string, sessionToken?: string) => await ApiRequest<{
+  group: IGroup | null,
+  error: IApplicationError | null
+}, undefined>(`${GroupRoutes.GROUP}/${groupId}`, RestMethods.GET, { sessionToken })
 
 export const useGetGroup = ({ groupId }: { groupId?: string, }) => {
   const { data: session } = useSession()
-  const setGroup = useGroupSlice(state => state.setGroup)
+  const upsertGroup = useGroupSlice(state => state.upsertGroup)
 
   return useQuery({
     queryKey: ["group", groupId],
     queryFn: async () => {
       if (groupId && session && session.id) {
-        return await getGroup(groupId, session.id)
+        const res = await getGroup(groupId, session.id)
+        return res?.group
       }
       return null
     },
     onSuccess: (res) => {
       if (res) {
-        setGroup(res)
+        upsertGroup(res)
       }
     }
   })
@@ -68,21 +73,31 @@ export const useGetGroup = ({ groupId }: { groupId?: string, }) => {
 
 export const createGroup = async (group: ICreateGroup, sessionToken: string) => await ApiRequest<IGroup, ICreateGroup>(GroupRoutes.GROUP, RestMethods.POST, { body: group, sessionToken })
 
-export const useCreateGroup = () => useMutation({
-  mutationFn: async ({ group, sessionToken }: { group: ICreateGroup, sessionToken?: string }) => {
-    if (sessionToken) {
-      return await createGroup(group, sessionToken)
+export const useCreateGroup = () => {
+  const { data: session } = useSession()
+  const sessionToken = session?.id
+  const upsertGroup = useGroupSlice(state => state.upsertGroup)
+  return useMutation({
+    mutationFn: async ({ group }: { group: ICreateGroup }) => {
+      if (sessionToken) {
+        return await createGroup(group, sessionToken)
+      }
+      return null
+    },
+    onSuccess: (res) => {
+      if (res) {
+        upsertGroup(res)
+      }
     }
-    return null
-  }
-})
+  })
+}
 
 export const updateGroup = async (group: IUpdateGroup, sessionToken: string) => await ApiRequest<IGroup, IUpdateGroup>(GroupRoutes.GROUP, RestMethods.PUT, { body: group, sessionToken })
 
 export const useUpdateGroup = () => {
   const { data: session } = useSession()
   const sessionToken = session?.id
-  const setGroup = useGroupSlice(state => state.setGroup)
+  const upsertGroup = useGroupSlice(state => state.upsertGroup)
 
   return useMutation({
     mutationFn: async ({ group }: { group: IUpdateGroup }) => {
@@ -92,8 +107,8 @@ export const useUpdateGroup = () => {
       return null
     },
     onSuccess: (res) => {
-      if (res) {
-        setGroup(res)
+      if (res !== null) {
+        upsertGroup(res)
       }
     }
   })

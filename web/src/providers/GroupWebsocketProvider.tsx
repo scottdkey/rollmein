@@ -10,6 +10,7 @@ import { usePlayerCountsSlice } from "../stores/PlayerCounts.slice";
 import { IGroupWsResponse } from "@sharedTypes/Group";
 import { GroupWSMessageTypes } from "@sharedTypes/GroupMessages.enum";
 import { usePlayersSlice } from "../stores/Players.slice";
+import { useCurrentGroupSlice } from "../stores/CurrentGroup.slice";
 
 interface IGroupWsContext {
   ready: boolean
@@ -20,25 +21,16 @@ export const GroupWSContext = createContext<IGroupWsContext>({} as IGroupWsConte
 
 export const GroupWsProvider = ({ children, groupId }: { children: ReactNode, groupId: string }): JSX.Element => {
   const { status, data: session } = useSession()
-  const setGroup = useGroupSlice((state) => state.setGroup)
+  const upsertGroup = useGroupSlice((state) => state.upsertGroup)
   const [readyState, setReadyState] = useState<ReadyState>(ReadyState.UNINSTANTIATED)
-  const [loading, setLoading] = useState(false)
   const setPlayerCounts = usePlayerCountsSlice(state => state.setPlayerCounts)
   const handlePlayerChange = usePlayersSlice(state => state.handlePlayerChange)
-  const removePlayer = usePlayersSlice(state => state.removePlayer)
+  const setGroup = useCurrentGroupSlice(state => state.setGroup)
 
   const toast = useToast()
-  const queryClient = useQueryClient()
-  const { data, isLoading: groupQueryLoading } = useGetGroup({ groupId })
 
   const { } = useGetPlayerCount({
-    groupId,
-    sessionToken: session?.id,
-    onSuccess: (counts) => {
-      if (counts) {
-        setPlayerCounts(counts)
-      }
-    }
+    groupId
   })
 
   const { sendJsonMessage, readyState: rs } = useWebSocket(`${process.env.NEXT_PUBLIC_API_WS}`, {
@@ -57,6 +49,8 @@ export const GroupWsProvider = ({ children, groupId }: { children: ReactNode, gr
     console.log({ messageType, data })
     switch (messageType) {
       case GroupWSMessageTypes.Open:
+        upsertGroup(data)
+        setGroup(data)
         break
       case GroupWSMessageTypes.PlayerUpdated:
         handlePlayerChange(data)
@@ -67,12 +61,14 @@ export const GroupWsProvider = ({ children, groupId }: { children: ReactNode, gr
       case GroupWSMessageTypes.PlayerAdded:
         handlePlayerChange(data)
         break
+      case GroupWSMessageTypes.GroupUpdated:
+        upsertGroup(data)
+        setGroup(data)
+        break
 
       default:
         console.error({ messageType, data })
     }
-
-
   }
 
   const sendMessage = (messageType: GroupWSMessageTypes, body: any, sessionToken: string) => {
@@ -88,8 +84,8 @@ export const GroupWsProvider = ({ children, groupId }: { children: ReactNode, gr
     }
   }
 
-  useEffect(() => { 
-    if(readyState !== ReadyState.OPEN && session && session.id) {
+  useEffect(() => {
+    if (readyState !== ReadyState.OPEN && session && session.id) {
       sendMessage(GroupWSMessageTypes.Open, { groupId }, session?.id)
     }
   }, [readyState, session, groupId])

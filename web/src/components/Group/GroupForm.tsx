@@ -6,17 +6,13 @@ import { useGroupSlice } from "../../stores/Group.slice"
 import { RollType, useCreateGroup, useGetGroup, useUpdateGroup } from "../../utils/group.api"
 import { ICreateGroup, IGroup, IUpdateGroup } from "../../../../shared/types/Group"
 
-export const GroupForm = (params: { group?: IGroup }) => {
-  const { status, data: session } = useSession()
+export const GroupForm = ({group}: { group?: IGroup }) => {
   const [modalOpen, setModalOpen] = useState(false)
-  const [name, setName] = useState("")
-  const groups = useGroupSlice(state => state.groups)
-  const group = useGroupSlice(state => state.groups.find(group => group.id === params.group?.id))
-  const setGroups = useGroupSlice(state => state.setGroups)
 
-  const { } = useGetGroup({
-    groupId: params.group?.id
-  })
+
+  const { status } = useSession()
+
+  const [name, setName] = useState("")
   const [lockAfterOut, setLockAfterOut] = useState(false)
   const [membersCanUpdate, setMembersCanUpdate] = useState(false)
   const [rollType, setRollType] = useState(RollType.FFA)
@@ -39,7 +35,7 @@ export const GroupForm = (params: { group?: IGroup }) => {
   }, [group])
 
   const nameInputValid = () => {
-    if (name.length <= 1) {
+    if (name && name.length <= 1) {
       setNameError({
         error: true,
         message: "name must exist"
@@ -63,10 +59,9 @@ export const GroupForm = (params: { group?: IGroup }) => {
         message: ""
       })
     }
-    const sessionToken = session?.id
 
 
-    if (isNameValid && group && group.id && sessionToken) {
+    if (isNameValid && group && group.id && group.name) {
       const groupUpdate: IUpdateGroup = {
         ...data,
         id: group.id
@@ -74,14 +69,16 @@ export const GroupForm = (params: { group?: IGroup }) => {
       await updateGroup.mutateAsync({
         group: groupUpdate
       })
+      setModalOpen(false)
     }
-    if (isNameValid && group === undefined && sessionToken) {
+    if (isNameValid && group === undefined) {
       const groupCreate: ICreateGroup = {
         ...data
       }
       await createGroup.mutateAsync({
         group: groupCreate,
       })
+      setModalOpen(false)
     }
 
   }

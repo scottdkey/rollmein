@@ -3,39 +3,36 @@ import { IGroup } from '@sharedTypes/Group'
 
 interface GroupState {
   groups: IGroup[]
-  setGroup: (group: IGroup) => void
   setGroups: (groups: IGroup[]) => void
+  upsertGroup: (group: IGroup) => void
   error: string | null
 }
 
 
 export const useGroupSlice = create<GroupState>((set) => {
-  const setGroup = (group: IGroup) => set((state) => {
+
+  const upsertGroup = (group: IGroup) => set((state) => {
     const newGroups = state.groups
     const existing = newGroups.findIndex(item => item.id === group.id)
 
     if (existing) {
-      const groupsReturn = newGroups.map(g => {
-        if (g.id === group.id) {
-          return group
-        }
-        return g
-      })
-
-      return { groups: groupsReturn }
-    }
-    if (!existing) {
-      return { groups: [...newGroups, group] }
+      newGroups[existing] = group
+      return {
+        ...state,
+        groups: newGroups
+      }
     }
     return {
+      ...state,
       groups: newGroups
     }
   })
+  const setGroups = (groups: IGroup[]) => set({ groups })
 
   return ({
     groups: [],
     error: null,
-    setGroups: (groups: IGroup[]) => set({ groups }),
-    setGroup,
+    setGroups,
+    upsertGroup
   })
 })

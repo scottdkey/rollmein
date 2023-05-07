@@ -38,7 +38,6 @@ export class GroupCountService {
 
   }
   async updateActiveGroupCounts(groupId: string) {
-    console.log({ groupId })
     try {
       const groupCounts = await this.getGroupPlayerCounts(groupId)
       if (groupCounts) {

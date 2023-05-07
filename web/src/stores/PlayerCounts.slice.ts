@@ -1,5 +1,6 @@
 import { create } from 'zustand'
 import { IGroupPlayerCountResponse } from '@sharedTypes/Group'
+import { RollType } from '../utils/group.api'
 
 interface PlayerCountsState {
   playerCounts: IGroupPlayerCountResponse | null

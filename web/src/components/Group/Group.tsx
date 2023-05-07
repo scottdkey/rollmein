@@ -1,26 +1,31 @@
 import { DeleteIcon } from "@chakra-ui/icons"
-import { Button, HStack, Heading, useToast } from "@chakra-ui/react"
+import { Button, HStack, Heading, Spinner, useToast } from "@chakra-ui/react"
 import { useSession } from "next-auth/react"
 import { useRouter } from "next/router"
-import { useDeleteGroup, useGetGroup } from "../../utils/group.api"
+import { useDeleteGroup } from "../../utils/group.api"
 import { useGetGroupPlayers } from "../../utils/player.api"
 import { useGroupSlice } from "../../stores/Group.slice"
 import { GroupForm } from "./GroupForm"
 import { IGroup } from "@sharedTypes/Group"
+import { useEffect, useState } from "react"
 
 
 export const Group = (params: { group: IGroup }) => {
   const { status, data: session } = useSession()
   const router = useRouter()
   const groups = useGroupSlice(state => state.groups)
-  const group = useGroupSlice(state => state.groups.find(g => g.id === params.group?.id))
-  const setGroups = useGroupSlice(state => state.setGroups)
+  const [group, setGroup] = useState<IGroup | undefined>(undefined)
   const toast = useToast()
   const deleteGroup = useDeleteGroup({
     onSuccess: () => { }
   })
-  const { data: players } = useGetGroupPlayers({ groupId: params.group.id })
-  const { isLoading } = useGetGroup({ groupId: params.group.id, })
+  const { data: players, isLoading, isError } = useGetGroupPlayers({ groupId: params.group.id })
+
+  useEffect(() => {
+    if (params.group) {
+      setGroup(groups.find(group => group.id === params.group.id))
+    }
+  }, [params.group, groups])
 
 
   const handleDelete = async () => {
@@ -43,15 +48,7 @@ export const Group = (params: { group: IGroup }) => {
     })
   }
 
-  if (isLoading) {
-    return (
-      <>
-        loading
-      </>
-    )
-  }
-
-  if (group) {
+  if (group && players) {
     return (
       <HStack>
         <Button variant={'solid'} colorScheme={'green'} disabled={status !== "authenticated"} onClick={async () => {
@@ -59,7 +56,8 @@ export const Group = (params: { group: IGroup }) => {
         }}>
           <HStack >
             <Heading>{group.name}</Heading>
-            <Heading size={'small'}> Players: {players?.length}</Heading>
+            {isError}
+            {isLoading ? <Spinner /> : <Heading size={'small'}> Players: {players.length}</Heading>}
           </HStack>
         </Button>
         <GroupForm group={group} />
