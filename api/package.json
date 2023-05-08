@@ -15,9 +15,7 @@
     "watch:ts": "tsc -w",
     "watch:node": "nodemon dist/api/src/index.js | npx pino-pretty",
     "docker:build": "docker build -t scottdkey/rollmein_api:$(echo $npm_package_version) -f Dockerfile ../",
-    "docker:push": "docker push scottdkey/rollmein_api:$(echo $npm_package_version) && docker push scottdkey/rollmein_api:latest",
-    "docker:run": "docker run -p 8000:8000 --name rollmein_api scottdkey/rollmein_api:latest",
-    "docker:build-push": "run-s docker:build docker:push"
+    "docker:push": "docker push scottdkey/rollmein_api:$(echo $npm_package_version) && docker push scottdkey/rollmein_api:latest"
   },
   "dependencies": {
     "@koa/router": "^10.1.0",
