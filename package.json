@@ -19,8 +19,7 @@
     "start:web": "yarn --cwd ./packages/web start",
     "build:web": "yarn --cwd ./packages/web build",
     "lint:web": "yarn --cwd ./packages/web lint",
-    "dev:web": "yarn --cwd ./packages/web dev",
-    "copyTypes": "cp -r ./packages/types ./api/src && cp -r ./types ./web/src"
+    "dev:web": "yarn --cwd ./packages/web dev"
   },
   "dependencies": {
     "db-migrate": "^0.11.13",
