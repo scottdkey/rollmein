@@ -38,7 +38,7 @@ export const useMeQuery = (enabled: boolean = true) => {
     queryKey: UserRoutes.ME,
     enabled: session.data?.id !== undefined || enabled,
     onError: (data) => {
-      console.log(data)
+      console.error(data)
       unableToSignIn()
     },
     onSettled: (data) => {
@@ -52,7 +52,7 @@ export const useMeQuery = (enabled: boolean = true) => {
 export const useProfileUpdateMutation = () => useMutation({
   mutationFn: async (params: IProfileUpdateBody, sessionToken?: string) => {
     const res = await ApiRequest<IMeRes, IProfileUpdateBody>(UserRoutes.PROFILE, RestMethods.PUT, { body: params, sessionToken })
-    if(res){
+    if (res) {
       return res
     }
     return null

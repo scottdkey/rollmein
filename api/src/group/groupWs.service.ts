@@ -26,6 +26,13 @@ export class GroupWsService {
     }
   }
 
+  async rollUpdated(groupId: string, roll: RollReturn){
+    await this.groupPub(groupId, {
+      messageType: GroupWSMessageTypes.RollUpdated,
+      data: roll
+    })
+  }
+
   async groupUpdated(group: IGroup) {
     await this.groupPub(group.id, {
       messageType: GroupWSMessageTypes.GroupUpdated,
@@ -94,9 +101,9 @@ export class GroupWsService {
   groupSub = async (group: IGroup | null, sub: Redis) => {
     if (group) {
       const redisKey = `${RedisKeys.GROUP}-${group.id}`
-      const current = await this.redisService.get(RedisKeys.GROUP, group.id)
+      const current = await this.redisService.get<IGroup>(RedisKeys.GROUP, group.id)
 
-      if (current.data === null) {
+      if (current === null) {
         await this.redisService.set(RedisKeys.GROUP, group.id, group)
       }
       await sub.subscribe(redisKey, (err, _) => {

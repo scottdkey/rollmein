@@ -1,13 +1,12 @@
-import { addToContainer } from "../container";
-import { GroupRepository } from './group.repository';
-import { PlayerService } from "../player/player.service";
-import { GroupWsService } from "./groupWs.service";
-import { LoggerService } from "../logger/logger.service";
 import { Logger } from "pino";
-import { ErrorMessages } from "../../../shared/types/ErrorTypes.enum";
-import { DataResponse } from "../../../shared/types/DataResponse";
+import { ErrorTypes } from "../../../shared/types/ErrorCodes.enum";
 import { ICreateGroup, IGroup, IUpdateGroup } from "../../../shared/types/Group";
-import { HTTPCodes } from "../../../shared/types/HttpCodes.enum";
+import { addToContainer } from "../container";
+import { LoggerService } from "../logger/logger.service";
+import { PlayerService } from "../player/player.service";
+import { createError } from "../utils/CreateError";
+import { GroupRepository } from './group.repository';
+import { GroupWsService } from "./groupWs.service";
 
 @addToContainer()
 export class GroupService {
@@ -23,32 +22,30 @@ export class GroupService {
 
   async getGroup(groupId: string, userId?: string) {
     const res = await this.groupRepo.getGroupById(groupId)
+
     let auth: boolean = false
-    if (res.data && userId) {
-      auth = await this.checkIfAuthorized(res.data, userId)
+    if (res && userId) {
+      auth = await this.checkIfAuthorized(res, userId)
     }
     return {
       auth,
-      group: res.data
+      group: res
     }
 
   }
 
   async getGroups() {
     const res = await this.groupRepo.getGroups()
-    if (res.data && res.data.length > 0) {
-      return {
-        ...res,
-        data: res.data.sort((a: any, b: any) => {
-          const date1 = new Date(a.createdAt).getMilliseconds()
+    if (res) {
+      const sorted = res.sort((a: any, b: any) => {
+        const date1 = new Date(a.createdAt).getMilliseconds()
 
-          const date2 = new Date(b.createdAt).getMilliseconds()
-          return date1 - date2
-        })
-      }
+        const date2 = new Date(b.createdAt).getMilliseconds()
+        return date1 - date2
+      })
+      return sorted
     }
-
-    return res
+    return null
   }
 
   async getGroupsByUserId(userId: string) {
@@ -56,55 +53,49 @@ export class GroupService {
   }
 
   async createGroup(userId: string, createParams: ICreateGroup) {
-    try {
-      const res = await this.groupRepo.createGroup(userId, createParams)
-      if (res.data) {
-
-      }
-      if (res.data || res.error) {
-        return res
-      }
-      return ErrorMessages.CreateGroup
-
-    } catch (e) {
-      this.logger.error({ message: "create group error", error: e })
-      return e.message
-    }
+    return await this.groupRepo.createGroup(userId, createParams)
   }
 
   async updateActiveGroup(group: IGroup) {
     const res = await this.groupRepo.updateGroup(group)
-    if (res.success && res.data) {
-      await this.groupWs.groupUpdated(group)
-    }
+    await this.groupWs.groupUpdated(group)
     return res
   }
 
   async updateGroup(
     userId: string,
-    updateValueInput: IUpdateGroup): Promise<DataResponse<IGroup>> {
+    updateValueInput: IUpdateGroup): Promise<IGroup | null> {
 
-    const groupQuery = await this.setupUpdateGeneric(updateValueInput.id, userId)
+    try {
+      const group = await this.setupUpdateGeneric(updateValueInput.id, userId)
 
-    if (groupQuery.success && groupQuery.data) {
-      const group = groupQuery.data
+      if (group) {
+        group.relations.members = this.setFromStringArray(group.relations.members, updateValueInput.memberId)
 
-      group.relations.members = this.setFromStringArray(group.relations.members, updateValueInput.memberId)
+        group.relations.players = this.setFromStringArray(group.relations.players, updateValueInput.playerId)
 
-      group.relations.players = this.setFromStringArray(group.relations.players, updateValueInput.playerId)
+        group.name = updateValueInput.name ? updateValueInput.name : group.name
 
-      group.name = updateValueInput.name ? updateValueInput.name : group.name
+        group.rollType = updateValueInput.rollType ? updateValueInput.rollType : group.rollType
 
-      group.rollType = updateValueInput.rollType ? updateValueInput.rollType : group.rollType
+        group.lockAfterOut = updateValueInput.lockAfterOut !== undefined ? updateValueInput.lockAfterOut : group.lockAfterOut
 
-      group.lockAfterOut = updateValueInput.lockAfterOut !== undefined ? updateValueInput.lockAfterOut : group.lockAfterOut
+        group.membersCanUpdate = updateValueInput.membersCanUpdate !== undefined ? updateValueInput.membersCanUpdate : group.membersCanUpdate
+        const res = await this.groupRepo.updateGroup(group)
+        this.groupWs.groupUpdated(group)
 
-      group.membersCanUpdate = updateValueInput.membersCanUpdate !== undefined ? updateValueInput.membersCanUpdate : group.membersCanUpdate
-      const res = await this.groupRepo.updateGroup(group)
-      this.groupWs.groupUpdated(group)
-      return res
+        return res
+      }
+      return null
+
+    } catch (e) {
+      this.logger.error(e)
+      throw createError({
+        message: 'Error updating group',
+        type: ErrorTypes.GROUP_ERROR,
+        context: "GroupService.updateGroup",
+      })
     }
-    return groupQuery
   }
 
   setFromStringArray(array: string[], value?: string) {
@@ -112,27 +103,23 @@ export class GroupService {
   }
 
   async setupUpdateGeneric(groupId: string, userId: string) {
-    const groupQuery = await this.groupRepo.getGroupById(groupId)
-    if (groupQuery.success && groupQuery.data) {
-      const group = groupQuery.data
-      const authorized = this.checkIfAuthorized(group, userId)
-      if (!authorized) {
-        throw ErrorMessages.AuthorizationError
-      }
-      return groupQuery
+    const group = await this.groupRepo.getGroupById(groupId)
+    if (group) {
+      this.checkIfAuthorized(group, userId)
+      return group
+    } else {
+      return null
     }
-    throw { message: "#addPlayer error", info: "no group found with id" }
   }
 
   async addPlayer(groupId: string, userId: string, player: IPlayer) {
-    const groupQuery = await this.setupUpdateGeneric(groupId, userId)
-    if (groupQuery.success && groupQuery.data) {
-      const group = groupQuery.data
+    const group = await this.setupUpdateGeneric(groupId, userId)
+    if (group) {
       group.relations.players = this.setFromStringArray(group.relations.players, player.id)
       this.groupWs.playerWasAdded(player)
       return await this.updateActiveGroup(group)
     }
-    return groupQuery
+    return null
   }
 
   async createGroupPlayer(input: ICreatePlayer, groupId: string, userId: string) {
@@ -149,84 +136,107 @@ export class GroupService {
   }
 
   async removePlayer(groupId: string, userId: string, playerId: string) {
-    const groupQuery = await this.setupUpdateGeneric(groupId, userId)
-    if (groupQuery.success && groupQuery.data) {
-      const group = groupQuery.data
+    const group = await this.setupUpdateGeneric(groupId, userId)
+    if (group) {
       group.relations.players = group.relations.players.filter((value: string) => value === playerId)
-
       return await this.updateActiveGroup(group)
     }
-    return groupQuery
+    return null
   }
 
   async addMember(groupId: string, userId: string, player: IPlayer) {
-    const groupQuery = await this.setupUpdateGeneric(groupId, userId)
-    let playerId = ""
-    const existingPlayer = await this.playerService.getGroupPlayer(userId, groupId)
+    try {
+      const group = await this.setupUpdateGeneric(groupId, userId)
 
-    if (existingPlayer.data?.id) {
-      playerId = existingPlayer.data.id
-    } else {
-      const groupPlayer = await this.playerService.createPlayer({
-        groupId,
-        userId,
-        name: player.name,
-        tank: player.tank,
-        healer: player.healer,
-        dps: player.dps,
-        locked: false,
-        inTheRoll: false
-      })
-      if (groupPlayer?.id) {
-        playerId = groupPlayer?.id
+      const existingPlayer = await this.playerService.getGroupPlayer(userId, groupId)
+
+      if (existingPlayer && existingPlayer.id) {
+        return group
       }
-    }
 
-    if (groupQuery.success && groupQuery.data && playerId !== "") {
-      const group = groupQuery.data
-      group.relations.members = this.setFromStringArray(group.relations.members, userId)
-      group.relations.players = this.setFromStringArray(group.relations.players, playerId)
       this.groupWs.playerJoinedGroup(player)
 
-      return await this.updateActiveGroup(group)
+      if (group) {
+        return await this.updateActiveGroup(group)
+      }
+
+      if (!group) {
+        const groupPlayer = await this.playerService.createPlayer({
+          groupId,
+          userId,
+          name: player.name,
+          tank: player.tank,
+          healer: player.healer,
+          dps: player.dps,
+          locked: false,
+          inTheRoll: false
+        })
+        const group = await this.setupUpdateGeneric(groupId, userId)
+        if (group && groupPlayer) {
+          const newGroup = await this.pushPlayerToGroup(group, groupPlayer)
+          const res = await this.updateActiveGroup(newGroup)
+          this.groupWs.playerJoinedGroup(groupPlayer)
+          return res
+        }
+      }
+      return null
+    } catch (e) {
+      this.logger.error(e)
+      return null
     }
-    return groupQuery
+  }
+
+  private pushPlayerToGroup(group: IGroup, player: IPlayer) {
+    const newMembers = this.setFromStringArray(group.relations.members, player.userId ? player.userId : undefined)
+    const newPlayers = this.setFromStringArray(group.relations.players, player.id)
+
+    group.relations.members = newMembers
+    group.relations.players = newPlayers
+    return {
+      ...group,
+      relations: {
+        members: newMembers,
+        players: newPlayers
+      }
+    }
   }
 
   async removeMember(group: IGroup, userId: string) {
-    const groupQuery = await this.setupUpdateGeneric(group.id, userId)
+    const setupGroup = await this.setupUpdateGeneric(group.id, userId)
     const player = await this.playerService.getGroupPlayer(userId, group.id)
-    if (groupQuery.success && groupQuery.data && player.data) {
-      const group = groupQuery.data
-      group.relations.members = group.relations.members.filter((value: string) => value !== userId)
-      group.relations.players = group.relations.players.filter((value: string) => value !== player.data?.id)
 
-      await this.playerService.deletePlayer(player.data.id)
-
-      await this.updateActiveGroup(group)
-      await this.groupWs.playerLeftGroup(player.data)
+    if (player && setupGroup) {
+      group.relations.members = setupGroup.relations.members.filter((value: string) => value !== userId)
+      group.relations.players = setupGroup.relations.players.filter((value: string) => value !== player.id)
+      await this.playerService.deletePlayer(player.id)
+      await this.groupWs.playerLeftGroup(player)
     }
-    return groupQuery
+
+    await this.updateActiveGroup(group)
+
   }
 
-  async deleteGroup(id: string, userId: string): Promise<DataResponse<IGroup>> {
+  async deleteGroup(id: string, userId: string): Promise<boolean> {
     const groupQuery = await this.groupRepo.getGroupById(id)
-    const authorized = groupQuery.data && this.checkIfAuthorized(groupQuery.data, userId)
-    if (!authorized) {
-      return {
-        data: null,
-        success: false,
-        error: {
-          message: ErrorMessages.AuthorizationError,
-          detail: "You are not authorized to delete this group"
-
-
-        }
-
+    if (groupQuery) {
+      const authorized = this.checkIfAuthorized(groupQuery, userId)
+      if (!authorized) {
+        throw createError({
+          message: 'Not authorized',
+          type: ErrorTypes.APP_ERROR,
+          context: 'deleteGroup'
+        })
       }
+      return await this.groupRepo.deleteByUserId(id, userId)
+    } else {
+      throw createError({
+        message: 'Group not found',
+        type: ErrorTypes.APP_ERROR,
+        context: 'deleteGroup'
+      })
     }
 
-    return await this.groupRepo.deleteByUserId(id, userId)
+
 
   }
 
@@ -244,23 +254,32 @@ export class GroupService {
     try {
       const player = await this.playerService.getPlayerByUserId(userId)
       const groupRes = await this.getGroup(groupId, userId)
-      if (player && groupRes.auth && groupRes.group) {
-        const res = await this.addMember(groupId, userId, player)
-        return res.success
+      if (groupRes.group && groupRes.auth && player) {
+        const updatedGroup = await this.addMember(groupId, userId, player)
+        return updatedGroup
       }
-      return false
+      throw createError({
+        message: 'Not authorized',
+        type: ErrorTypes.APP_ERROR,
+        context: 'userJoinGroup',
+        detail: {
+          ...groupRes
+        }
+      })
 
     } catch (e) {
-      this.logger.error({
-        message: "unable to join group",
-        groupId,
-        userId,
-        error: e.message,
+      const error = createError({
+        type: ErrorTypes.GROUP_ERROR,
+        detail: {
+          groupId,
+          userId,
+        },
+        context: 'userJoinGroup',
+        message: e.message,
         stacktrace: e.stacktrace
       })
-      throw {
-        status: HTTPCodes.SERVER_ERROR
-      }
+      this.logger.error(error)
+      throw error
     }
 
   }

@@ -1,15 +1,16 @@
-import { DataResponse } from "../../../shared/types/DataResponse"
 import { DataServiceAbstract } from "../common/data/dataService.abstract"
 import { DatabaseService } from "../common/database/database.service"
 import { addToContainer } from "../container"
+import { LoggerService } from "../logger/logger.service"
 
 @addToContainer()
 export class PlayerRepository extends DataServiceAbstract<DbPlayer, IPlayer> {
-  
+  private logger = this.ls.getLogger(PlayerRepository.name)
   db: DatabaseService
-  constructor(db: DatabaseService) {
+  constructor(db: DatabaseService, private ls: LoggerService) {
     super()
     this.db = db
+    this.logger.debug('PlayerRepository instantiated')
   }
 
   mapToCamelCase = ({ id, group_id, user_id, name, tank, healer, dps, locked, in_the_roll, created_at, updated_at }: DbPlayer): IPlayer => {
@@ -28,13 +29,18 @@ export class PlayerRepository extends DataServiceAbstract<DbPlayer, IPlayer> {
     }
   }
 
-  async getPlayersByGroupId(groupId: string): Promise<DataResponse<IPlayer[]>> {
-    const query = 'SELECT * FROM player WHERE group_id=$1'
-    const params = [groupId]
-    return await this.returnMany(query, params)
+  async getPlayersByGroupId(groupId: string) {
+    try {
+      const query = 'SELECT * FROM player WHERE group_id=$1'
+      const params = [groupId]
+      return await this.returnMany(query, params)
+    } catch (e){
+      this.logger.error(e)
+      return null
+    }
   }
 
-  async getPlayerById(id: string): Promise<DataResponse<IPlayer>> {
+  async getPlayerById(id: string) {
     const query = `SELECT * FROM player WHERE id=$1`
     const params = [id]
     return await this.returnOne(query, params)
@@ -67,20 +73,6 @@ export class PlayerRepository extends DataServiceAbstract<DbPlayer, IPlayer> {
   async deletePlayer(id: string) {
     const query = `DELETE FROM player WHERE id=$1`
     const params = [id]
-    const res = await this.returnOne(query, params)
-    if (res.error) {
-      return {
-        data: null,
-        success: false,
-        error: res.error
-      }
-    }
-    return {
-      data: {
-        id
-      },
-      success: true,
-      error: null
-    }
+    return await this.returnOne(query, params)
   }
 }

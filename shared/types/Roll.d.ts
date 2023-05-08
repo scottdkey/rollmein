@@ -1,13 +1,3 @@
-interface ValidRoll {
-  valid: boolean,
-  errors: IApplicationError[]
-}
-interface RollInputParam {
-  rollType: string
-  lockAfterOut: boolean
-  theme: string
-}
-
 interface PlayerCounts {
   locked: number,
   inTheRoll: number,
@@ -16,18 +6,22 @@ interface PlayerCounts {
   dps: number,
 }
 
-interface RollByRoleReturn {
-  tank: IPlayer;
-  healer: IPlayer;
-  dps: IPlayer[]
-}
-
 interface RollReturn {
-  players: IPlayer[] | RollByRoleReturn,
-  remaining: IPlayer[]
+  started: boolean,
+  currentRoll: IRoll | null,
+  previousRolls: PreviousRoll[],
+  remainingPlayers: string[],
+  lastCompletedTimestamp: Date | null
 }
 
-interface DPSObject {
-  players: IPlayer[];
-  remaining: IPlayer[];
+interface IRoll {
+  tank: string | null
+  healer: string | null
+  dps: string[] | null
+  ffa: string[] | null
+}
+
+interface IPreviousRoll {
+  roll: IRoll,
+  timestamp: Date
 }

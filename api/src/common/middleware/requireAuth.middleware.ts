@@ -1,11 +1,10 @@
 import { Next } from "koa";
-import { container } from "../../container";
-import { LoggerService } from "../../logger/logger.service";
 import { IApplicationError } from "../../../../shared/types/ApplicationError";
 import { MyContext } from "../../../../shared/types/Context";
-import { ErrorTypes } from "../../../../shared/types/ErrorCodes.enum";
 import { ErrorMessages } from "../../../../shared/types/ErrorTypes.enum";
 import { HTTPCodes } from "../../../../shared/types/HttpCodes.enum";
+import { container } from "../../container";
+import { LoggerService } from "../../logger/logger.service";
 
 
 
@@ -15,12 +14,11 @@ const logger = container.get(LoggerService).getLogger('RequireAuth')
 export async function RequireAuth(ctx: MyContext<any, IApplicationError | null>, next: Next) {
   try {
     if (ctx.state.validUser === false) {
-      ctx.body = {
-        message: ErrorMessages.AuthorizationError,
-        type: ErrorTypes.AUTH_ERROR,
-        context: "RequireAuth"
-      }
-      ctx.status = HTTPCodes.UNAUTHORIZED
+
+      ctx.throw(HTTPCodes.UNAUTHORIZED, ErrorMessages.AuthorizationError)
+    }
+    if (ctx.state.validUser === true) {
+      ctx.state = { ...ctx.state, user: ctx.state.user }
     }
   } catch (e) {
     logger.error({
@@ -28,14 +26,8 @@ export async function RequireAuth(ctx: MyContext<any, IApplicationError | null>,
       error: e.message,
       stacktrace: e.stacktrace
     })
-    ctx.body = {
-      message: ErrorMessages.AuthorizationError,
-      type: ErrorTypes.AUTH_ERROR,
-      context: "RequireAuth"
-    }
-    ctx.status = HTTPCodes.UNAUTHORIZED
+    ctx.throw(HTTPCodes.UNAUTHORIZED, ErrorMessages.AuthorizationError)
 
   }
-  await next()
-
+  return await next()
 }

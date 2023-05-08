@@ -1,11 +1,9 @@
-import { RedisError } from '../../../shared/types/ErrorTypes.enum';
-import { addToContainer } from "../container";
-import IoRedis, { Redis } from 'ioredis'
-import { ConfigService } from '../common/config/config.service';
-import { LoggerService } from '../logger/logger.service';
+import IoRedis, { Redis } from 'ioredis';
 import { Logger } from 'pino';
 import { RedisKeys } from '../../../shared/types/redisKeys.enum';
-import { DataResponse } from '../../../shared/types/DataResponse';
+import { ConfigService } from '../common/config/config.service';
+import { addToContainer } from "../container";
+import { LoggerService } from '../logger/logger.service';
 
 
 
@@ -56,46 +54,29 @@ export class RedisService {
       process.exit()
     }
   }
-  async get<T>(key: RedisKeys, id: string): Promise<DataResponse<T>> {
+  async get<T>(key: RedisKeys, id: string): Promise<T | null> {
     const res = await this.redis.get(`${key}-${id}`)
     if (res) {
-      return {
-        data: JSON.parse(res) as T,
-        success: true,
-        error: null
-      }
+      return await JSON.parse(res) as T
     }
-    return {
-      data: null,
-      success: false,
-      error: RedisError(key, id, null, "unable to get data from redis")
-    }
+    return null
   }
 
-  async refreshExpire<T>(key: RedisKeys, id: string, expireTime?: number) {
+  async refreshExpire<T>(key: RedisKeys, id: string, expireTime?: number): Promise<T | null> {
     const data = await this.get<T>(key, id)
-    if (data.data) {
-      return data.data && await this.setWithRetry<T>(key, id, data.data, expireTime)
+    if (data) {
+      return await this.setWithRetry<T>(key, id, data, expireTime)
     }
     return data
-
   }
 
   //expire time is in seconds
-  async set<T>(key: RedisKeys, id: string, data: T, expireTime: number = 7200): Promise<DataResponse<T>> {
+  async set<T>(key: RedisKeys, id: string, data: T, expireTime: number = 7200): Promise<T | null> {
     const res = await this.redis.set(`${key}-${id}`, JSON.stringify(data), 'ex', expireTime)
-    if (res) {
-      return {
-        data,
-        success: true,
-        error: null
-      }
+    if (res === "OK") {
+      return data
     }
-    return {
-      data,
-      success: false,
-      error: RedisError(key, id, data, 'unable to set data in redis')
-    }
+    return res
   }
 
 
@@ -110,12 +91,7 @@ export class RedisService {
     if (res) {
       return res
     }
-    return {
-      data: null,
-      success: false,
-      error: RedisError(key, id, data, 'unable to setWithRetry in redis')
-    }
-
+    return null
   }
   async publish<T>(key: RedisKeys, id: string, data: T) {
     try {

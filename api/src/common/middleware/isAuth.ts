@@ -12,14 +12,12 @@ export async function isAuth(ctx: MyContext<any, any>, next: Next) {
   try {
     const sessionToken = ctx.headers.authorization?.split(" ")[1]
     if (sessionToken) {
-  
+
       const session = await sessionService.getSession(sessionToken)
-      if (session.success && session.data?.id, session.data?.username) {
-        await sessionService.refreshSession(sessionToken)
-        ctx.state.user = session.data
-        ctx.state.token = sessionToken
-        ctx.state.validUser = session.success
-      }
+      await sessionService.refreshSession(sessionToken)
+      ctx.state.user = session
+      ctx.state.token = sessionToken
+      ctx.state.validUser = session !== null
     }
   } catch (e) {
     logger.error({ message: e.message })

@@ -83,36 +83,38 @@ router.get("/:userId", RequireAuth, async (ctx: MyContext<{}, IPlayer | null>, n
             }
         }
 
-        await next()
+
     } catch (e) {
         logger.error(e)
     }
+    await next()
 
 })
 
 router.get("/group/:groupId", RequireAuth, async (ctx: MyContext<{}, IPlayer[] | null>, next: Next) => {
     try {
-        const groupId = ctx.params.groupId
+        const groupId = ctx.params.groupId as string | undefined
         if (groupId) {
-            {
-                const players = await playerService.getPlayersByGroupId(groupId)
-
-                if (players.data) {
-                    ctx.body = players.data
-                }
-                if (players.error) {
-                    const error = players.error
-                    logger.warn(error)
-                    ctx.message = players.error
-                    ctx.body = []
-                }
-
+            const players = await playerService.getPlayersByGroupId(groupId)
+            if(players){
+                ctx.body = players
+                ctx.status = HTTPCodes.OK
             }
-            await next()
+            if(!players){
+                ctx.body = []
+                ctx.status = HTTPCodes.NOT_FOUND
+            }
         }
+        if(!groupId){
+            ctx.throw(HTTPCodes.BAD_REQUEST, "no groupId provided")
+        }
+
     } catch (e) {
         logger.error(e)
+        ctx.status = HTTPCodes.SERVER_ERROR
+        ctx.body = e
     }
+    await next()
 })
 
 

@@ -1,56 +1,46 @@
-import { addToContainer } from "../container";
-import { Logger } from "pino";
-import { LoggerService } from "../logger/logger.service";
-import { createError } from "../utils/CreateError";
-import { IApplicationError } from "../../../shared/types/ApplicationError";
-import { ErrorTypes } from "../../../shared/types/ErrorCodes.enum";
-import { DataResponse } from "../../../shared/types/DataResponse";
-import { ErrorMessages } from "../../../shared/types/ErrorTypes.enum";
+import { Logger } from 'pino';
+import { addToContainer } from '../container';
+import { GroupService } from '../group/group.service';
+import { GroupWsService } from '../group/groupWs.service';
+import { LoggerService } from '../logger/logger.service';
+import { PlayerService } from '../player/player.service';
+import { RollRepository } from './roll.repository';
+import { RollUtilities } from './roll.utilities';
 
 @addToContainer()
 export class RollService {
   private logger: Logger
-  constructor(private ls: LoggerService) {
+  constructor(
+    private ls: LoggerService,
+    private groupService: GroupService,
+    private playerService: PlayerService,
+    private webSocketService: GroupWsService,
+    private rollUtilities: RollUtilities,
+    private rollRepository: RollRepository
+  ) {
     this.logger = this.ls.getLogger(RollService.name)
   }
 
-  async addPlayerToRoll(body: IAddPlayerRequestBody) {
-    this.logger.info({ message: "addPlayerToRoll", body })
-    return true
+  private async setupGroupRoll(groupId: string, userId: string) {
+    const { group: groupData, auth } = await this.groupService.getGroup(groupId, userId)
+    const playersData = await this.playerService.getPlayersByGroupId(groupId)
+
+    return this.rollUtilities.validateRollGroup(auth, groupData, playersData)
   }
 
-  lockedCount(players: IPlayer[]): number {
-    return players.filter(p => p.inTheRoll).length
-  }
+  async roll(groupId: string, userId: string): Promise<RollReturn> {
+    const getRoll = await this.rollRepository.getRoll(groupId)
+    const { rollType, players } = await this.setupGroupRoll(groupId, userId)
 
-  inCount(players: IPlayer[]): number {
-    return players.filter(p => p.inTheRoll).length
-  }
 
-  playerCounts = (players: IPlayer[], rollType: RollType): PlayerCounts => {
-    const locked = players.filter(p => p.locked).length
-    const inTheRoll = players.filter(p => p.inTheRoll)
-    if (rollType === RollType.ROLE) {
-      const tanks = inTheRoll.filter(p => p.tank).length
-      const healers = inTheRoll.filter(p => p.healer).length
-      const dps = inTheRoll.filter(p => p.dps).length
-      return {
-        locked,
-        inTheRoll: inTheRoll.length,
-        tanks,
-        healers,
-        dps
-      }
-    } else {
-      return {
-        locked,
-        inTheRoll: inTheRoll.length,
-        tanks: 0,
-        healers: 0,
-        dps: 0
-      }
-    }
-  };
+    const previousRolls = getRoll.currentRoll ? [...getRoll.previousRolls, getRoll.currentRoll] : getRoll.previousRolls
+
+    const rollReturn = await this.rollUtilities.handleRoll(rollType, players, previousRolls)
+    await this.webSocketService.rollUpdated(groupId, rollReturn)
+    await this.rollRepository.setRollToCache(groupId, rollReturn)
+
+    return rollReturn
+  }
 
   async startRoll(groupId: string): Promise<RollStartResponse> {
     this.logger.info({ message: groupId })
@@ -59,134 +49,5 @@ export class RollService {
     }
   }
 
-  FFARoll(currentGroup: IPlayer[]): { players: IPlayer[]; remaining: IPlayer[] } {
-    let remaining = currentGroup
-    const players: IPlayer[] = []
-    while (players.length > 5) {
-      const pickedPlayer = this.rollWithLocked(remaining)
-      players.push(pickedPlayer)
-      remaining = this.removeFromGroup(pickedPlayer, remaining)
-    }
-    return { players, remaining }
-  }
-
-  rollByRole(currentGroup: IPlayer[]): DataResponse<{
-    players: {
-      tank: IPlayer;
-      healer: IPlayer;
-      dps: IPlayer[];
-    };
-    remaining: IPlayer[];
-  }> {
-    const validRoll = this.validRoll(currentGroup, RollType.ROLE)
-    if (!validRoll.valid) {
-      return {
-        data: null,
-        success: false,
-        error: validRoll.errors.join()
-      }
-    }
-    const tankRoll = this.rollForRole(PlayerRoles.TANK, currentGroup);
-    const healerRoll = this.rollForRole(PlayerRoles.HEALER, tankRoll.remaining);
-    const dpsRoll = this.rollForDps(healerRoll.remaining);
-    const players = { tank: tankRoll.player, healer: healerRoll.player, dps: dpsRoll.players }
-    return {
-      data: { players, remaining: dpsRoll.remaining },
-      success: true,
-      error: null
-    };
-  }
-
-
-  protected randomFromArray(players: IPlayer[]): IPlayer {
-    return players[Math.floor(Math.random() * players.length)];
-  }
-  private removeFromGroup(
-    pickedPlayer: IPlayer,
-    remainingPlayers: IPlayer[]
-  ): IPlayer[] {
-    return remainingPlayers.filter(
-      (player) => player.id !== pickedPlayer.id
-    );
-  }
-
-  private rollForRole(role: string, players: IPlayer[]): { player: IPlayer, remaining: IPlayer[] } {
-    const group: IPlayer[] = players.filter(
-      (player) => player[role as keyof IPlayer] === true
-    );
-    const playerWithRole = this.rollWithLocked(group)
-    const remaining = this.removeFromGroup(playerWithRole, players)
-
-    return {
-      player: playerWithRole,
-      remaining
-    }
-  }
-
-  protected rollWithLocked(players: IPlayer[]): IPlayer {
-    const locked = players.filter((p: IPlayer) => p.locked);
-    const outGroup = players.filter((p: IPlayer) => !p.locked)
-    let pickedPlayer: IPlayer;
-    if (locked.length > 0) {
-      pickedPlayer = this.randomFromArray(locked);
-    } else {
-      pickedPlayer = this.randomFromArray(outGroup);
-    }
-    return pickedPlayer
-  }
-
-  private rollForDps(currentGroup: IPlayer[]): { remaining: IPlayer[], players: IPlayer[] } {
-    let remaining = currentGroup;
-
-    const players: IPlayer[] = [];
-    for (let dpsCount = 1; dpsCount < 4; dpsCount++) {
-      const pickedDPS = this.rollForRole(PlayerRoles.DPS, remaining);
-      players.push(pickedDPS.player);
-      remaining = pickedDPS.remaining;
-    }
-    return { remaining, players };
-  }
-
-  private validRoll = (players: IPlayer[], rollType: RollType): ValidRoll => {
-    const playerCounts = this.playerCounts(players, rollType)
-    const errorArray: IApplicationError[] = []
-    const invalidRollError = (message: ErrorMessages) => {
-      errorArray.push(createError({
-        message,
-        type: ErrorTypes.INVALID_ROLL,
-        context: 'validRoll'
-      }))
-    }
-    const isRoleBased = rollType === RollType.ROLE
-    if (isRoleBased && playerCounts.tanks === 0) {
-      invalidRollError(ErrorMessages.MustHaveTank)
-
-    }
-    if (isRoleBased && playerCounts.dps >= 3) {
-      invalidRollError(ErrorMessages.MustHaveCorrectDps)
-
-    }
-    if (isRoleBased && playerCounts.healers === 0) {
-      invalidRollError(ErrorMessages.MustHaveHealer)
-
-    }
-    if (playerCounts.inTheRoll > 5) {
-      invalidRollError(ErrorMessages.MustCorrectPlayers)
-    }
-    return {
-      valid: errorArray.length < 1,
-      errors: errorArray
-    }
-  }
-
 }
 
-export enum RollType {
-  FFA = "ffa",
-  ROLE = 'role'
-}
-export enum PlayerRoles {
-  TANK = 'tank',
-  DPS = 'dps',
-  HEALER = 'healer'
-}

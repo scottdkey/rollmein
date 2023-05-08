@@ -4,9 +4,8 @@ import { addToContainer } from "../../container"
 import { LoggerService } from "../../logger/logger.service"
 import { dbToIsoString } from "../../utils/date.util"
 import { ConfigService } from "../config/config.service"
-import { ErrorMessages } from "../../../../shared/types/ErrorTypes.enum"
-import { DataResponse } from "../../../../shared/types/DataResponse"
 import { ErrorTypes } from "../../../../shared/types/ErrorCodes.enum"
+import { createError } from "../../utils/CreateError"
 
 @addToContainer()
 export class DatabaseService {
@@ -34,7 +33,7 @@ export class DatabaseService {
     })
   }
 
-  async query<D, T>(text: string, params: unknown[], mapToCamelCase: (data: D) => T): Promise<DataResponse<T[]>> {
+  async query<D, T>(text: string, params: unknown[], mapToCamelCase: (data: D) => T): Promise<T[] | null> {
     const client: PoolClient = await this.pool.connect()
     this.logger.debug({ message: 'performing query', text, params })
     try {
@@ -50,60 +49,42 @@ export class DatabaseService {
           }
           return mapToCamelCase(modifiableRow)
         }) : res.rows as T[]
-        return {
-          data,
-          success: true,
-          error: null
-        }
+        this.logger.debug({ message: 'query result', data })
+        return data
       }
-
-      return {
-        data: null,
-        success: false,
-        error: {
-          message: ErrorMessages.NoRowsReturned,
-          context: "#databaseService query",
-          type: ErrorTypes.DB_ERROR,
-          detail: "no rows returned"
-        }
-      }
+      return null
     } catch (e) {
-      this.logger.error({ ...e, message: "db query failed", text })
-      return {
-        data: null,
-        success: false,
-        error: {
-          message: ErrorMessages.DatabaseError,
-          stacktrace: e.stacktrace,
-          context: "#databaseService query",
-          type: ErrorTypes.DB_ERROR,
-          detail: e.message
+      const error = createError({
+        message: e.message,
+        stacktrace: e.stacktrace,
+        context: "#databaseService query",
+        type: ErrorTypes.DB_ERROR,
+        detail: {
+          text,
+          params,
         }
-      }
+      })
+      this.logger.error(error)
+      throw error
     } finally {
       client.release()
     }
   }
 
-  async findOne<D, T>(text: string, params: unknown[], mapToCamelCase: (data: D) => T): Promise<DataResponse<T>> {
+  async findOne<D, T>(text: string, params: unknown[], mapToCamelCase: (data: D) => T): Promise<T | null> {
     try {
       const res = await this.query<D, T>(text, params, mapToCamelCase)
-      if (res.data && res.success) {
-        return {
-          ...res,
-          data: res.data[0]
-        }
+      if (res) {
+        return res[0]
       }
-      return {
-        ...res,
-        data: null
-      }
+      return null
     } catch (e) {
-      return {
-        data: null,
-        success: false,
-        error: e.message
-      }
+      throw createError({
+        message: e.message,
+        stacktrace: e.stacktrace,
+        context: "#databaseService findOne",
+        type: ErrorTypes.DB_ERROR,
+      })
     }
   }
 }

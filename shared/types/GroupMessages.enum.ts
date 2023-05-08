@@ -11,5 +11,6 @@ export enum GroupWSMessageTypes {
   RollEnded = 'rollEnded',
   Open = 'open',
   TooManyLocked = 'tooManyLocked',
-  CountUpdated = 'countUpdated'
+  CountUpdated = 'countUpdated',
+  RollUpdated = 'rollUpdated',
 }

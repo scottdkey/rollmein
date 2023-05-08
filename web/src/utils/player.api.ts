@@ -3,16 +3,11 @@ import { useMutation, useQuery } from "react-query"
 import { useSession } from "next-auth/react"
 import { usePlayersSlice } from "../stores/Players.slice"
 import { RestMethods } from "@sharedTypes/RestMethods.enum"
+import { PlayerRoutes } from "../../../shared/types/PlayerRoutes.enum"
 
 
 
-export enum PlayerRoutes {
-  PLAYERS = 'player/group',
-  PLAYER = 'player',
-  PLAYER_BY_SIGNED_IN_USER = 'user/player',
-  PLAYER_BY_USER_ID = 'player/:userId'
 
-}
 
 export const getPlayer = async (playerId?: string, sessionToken?: string) => {
   if (playerId && sessionToken) {
@@ -116,7 +111,7 @@ export const updatePlayer = async (params: IUpdatePlayer, sessionToken: string) 
   try {
     await ApiRequest<IPlayer, IUpdatePlayer>(PlayerRoutes.PLAYER, RestMethods.PUT, { body: params, sessionToken })
   } catch (e) {
-    console.log(e)
+    console.error(e)
   }
 }
 

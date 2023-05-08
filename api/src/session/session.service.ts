@@ -47,11 +47,12 @@ export class SessionService {
 
   async setSession(sessionId: string, user: User) {
     try {
+      const sessionExpiresInDays = 10
       const cacheUser: CacheUser = {
         ...user,
-        sessionExpires: this.date.getDaysFromNow(1).toISOString()
+        sessionExpires: this.date.getDaysFromNow(sessionExpiresInDays).toISOString()
       }
-      const sessionExpireInSeconds = this.date.secondsFromNumberOfDays(7)
+      const sessionExpireInSeconds = this.date.secondsFromNumberOfDays(sessionExpiresInDays)
       await this.redis.setWithRetry(RedisKeys.SESSION, sessionId, cacheUser, 4, sessionExpireInSeconds)
       return sessionId
     } catch (e) {

@@ -1,17 +1,11 @@
 import { create } from 'zustand'
 
-export interface IRoll {
-  tank: IPlayer | null
-  healer: IPlayer | null
-  dps: IPlayer[] | null
-  ffa: IPlayer[] | null
-}
-
 interface RollState {
   currentRoll: IRoll
   previousRolls: IRoll[]
-  remainingPlayers: IPlayer[]
+  remainingPlayers: string[]
   rollSize: number
+  active: boolean
   error: string | null
 }
 
@@ -26,6 +20,7 @@ export const useRollSlice = create<RollState>((set) => {
     },
     remainingPlayers: [],
     previousRolls: [],
+    active: false,
     rollSize: 5,
     error: null,
   })

@@ -6,38 +6,42 @@ import { LoggerService } from '../logger/logger.service';
 import { RequireAuth } from '../common/middleware/requireAuth.middleware';
 import { MyContext } from '../../../shared/types/Context';
 import { HTTPCodes } from '../../../shared/types/HttpCodes.enum';
+import { RollUtilities } from './roll.utilities';
 
 const router = new Router({ prefix: '/roll' })
 
 const rollService = container.get(RollService)
+const rollUtilities = container.get(RollUtilities)
 const logger = container.get(LoggerService).getLogger("rollRouter")
 
-router.post('/addPlayer', isAuth, async (ctx: MyContext<IAddPlayerRequestBody, IAddPlayerReturnBody>, next) => {
+router.post('/:groupId', RequireAuth, async (ctx: MyContext<any, any>, next) => {
   try {
-    const res = await rollService.addPlayerToRoll(ctx.request.body)
-
-
-    ctx.body = {
-      success: res
+    const groupId = ctx.params.groupId
+    const userId = ctx.state.user.id as string
+    if (!groupId) {
+      ctx.status = HTTPCodes.BAD_REQUEST
+      ctx.body = {
+        data: null,
+        error: "must include a group id",
+        success: false
+      }
     }
-    ctx.status = HTTPCodes.CREATED
-
+    if (groupId && userId) {
+      ctx.body = await rollService.roll(groupId, userId)
+      ctx.status = HTTPCodes.OK
+    }
   } catch (e) {
-    logger.error({
-      message: "error adding player",
-      ...e
-    })
-    ctx.body = {
-      success: false
-    }
-    ctx.status = e.status
+    logger.error(e)
+    ctx.status = e.status ? e.status : HTTPCodes.UNPROCESSABLE_ENTITY
+    ctx.body = e
   }
   await next()
+
 })
 
 router.get('/inCount', isAuth, async (ctx: MyContext<IPlayerInCountRequestBody, any>, next) => {
   const requestBody = ctx.request.body
-  const res = rollService.inCount(requestBody.players)
+  const res = rollUtilities.inCount(requestBody.players)
   ctx.body = {
     data: res,
     error: null,

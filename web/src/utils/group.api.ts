@@ -40,6 +40,9 @@ export const useGetGroups = () => {
       if (res) {
         setGroups(res)
       }
+    },
+    onError: (err) => {
+      console.log(err)
     }
   })
 }

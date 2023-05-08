@@ -13,6 +13,7 @@ import { ErrorTypes } from "../../../shared/types/ErrorCodes.enum";
 import { IGroup, ICreateGroup, IUpdateGroup, IJoinGroupReq, IJoinGroupRes, IGroupPlayerCountResponse } from "../../../shared/types/Group";
 import { HTTPCodes } from "../../../shared/types/HttpCodes.enum";
 import { GroupCountService } from "../groupCount/groupCount.service";
+import { createError } from "../utils/CreateError";
 
 
 
@@ -22,41 +23,30 @@ const groupCountService = container.get(GroupCountService)
 const logger = container.get(LoggerService).getLogger('group router')
 
 groupRouter.get("/", async (ctx: MyContext<{}, IGroup[] | IApplicationError>, next: Next) => {
-  let returnGroups: IGroup[] = []
-  let error = false
-  const user = ctx.state.user
-  if (user) {
-    try {
-      const groups = await groupService.getGroupsByUserId(user.id)
-      if (groups) {
-        returnGroups = [...groups]
-      }
-
-    } catch (e) {
-      logger.error({ message: 'get groups error', error: e })
-      error = true
-    }
-  }
   try {
+    let returnGroups: IGroup[] = []
+    const user = ctx.state.user
+    if (user) {
+      const groups = await groupService.getGroupsByUserId(user.id)
+      returnGroups = groups ? [...returnGroups, ...groups] : []
+      logger.info({
+        message: "user groups found",
+        groups: groups,
+      })
+    }
     const groups = await groupService.getGroups()
-    if (groups.data) {
-      returnGroups = [...returnGroups, ...groups.data]
-    }
-    if (groups.error) {
-      logger.error({ message: "get groups error", error: groups.error })
-    }
-  } catch (e) {
-    logger.error({ message: 'get groups error', error: e })
-    error = true
-  }
-  if (!error) {
-    ctx.status = HTTPCodes.OK
-  }
-  if (error) {
-    ctx.status = HTTPCodes.NOT_FOUND
-  }
+    returnGroups = groups ? [...returnGroups, ...groups] : []
+    logger.info({
+      message: "groups found",
+      groups: groups,
+    })
 
-  ctx.body = [...new Map(returnGroups.map((group) => [group["id"], group])).values()]
+    ctx.body = [...new Set(returnGroups)]
+    ctx.status = HTTPCodes.OK
+  } catch (e) {
+    ctx.status = HTTPCodes.INTERNAL_SERVER_ERROR
+    ctx.body = e
+  }
 
   await next()
 })
@@ -105,30 +95,31 @@ groupRouter.get('/:groupId', async (ctx: MyContext<{}, {
   await next()
 })
 
-groupRouter.post("/", async (ctx: MyContext<ICreateGroup, IGroup | { message: string }>, next: Next) => {
-  logger.info({ message: "post route", body: ctx.request.body })
+groupRouter.post("/", RequireAuth, async (ctx: MyContext<ICreateGroup, IGroup | { message: string }>, next: Next) => {
   try {
-    if (ctx.state.user && ctx.state.validUser) {
-      const res = await groupService.createGroup(ctx.state.user.id, ctx.request.body)
-      if (res.data && res.success) {
-        ctx.body = res.data
+    const userId = ctx.state.user?.id
+    const validUser = ctx.state.validUser
+    if (userId && validUser) {
+      const group = await groupService.createGroup(ctx.state.user.id, ctx.request.body)
+      if(group){
+        ctx.body = group
         ctx.status = HTTPCodes.CREATED
       }
-      if (res.error) {
+      if(!group){
         ctx.body = {
-          message: JSON.stringify(res.error)
+          message: "group not created"
         }
+        ctx.status = HTTPCodes.UNPROCESSABLE_ENTITY
       }
-
     }
-    if (!ctx.state.validUser && !ctx.state.user) {
+    if (!userId || !validUser) {
       ctx.body = {
         message: "not signed in, cannot create group"
       }
       ctx.status = HTTPCodes.UNAUTHORIZED
     }
   } catch (e) {
-    ctx.body = { message: e.message }
+    ctx.body = e
     ctx.status = HTTPCodes.SERVER_ERROR
   }
   await next()
@@ -136,15 +127,26 @@ groupRouter.post("/", async (ctx: MyContext<ICreateGroup, IGroup | { message: st
 
 groupRouter.put("/", async (ctx: MyContext<IUpdateGroup, IGroup | IApplicationError>, next: Next) => {
   const userId = ctx.state.user?.id
-  if (userId && ctx.state.validUser) {
-    const res = await groupService.updateGroup(userId, ctx.request.body)
-    if (res.data) {
-      ctx.body = res.data
+  try {
+    if (userId && ctx.state.validUser) {
+      const group = await groupService.updateGroup(userId, ctx.request.body)
+      if(group){
+        ctx.body = group
+        ctx.status = HTTPCodes.OK
+      }
+      if(!group){
+        ctx.body = createError({
+          message: "group not updated",
+          type: ErrorTypes.GROUP_ERROR,
+          context: "group router update group",
+        })
+        ctx.status = HTTPCodes.UNPROCESSABLE_ENTITY
+      }
     }
-    if (res.error) {
-      ctx.status = 400
-      ctx.body = res.error
-    }
+  } catch (e) {
+    logger.error(e)
+    ctx.body = e
+    ctx.status = HTTPCodes.SERVER_ERROR
   }
 
 
@@ -152,8 +154,6 @@ groupRouter.put("/", async (ctx: MyContext<IUpdateGroup, IGroup | IApplicationEr
 })
 
 groupRouter.delete('/', async (ctx: MyContext<{}, {}>, next: Next) => {
-  console.log(ctx.request.body)
-
   ctx.body = {
     message: 'received'
   }
@@ -199,12 +199,14 @@ groupRouter.post('/joinGroup', RequireAuth, async (ctx: MyContext<IJoinGroupReq,
     const userId = ctx.state.user.id as string
     const groupId = ctx.request.body.groupId
 
-    const res = await groupService.userJoinGroup(groupId, userId)
+    await groupService.userJoinGroup(groupId, userId)
+    ctx.status = HTTPCodes.OK
     ctx.body = {
-      success: res
+      success: true
     }
   } catch (e) {
-    ctx.status = e.status
+    logger.error(e)
+    ctx.status = HTTPCodes.SERVER_ERROR
     ctx.body = { success: false }
   }
 

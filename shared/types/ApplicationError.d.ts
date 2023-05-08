@@ -4,7 +4,7 @@ import { ErrorTypes } from "./ErrorCodes.enum";
 interface IApplicationError {
   context: string;
   type: ErrorTypes
-  message: ErrorMessages;
+  message: string;
   stacktrace?: any;
   detail?: any
 }

@@ -1,6 +1,5 @@
 import { HStack } from "@chakra-ui/react"
 import { FC } from "react"
-import { IRoll } from "../../stores/Roll.slice"
 import { RollPlayerDisplay } from "./RollPlayerDisplay"
 
 export const FfaRollPlayers: FC<{ roll: IRoll }> = ({ roll }) => {
@@ -8,7 +7,7 @@ export const FfaRollPlayers: FC<{ roll: IRoll }> = ({ roll }) => {
     return (
       <HStack>
         {
-          roll.ffa.map(player => RollPlayerDisplay({ player }))
+          roll.ffa.map(id => RollPlayerDisplay({ playerId: id }))
         }
       </HStack>
     )

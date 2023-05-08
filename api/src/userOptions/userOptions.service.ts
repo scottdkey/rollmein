@@ -1,11 +1,11 @@
 import { Logger } from 'pino';
+import { ErrorTypes } from '../../../shared/types/ErrorCodes.enum';
+import { DbUserOptions, UserOptions, UserOptionsInput } from '../../../shared/types/UserOptions';
 import { DataServiceAbstract } from '../common/data/dataService.abstract';
 import { DatabaseService } from '../common/database/database.service';
 import { addToContainer } from '../container';
 import { LoggerService } from '../logger/logger.service';
-import { ErrorMessages } from '../../../shared/types/ErrorTypes.enum';
-import { DataResponse } from '../../../shared/types/DataResponse';
-import { DbUserOptions, UserOptions, UserOptionsInput } from '../../../shared/types/UserOptions';
+import { createError } from '../utils/CreateError';
 
 @addToContainer()
 export class UserOptionsService extends DataServiceAbstract<DbUserOptions, UserOptions>{
@@ -26,75 +26,58 @@ export class UserOptionsService extends DataServiceAbstract<DbUserOptions, UserO
     }
   }
 
-  async createOptions(userId: string): Promise<DataResponse<UserOptions>> {
+  async createOptions(userId: string): Promise<UserOptions | null> {
     const query = `INSERT INTO user_options (user_id) VALUES ($1) RETURNING *`
     const params = [userId]
     return this.returnOne(query, params)
   }
-  async getUserOptions(userId: string): Promise<DataResponse<UserOptions>> {
+
+  async getUserOptions(userId: string): Promise<UserOptions | null> {
     const query = 'SELECT * FROM user_options WHERE user_id=$1'
     const params = [userId]
     return await this.returnOne(query, params)
   }
-  async updateOptions(userId: string, requestInput: UserOptionsInput): Promise<DataResponse<UserOptions>> {
+
+  async updateOptions(userId: string, requestInput: UserOptionsInput): Promise<UserOptions | null> {
     const uoRes = await this.getUserOptions(userId)
-    if (uoRes.data) {
-      const { input, error } = this.validateUserOptionsInput(userId, requestInput, uoRes.data)
-      if (input) {
-        const query = `UPDATE user_options SET theme=$1 WHERE user_id=$2 RETURNING *`
-        const params = [input.theme, userId]
-        return await this.returnOne(query, params)
-      }
-      if (error) {
-        return {
-          data: null,
-          success: false,
-          error
-        }
-      }
+    if (uoRes) {
+      const input = this.validateUserOptionsInput(userId, requestInput, uoRes)
+
+      const query = `UPDATE user_options SET theme=$1 WHERE user_id=$2 RETURNING *`
+      const params = [input.theme, userId]
+      return await this.returnOne(query, params)
     }
-    return {
-      data: null,
-      success: false,
-      error: `unable to update user options for user ${userId}`
-    }
+    return null
   }
-  async deleteOptions(userId: string): Promise<DataResponse<boolean | null>> {
-    const res = await this.returnOne("DELETE FROM user_options WHERE user_id=$1", [userId])
-    if (res.success) {
-      return {
-        ...res,
-        data: null
-      }
-    }
-    return {
-      ...res,
-      data: null,
-      error: `unable to delete user options for user ${userId}`
-    }
+
+  async deleteOptions(userId: string): Promise<boolean> {
+    await this.returnOne("DELETE FROM user_options WHERE user_id=$1", [userId])
+    return true
+
   }
 
 
-  protected validateUserOptionsInput(userId: string, input: UserOptionsInput | null, userOptions: UserOptions): { input: UserOptionsInput | null; error: string | null } {
+  protected validateUserOptionsInput(userId: string, input: UserOptionsInput | null, userOptions: UserOptions): UserOptionsInput {
     if (userId !== userOptions.userId) {
-      const error = { message: ErrorMessages.AuthorizationError, context: 'userId does not match userOptions.userId' }
+      const error = createError({
+        message: 'userId does not match userOptions.userId',
+        context: 'validateUserOptionsInput',
+        type: ErrorTypes.AUTH_ERROR,
+      })
       this.logger.error(error)
-      return {
-        error: error.context,
-        input: null
-      }
+      throw error
 
     }
     if (input === null) {
-      this.logger.error({ message: 'null input #validateUserOptionsInput' })
-      return {
-        error: ErrorMessages.NullInputError,
-        input: null
-      }
+      const error = createError({
+        message: 'null input',
+        context: 'validateUserOptionsInput',
+        type: ErrorTypes.INPUT_ERROR,
+      })
+      this.logger.error(error)
+
+      throw error
     }
-    return {
-      error: null,
-      input
-    }
+    return input
   }
 }

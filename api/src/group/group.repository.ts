@@ -43,30 +43,35 @@ export class GroupRepository extends DataServiceAbstract<DbGroup, IGroup>{
   }
 
   async getGroupsByUserId(userId: string) {
-    const res = await this.getGroups()
-    if (res.error) {
-      this.logger.error({ message: '#getGroupsByUserId error', error: res.error })
-    }
-    return res.data?.filter((group: IGroup) => {
-      const includes = group.relations.members.includes(userId)
-      const isUser = group.userId !== userId
-      if (isUser || includes) {
-        return group
+    try {
+      const res = await this.getGroups()
+      if (res) {
+        return res.filter((group: IGroup) => {
+          const includes = group.relations.members.includes(userId)
+          const isUser = group.userId !== userId
+          if (isUser || includes) {
+            return group
+          }
+          return
+        })
       }
-      return
-    })
+      return null
+    } catch (e) {
+      this.logger.error(e)
+      return null
+    }
   }
   async getGroupsByPlayerId(playerId: string) {
     const res = await this.getGroups()
-    if (res.error) {
-      this.logger.error({ message: '#getGroupsByPlayerId error', error: res.error })
+    if (res) {
+      return res.filter((group: IGroup) => {
+        if (group.relations.players.includes(playerId)) {
+          return group
+        }
+        return
+      })
     }
-    return res.data?.filter((group: IGroup) => {
-      if (group.relations.players.includes(playerId)) {
-        return group
-      }
-      return
-    })
+    return null
   }
 
   async createGroup(userId: string, { name, rollType, membersCanUpdate, lockAfterOut }: ICreateGroup) {
@@ -84,6 +89,10 @@ export class GroupRepository extends DataServiceAbstract<DbGroup, IGroup>{
   async deleteByUserId(groupId: string, userId: string) {
     const query = 'DELETE FROM public.group WHERE id=$1 AND user_id=$2'
     const params = [groupId, userId]
-    return this.returnOne(query, params)
+    const res = await this.returnOne(query, params)
+    if (res) {
+      return true
+    }
+    return false
   }
 }

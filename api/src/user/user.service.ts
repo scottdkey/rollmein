@@ -3,6 +3,8 @@ import { UserRepository } from './user.repository';
 import { PlayerService } from '../player/player.service';
 import { Logger } from 'pino';
 import { LoggerService } from '../logger/logger.service';
+import { createError } from "../utils/CreateError";
+import { ErrorTypes } from "../../../shared/types/ErrorCodes.enum";
 
 @addToContainer()
 export class UserService {
@@ -28,23 +30,14 @@ export class UserService {
 
   async getOrCreateUserByGoogleId(googleId: string, email: string, username: string) {
     try {
-      const user = await this.getByGoogleId(googleId)
-      if (user.success === false) {
-        const registerRes = await this.register({ googleId, email, username, appleId: null, githubId: null })
-        return registerRes.data
 
-      }
-      if (user.success === true) {
-        return user.data
-      }
-      return null
+      return await this.getByGoogleId(googleId)
+
     } catch (e) {
-      const message = 'error #findOrCreateUserGoogleId'
-      this.logError(message, e)
-      throw {
-        ...e,
-        message
-      }
+
+      this.logger.error(e)
+
+      return await this.register({ googleId, email, username, appleId: null, githubId: null })
     }
   }
 
@@ -57,59 +50,57 @@ export class UserService {
   }
 
   async getByEmail(email: string) {
-    const user = await this.userRepo.getUserByEmail(email)
-    if (user.success && user.data) {
-      return {
-        ...user,
-        data: this.scrubUser(user.data)
-      }
+    const res = await this.userRepo.getUserByEmail(email)
+    if (res) {
+      return this.scrubUser(res)
     }
-    return user
+    return null
   }
 
 
   async register(registerUser: RegisterUser) {
     try {
       const user = await this.userRepo.createUser(registerUser)
-      const userId = user?.data?.id as string
-      const username = user?.data?.username as string
-      await this.playerService.createPlayerForUser(userId, username)
-      return user
+      if (user) {
+        const adjustedName = user.username || `user-${user.id}`
+        await this.playerService.createPlayerForUser(user.id, adjustedName)
+        return user
+      }
+      return null
     } catch (e) {
-      const message = "error creating user"
-      this.logError(message, e)
-      throw {
-        ...e,
-        message
-      }
-
+      const error = createError({
+        message: "Error registering user",
+        type: ErrorTypes.USER_ERROR,
+        stacktrace: e.stacktrace,
+        context: "UserService",
+        detail: {
+          registerUser
+        }
+      })
+      this.logger.error(error)
+      throw error
     }
   }
 
-  async updateProfile(username: string) {
+  async updateProfile(username: string): Promise<{
+    user: User | null,
+    scrubbedUser: ScrubbedUser | null
+  }> {
     const user = await this.userRepo.updateUserProfile(username)
-    if (user.success && user.data) {
-      return {
-        ...user,
-        data: this.scrubUser(user.data),
-        user: user.data
-      }
-    }
     return {
-      ...user,
-      user: null
+      user,
+      scrubbedUser: user ? this.scrubUser(user) : null
     }
   }
-  logError(message: string, e: any) {
-    this.logger.error({
+  logError(message: string, e: any, context: string = "UserService") {
+    const error = createError({
       message,
-      error: e.message,
-      stacktrace: e.stacktrace
+      type: ErrorTypes.USER_ERROR,
+      stacktrace: e.stacktrace,
+      context
     })
-    throw {
-      ...e,
-      message
-    }
+    this.logger.error(error)
+    throw error
   }
 
 

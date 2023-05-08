@@ -26,6 +26,7 @@ export enum ErrorMessages {
   MustHaveCorrectDps = 'must have 3 dps',
   MustHaveHealer = 'must have a healer',
   MustCorrectPlayers = 'must have 5 or more players',
+  ROLL_ERROR = 'something went wrong when rolling',
 }
 
 

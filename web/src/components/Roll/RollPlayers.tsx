@@ -1,6 +1,5 @@
 import { HStack, VStack, FormLabel } from "@chakra-ui/react"
 import { FC } from "react"
-import { IRoll } from "../../stores/Roll.slice"
 import { RollPlayerDisplay } from "./RollPlayerDisplay"
 
 export const RollPlayers: FC<{ roll: IRoll }> = ({ roll }) => {
@@ -9,16 +8,16 @@ export const RollPlayers: FC<{ roll: IRoll }> = ({ roll }) => {
       <HStack>
         <VStack>
           <FormLabel>Tank</FormLabel>
-          <RollPlayerDisplay player={roll.tank} />
+          <RollPlayerDisplay playerId={roll.tank} />
         </VStack>
         <VStack>
           <FormLabel>Healer</FormLabel>
-          <RollPlayerDisplay player={roll.healer} />
+          <RollPlayerDisplay playerId={roll.healer} />
         </VStack>
         <VStack>
           <FormLabel>Dps</FormLabel>
           {
-            roll.dps.map(player => RollPlayerDisplay({ player }))
+            roll.dps.map(id => RollPlayerDisplay({ playerId: id }))
           }
         </VStack>
       </HStack>

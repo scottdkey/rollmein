@@ -1,50 +1,41 @@
 import { addToContainer } from "../container";
-import { LoggerService } from "../logger/logger.service";
-import { PlayerService } from "../player/player.service";
-import { RollService } from "../roll/roll.service";
 import { GroupService } from "../group/group.service";
 import { GroupWsService } from "../group/groupWs.service";
-import { inject } from "inversify";
+import { PlayerService } from "../player/player.service";
+import { RollUtilities } from "../roll/roll.utilities";
 
 
 @addToContainer()
 export class GroupCountService {
-  private logger = this.ls.getLogger(GroupCountService.name)
   constructor(
     private groupService: GroupService,
     private playerService: PlayerService,
-    private rollService: RollService,
     private groupWs: GroupWsService,
-    private ls: LoggerService
+    private rollUtilities: RollUtilities
   ) { }
 
   async getGroupPlayerCounts(groupId: string) {
-    try {
-      const group = await this.groupService.getGroup(groupId)
-      const players = await this.playerService.getPlayersByGroupId(groupId)
-      if (players.data && group.group?.rollType) {
-
-        const res = this.rollService.playerCounts(players.data, group.group.rollType)
-        if (res.locked > 5) {
-          this.groupWs.tooManyLocked(groupId, res.locked)
-        }
-        return res
-      }
-      return null
-    } catch (e) {
-      this.logger.error({ message: "getGroupPlayerCounts error", error: e })
-      return null
+    const groupRes = await this.groupService.getGroup(groupId)
+    const players = await this.playerService.getPlayersByGroupId(groupId)
+    if(players && groupRes.group){
+      const res = this.rollUtilities.playerCounts(players, groupRes.group.rollType)
+      await this.messageIfTooManyLocked(groupId, res)
+      return res
     }
-
+    return null
   }
+
+  async messageIfTooManyLocked(groupId: string, playerCounts: PlayerCounts) {
+    if (playerCounts.locked > 5) {
+      this.groupWs.tooManyLocked(groupId, playerCounts.locked)
+    }
+  }
+
   async updateActiveGroupCounts(groupId: string) {
-    try {
-      const groupCounts = await this.getGroupPlayerCounts(groupId)
-      if (groupCounts) {
-        await this.groupWs.updateGroupCount(groupId, groupCounts)
-      }
-    } catch (e) {
-      this.logger.error({ message: "updateActiveGroupCounts error", error: e })
+    const groupCounts = await this.getGroupPlayerCounts(groupId)
+    if (groupCounts) {
+      await this.messageIfTooManyLocked(groupId, groupCounts)
+      await this.groupWs.updateGroupCount(groupId, groupCounts)
     }
   }
 }

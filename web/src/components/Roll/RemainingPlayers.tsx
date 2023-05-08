@@ -11,7 +11,7 @@ export const RemainingPlayers = () => {
         <Heading>Remaining Players</Heading>
         <HStack>
           {
-            remaining.map(player => <RollPlayerDisplay player={player} />)
+            remaining.map(id => <RollPlayerDisplay playerId={id} key={`${id}-remainingPlayers`} />)
           }
         </HStack>
       </VStack>

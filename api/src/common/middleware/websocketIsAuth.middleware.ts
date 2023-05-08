@@ -13,15 +13,19 @@ const logger = container.get(LoggerService).getLogger("websocketAuth")
 
 export async function validateSessionToken(token: string) {
   const session = await sessionService.getSession(token)
-  if (session.error) {
+  if (!session) {
     logger.error({
-      ...session.error,
       message: "unable to find session",
-
     })
   }
+  if (session) {
+    return {
+      user: session,
+      valid: true
+    }
+  }
   return {
-    user: session.data,
-    valid: session.success
+    user: null,
+    valid: false
   }
 }

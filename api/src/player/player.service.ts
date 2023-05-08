@@ -3,7 +3,8 @@ import { PlayerRepository } from './player.repository';
 import { GroupWsService } from '../group/groupWs.service';
 import { Logger } from 'pino';
 import { LoggerService } from '../logger/logger.service';
-import { DataResponse } from '../../../shared/types/DataResponse';
+import { createError } from '../utils/CreateError';
+import { ErrorTypes } from '../../../shared/types/ErrorCodes.enum';
 
 @addToContainer()
 export class PlayerService {
@@ -17,80 +18,49 @@ export class PlayerService {
   }
 
   async getPlayersByGroupId(groupId: string) {
-    return await this.playerRepo.getPlayersByGroupId(groupId)
+    try {
+      const res = await this.playerRepo.getPlayersByGroupId(groupId)
+      if (res && res.length) {
+        return res
+      }
+      return []
+    } catch (e) {
+      this.logger.error(e)
+      return []
+    }
   }
   async getPlayerById(playerId: string) {
-    try {
-      const playerRes = await this.playerRepo.getPlayerById(playerId)
-      if (playerRes.success) {
-        return playerRes.data
-      }
-      throw playerRes.error
-    } catch (e) {
-      throw e.message
-    }
+    return await this.playerRepo.getPlayerById(playerId)
   }
-  async getPlayerByUserId(userId: string) {
-    try {
-      const res = await this.playerRepo.getPlayerByUserId(userId)
-      if (res.success) {
-        return res.data
-      }
-      if (res.error) {
-        this.logger.error({
-          ...res,
-          message: "unable to get player by userId",
 
-        })
-      }
-      return
-    } catch (e) {
-      throw e.message
-    }
+  async getGroupPlayersWherePlayerIsIn(groupId: string, userId: string) {
+    const res = await this.getPlayersByGroupId(groupId)
+    this.logger.info(res, userId)
+  }
+
+  async getPlayerByUserId(userId: string) {
+    return await this.playerRepo.getPlayerByUserId(userId)
   }
 
   async getGroupPlayer(userId: string, groupId: string) {
-    try {
-      return await this.playerRepo.getUserPlayerFromGroup(userId, groupId)
-    } catch (e) {
-      throw e.message
-    }
+    return await this.playerRepo.getUserPlayerFromGroup(userId, groupId)
   }
 
   async createPlayer(player: ICreatePlayer) {
-    try {
-      const res = await this.playerRepo.createPlayer(player)
-      if (res.success) {
-        return res.data
-      }
-      throw res.error
-    } catch (e) {
-      throw e.message
-    }
+    return await this.playerRepo.createPlayer(player)
   }
 
   async createPlayerForUser(userId: string, username: string) {
-    try {
-      return await this.createPlayer({
-        userId,
-        name: username,
-        groupId: null,
-        tank: false,
-        healer: false,
-        dps: false,
-        inTheRoll: false,
-        locked: false
-      })
-    } catch (e) {
-      const error = {
-        message: "Unable to create player",
-        error: e.message,
-        stacktrace: e.stacktrace
-      }
-      this.logger.error(error)
-      throw error
-    }
-
+    return await this.createPlayer({
+      userId,
+      name: username,
+      groupId: null,
+      tank: false,
+      healer: false,
+      dps: false,
+      inTheRoll: false,
+      locked: false
+    })
   }
 
   async updatePlayerIsValid(input: IUpdatePlayer, userId: string) {
@@ -110,33 +80,27 @@ export class PlayerService {
   }
 
   async updateUserPlayer(input: IUpdatePlayer, userId: string) {
-    try {
-      const valid = await this.updatePlayerIsValid(input, userId)
-      if (valid) {
-        return await this.updatePlayer(input)
-      } {
-        return null
-      }
-    } catch (e) {
-      this.logger.error({ ...e })
-      throw e.message
+    const valid = await this.updatePlayerIsValid(input, userId)
+    if (!valid) {
+      throw createError({
+        message: "unable to update player",
+        type: ErrorTypes.PLAYER_ERROR,
+        context: this.updateUserPlayer.name,
+        detail: "player is not valid"
+      })
     }
-
+    return await this.updatePlayer(input)
   }
 
   async updatePlayer(input: IUpdatePlayer) {
     const res = await this.playerRepo.updatePlayer(input)
-    if (res.data && res.data.groupId !== null) {
-      this.groupWs.playerUpdated(res.data)
+    if (res && res.groupId !== null) {
+      this.groupWs.playerUpdated(res)
     }
-    if (res.success) {
-      return res.data
-    }
-
-    throw res.error
+    return res
   }
 
-  async deletePlayer(id: string): Promise<DataResponse<IDeletePlayerResponse>> {
+  async deletePlayer(id: string) {
     return await this.playerRepo.deletePlayer(id)
   }
 
