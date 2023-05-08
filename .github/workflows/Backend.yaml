@@ -55,9 +55,6 @@ jobs:
     permissions:
       contents: read
       packages: write
-    defaults:
-      run:
-        working-directory: ./
     steps:
       - uses: actions/checkout@v3
 
