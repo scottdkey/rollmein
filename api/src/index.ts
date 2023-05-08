@@ -17,6 +17,7 @@ const server = async () => {
   app.proxy = config.prod
 
   app.use(bodyParser())
+  
 
   app.use(
     cors({
