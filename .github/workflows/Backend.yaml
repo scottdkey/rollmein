@@ -57,7 +57,7 @@ jobs:
       packages: write
     defaults:
       run:
-        working-directory: ./api
+        working-directory: ./
     steps:
       - uses: actions/checkout@v3
 
