@@ -17,7 +17,9 @@ export const RollPlayers: FC<{ roll: IRoll }> = ({ roll }) => {
         <VStack>
           <FormLabel>Dps</FormLabel>
           {
-            roll.dps.map(id => RollPlayerDisplay({ playerId: id }))
+            roll.dps.map(id => {
+              return <RollPlayerDisplay key={id} playerId={id} />
+            })
           }
         </VStack>
       </HStack>

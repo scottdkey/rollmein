@@ -49,13 +49,18 @@ export const useMeQuery = (enabled: boolean = true) => {
   })
 }
 
-export const useProfileUpdateMutation = () => useMutation({
-  mutationFn: async (params: IProfileUpdateBody, sessionToken?: string) => {
-    const res = await ApiRequest<IMeRes, IProfileUpdateBody>(UserRoutes.PROFILE, RestMethods.PUT, { body: params, sessionToken })
-    if (res) {
-      return res
-    }
-    return null
-  }
+export const useProfileUpdateMutation = () => {
+  const session = useSession()
+  const sessionToken = session.data?.id
 
-})
+  return useMutation({
+    mutationFn: async (params: IProfileUpdateBody) => {
+      const res = await ApiRequest<IMeRes, IProfileUpdateBody>(UserRoutes.PROFILE, RestMethods.PUT, { body: params, sessionToken })
+      if (res) {
+        return res
+      }
+      return null
+    }
+
+  })
+}

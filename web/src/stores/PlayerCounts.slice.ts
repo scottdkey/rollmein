@@ -1,12 +1,10 @@
 import { create } from 'zustand'
 import { IGroupPlayerCountResponse } from '@sharedTypes/Group'
-import { RollType } from '../utils/group.api'
 
 interface PlayerCountsState {
   playerCounts: IGroupPlayerCountResponse | null
   setPlayerCounts: (playerCounts: IGroupPlayerCountResponse) => void
 }
-
 
 export const usePlayerCountsSlice = create<PlayerCountsState>((set) => {
   return ({

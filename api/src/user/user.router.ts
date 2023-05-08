@@ -7,6 +7,7 @@ import { PlayerService } from '../player/player.service';
 import { RequireAuth } from '../common/middleware/requireAuth.middleware';
 import { MyContext } from '../../../shared/types/Context';
 import { HTTPCodes } from '../../../shared/types/HttpCodes.enum';
+import { isAuth } from '../common/middleware/isAuth';
 
 const router = new Router<DefaultState, MyContext<any, any>>({ prefix: '/user' })
 const userService = container.get(UserService)
@@ -15,19 +16,25 @@ const playerService = container.get(PlayerService)
 
 
 router.get('/me', RequireAuth, async (ctx, next) => {
-  ctx.body = {
-    user: userService.scrubUser(ctx.state.user),
-    success: true
+  const user = ctx.state.user
+  if (user) {
+    ctx.body = {
+      user: userService.scrubUser(ctx.state.user),
+      success: true
+    }
+    ctx.status = HTTPCodes.OK
   }
-  ctx.status = HTTPCodes.OK
+
   await next()
 
 })
 
-router.post('/profile', RequireAuth, async (ctx: MyContext<{ username: string }, ScrubbedUser | { error: string }>, next: Next) => {
+router.put('/profile', isAuth, RequireAuth, async (ctx: MyContext<{ username: string }, ScrubbedUser | { error: string }>, next: Next) => {
   try {
     const username = ctx.request.body.username
-    const sessionId = ctx.state.token
+
+    const sessionId = ctx.state.token as string
+
     const res = await userService.updateProfile(username)
 
     if (sessionId && res.user && res.scrubbedUser) {
@@ -35,7 +42,8 @@ router.post('/profile', RequireAuth, async (ctx: MyContext<{ username: string },
       ctx.status = HTTPCodes.OK
       ctx.body = res.scrubbedUser
     }
-    if (!sessionId || !res.user || !res.scrubbedUser) {
+
+    if (!sessionId) {
       ctx.status = HTTPCodes.INTERNAL_SERVER_ERROR
       ctx.body = {
         error: "Error updating profile"

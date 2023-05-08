@@ -11,6 +11,7 @@ import { IGroupWsResponse } from "@sharedTypes/Group";
 import { GroupWSMessageTypes } from "@sharedTypes/GroupMessages.enum";
 import { usePlayersSlice } from "../stores/Players.slice";
 import { useCurrentGroupSlice } from "../stores/CurrentGroup.slice";
+import { useRollSlice } from "../stores/Roll.slice";
 
 interface IGroupWsContext {
   ready: boolean
@@ -26,6 +27,7 @@ export const GroupWsProvider = ({ children, groupId }: { children: ReactNode, gr
   const setPlayerCounts = usePlayerCountsSlice(state => state.setPlayerCounts)
   const handlePlayerChange = usePlayersSlice(state => state.handlePlayerChange)
   const setGroup = useCurrentGroupSlice(state => state.setGroup)
+  const setRollInfo = useRollSlice(state => state.setData)
 
   const toast = useToast()
 
@@ -46,7 +48,7 @@ export const GroupWsProvider = ({ children, groupId }: { children: ReactNode, gr
   })
 
   const handleMessageData = ({ messageType, data }: IGroupWsResponse) => {
-    console.log({ messageType, data })
+
     switch (messageType) {
       case GroupWSMessageTypes.Open:
         upsertGroup(data)
@@ -65,7 +67,9 @@ export const GroupWsProvider = ({ children, groupId }: { children: ReactNode, gr
         upsertGroup(data)
         setGroup(data)
         break
-
+      case GroupWSMessageTypes.RollUpdated:
+        setRollInfo(data)
+        break
       default:
         console.error({ messageType, data })
     }

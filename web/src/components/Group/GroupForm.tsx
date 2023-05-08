@@ -2,9 +2,9 @@ import { EditIcon } from "@chakra-ui/icons"
 import { Button, FormControl, FormErrorMessage, FormLabel, IconButton, Input, Modal, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalHeader, ModalOverlay, Radio, RadioGroup, Stack, Switch } from "@chakra-ui/react"
 import { useEffect, useState } from "react"
 import { useSession } from "next-auth/react"
-import { useGroupSlice } from "../../stores/Group.slice"
-import { RollType, useCreateGroup, useGetGroup, useUpdateGroup } from "../../utils/group.api"
+import { useCreateGroup, useUpdateGroup } from "../../utils/group.api"
 import { ICreateGroup, IGroup, IUpdateGroup } from "../../../../shared/types/Group"
+import { RollType } from "../../../../shared/types/RollType.enum"
 
 export const GroupForm = ({group}: { group?: IGroup }) => {
   const [modalOpen, setModalOpen] = useState(false)

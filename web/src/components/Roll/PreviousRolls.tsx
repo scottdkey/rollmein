@@ -2,9 +2,9 @@ import { Button, HStack } from "@chakra-ui/react"
 import { useRollSlice } from "../../stores/Roll.slice"
 import { useState } from "react"
 import { useCurrentGroupSlice } from "../../stores/CurrentGroup.slice"
-import { RollType } from "../../utils/group.api"
 import { FfaRollPlayers } from "./FfaRollPlayers"
 import { RollPlayers } from "./RollPlayers"
+import { RollType } from "../../../../shared/types/RollType.enum"
 
 
 export const PreviousRolls = () => {

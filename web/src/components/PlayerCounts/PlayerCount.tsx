@@ -2,10 +2,10 @@ import { Heading, HStack, Spinner, VStack, Text } from "@chakra-ui/react"
 import { Lock, Dice, Shield, Sword, FirstAid } from "../../assets"
 import { CountItem } from "../CountItem"
 import { useGetPlayerCount } from "../../utils/playerCounts.api"
-import { FC } from "react"
+import { useEffect } from "react"
 import { usePlayerCountsSlice } from "../../stores/PlayerCounts.slice"
-import { RollType } from "../../../../shared/types/Group.enum"
 import { useCurrentGroupSlice } from "../../stores/CurrentGroup.slice"
+import { RollType } from "../../../../shared/types/RollType.enum"
 
 
 
@@ -13,7 +13,7 @@ const PlayerCount = () => {
   const playerCounts = usePlayerCountsSlice(state => state.playerCounts)
   const rollType = useCurrentGroupSlice(state => state.rollType)
   const groupId = useCurrentGroupSlice(state => state.id)
-  const { isLoading } = useGetPlayerCount({ groupId })
+  const { isLoading, } = useGetPlayerCount({ groupId })
 
 
   if (isLoading) {

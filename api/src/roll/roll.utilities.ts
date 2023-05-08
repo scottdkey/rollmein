@@ -2,8 +2,8 @@ import { IApplicationError } from "../../../shared/types/ApplicationError";
 import { ErrorTypes } from "../../../shared/types/ErrorCodes.enum";
 import { ErrorMessages } from "../../../shared/types/ErrorTypes.enum";
 import { IGroup } from "../../../shared/types/Group";
-import { RollType } from "../../../shared/types/Group.enum";
 import { PlayerRoles } from "../../../shared/types/PlayerRoles.enum";
+import { RollType } from "../../../shared/types/RollType.enum";
 import { addToContainer } from "../container";
 import { LoggerService } from "../logger/logger.service";
 import { createError } from "../utils/CreateError";
@@ -39,9 +39,25 @@ export class RollUtilities {
 
         if (rollType === RollType.ROLE) {
           const { tank, dps, healer, remaining } = this.rollByRole(players)
+          if (tank === undefined || healer === undefined || dps === undefined) {
+            //the per mutations of this roll produced an empty roll
+            // got to try to figure out how to approach when one user is tank, healer, dps,  and they are the only healer
+            throw createError({
+              message: "this roll produced an empty roll",
+              type: ErrorTypes.ROLL_ERROR,
+              context: this.handleRoll.name,
+              detail: {
+                rollType,
+                tank,
+                healer,
+                dps,
+              }
+
+            })
+          }
           returnObject.currentRoll = {
-            tank: this.playerIdFromPlayer(tank),
-            healer: this.playerIdFromPlayer(healer),
+            tank: tank.id,
+            healer: healer.id,
             dps: this.playerIdsFromPlayers(dps),
             ffa: null
           }
@@ -54,7 +70,7 @@ export class RollUtilities {
         message: e.message,
         type: ErrorTypes.ROLL_ERROR,
         context: this.handleRoll.name,
-        stacktrace: e.stacktrace,
+        stacktrace: e.stack,
       })
       this.logger.error(error)
       throw error
@@ -65,17 +81,19 @@ export class RollUtilities {
     pickedPlayer: IPlayer,
     remainingPlayers: IPlayer[]
   ): IPlayer[] {
-    return remainingPlayers.filter(
-      (player) => player.id !== pickedPlayer.id
-    );
-  }
+    if (pickedPlayer !== undefined) {
+      const returnPlayers = remainingPlayers
 
-  playerIdFromPlayer(player: IPlayer): string {
-    return player.id
+      return returnPlayers.filter(player => player.id !== pickedPlayer.id);
+    }
+
+    return remainingPlayers
+
   }
 
   playerIdsFromPlayers(players: IPlayer[]): string[] {
-    return players.map((player) => this.playerIdFromPlayer(player))
+    const playersWithoutUndefined = players.filter(p => p !== undefined)
+    return playersWithoutUndefined.map((player) => player.id)
   }
 
   FFARoll(currentGroup: IPlayer[], numberOfPlayers: number = 5): { ffaRoll: IPlayer[]; remaining: IPlayer[] } {
@@ -97,10 +115,15 @@ export class RollUtilities {
     remaining: IPlayer[];
   } {
     const tankRoll = this.rollForRole(PlayerRoles.TANK, currentGroup);
+    console.log({ tankRoll: tankRoll.remaining })
     const healerRoll = this.rollForRole(PlayerRoles.HEALER, tankRoll.remaining);
     const dpsRoll = this.rollForDps(healerRoll.remaining);
-    const players = { tank: tankRoll.player, healer: healerRoll.player, dps: dpsRoll.players }
-    return { ...players, remaining: dpsRoll.remaining };
+    return {
+      tank: tankRoll.player,
+      healer: healerRoll.player,
+      dps: dpsRoll.players,
+      remaining: dpsRoll.remaining
+    };
   }
 
   randomFromArray(players: IPlayer[]): IPlayer {
@@ -108,10 +131,10 @@ export class RollUtilities {
   }
 
   rollForRole(role: string, players: IPlayer[]): { player: IPlayer, remaining: IPlayer[] } {
-    const group: IPlayer[] = players.filter(
+    const playerGroup: IPlayer[] = players.filter(
       (player) => player[role as keyof IPlayer] === true
     );
-    const playerWithRole = this.rollWithLocked(group)
+    const playerWithRole = this.rollWithLocked(playerGroup)
     const remaining = this.removeFromGroup(playerWithRole, players)
 
     return {
@@ -134,8 +157,8 @@ export class RollUtilities {
 
 
   playerCounts = (players: IPlayer[], rollType: RollType): PlayerCounts => {
-    const locked = players.filter(p => p.locked).length
-    const inTheRoll = players.filter(p => p.inTheRoll)
+    const locked = this.lockedCount(players)
+    const inTheRoll = this.inPlayers(players)
     if (rollType === RollType.ROLE) {
       const tanks = inTheRoll.filter(p => p.tank).length
       const healers = inTheRoll.filter(p => p.healer).length
@@ -159,7 +182,7 @@ export class RollUtilities {
   };
 
   lockedCount(players: IPlayer[]): number {
-    return players.filter(p => p.inTheRoll).length
+    return players.filter(p => p.locked).length
   }
 
   inPlayers(players: IPlayer[]): IPlayer[] {
@@ -174,10 +197,12 @@ export class RollUtilities {
     let remaining = currentGroup;
 
     const players: IPlayer[] = [];
-    for (let dpsCount = 1; dpsCount < 4; dpsCount++) {
-      const pickedDPS = this.rollForRole(PlayerRoles.DPS, remaining);
-      players.push(pickedDPS.player);
-      remaining = pickedDPS.remaining;
+    let dpsCount = 0
+    while (dpsCount < 3) {
+      const { player, remaining: r } = this.rollForRole(PlayerRoles.DPS, remaining);
+      players.push(player);
+      remaining = r;
+      dpsCount++
     }
     return { remaining, players };
   }
@@ -195,30 +220,31 @@ export class RollUtilities {
     }) => {
     const playerCounts = this.playerCounts(players, rollType)
     const errorArray: string[] = []
-    const invalidRollError = (message: ErrorMessages) => {
-      errorArray.push(message)
-    }
+
     const isRoleBased = rollType === RollType.ROLE
-    if (isRoleBased && playerCounts.tanks <= counts.tanks) {
-      invalidRollError(ErrorMessages.MustHaveTank)
 
-    }
-    if (isRoleBased && playerCounts.dps <= counts.dps) {
-      invalidRollError(ErrorMessages.MustHaveCorrectDps)
+    if (isRoleBased) {
+      if (playerCounts.tanks >= counts.tanks === false) {
+        errorArray.push(ErrorMessages.MustHaveTank)
 
-    }
-    if (isRoleBased && playerCounts.healers <= counts.healers) {
-      invalidRollError(ErrorMessages.MustHaveHealer)
+      }
+      if (playerCounts.dps >= counts.dps === false) {
+        errorArray.push(ErrorMessages.MustHaveCorrectDps)
 
+      }
+      if (playerCounts.healers >= counts.healers === false) {
+        errorArray.push(ErrorMessages.MustHaveHealer)
+
+      }
     }
     if (playerCounts.inTheRoll < counts.players) {
-      invalidRollError(ErrorMessages.MustCorrectPlayers)
+      errorArray.push(ErrorMessages.MustCorrectPlayers)
     }
 
     const combinedError: IApplicationError = {
       message: ErrorMessages.ROLL_ERROR,
       type: ErrorTypes.ROLL_ERROR,
-      context: "handleRoll",
+      context: this.validRoll.name,
       detail: errorArray.join(",")
     }
     if (errorArray.length > 0) {
@@ -237,7 +263,7 @@ export class RollUtilities {
       errors.push("no group found")
     }
     if (!players) {
-      errors.push("no group found")
+      errors.push("no players found")
     }
     if (!rollType) {
       errors.push("no roll type found")

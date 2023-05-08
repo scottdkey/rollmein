@@ -1,6 +1,6 @@
 import { create } from 'zustand'
 import { IGroup } from '@sharedTypes/Group'
-import { RollType } from '../utils/group.api'
+import { RollType } from '../../../shared/types/RollType.enum'
 
 interface CurrentGroupState {
   group: IGroup | null
@@ -18,7 +18,20 @@ interface CurrentGroupState {
 
 
 export const useCurrentGroupSlice = create<CurrentGroupState>((set) => {
-  const setGroup = (group: IGroup) => set({ ...group, group })
+  const setGroup = (group: IGroup) => set(() => {
+    console.debug({ group })
+    return {
+      group,
+      id: group.id,
+      name: group.name,
+      userId: group.userId,
+      members: group.relations.members,
+      players: group.relations.players,
+      membersCanUpdate: group.membersCanUpdate,
+      rollType: group.rollType ? group.rollType : RollType.FFA,
+      lockAfterOut: group.lockAfterOut,
+    }
+  })
   return ({
     group: null,
     id: "",

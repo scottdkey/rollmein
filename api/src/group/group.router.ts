@@ -20,7 +20,7 @@ import { createError } from "../utils/CreateError";
 const groupRouter = new Router<DefaultState, MyContext<any, any>>({ prefix: "/group" })
 const groupService = container.get(GroupService)
 const groupCountService = container.get(GroupCountService)
-const logger = container.get(LoggerService).getLogger('group router')
+const logger = container.get(LoggerService).getLogger('groupRouter')
 
 groupRouter.get("/", async (ctx: MyContext<{}, IGroup[] | IApplicationError>, next: Next) => {
   try {
@@ -29,17 +29,9 @@ groupRouter.get("/", async (ctx: MyContext<{}, IGroup[] | IApplicationError>, ne
     if (user) {
       const groups = await groupService.getGroupsByUserId(user.id)
       returnGroups = groups ? [...returnGroups, ...groups] : []
-      logger.info({
-        message: "user groups found",
-        groups: groups,
-      })
     }
     const groups = await groupService.getGroups()
     returnGroups = groups ? [...returnGroups, ...groups] : []
-    logger.info({
-      message: "groups found",
-      groups: groups,
-    })
 
     ctx.body = [...new Set(returnGroups)]
     ctx.status = HTTPCodes.OK
@@ -101,11 +93,11 @@ groupRouter.post("/", RequireAuth, async (ctx: MyContext<ICreateGroup, IGroup | 
     const validUser = ctx.state.validUser
     if (userId && validUser) {
       const group = await groupService.createGroup(ctx.state.user.id, ctx.request.body)
-      if(group){
+      if (group) {
         ctx.body = group
         ctx.status = HTTPCodes.CREATED
       }
-      if(!group){
+      if (!group) {
         ctx.body = {
           message: "group not created"
         }
@@ -130,11 +122,11 @@ groupRouter.put("/", async (ctx: MyContext<IUpdateGroup, IGroup | IApplicationEr
   try {
     if (userId && ctx.state.validUser) {
       const group = await groupService.updateGroup(userId, ctx.request.body)
-      if(group){
+      if (group) {
         ctx.body = group
         ctx.status = HTTPCodes.OK
       }
-      if(!group){
+      if (!group) {
         ctx.body = createError({
           message: "group not updated",
           type: ErrorTypes.GROUP_ERROR,

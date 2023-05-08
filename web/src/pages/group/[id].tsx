@@ -1,47 +1,40 @@
-import { Button, Center, HStack, Heading, VStack } from "@chakra-ui/react";
+import { Button, Center, HStack, Heading, Skeleton, VStack } from "@chakra-ui/react";
 import { useRouter } from "next/router";
 import PlayerCards from "../../components/Player/PlayerCards";
 import { useEffect } from "react";
 import { useSession } from "next-auth/react";
 import { GroupForm } from "../../components/Group/GroupForm";
-import { useGroupSlice } from "../../stores/Group.slice";
 import { GroupWsProvider } from "../../providers/GroupWebsocketProvider";
 import { useCurrentGroupSlice } from "../../stores/CurrentGroup.slice";
 import Rolls from "../../components/Roll/Roll";
-
+import { useGetGroup } from "../../utils/group.api";
 
 export default function Group() {
   const router = useRouter()
   const params = router.query
   const id = params.id as string
-  const { data: session } = useSession()
-  const setGroup = useCurrentGroupSlice(state => state.setGroup)
-
-  const groups = useGroupSlice(state => state.groups)
+  const { status } = useSession()
   const group = useCurrentGroupSlice(state => state.group)
   const groupId = useCurrentGroupSlice(state => state.id)
   const name = useCurrentGroupSlice(state => state.name)
-
+  const { isLoading, refetch } = useGetGroup({ groupId: id === "" ? groupId : id })
 
 
 
   useEffect(() => {
-    if (session && !session.id) {
-      router.push("/")
+    if (group === null) {
+      refetch()
     }
-    if (!session) {
+  }, [group, refetch, status])
+
+  useEffect(() => {
+    if (status === 'unauthenticated') {
       router.push('/')
     }
-  }, [router, session])
 
-  useEffect(() => {
-    if (groups) {
-      const group = groups.find(group => group.id === id)
-      if (group) {
-        setGroup(group)
-      }
-    }
-  }, [groups])
+  }, [router, status])
+
+
 
   if (group) {
     return (
@@ -53,14 +46,25 @@ export default function Group() {
               <GroupForm group={group} />
             </HStack>
             <PlayerCards groupId={groupId} />
-            <Button>Start Roll</Button>
+            {/* <Button>Start Roll</Button> */}
             <Rolls />
           </VStack>
         </Center>
       </GroupWsProvider>
     )
   }
-  return (
-    <Heading>unknown error occurred</Heading>
-  )
+
+  if (isLoading) {
+    return (
+      <Skeleton />
+    )
+  }
+
+  if (!isLoading && !group) {
+    return (
+      <Skeleton />
+    )
+  }
+
+  return null
 }

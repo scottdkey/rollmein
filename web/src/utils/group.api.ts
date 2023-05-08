@@ -5,6 +5,7 @@ import { useGroupSlice } from "../stores/Group.slice"
 import { IGroup, ICreateGroup, IUpdateGroup, IJoinGroupReq, IJoinGroupRes, IGroupDelete } from "@sharedTypes/Group"
 import { RestMethods } from "@sharedTypes/RestMethods.enum"
 import { IApplicationError } from "../../../shared/types/ApplicationError"
+import { useCurrentGroupSlice } from "../stores/CurrentGroup.slice"
 
 
 
@@ -13,11 +14,6 @@ export enum GroupRoutes {
   ADD_PLAYER = 'group/addPlayer',
   ADD_USER = 'group/addUser',
   USER_JOIN_GROUP = 'group/joinGroup',
-}
-
-export enum RollType {
-  FFA = "ffa",
-  ROLE = 'role'
 }
 
 
@@ -42,7 +38,7 @@ export const useGetGroups = () => {
       }
     },
     onError: (err) => {
-      console.log(err)
+      console.error(err)
     }
   })
 }
@@ -55,6 +51,7 @@ export const getGroup = async (groupId: string, sessionToken?: string) => await 
 export const useGetGroup = ({ groupId }: { groupId?: string, }) => {
   const { data: session } = useSession()
   const upsertGroup = useGroupSlice(state => state.upsertGroup)
+  const setGroup = useCurrentGroupSlice(state => state.setGroup)
 
   return useQuery({
     queryKey: ["group", groupId],
@@ -66,10 +63,15 @@ export const useGetGroup = ({ groupId }: { groupId?: string, }) => {
       return null
     },
     onSuccess: (res) => {
-      if (res) {
+      if (res !== null && res !== undefined) {
         upsertGroup(res)
+        setGroup(res)
       }
-    }
+    },
+    onError: (err) => {
+      console.error(err)
+    },
+    enabled: groupId !== undefined
   })
 }
 
