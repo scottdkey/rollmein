@@ -2,19 +2,19 @@
   "name": "rollmein_api",
   "version": "1.0.0",
   "description": "",
-  "main": ".src/index.js",
+  "main": ".dist/api/src/index.js",
   "type": "commonjs",
   "author": "Scott Key",
   "license": "MIT",
   "scripts": {
-    "start": "node ./dist/index.js",
+    "start": "node ./dist/api/src/index.js",
     "dev": "run-p watch:*",
     "test": "mocha -r ts-node/register src/tests/**/*.test.ts --exit",
     "lint": "eslint",
     "build": "tsc",
     "watch:ts": "tsc -w",
     "watch:node": "nodemon dist/api/src/index.js | npx pino-pretty",
-    "docker:build": "docker build -t scottdkey/rollmein_api:$(echo $npm_package_version) -f Dockerfile ../",
+    "docker:build": "docker build -t scottdkey/rollmein_api:$(echo $npm_package_version) -f Dockerfile ../ --no-cache && docker tag scottdkey/rollmein_api:$(echo $npm_package_version) scottdkey/rollmein_api:latest",
     "docker:push": "docker push scottdkey/rollmein_api:$(echo $npm_package_version) && docker push scottdkey/rollmein_api:latest"
   },
   "dependencies": {

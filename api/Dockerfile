@@ -4,11 +4,11 @@ WORKDIR /usr/app
 COPY ./api/package.json .
 COPY ./api/yarn.lock .
 
-WORKDIR /usr/app
 RUN yarn install
+
 COPY ./api .
 
-ADD shared ../shared
+COPY ./shared ../shared
 
 RUN yarn build
 
@@ -23,5 +23,6 @@ COPY /api/yarn.lock .
 RUN yarn install --production
 
 COPY --from=build /usr/app/dist ./dist
+RUN ls -a
 EXPOSE ${PORT}
 CMD ["yarn", "start"]

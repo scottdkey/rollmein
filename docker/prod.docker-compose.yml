@@ -26,7 +26,8 @@ services:
   api:
     hostname: rollmein-api
     container_name: rollmein-api
-    image: ghcr.io/scottdkey/rollmein:main
+    # image: ghcr.io/scottdkey/rollmein:main
+    image: scottdkey/rollmein_api:1.0.0
     pull_policy: always
     restart: on-failure
     env_file:
