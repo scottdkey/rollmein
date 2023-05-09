@@ -47,9 +47,9 @@ services:
     labels:
       - traefik.enable=true
       - traefik.http.routers.rollmein-api.rule=Host(`rollmein-api.scottkey.dev`)
-      - traefik.http.routers.rollmein-api.entrypoints=websecure
+      - traefik.http.routers.rollmein-api.entrypoints=https
       - traefik.http.routers.rollmein-api.tls=true
-      - traefik.http.routers.rollmein-api.tls.certresolver=mydnschallenge
+      - traefik.http.routers.rollmein-api.tls.certresolver=letsencrypt
     networks:
       - traefik-public
 networks:
