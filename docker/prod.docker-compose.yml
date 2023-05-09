@@ -50,7 +50,7 @@ services:
       - traefik.http.routers.rollmein-api.rule=Host(`rollmein-api.scottkey.dev`)
 
       # - traefik.http.routers.rollmein-api.tls=true
-      # - traefik.http.routers.rollmein-api.entrypoints=websecure
+      - traefik.http.routers.rollmein-api.entrypoints=websecure
       - traefik.http.routers.rollmein-api.tls.certresolver=le
     networks:
       - traefik-public
