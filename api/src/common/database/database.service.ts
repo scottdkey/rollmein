@@ -28,6 +28,9 @@ export class DatabaseService {
       min: 3,
       idleTimeoutMillis: 600000,
     })
+    this.pool.on('connect', () => {
+      this.logger.info({ message: 'connected to database' })
+    })
     this.pool.on('error', (err) => {
       this.logger.error({ message: 'idle client error', err })
     })

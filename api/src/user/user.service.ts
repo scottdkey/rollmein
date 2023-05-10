@@ -42,7 +42,15 @@ export class UserService {
   }
 
   async getByGoogleId(googleId: string) {
-    return await this.userRepo.getUserByGoogleId(googleId)
+    const res = await this.userRepo.getUserByGoogleId(googleId)
+    if (res) {
+      return res
+    }
+    throw createError({
+      message: "User not found",
+      type: ErrorTypes.USER_ERROR,
+      context: "UserService",
+    })
   }
 
   async getById(id: string) {

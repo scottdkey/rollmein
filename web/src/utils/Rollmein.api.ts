@@ -32,6 +32,12 @@ export async function ApiRequest<Res, T>(route: string, method: RestMethods, par
       }
     }
     const res = await fetch(`${apiUrl}${route}`, options)
+    if(res.status === 401) {
+      throw {
+        message: 'Unauthorized',
+        status: 401
+      }
+    }
     if (res.status < 400) {
       return await res.json() as Res
     }

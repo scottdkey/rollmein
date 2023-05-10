@@ -37,6 +37,7 @@ authRouter.post("/validate",
       switch (body.authType) {
         case AuthTypes.GOOGLE:
           user = await authService.validateGoogleOauth2(body.token)
+          logger.info({ message: "validated google oauth2", user })
           break
         default:
           logger.error({

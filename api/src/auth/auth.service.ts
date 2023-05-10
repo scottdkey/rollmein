@@ -19,6 +19,7 @@ export class AuthService {
     const googleResponse = await this.googleClient.verify(token)
     const googleUserId = googleResponse.getUserId()
     const payload = googleResponse.getPayload()
+    this.logger.debug({ googleResponse, googleUserId, payload })
     if (googleResponse && googleUserId && payload) {
 
       const username = payload.name || "No Name Set"
