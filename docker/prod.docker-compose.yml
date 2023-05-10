@@ -60,8 +60,8 @@ services:
       - traefik.http.routers.rollmein-api.entrypoints=ws
 
       # WSS Domain config
-      - traefik.http.routers.ws-service-wss.rule=Host(`${API_HOSTNAME}`)
-      - traefik.http.routers.ws-service-wss.entrypoints=wss
+      - traefik.http.routers.rollmein-api.rule=Host(`${API_HOSTNAME}`)
+      - traefik.http.routers.rollmein-api.entrypoints=wss
     networks:
       - traefik-public
       - traefik-private
