@@ -46,7 +46,7 @@ services:
         condition: service_started
     labels:
       - traefik.enable=true
-      - traefik.http.routers.rollmein-api.rule=Host(`rollmein_api.${PRIMARY_DOMAIN}`)
+      - traefik.http.routers.rollmein-api.rule=Host(`rollmein-api.${PRIMARY_DOMAIN}`)
 
       - traefik.http.routers.rollmein-api.tls=true
       - traefik.http.routers.rollmein-api.entrypoints=websecure
