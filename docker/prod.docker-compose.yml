@@ -64,6 +64,7 @@ services:
       - traefik.http.routers.ws-service-wss.entrypoints=wss
     networks:
       - traefik-public
+      - traefik-private
 networks:
   # part of public and private networks. Each service can choose which network to join
   traefik-public:
