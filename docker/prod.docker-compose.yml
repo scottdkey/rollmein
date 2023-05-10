@@ -14,7 +14,7 @@ services:
     ports:
       - 5432:5432
     networks:
-      - traefik-public
+      - traefik-private
   redis:
     image: redis:alpine
     volumes:
@@ -22,7 +22,7 @@ services:
     expose:
       - 6379
     networks:
-      - traefik-public
+      - traefik-private
   api:
     hostname: rollmein-api
     container_name: rollmein-api
@@ -46,14 +46,26 @@ services:
         condition: service_started
     labels:
       - traefik.enable=true
-      - traefik.http.routers.rollmein-api.rule=Host(`rollmein-api.scottkey.dev`)
 
+      # Certificate setup from traefikResolver in traefik repository
       - traefik.http.routers.rollmein-api.tls=true
       - traefik.http.routers.rollmein-api.entrypoints=websecure
       - traefik.http.routers.rollmein-api.tls.certresolver=traefikResolver
+
+      # HTTP domain config
+      - traefik.http.routers.rollmein-api.rule=Host(`${API_HOSTNAME}}`)
+
+      # WS Domain config
+      - traefik.http.routers.rollmein-api.rule=Host(`${API_HOSTNAME}`)
+      - traefik.http.routers.rollmein-api.entrypoints=ws
+
+      # WSS Domain config
+      - traefik.http.routers.ws-service-wss.rule=Host(`${API_HOSTNAME}`)
+      - traefik.http.routers.ws-service-wss.entrypoints=wss
     networks:
       - traefik-public
 networks:
+  # part of public and private networks. Each service can choose which network to join
   traefik-public:
     external: true
   traefik-private:

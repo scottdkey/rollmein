@@ -8,12 +8,19 @@ import { validateSessionToken } from "../common/middleware/websocketIsAuth.middl
 import { RedisKeys } from "../../../shared/types/redisKeys.enum"
 import { IGroup, IGroupWsResponse, IGroupWsRequest } from "../../../shared/types/Group"
 import { GroupWSMessageTypes } from "../../../shared/types/GroupMessages.enum"
+import Router from "koa-router"
+import { LoggerService } from "../logger/logger.service"
 
 
 const groupService = container.get(GroupService)
 const groupWsService = container.get(GroupWsService)
 const config = container.get(ConfigService).redisConfig
+const logger = container.get(LoggerService).getLogger('GroupWsLogger')
 
+
+export const groupWsRouter = new Router({
+  prefix: '/groupws'
+})
 
 
 export async function GroupWebsocket(ctx: MiddlewareContext<{}>) {
@@ -88,7 +95,13 @@ export async function GroupWebsocket(ctx: MiddlewareContext<{}>) {
 
     })
   } catch (e) {
-    console.error(e)
+    logger.error(e)
   }
 
 }
+
+//@ts-ignore
+groupWsRouter.all('/', GroupWebsocket)
+
+
+export default groupWsRouter

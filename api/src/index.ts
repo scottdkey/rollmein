@@ -17,18 +17,19 @@ const server = async () => {
   app.proxy = config.prod
 
   app.use(bodyParser())
-  
+
 
   app.use(
     cors({
       origin: `${config.cors_uri}`,
       credentials: true,
-      headers: ['Authorization', "content-type", 'Access-Control-Allow-Origin' ]
+      headers: ['Authorization', "content-type", 'Access-Control-Allow-Origin']
     })
   )
 
   app.use(isAuth)
   app.ws.use(GroupWebsocket)
+  // app.ws.use(groupWsRouter.routes()).use(groupWsRouter.allowedMethods())
 
   Routers.forEach(({ router, routerName }) => {
     logger.debug({ message: `starting ${routerName}` })

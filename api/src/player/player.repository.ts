@@ -1,16 +1,13 @@
 import { DataServiceAbstract } from "../common/data/dataService.abstract"
 import { DatabaseService } from "../common/database/database.service"
 import { addToContainer } from "../container"
-import { LoggerService } from "../logger/logger.service"
 
 @addToContainer()
 export class PlayerRepository extends DataServiceAbstract<DbPlayer, IPlayer> {
-  private logger = this.ls.getLogger(PlayerRepository.name)
   db: DatabaseService
-  constructor(db: DatabaseService, private ls: LoggerService) {
+  constructor(db: DatabaseService) {
     super()
     this.db = db
-    this.logger.debug('PlayerRepository instantiated')
   }
 
   mapToCamelCase = ({ id, group_id, user_id, name, tank, healer, dps, locked, in_the_roll, created_at, updated_at }: DbPlayer): IPlayer => {
