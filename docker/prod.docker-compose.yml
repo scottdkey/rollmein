@@ -14,7 +14,7 @@ services:
     ports:
       - 5432:5432
     networks:
-      - traefik-private
+      - traefik-public
   redis:
     image: redis:alpine
     volumes:
@@ -22,7 +22,7 @@ services:
     expose:
       - 6379
     networks:
-      - traefik-private
+      - traefik-public
   api:
     hostname: rollmein-api
     container_name: rollmein-api
@@ -56,13 +56,12 @@ services:
       - traefik.http.routers.rollmein-api.entrypoints=websecure, ws, wss
     networks:
       - traefik-public
-      - traefik-private
 networks:
   # part of public and private networks. Each service can choose which network to join
   traefik-public:
     external: true
-  traefik-private:
-    external: false
+  # traefik-private:
+  #   external: false
 volumes:
   postgres_db:
   redis_data:
