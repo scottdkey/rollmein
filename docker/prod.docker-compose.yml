@@ -49,11 +49,8 @@ services:
       - traefik.http.routers.rollmein-api.rule=Host(`rollmein-api.${PRIMARY_DOMAIN}`)
 
       - traefik.http.routers.rollmein-api.tls=true
-      - traefik.http.routers.rollmein-api.entrypoints=websecure
-
-      - traefik.http.routers.rollmein-api.entrypoints=ws
-      - traefik.http.routers.rollmein-api.entrypoints=wss
-
+      - traefik.http.routers.rollmein-api.entrypoints=websecure,ws,wss
+      
       - traefik.http.routers.rollmein-api.tls.certresolver=traefikResolver
     networks:
       - traefik-public
