@@ -50,7 +50,7 @@ services:
       # Certificate setup from traefikResolver in traefik repository
       - traefik.http.routers.rollmein-api.tls=true
 
-      - traefik.http.routers.rollmein-api.rule=Host('rollmein_api.scottkey.dev')
+      - traefik.http.routers.rollmein-api.rule=Host(`rollmein_api.scottkey.dev`)
       - traefik.http.routers.rollmein-api.entrypoints=websecure
       - traefik.http.routers.rollmein-api.entrypoints=ws
       - traefik.http.routers.rollmein-api.entrypoints=wss
