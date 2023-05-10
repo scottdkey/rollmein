@@ -53,7 +53,7 @@ services:
 
       - traefik.http.routers.rollmein-api.entrypoints=ws
       - traefik.http.routers.rollmein-api.entrypoints=wss
-      - traefik.http.routers.rollmein-api.middlewares=ws-headers@docker
+      
       - traefik.http.routers.rollmein-api.tls.certresolver=traefikResolver
     networks:
       - traefik-public
