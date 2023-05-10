@@ -49,18 +49,12 @@ services:
 
       # Certificate setup from traefikResolver in traefik repository
       - traefik.http.routers.rollmein-api.tls=true
-      - traefik.http.routers.rollmein-api.entrypoints=websecure
+      
       - traefik.http.routers.rollmein-api.tls.certresolver=traefikResolver
 
-      # HTTP domain config
       - traefik.http.routers.rollmein-api.rule=Host(`${API_HOSTNAME}}`)
-
-      # WS Domain config
-      - traefik.http.routers.rollmein-api.rule=Host(`${API_HOSTNAME}`)
+      - traefik.http.routers.rollmein-api.entrypoints=websecure
       - traefik.http.routers.rollmein-api.entrypoints=ws
-
-      # WSS Domain config
-      - traefik.http.routers.rollmein-api.rule=Host(`${API_HOSTNAME}`)
       - traefik.http.routers.rollmein-api.entrypoints=wss
     networks:
       - traefik-public
