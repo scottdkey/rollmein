@@ -52,7 +52,7 @@ services:
       
       - traefik.http.routers.rollmein-api.tls.certresolver=traefikResolver
 
-      - traefik.http.routers.rollmein-api.rule=Host(`${API_HOSTNAME}}`)
+      - traefik.http.routers.rollmein-api.rule=Host(${API_HOSTNAME}})
       - traefik.http.routers.rollmein-api.entrypoints=websecure
       - traefik.http.routers.rollmein-api.entrypoints=ws
       - traefik.http.routers.rollmein-api.entrypoints=wss
