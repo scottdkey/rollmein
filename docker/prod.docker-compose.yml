@@ -46,14 +46,14 @@ services:
         condition: service_started
     labels:
       - traefik.enable=true
+      - traefik.http.routers.rollmein-api.rule=Host(`rollmein-api.scottkey.dev`)
 
-      # Certificate setup from traefikResolver in traefik repository
       - traefik.http.routers.rollmein-api.tls=true
-
-      - traefik.http.routers.rollmein-api.rule=Host(rollmein_api.scottkey.dev)
       - traefik.http.routers.rollmein-api.entrypoints=websecure
+
       - traefik.http.routers.rollmein-api.entrypoints=ws
       - traefik.http.routers.rollmein-api.entrypoints=wss
+      - traefik.http.routers.rollmein-api.middlewares=ws-headers@docker
       - traefik.http.routers.rollmein-api.tls.certresolver=traefikResolver
     networks:
       - traefik-public
