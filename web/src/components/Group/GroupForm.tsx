@@ -2,7 +2,7 @@ import { EditIcon } from "@chakra-ui/icons"
 import { Button, FormControl, FormErrorMessage, FormLabel, IconButton, Input, Modal, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalHeader, ModalOverlay, Radio, RadioGroup, Stack, Switch } from "@chakra-ui/react"
 import { useEffect, useState } from "react"
 import { useSession } from "next-auth/react"
-import { useCreateGroup, useUpdateGroup } from "../../utils/group.api"
+import { useCreateGroup, useGetGroup, useUpdateGroup } from "../../utils/group.api"
 import { ICreateGroup, IGroup, IUpdateGroup } from "../../../../shared/types/Group"
 import { RollType } from "../../../../shared/types/RollType.enum"
 
@@ -18,13 +18,14 @@ export const GroupForm = ({group}: { group?: IGroup }) => {
   const [rollType, setRollType] = useState(RollType.FFA)
   const updateGroup = useUpdateGroup()
   const createGroup = useCreateGroup()
+  const {isLoading, isError, data} = useGetGroup({groupId: group?.id})
 
   const [nameError, setNameError] = useState({
     error: false,
     message: ""
   })
 
-  useEffect(() => {
+  const resetCard = (group?: IGroup | null) => {
     if (group) {
       setName(group.name)
       setLockAfterOut(group.lockAfterOut)
@@ -32,7 +33,16 @@ export const GroupForm = ({group}: { group?: IGroup }) => {
       setRollType(group.rollType)
       setModalOpen(false)
     }
+  }
+
+  useEffect(() => {
+    resetCard(group)
   }, [group])
+
+  useEffect(() => {
+    resetCard(data)
+  }, [data])
+
 
   const nameInputValid = () => {
     if (name && name.length <= 1) {
@@ -66,9 +76,12 @@ export const GroupForm = ({group}: { group?: IGroup }) => {
         ...data,
         id: group.id
       }
-      await updateGroup.mutateAsync({
+      const res = await updateGroup.mutateAsync({
         group: groupUpdate
       })
+      if (res) {
+
+      }
       setModalOpen(false)
     }
     if (isNameValid && group === undefined) {
@@ -79,6 +92,7 @@ export const GroupForm = ({group}: { group?: IGroup }) => {
         group: groupCreate,
       })
       setModalOpen(false)
+      resetCard()
     }
 
   }

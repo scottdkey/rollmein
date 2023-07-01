@@ -3,17 +3,15 @@ import { Box, Button, Center, Drawer, DrawerBody, DrawerCloseButton, DrawerConte
 import PlayerCount from "../PlayerCounts/PlayerCount";
 import PlayerCard from "./PlayerCard"
 import { NewPlayerCard } from "./NewPlayerCard";
-import { usePlayersSlice } from "../../stores/Players.slice";
 import { useGetGroupPlayers } from "../../utils/player.api";
 import { useCurrentGroupSlice } from "../../stores/CurrentGroup.slice";
 
 
 const PlayerCards = ({ groupId }: { groupId: string }): JSX.Element => {
   const { isOpen, onOpen, onClose } = useDisclosure()
-  const players = usePlayersSlice(state => state.players)
   const rollType = useCurrentGroupSlice(state => state.rollType)
 
-  const { isLoading } = useGetGroupPlayers({ groupId })
+  const { isLoading, data: players } = useGetGroupPlayers({ groupId })
 
   if (isLoading) {
     return <Box><Spinner /></Box>
@@ -54,11 +52,14 @@ const PlayerCards = ({ groupId }: { groupId: string }): JSX.Element => {
 
               <Wrap spacing="5px" align="center" m="5px" justify="center">
 
-                {players.map((player) =>
-                  <WrapItem key={player.id} >
-                    <PlayerCard
-                      id={player.id} rollType={rollType} profilePage={false} />
-                  </WrapItem>)}
+                {players && players.map((player) => {
+                  return (
+                    <WrapItem key={player.id} >
+                      <PlayerCard
+                        id={player.id} rollType={rollType} profilePage={false} />
+                    </WrapItem>
+                  )
+                })}
                 <NewPlayerCard rollType={rollType} groupId={groupId} />
                 <WrapItem>
                 </WrapItem>

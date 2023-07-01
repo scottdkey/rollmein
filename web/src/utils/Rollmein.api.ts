@@ -41,7 +41,13 @@ export async function ApiRequest<Res, T>(route: string, method: RestMethods, par
     if (res.status < 400) {
       return await res.json() as Res
     }
-    return null
+    if(res.status >= 400) {
+      throw {
+        message: res.statusText,
+        status: res.status
+      }
+    }
+    return
   } catch (e: any) {
     throw {
       message: e.message,

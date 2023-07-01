@@ -26,9 +26,9 @@ services:
   #     context: ./api
   #     dockerfile: Dockerfile.dev
   #   volumes:
-  #     - ./api/src:/usr/api/src
-  #     - ./api/node_modules:/usr/api/node_modules
-  #     - ./api/log:/usr/api/log
+  #     - ../api/src:/usr/api/src
+  #     - ../api/node_modules:/usr/api/node_modules
+  #     - ../api/log:/usr/api/log
   #   env_file:
   #     - .env
   #   environment:

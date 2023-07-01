@@ -28,6 +28,7 @@ const PlayerCard = ({ id, userId, rollType = 'role', groupId, profilePage, close
 
   const basePlayer = {
     userId: userId ? userId : "",
+    //@ts-ignore
     id: id ? id : null,
     name: '',
     tank: false,
@@ -42,21 +43,27 @@ const PlayerCard = ({ id, userId, rollType = 'role', groupId, profilePage, close
 
   const updatePlayer = useUpdatePlayer()
   const addPlayerToGroupMutation = useAddPlayerToGroup({
-    onSuccess: () => {
-      resetCard()
-    }
+    groupId: groupId ? groupId : null,
   })
   const handlePlayerChange = usePlayersSlice(state => state.handlePlayerChange)
 
-  const storePlayer = usePlayersSlice(state => state.players.find(p => p.id === id))
-  const [player, setPlayer] = useState(storePlayer ? storePlayer : basePlayer)
+  //@ts-ignore
+  const [player, setPlayer] = useState<IPlayer>(basePlayer)
+  const {data: serverPlayerData} = useGetPlayer({
+    playerId: id,
+    enabled: id ? true : false
+
+  })
+
 
   useEffect(() => {
-    if (storePlayer) {
-      setPlayer(storePlayer)
-      setName(storePlayer.name)
+    if (serverPlayerData) {
+      setPlayer(serverPlayerData)
+      setName(serverPlayerData.name)
+    } else {
+      resetCard()
     }
-  }, [storePlayer])
+  }, [serverPlayerData])
 
 
   const [name, setName] = useState(basePlayer.name)
@@ -100,6 +107,7 @@ const PlayerCard = ({ id, userId, rollType = 'role', groupId, profilePage, close
   }
   const resetCard = () => {
     closeCreate && closeCreate()
+    //@ts-ignore
     setPlayer(basePlayer)
   }
 

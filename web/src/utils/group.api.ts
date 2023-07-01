@@ -1,5 +1,5 @@
 import { ApiRequest } from "./Rollmein.api"
-import { useMutation, useQuery } from "react-query"
+import { useMutation, useQuery, useQueryClient } from "react-query"
 import { useSession } from "next-auth/react"
 import { useGroupSlice } from "../stores/Group.slice"
 import { IGroup, ICreateGroup, IUpdateGroup, IJoinGroupReq, IJoinGroupRes, IGroupDelete } from "@sharedTypes/Group"
@@ -44,11 +44,14 @@ export const useGetGroups = () => {
 }
 
 export const getGroup = async (groupId: string, sessionToken?: string) => await ApiRequest<{
-  group: IGroup | null,
-  error: IApplicationError | null
-}, undefined>(`${GroupRoutes.GROUP}/${groupId}`, RestMethods.GET, { sessionToken })
+  group: IGroup,
+  error: null
+}, {
+  group: null,
+  error: IApplicationError
+}>(`${GroupRoutes.GROUP}/${groupId}`, RestMethods.GET, { sessionToken })
 
-export const useGetGroup = ({ groupId }: { groupId?: string, }) => {
+export const useGetGroup = ({ groupId }: { groupId: string | null }) => {
   const { data: session } = useSession()
   const upsertGroup = useGroupSlice(state => state.upsertGroup)
   const setGroup = useCurrentGroupSlice(state => state.setGroup)
@@ -63,15 +66,18 @@ export const useGetGroup = ({ groupId }: { groupId?: string, }) => {
       return null
     },
     onSuccess: (res) => {
-      if (res !== null && res !== undefined) {
+      if (res) {
         upsertGroup(res)
         setGroup(res)
+        return res
       }
+      return null
     },
     onError: (err) => {
       console.error(err)
+      return null
     },
-    enabled: groupId !== undefined
+    enabled: groupId !== null
   })
 }
 
@@ -82,6 +88,7 @@ export const useCreateGroup = () => {
   const { data: session } = useSession()
   const sessionToken = session?.id
   const upsertGroup = useGroupSlice(state => state.upsertGroup)
+  const { refetch } = useGetGroups()
   return useMutation({
     mutationFn: async ({ group }: { group: ICreateGroup }) => {
       if (sessionToken) {
@@ -90,6 +97,7 @@ export const useCreateGroup = () => {
       return null
     },
     onSuccess: (res) => {
+      refetch()
       if (res) {
         upsertGroup(res)
       }
@@ -102,6 +110,7 @@ export const updateGroup = async (group: IUpdateGroup, sessionToken: string) => 
 export const useUpdateGroup = () => {
   const { data: session } = useSession()
   const sessionToken = session?.id
+  const { refetch } = useGetGroups()
   const upsertGroup = useGroupSlice(state => state.upsertGroup)
 
   return useMutation({
@@ -109,10 +118,11 @@ export const useUpdateGroup = () => {
       if (sessionToken) {
         return await updateGroup(group, sessionToken)
       }
-      return null
+      return
     },
     onSuccess: (res) => {
-      if (res !== null) {
+      refetch()
+      if (res) {
         upsertGroup(res)
       }
     }
@@ -145,18 +155,35 @@ export const useDeleteGroup = ({ onSuccess }: { onSuccess: (group: IGroup | null
 
 export const addPlayerToGroup = async (params: ICreatePlayer, sessionToken: string) => await ApiRequest<IPlayer, ICreatePlayer>(GroupRoutes.ADD_PLAYER, RestMethods.POST, { body: params, sessionToken })
 
-export const useAddPlayerToGroup = ({ onSuccess }: { onSuccess: (player: IPlayer | null) => any }) => {
+export const useAddPlayerToGroup = ({ groupId }: { groupId: string | null }) => {
   const { data: session } = useSession()
   const sessionToken = session?.id ? session.id : undefined
+  const { refetch } = useGetGroup({ groupId })
+  const queryClient = useQueryClient()
   return useMutation({
     mutationFn: async (params: ICreatePlayer) => {
       if (sessionToken) {
-        const res = await addPlayerToGroup(params, sessionToken)
-        return res
+        return await addPlayerToGroup(params, sessionToken)
       }
-      return null
+      return
     },
-    onSuccess
+    onSuccess: (res) => {
+      if (res) {
+        refetch()
+        queryClient.setQueryData(["group", groupId], (oldData: any) => {
+          if (oldData) {
+            return {
+              ...oldData,
+              relations: {
+                ...oldData.relations,
+                players: [...oldData.relations.players, res]
+              }
+            }
+          }
+          return null
+        })
+      }
+    }
   })
 }
 

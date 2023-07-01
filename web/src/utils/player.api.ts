@@ -1,5 +1,5 @@
 import { ApiRequest } from "./Rollmein.api"
-import { useMutation, useQuery } from "react-query"
+import { useMutation, useQuery, useQueryClient } from "react-query"
 import { useSession } from "next-auth/react"
 import { usePlayersSlice } from "../stores/Players.slice"
 import { RestMethods } from "@sharedTypes/RestMethods.enum"
@@ -35,6 +35,9 @@ export const useGetPlayer = ({ playerId, enabled = true }: { enabled?: boolean, 
       if (res) {
         usePlayersSlice.getState().handlePlayerChange(res)
       }
+    },
+    onError: (err) => {
+      console.error(err)
     }
   })
 }
@@ -52,7 +55,9 @@ export const useGetGroupPlayers = ({ groupId }: { groupId?: string }) => {
     queryFn: async () => {
       if (groupId && sessionToken) {
         const res = await getGroupPlayers(groupId, sessionToken)
-        if (res) return res
+        if (res) {
+          return res.sort((a, b) => a.name.localeCompare(b.name))
+        }
         return []
       }
       return []
@@ -72,11 +77,11 @@ export const useGetSignedInUserPlayer = () => {
   const sessionToken = session?.id
   return useQuery({
     queryKey: ["user-player"],
-    queryFn: async (): Promise<IPlayer | null> => {
+    queryFn: async (): Promise<IPlayer | undefined> => {
       if (sessionToken) {
         return await getSignedInUserPlayer(sessionToken)
       }
-      return null
+      return
     },
     onSuccess: (res) => {
       if (res) {
@@ -90,50 +95,75 @@ export const getPlayerFromUserId = async (userId: string, sessionToken: string) 
 
 export const createPlayer = async (params: ICreatePlayer, sessionToken: string) => await ApiRequest<IPlayer, ICreatePlayer>(PlayerRoutes.PLAYER, RestMethods.POST, { body: params, sessionToken })
 
-export const useCreatePlayer = (setterFunction?: (player: IPlayer | null) => any) => useMutation({
-  mutationFn: async (params: ICreatePlayer, sessionToken?: string) => {
-    if (sessionToken) {
-      return await createPlayer(params, sessionToken)
-    }
-    return null
-  },
-  onSuccess: (data) => {
-    if (setterFunction) {
-      setterFunction(data)
-    }
-    if (data) {
-      usePlayersSlice.getState().handlePlayerChange(data)
-    }
-  }
-})
-
-export const updatePlayer = async (params: IUpdatePlayer, sessionToken: string) => {
-  try {
-    await ApiRequest<IPlayer, IUpdatePlayer>(PlayerRoutes.PLAYER, RestMethods.PUT, { body: params, sessionToken })
-  } catch (e) {
-    console.error(e)
-  }
-}
-
-export const useUpdatePlayer = () => {
+export const useCreatePlayer = () => {
   const { data: session } = useSession()
   const sessionToken = session?.id
+  const queryClient = useQueryClient()
+
   return useMutation({
-    mutationFn: async (params: IUpdatePlayer) => {
+    mutationFn: async (params: ICreatePlayer) => {
       if (sessionToken) {
-        return await updatePlayer(params, sessionToken)
+        return await createPlayer(params, sessionToken)
       }
       return null
     },
     onSuccess: (data) => {
       if (data) {
         usePlayersSlice.getState().handlePlayerChange(data)
+        queryClient.invalidateQueries("players")
+        queryClient.setQueryData(["player", data.id], data)
+      }
+    }
+  })
+}
+
+export const updatePlayer = async (params: IUpdatePlayer, sessionToken: string) => {
+  try {
+    return await ApiRequest<IPlayer, IUpdatePlayer>(PlayerRoutes.PLAYER, RestMethods.PUT, { body: params, sessionToken })
+  } catch (e) {
+    console.error(e)
+    return
+  }
+}
+
+export const useUpdatePlayer = () => {
+  const { data: session } = useSession()
+  const sessionToken = session?.id
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: async (params: IUpdatePlayer) => {
+      if (sessionToken) {
+        return await updatePlayer(params, sessionToken)
+      }
+      return
+    },
+    onSuccess: (data) => {
+      if (data) {
+        usePlayersSlice.getState().handlePlayerChange(data)
+        queryClient.invalidateQueries("players")
+        queryClient.setQueryData(["player", data.id], data)
       }
     }
   })
 }
 
 export const deletePlayer = async (sessionToken: string) => await ApiRequest<IPlayer, IDeletePlayer>(PlayerRoutes.PLAYER, RestMethods.DELETE, { sessionToken })
+
+export const useDeletePlayer = () => {
+  const { data: session } = useSession()
+  const sessionToken = session?.id
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: async () => {
+
+      if (sessionToken) {
+        return await deletePlayer(sessionToken)
+      }
+      return
+    }
+  })
+}
 
 
 

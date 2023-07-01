@@ -8,18 +8,21 @@ import { useGetGroups } from "../../utils/group.api"
 
 
 export const Groups = () => {
-  const groups = useGroupSlice(state => state.groups)
-  const { isLoading } = useGetGroups()
+  const { isLoading, data: groups } = useGetGroups()
 
   if (isLoading) {
     <Spinner />
   }
-  return (
-    <VStack>
-      <GroupForm />
-      {groups.map((group, index) => <Group group={group} key={group.id + index} />)}
-    </VStack>
-  )
+  if(groups){
+    return (
+      <VStack>
+        <GroupForm />
+        {groups.map((group, index) => <Group group={group} key={group.id + index} />)}
+      </VStack>
+    )
+  }
+
+  return <GroupForm />
 }
 
 
