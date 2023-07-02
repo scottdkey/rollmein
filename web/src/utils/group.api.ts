@@ -2,9 +2,9 @@ import { ApiRequest } from "./Rollmein.api"
 import { useMutation, useQuery, useQueryClient } from "react-query"
 import { useSession } from "next-auth/react"
 import { useGroupSlice } from "../stores/Group.slice"
-import { IGroup, ICreateGroup, IUpdateGroup, IJoinGroupReq, IJoinGroupRes, IGroupDelete } from "@sharedTypes/Group"
-import { RestMethods } from "@sharedTypes/RestMethods.enum"
-import { IApplicationError } from "../../../shared/types/ApplicationError"
+import { IGroup, ICreateGroup, IUpdateGroup, IJoinGroupReq, IJoinGroupRes, IGroupDelete } from "../types/Group"
+import { RestMethods } from "../types/RestMethods.enum"
+import { IApplicationError } from "../types/ApplicationError"
 import { useCurrentGroupSlice } from "../stores/CurrentGroup.slice"
 
 

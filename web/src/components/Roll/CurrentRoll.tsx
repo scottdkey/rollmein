@@ -5,7 +5,7 @@ import { useRollSlice } from "../../stores/Roll.slice"
 import { FC } from "react"
 import { FfaRollPlayers } from "./FfaRollPlayers"
 import { RollPlayers } from "./RollPlayers"
-import { RollType } from "../../../../shared/types/RollType.enum"
+import { RollType } from "../../types/RollType.enum"
 
 export const CurrentRoll: FC<{ hideHeading?: boolean }> = ({ hideHeading }) => {
   const currentRoll = useRollSlice(state => state.currentRoll)

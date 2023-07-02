@@ -1,5 +1,5 @@
 import { create } from 'zustand'
-import { IGroupPlayerCountResponse } from '@sharedTypes/Group'
+import { IGroupPlayerCountResponse } from '../types/Group'
 
 interface PlayerCountsState {
   playerCounts: IGroupPlayerCountResponse | null

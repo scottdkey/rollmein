@@ -1,5 +1,5 @@
-import { RestMethods } from "@sharedTypes/RestMethods.enum";
-import { IValidateAuthBody, IValidateAuthRes } from "@sharedTypes/ValidateAuth";
+import { RestMethods } from "../types/RestMethods.enum";
+import { IValidateAuthBody, IValidateAuthRes } from "../types/ValidateAuth";
 import { ApiRequest } from "./Rollmein.api";
 
 export enum AuthRoutes {

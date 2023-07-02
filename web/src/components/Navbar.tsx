@@ -5,14 +5,17 @@ import NextLink from "next/link";
 import AuthMenu from './AuthMenu';
 import styles from "../styles/Navbar.module.scss"
 import { useRouter } from 'next/router';
-import { useSession } from 'next-auth/react';
+import { supabase } from '@supabase/auth-ui-shared';
+import { createPagesBrowserClient } from '@supabase/auth-helpers-nextjs';
+import { createSupabaseClient } from '../pages/_app';
+
 
 interface NavBarProps {
 
 }
 
 const NavBar: React.FC<NavBarProps> = ({ }) => {
-  const { status} = useSession()
+  const supabase = createSupabaseClient()
   
   const { colorMode, setColorMode } = useColorMode()
 

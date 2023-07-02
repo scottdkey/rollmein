@@ -1,4 +1,4 @@
-import { RestMethods } from "../../../shared/types/RestMethods.enum";
+import { RestMethods } from "../types/RestMethods.enum";
 import { apiUrl } from "./constants";
 
 export async function ApiRequest<Res, T>(route: string, method: RestMethods, params: { body?: T, sessionToken?: string }) {
@@ -32,7 +32,7 @@ export async function ApiRequest<Res, T>(route: string, method: RestMethods, par
       }
     }
     const res = await fetch(`${apiUrl}${route}`, options)
-    if(res.status === 401) {
+    if (res.status === 401) {
       throw {
         message: 'Unauthorized',
         status: 401
@@ -41,7 +41,7 @@ export async function ApiRequest<Res, T>(route: string, method: RestMethods, par
     if (res.status < 400) {
       return await res.json() as Res
     }
-    if(res.status >= 400) {
+    if (res.status >= 400) {
       throw {
         message: res.statusText,
         status: res.status

@@ -1,6 +1,6 @@
 import { create } from 'zustand'
-import { IGroup } from '@sharedTypes/Group'
-import { RollType } from '../../../shared/types/RollType.enum'
+import { IGroup } from '../types/Group'
+import { RollType } from '../types/RollType.enum'
 
 interface CurrentGroupState {
   group: IGroup | null

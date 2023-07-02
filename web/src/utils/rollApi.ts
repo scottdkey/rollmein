@@ -2,7 +2,7 @@ import { ApiRequest } from "./Rollmein.api"
 import { useMutation, useQuery } from "react-query"
 import { useSession } from "next-auth/react"
 import { useRollSlice } from "../stores/Roll.slice"
-import { RestMethods } from "@sharedTypes/RestMethods.enum"
+import { RestMethods } from "../types/RestMethods.enum"
 
 
 const getRoll = async (groupId: string, sessionToken?: string) => {
@@ -21,7 +21,7 @@ export const useRollQuery = (groupId: string) => {
   return useQuery({
     queryKey: `roll/${groupId}`,
     queryFn: async () => {
-      
+
       if (session.data?.id) {
         return await getRoll(groupId, session.data?.id)
       }

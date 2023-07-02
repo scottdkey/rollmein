@@ -3,10 +3,10 @@ import { Button, FormControl, FormErrorMessage, FormLabel, IconButton, Input, Mo
 import { useEffect, useState } from "react"
 import { useSession } from "next-auth/react"
 import { useCreateGroup, useGetGroup, useUpdateGroup } from "../../utils/group.api"
-import { ICreateGroup, IGroup, IUpdateGroup } from "../../../../shared/types/Group"
-import { RollType } from "../../../../shared/types/RollType.enum"
+import { ICreateGroup, IGroup, IUpdateGroup } from "../../types/Group"
+import { RollType } from "../../types/RollType.enum"
 
-export const GroupForm = ({group}: { group?: IGroup }) => {
+export const GroupForm = ({ group }: { group?: IGroup }) => {
   const [modalOpen, setModalOpen] = useState(false)
 
 
@@ -18,7 +18,7 @@ export const GroupForm = ({group}: { group?: IGroup }) => {
   const [rollType, setRollType] = useState(RollType.FFA)
   const updateGroup = useUpdateGroup()
   const createGroup = useCreateGroup()
-  const {isLoading, isError, data} = useGetGroup({groupId: group?.id})
+  const { isLoading, isError, data } = useGetGroup({ groupId: group?.id ?? null })
 
   const [nameError, setNameError] = useState({
     error: false,

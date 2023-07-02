@@ -1,7 +1,6 @@
 import { Spinner, Text, VStack } from "@chakra-ui/react"
 import { Group } from "./Group"
 import { GroupForm } from "./GroupForm"
-import { useGroupSlice } from "../../stores/Group.slice"
 import { useGetGroups } from "../../utils/group.api"
 
 

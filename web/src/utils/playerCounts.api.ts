@@ -1,7 +1,7 @@
 import { useQuery } from "react-query";
 import { ApiRequest } from "./Rollmein.api";
-import { IGroupPlayerCountResponse } from "@sharedTypes/Group";
-import { RestMethods } from "@sharedTypes/RestMethods.enum";
+import { IGroupPlayerCountResponse } from "../types/Group";
+import { RestMethods } from "../types/RestMethods.enum";
 import { useSession } from "next-auth/react";
 import { usePlayerCountsSlice } from "../stores/PlayerCounts.slice";
 

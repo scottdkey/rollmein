@@ -4,7 +4,7 @@ import { useState } from "react"
 import { useCurrentGroupSlice } from "../../stores/CurrentGroup.slice"
 import { FfaRollPlayers } from "./FfaRollPlayers"
 import { RollPlayers } from "./RollPlayers"
-import { RollType } from "../../../../shared/types/RollType.enum"
+import { RollType } from "../../types/RollType.enum"
 
 
 export const PreviousRolls = () => {

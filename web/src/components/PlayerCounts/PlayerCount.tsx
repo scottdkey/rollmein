@@ -5,7 +5,7 @@ import { useGetPlayerCount } from "../../utils/playerCounts.api"
 import { useEffect } from "react"
 import { usePlayerCountsSlice } from "../../stores/PlayerCounts.slice"
 import { useCurrentGroupSlice } from "../../stores/CurrentGroup.slice"
-import { RollType } from "../../../../shared/types/RollType.enum"
+import { RollType } from "../../types/RollType.enum"
 
 
 

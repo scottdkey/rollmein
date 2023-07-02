@@ -2,8 +2,8 @@ import { ApiRequest } from "./Rollmein.api"
 import { useMutation, useQuery } from "react-query"
 import { useSession, signOut } from "next-auth/react"
 import { useToast } from "@chakra-ui/react"
-import { RestMethods } from "@sharedTypes/RestMethods.enum"
-import { UserRoutes } from "@sharedTypes/UserRoutes.enum"
+import { RestMethods } from "../types/RestMethods.enum"
+import { UserRoutes } from "../types/UserRoutes.enum"
 
 
 

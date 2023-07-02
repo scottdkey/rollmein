@@ -2,8 +2,8 @@ import { ApiRequest } from "./Rollmein.api"
 import { useMutation, useQuery, useQueryClient } from "react-query"
 import { useSession } from "next-auth/react"
 import { usePlayersSlice } from "../stores/Players.slice"
-import { RestMethods } from "@sharedTypes/RestMethods.enum"
-import { PlayerRoutes } from "../../../shared/types/PlayerRoutes.enum"
+import { RestMethods } from "../types/RestMethods.enum"
+import { PlayerRoutes } from "../types/PlayerRoutes.enum"
 
 
 

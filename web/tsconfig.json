@@ -27,9 +27,9 @@
       "@appTypes": ["./src/types*"],
       "@src": ["./src/*"],
       "@components": ["./src/components/*"],
-      "@sharedTypes/*": ["../shared/types/*"]
+      "@sharedTypes/*": ["src/types/*"]
     }
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "../shared"],
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "../shared", "src/types"],
   "exclude": ["node_modules"]
 }
