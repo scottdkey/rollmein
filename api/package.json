@@ -13,7 +13,7 @@
     "lint": "eslint",
     "build": "tsc",
     "watch:ts": "tsc -w",
-    "watch:node": "nodemon dist/api/src/index.js | npx pino-pretty",
+    "watch:node": "nodemon ./dist/api/src/index.js | npx pino-pretty",
     "docker:build": "docker build -t scottdkey/rollmein_api:$(echo $npm_package_version) -f Dockerfile ../ --no-cache && docker tag scottdkey/rollmein_api:$(echo $npm_package_version) scottdkey/rollmein_api:latest",
     "docker:push": "docker push scottdkey/rollmein_api:$(echo $npm_package_version) && docker push scottdkey/rollmein_api:latest"
   },
@@ -35,7 +35,9 @@
     "koa-redis": "^4.0.1",
     "koa-route": "^3.2.0",
     "koa-router": "^12.0.0",
+    "koa-swagger-decorator": "^1.8.7",
     "koa-websocket": "^7.0.0",
+    "koa2-swagger-ui": "^5.10.0",
     "pg": "^8.8.0",
     "pino": "^8.8.0",
     "pino-pretty": "^9.1.1",

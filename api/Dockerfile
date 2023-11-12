@@ -1,4 +1,4 @@
-FROM node:18-alpine3.15 as build
+FROM node:20 as build
 WORKDIR /usr/app
 
 COPY ./api/package.json .
@@ -14,7 +14,7 @@ RUN yarn build
 
 
 
-FROM node:18-alpine3.15 as prod
+FROM node:20 as prod
 WORKDIR /usr/app
 
 COPY /api/package.json .

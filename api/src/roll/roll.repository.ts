@@ -1,6 +1,6 @@
-import { ErrorTypes } from "../../../shared/types/ErrorCodes.enum";
-import { ErrorMessages } from "../../../shared/types/ErrorTypes.enum";
-import { RedisKeys } from "../../../shared/types/redisKeys.enum";
+import { ErrorTypes } from "../../../web/src/types/ErrorCodes.enum";
+import { ErrorMessages } from "../../../web/src/types/ErrorTypes.enum";
+import { RedisKeys } from "../../../web/src/types/redisKeys.enum";
 import { addToContainer } from "../container";
 import { RedisService } from "../redis/redis.service";
 import { createError } from "../utils/CreateError";

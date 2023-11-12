@@ -1,4 +1,5 @@
 version: "3.9"
+name: rollmein
 services:
   database:
     image: postgres
@@ -12,7 +13,7 @@ services:
     expose:
       - 5432
     volumes:
-      - postgres_db:/var/lib/postgresql/data
+      - rollmein_db:/var/lib/postgresql/data
   redis:
     image: redis:alpine
     ports:
@@ -21,26 +22,26 @@ services:
       - 6379
     volumes:
       - redis_data:/data
-  # api:
-  #   build:
-  #     context: ./api
-  #     dockerfile: Dockerfile.dev
-  #   volumes:
-  #     - ../api/src:/usr/api/src
-  #     - ../api/node_modules:/usr/api/node_modules
-  #     - ../api/log:/usr/api/log
-  #   env_file:
-  #     - .env
-  #   environment:
-  #     - POSTGRES_HOST=database
-  #     - REDIS_HOST=redis
-  #   ports:
-  #     - 8000:8000
-  #   expose:
-  #     - 8000
-  #   depends_on:
-  #     - database
-  #     - redis
+  api:
+    hostname: "api"
+    container_name: "api"
+    build:
+      context: ../api
+      dockerfile: Dockerfile.dev
+    volumes:
+      - ../api/:/usr/app
+    env_file:
+      - .env
+    environment:
+      - POSTGRES_HOST=database
+      - REDIS_HOST=redis
+    ports:
+      - 8000:8000
+    expose:
+      - 8000
+    depends_on:
+      - database
+      - redis
   # frontend:
   #   build:
   #     context: ./web
@@ -55,7 +56,7 @@ services:
   #     - 3000
   #   depends_on:
   #     - api
-  
+
 volumes:
-  postgres_db:
+  rollmein_db:
   redis_data:

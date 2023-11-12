@@ -43,7 +43,7 @@ interface IGroupDelete {
   id: string
 }
 
-interface IGroup extends ICreateGroup {
+export interface IGroup extends ICreateGroup {
   id: string
   relations: { members: string[], players: string[] }
   userId: string

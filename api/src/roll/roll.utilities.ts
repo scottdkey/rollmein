@@ -1,9 +1,9 @@
-import { IApplicationError } from "../../../shared/types/ApplicationError";
-import { ErrorTypes } from "../../../shared/types/ErrorCodes.enum";
-import { ErrorMessages } from "../../../shared/types/ErrorTypes.enum";
-import { IGroup } from "../../../shared/types/Group";
-import { PlayerRoles } from "../../../shared/types/PlayerRoles.enum";
-import { RollType } from "../../../shared/types/RollType.enum";
+import { IApplicationError } from "../../../web/src/types/ApplicationError";
+import { ErrorTypes } from "../../../web/src/types/ErrorCodes.enum";
+import { ErrorMessages } from "../../../web/src/types/ErrorTypes.enum";
+import { IGroup } from "../../../web/src/types/Group";
+import { PlayerRoles } from "../../../web/src/types/PlayerRoles.enum";
+import { RollType } from "../../../web/src/types/RollType.enum";
 import { addToContainer } from "../container";
 import { LoggerService } from "../logger/logger.service";
 import { createError } from "../utils/CreateError";
@@ -96,7 +96,7 @@ export class RollUtilities {
     return playersWithoutUndefined.map((player) => player.id)
   }
 
-  FFARoll(currentGroup: IPlayer[], numberOfPlayers: number = 5): { ffaRoll: IPlayer[]; remaining: IPlayer[] } {
+  FFARoll(currentGroup: IPlayer[], numberOfPlayers = 5): { ffaRoll: IPlayer[]; remaining: IPlayer[] } {
     let remaining = currentGroup
     const ffaRoll: IPlayer[] = []
 

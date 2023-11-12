@@ -1,6 +1,7 @@
-import { IApplicationError } from "../../../shared/types/ApplicationError"
-import { ErrorTypes } from "../../../shared/types/ErrorCodes.enum"
-import { HTTPCodes } from "../../../shared/types/HttpCodes.enum"
+import { IApplicationError } from "../../../web/src/types/ApplicationError"
+import { ErrorTypes } from "../../../web/src/types/ErrorCodes.enum"
+import { HTTPCodes } from "../../../web/src/types/HttpCodes.enum"
+
 
 
 

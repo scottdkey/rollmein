@@ -11,7 +11,5 @@
       "password": "postgres"
     }
   ],
-  "cSpell.words": [
-    "Rollmein"
-  ]
+  "cSpell.words": ["pino", "Rollmein"]
 }

@@ -5,11 +5,11 @@ import IORedis from "ioredis"
 import { GroupWsService } from "../group/groupWs.service"
 import { ConfigService } from "../common/config/config.service"
 import { validateSessionToken } from "../common/middleware/websocketIsAuth.middleware"
-import { RedisKeys } from "../../../shared/types/redisKeys.enum"
-import { IGroup, IGroupWsResponse, IGroupWsRequest } from "../../../shared/types/Group"
-import { GroupWSMessageTypes } from "../../../shared/types/GroupMessages.enum"
 import Router from "koa-router"
 import { LoggerService } from "../logger/logger.service"
+import { IGroup, IGroupWsRequest, IGroupWsResponse } from "../../../web/src/types/Group"
+import { GroupWSMessageTypes } from "../../../web/src/types/GroupMessages.enum"
+import { RedisKeys } from "../../../web/src/types/redisKeys.enum"
 
 
 const groupService = container.get(GroupService)
@@ -23,83 +23,83 @@ export const groupWsRouter = new Router({
 })
 
 
-export async function GroupWebsocket(ctx: MiddlewareContext<{}>) {
+export async function GroupWebsocket(ctx: MiddlewareContext<Record<string, unknown>>): Promise<void> {
   const sub = new IORedis({
-    host: config.host
-  })
+    host: config.host,
+  });
 
   try {
-    let redisKey = ""
-    let group: IGroup | null = null
-    let userId: string | null
-    let subbed = false
+    let redisKey = "";
+    let group: IGroup | null = null;
+    let userId: string | null;
+    let subbed = false;
 
     const subToGroup = async () => {
       if (subbed === false && group) {
-        await groupWsService.groupSub(group, sub)
-        subbed = true
+        await groupWsService.groupSub(group, sub);
+        subbed = true;
       }
-    }
+    };
 
-    ctx.websocket.on('open', () => {
+    ctx.websocket.on("open", () => {
       const messageRes: IGroupWsResponse = {
         messageType: GroupWSMessageTypes.Open,
-        data: null
-      }
-      ctx.websocket.send(JSON.stringify(messageRes))
-    })
-    ctx.websocket.on('close', async () => {
+        data: null,
+      };
+      ctx.websocket.send(JSON.stringify(messageRes));
+    });
+    ctx.websocket.on("close", async () => {
       if (userId && group) {
-        await groupService.removeMember(group, userId)
+        await groupService.removeMember(group, userId);
       }
-    })
+    });
 
-    sub.on('message', (channel, message) => {
+    sub.on("message", (channel, message) => {
       if (channel === redisKey) {
-        ctx.websocket.send(message)
+        ctx.websocket.send(message);
       }
-    })
+    });
 
     ctx.websocket.on("message", async (message: string) => {
-      const parsed = JSON.parse(message) as IGroupWsRequest
-      const groupId = parsed.groupId
-      const token = parsed.sessionToken
-      const { user, valid } = await validateSessionToken(token)
+      const parsed = JSON.parse(message) as IGroupWsRequest;
+      const groupId = parsed.groupId;
+      const token = parsed.sessionToken;
+      const { user, valid } = await validateSessionToken(token);
 
+      const { group: groupRes } = await groupService.getGroup(
+        groupId,
+        user?.id
+      );
 
-
-      const { group: groupRes } = await groupService.getGroup(groupId, user?.id)
-
-      redisKey = `${RedisKeys.GROUP}-${groupId}`
-      group = groupRes
+      redisKey = `${RedisKeys.GROUP}-${groupId}`;
+      group = groupRes;
 
       if (subbed === false) {
-        await subToGroup()
+        await subToGroup();
       }
 
       if (valid && user) {
         switch (parsed.messageType) {
           case GroupWSMessageTypes.Open:
-            userId = user.id
+            userId = user.id;
             if (valid && groupRes) {
-              groupWsService.openWsConnection(groupRes)
+              groupWsService.openWsConnection(groupRes);
             }
-            break
+            break;
           default:
-            break
+            break;
         }
       }
       if (!valid) {
-        ctx.websocket.close()
+        ctx.websocket.close();
       }
-
-    })
+    });
   } catch (e) {
-    logger.error(e)
+    logger.error(e);
   }
-
 }
 
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 //@ts-ignore
 groupWsRouter.all('/', GroupWebsocket)
 

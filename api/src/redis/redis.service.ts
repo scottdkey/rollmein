@@ -1,9 +1,9 @@
 import IoRedis, { Redis } from 'ioredis';
 import { Logger } from 'pino';
-import { RedisKeys } from '../../../shared/types/redisKeys.enum';
 import { ConfigService } from '../common/config/config.service';
 import { addToContainer } from "../container";
 import { LoggerService } from '../logger/logger.service';
+import { RedisKeys } from '../../../web/src/types/redisKeys.enum';
 
 
 
@@ -71,7 +71,7 @@ export class RedisService {
   }
 
   //expire time is in seconds
-  async set<T>(key: RedisKeys, id: string, data: T, expireTime: number = 7200): Promise<T | null> {
+  async set<T>(key: RedisKeys, id: string, data: T, expireTime = 7200): Promise<T | null> {
     const res = await this.redis.set(`${key}-${id}`, JSON.stringify(data), 'ex', expireTime)
     if (res === "OK") {
       return data
@@ -81,7 +81,7 @@ export class RedisService {
 
 
   //expire time is in seconds
-  async setWithRetry<T>(key: RedisKeys, id: string, data: T, retry: number = 3, expireTime?: number) {
+  async setWithRetry<T>(key: RedisKeys, id: string, data: T, retry = 3, expireTime?: number) {
     let res = await this.set(key, id, data, expireTime)
     let retryCount = 0
     while (!res && retryCount > retry) {

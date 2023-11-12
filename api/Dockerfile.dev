@@ -1,6 +1,5 @@
-FROM node:18-alpine3.15
-RUN apk update && apk add bash
-WORKDIR /usr/api
+FROM node:20
+WORKDIR /usr/app
 COPY . .
 RUN yarn
 

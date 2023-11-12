@@ -1,4 +1,4 @@
-import { IApplicationError } from "../../../shared/types/ApplicationError";
+import { IApplicationError } from "../../../web/src/types/ApplicationError";
 
 
 
