@@ -1,5 +1,4 @@
 import { CheckCircleIcon, EditIcon } from "@chakra-ui/icons"
-import { Box, Center, Heading, HStack, Input, useColorModeValue } from "@chakra-ui/react"
 import React, { useEffect, useState } from "react"
 import Dice from "../../assets/Dice"
 import FirstAid from "../../assets/FirstAid"
@@ -10,7 +9,7 @@ import { IconWrapper } from "../IconWrapper"
 import { Trash } from "../../assets/Trash"
 import { useToast } from "@chakra-ui/react"
 import { Shield } from "../../assets"
-import { useGetPlayer, useGetSignedInUserPlayer, useUpdatePlayer } from "../../utils/player.api"
+import { useGetPlayer, useUpdatePlayer } from "../../utils/player.api"
 import { useAddPlayerToGroup } from "../../utils/group.api"
 import { usePlayersSlice } from "../../stores/Players.slice"
 
@@ -49,7 +48,7 @@ const PlayerCard = ({ id, userId, rollType = 'role', groupId, profilePage, close
 
   //@ts-ignore
   const [player, setPlayer] = useState<IPlayer>(basePlayer)
-  const {data: serverPlayerData} = useGetPlayer({
+  const { data: serverPlayerData } = useGetPlayer({
     playerId: id,
     enabled: id ? true : false
 
@@ -68,12 +67,6 @@ const PlayerCard = ({ id, userId, rollType = 'role', groupId, profilePage, close
 
   const [name, setName] = useState(basePlayer.name)
   const [editing, setEditing] = useState(id ? false : true)
-  const textColor = useColorModeValue("gray.700", "gray:200")
-  const primary = useColorModeValue(`gray.300`, `gray.600`)
-  const inColor = useColorModeValue("teal.100", "teal.800")
-  const lockedColor = useColorModeValue("yellow.500", "yellow.500")
-  const background = player?.inTheRoll && !profilePage ? inColor : primary
-  const borderColor = !profilePage && player?.locked ? lockedColor : "blackAlpha.100"
 
 
 
@@ -127,11 +120,7 @@ const PlayerCard = ({ id, userId, rollType = 'role', groupId, profilePage, close
           toggleEditing()
         },
         onError: (error) => {
-          toast({
-            status: "error",
-            description: error,
-            title: "error updating player"
-          })
+          console.log('display this error', error)
         }
       })
     }
@@ -192,7 +181,7 @@ const PlayerCard = ({ id, userId, rollType = 'role', groupId, profilePage, close
         }
       }
       setPlayer(playerInput)
-      
+
       if (id !== undefined) {
         const idPlayer = { ...playerInput, id }
         await updatePlayer.mutateAsync(idPlayer)
@@ -223,61 +212,43 @@ const PlayerCard = ({ id, userId, rollType = 'role', groupId, profilePage, close
   }
 
   return (
-    <Box borderColor={borderColor} borderRadius={"md"} padding={2} w="240px" h="180px" shadow="base" borderWidth="10px" bg={background} position="relative" justifyContent="center" alignItems="center" onKeyPress={(e) => {
+    <div onKeyDown={(e) => {
       if (e.key === "Enter") {
         handleSubmit()
       }
     }}>
-      <Box position="relative">
-        <Center>
+      <div>
+        <div className="center">
           {profilePage ? null : <IconWrapper color="yellow" selected={player.locked} Icon={player.locked ? Lock : OpenLock} onClick={() => updatePlayerField('locked', !player.locked)} />}
           {profilePage ? null : <IconWrapper color="teal" selected={player.inTheRoll} Icon={Dice} onClick={() => updatePlayerField('inTheRoll', !player.inTheRoll)} />}
 
           {!profilePage && editing ?
             <IconWrapper color="red" selected={true} Icon={Trash} onClick={handleDelete} />
             : null}
-          <Box ml='auto'>
+          <div>
             <IconWrapper onClick={editing ? handleSubmit : toggleEditing} color={editing ? "green" : "gray"} selected={editing} Icon={editing ? CheckCircleIcon : EditIcon} />
-          </Box>
-        </Center>
-        <Center padding="4" color={useColorModeValue("gray.100", "gray.200")}>
+          </div>
+        </div>
+        <div className="center">
           {editing ?
-            <Input
+            <input
               name="name"
-              textAlign="center"
-              fontSize="xl"
               width='100%'
-              h='8'
-              textShadow="2xl"
-              textColor={textColor}
-              fontWeight="800"
               placeholder="player name"
               value={name}
-              size="sm"
               onChange={(e) => {
                 const value = e.target.value
                 setName(value)
               }}
-            >
-            </Input>
+            />
             :
-            <Heading
-              textColor={textColor}
-              textShadow="2xl"
-              fontSize="xl"
-              h='8'
-              width="100%"
-              textAlign="center"
-              justifyContent="center"
-              alignContent="center">{
-                name}
-            </Heading>
+            <h1>{name}</h1>
           }
-        </Center>
+        </div>
 
 
         {rollType === "role" ?
-          <HStack align="center" justify="center">
+          <div className="hStack">
             <IconWrapper selected={player.tank} color="blue" Icon={Shield} onClick={async () => {
               await updatePlayerField("tank", !player.tank)
             }} />
@@ -288,12 +259,12 @@ const PlayerCard = ({ id, userId, rollType = 'role', groupId, profilePage, close
               await updatePlayerField("healer", !player.healer)
 
             }} />
-          </HStack>
+          </div>
           :
           null
         }
-      </Box >
-    </Box >
+      </div >
+    </div >
   )
 }
 

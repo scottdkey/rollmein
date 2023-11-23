@@ -1,5 +1,3 @@
-import { ChevronDownIcon, ChevronUpIcon } from "@chakra-ui/icons"
-import { Menu, MenuButton, MenuList, Text, HStack, Skeleton, Box } from "@chakra-ui/react"
 import { useEffect, useState } from "react"
 import styles from "../styles/AuthMenu.module.scss"
 import AuthNav from "./AuthNavButtons"
@@ -30,33 +28,30 @@ const AuthMenu = () => {
 
   if (isLoading) {
     return (
-      <Box className={styles.Menu}>
+      <div className={styles.Menu}>
         loading
-      </Box>
+      </div>
     )
   }
 
   return (
-    <Box className={styles.Menu}>
-      <Menu>
-        <MenuButton
-          onClick={ToggleOpen}
-          className={styles.MenuButton} margin={'0'}>
-          <HStack>
-            <Text maxW={'28'}>
-              {status === 'authenticated' ? username : "Signed out"}
-            </Text>
-            {loginOpen ?
-              <ChevronUpIcon /> : <ChevronDownIcon />}
-          </HStack>
+    <div className={styles.Menu}>
+      <button className={styles.MenuButton}
+        onClick={ToggleOpen}>
+        <div className={styles.hStack}>
+          <text>
+            {status === 'authenticated' ? username : "Signed out"}
+          </text>
+          {loginOpen ?
+            <div>chevronUpIcon</div> : <div>chevronDownIcon</div>}
+        </div>
 
-        </MenuButton>
-        <MenuList className={styles.MenuList} margin={'0'}>
-          {status === "authenticated" ?
-            <AuthNav /> : <UnAuthNav />}
-        </MenuList>
-      </Menu>
-    </Box>
+      </button>
+      <div className={styles.MenuList}>
+        {status === "authenticated" ?
+          <AuthNav /> : <UnAuthNav />}
+      </div>
+    </div>
   )
 }
 

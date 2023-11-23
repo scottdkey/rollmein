@@ -1,4 +1,3 @@
-import { Button, Center, HStack, Heading, Skeleton, VStack } from "@chakra-ui/react";
 import { useRouter } from "next/router";
 import PlayerCards from "../../components/Player/PlayerCards";
 import { useEffect } from "react";
@@ -39,30 +38,30 @@ export default function Group() {
   if (group) {
     return (
       <GroupWsProvider groupId={groupId}>
-        <Center>
-          <VStack>
-            <HStack>
-              <Heading size={'xl'}>{name}</Heading>
+        <div>
+          <div>
+            <div>
+              <h1>{name}</h1>
               <GroupForm group={group} />
-            </HStack>
+            </div>
             <PlayerCards groupId={groupId} />
             {/* <Button>Start Roll</Button> */}
             <Rolls />
-          </VStack>
-        </Center>
+          </div>
+        </div>
       </GroupWsProvider>
     )
   }
 
   if (isLoading) {
     return (
-      <Skeleton />
+      <div className="skeleton">loading</div>
     )
   }
 
   if (!isLoading && !group) {
     return (
-      <Skeleton />
+      <div className="skeleton">no group found</div>
     )
   }
 

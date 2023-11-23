@@ -1,28 +1,27 @@
-import { HStack, VStack, FormLabel } from "@chakra-ui/react"
 import { FC } from "react"
 import { RollPlayerDisplay } from "./RollPlayerDisplay"
 
 export const RollPlayers: FC<{ roll: IRoll }> = ({ roll }) => {
   if (roll.tank && roll.healer && roll.dps) {
     return (
-      <HStack>
-        <VStack>
-          <FormLabel>Tank</FormLabel>
+      <div className="hStack">
+        <div className="vStack">
+          <h2>Tank</h2>
           <RollPlayerDisplay playerId={roll.tank} />
-        </VStack>
-        <VStack>
-          <FormLabel>Healer</FormLabel>
+        </div>
+        <div className="vStack">
+          <h2>Healer</h2>
           <RollPlayerDisplay playerId={roll.healer} />
-        </VStack>
-        <VStack>
-          <FormLabel>Dps</FormLabel>
+        </div>
+        <div className="vStack">
+          <h2>Dps</h2>
           {
             roll.dps.map(id => {
               return <RollPlayerDisplay key={id} playerId={id} />
             })
           }
-        </VStack>
-      </HStack>
+        </div>
+      </div>
     )
   }
   return null

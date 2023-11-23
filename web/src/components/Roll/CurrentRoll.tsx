@@ -1,5 +1,3 @@
-import { Heading, VStack } from "@chakra-ui/react"
-import { usePlayersSlice } from "../../stores/Players.slice"
 import { useCurrentGroupSlice } from "../../stores/CurrentGroup.slice"
 import { useRollSlice } from "../../stores/Roll.slice"
 import { FC } from "react"
@@ -13,10 +11,10 @@ export const CurrentRoll: FC<{ hideHeading?: boolean }> = ({ hideHeading }) => {
 
   if (currentRoll) {
     return (
-      <VStack>
-        <Heading hidden={hideHeading}>Current Roll</Heading>
+      <div className="vStack">
+        <h1 hidden={hideHeading}>Current Roll</h1>
         {rollType === RollType.FFA ? <FfaRollPlayers roll={currentRoll} /> : <RollPlayers roll={currentRoll} />}
-      </VStack>
+      </div>
     )
   }
   return null

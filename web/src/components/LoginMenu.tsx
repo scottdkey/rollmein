@@ -1,13 +1,13 @@
-import { Button, VStack, Box } from "@chakra-ui/react"
 import { signIn } from "next-auth/react"
 import NextImage from "next/image"
 import googleImage from "../assets/images/Google.svg"
 
 const LoginMenu = () => {
   return (
-    <VStack alignContent={"center"} alignItems={"center"} width="100%" >
+    //alignContent={"center"} alignItems={"center"} width="100%" 
+    <div >
       <OauthSignIn AuthType="google" image={googleImage} />
-    </VStack >
+    </div >
   )
 }
 export default LoginMenu
@@ -18,21 +18,24 @@ function OauthSignIn(props: { AuthType: string, image: any, }) {
 
   return (
     <>
-      <Button
+      {/* width="100%" */}
+      {/* alignItems={'center'} */}
+      {/* verticalAlign={'center'} */}
+      <button
+
         onClick={() => signIn(props.AuthType)}
-        width="100%"
-        alignItems={'center'}
-        verticalAlign={'center'}
+
       >
-        <Box ml='-1' mt='2.5' mb='auto' mr='5'>
+        {/* ml='-1' mt='2.5' mb='auto' mr='5' */}
+        <div >
+          {/* width="20rem" */}
+          {/* height="20rem" */}
           <NextImage
-            width="20rem"
-            height="20rem"
             src={googleImage}
             alt={`${props.AuthType} logo`} />
-        </Box>
+        </div>
         {text}
-      </Button>
+      </button>
     </>
   )
 }

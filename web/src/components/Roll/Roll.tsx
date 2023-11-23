@@ -1,10 +1,6 @@
-import { VStack } from '@chakra-ui/layout'
-import { Button, Skeleton } from '@chakra-ui/react'
 import React, { FC } from 'react'
 import { CurrentRoll } from './CurrentRoll'
 import { RemainingPlayers } from './RemainingPlayers'
-import { PreviousRolls } from './PreviousRolls'
-import { useRollSlice } from '../../stores/Roll.slice'
 import { useRollMutation, useRollQuery } from '../../utils/rollApi'
 import { useCurrentGroupSlice } from '../../stores/CurrentGroup.slice'
 
@@ -20,20 +16,18 @@ const Roll: FC<RollsType> = (): JSX.Element => {
 
   if (isLoading) {
     return (
-      <>
-        <Skeleton />
-      </>
+      <div className='skeleton'></div>
     )
   }
   return (
-    <VStack>
+    <div className='vStack'>
       <CurrentRoll />
       <RemainingPlayers />
       {/* <PreviousRolls /> */}
-      <Button variant="solid" onClick={async () => {
+      <button onClick={async () => {
         await rollMutation.mutateAsync()
-      }}>Roll</Button>
-    </VStack >
+      }}>Roll</button>
+    </div >
   )
 }
 

@@ -1,8 +1,6 @@
-import { Heading, HStack, Spinner, VStack, Text } from "@chakra-ui/react"
 import { Lock, Dice, Shield, Sword, FirstAid } from "../../assets"
 import { CountItem } from "../CountItem"
 import { useGetPlayerCount } from "../../utils/playerCounts.api"
-import { useEffect } from "react"
 import { usePlayerCountsSlice } from "../../stores/PlayerCounts.slice"
 import { useCurrentGroupSlice } from "../../stores/CurrentGroup.slice"
 import { RollType } from "../../types/RollType.enum"
@@ -17,17 +15,18 @@ const PlayerCount = () => {
 
 
   if (isLoading) {
-    return (<VStack>
-      <Heading size="sm">Players</Heading>
-      <Spinner></Spinner>
-    </VStack>)
+    return (
+      <div className="vStack">
+        <h3>Players</h3>
+        <div className="spinner" />
+      </div>)
   }
 
   if (playerCounts) {
     return (
-      <VStack>
-        <Heading size="sm">Players</Heading>
-        <HStack align="center" justify="center" position="relative">
+      <div className="vStack">
+        <h3>Players</h3>
+        <div className="hStack">
           <CountItem count={playerCounts.locked} icon={Lock} color="yellow" />
           <CountItem count={playerCounts.inTheRoll} icon={Dice} color="teal" />
           {rollType === RollType.ROLE ? <>
@@ -35,15 +34,15 @@ const PlayerCount = () => {
             <CountItem count={playerCounts.dps} icon={Sword} color="orange" />
             <CountItem count={playerCounts.healers} icon={FirstAid} color="green" />
           </> : null}
-        </HStack>
-      </VStack>
+        </div>
+      </div>
     )
   }
   return (
-    <VStack>
-      <Heading size="sm">Players</Heading>
-      <Text>error</Text>
-    </VStack>
+    <div className="vStack">
+      <h4>Players</h4>
+      <text>error</text>
+    </div>
   )
 
 

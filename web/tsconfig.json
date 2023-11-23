@@ -30,6 +30,6 @@
       "@sharedTypes/*": ["../web/src/types/*"]
     }
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "../shared", "src/types"],
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "../shared", "src/types", "src/pages/_document.js"],
   "exclude": ["node_modules"]
 }

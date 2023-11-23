@@ -1,4 +1,3 @@
-import { Button, HStack } from "@chakra-ui/react"
 import { useRollSlice } from "../../stores/Roll.slice"
 import { useState } from "react"
 import { useCurrentGroupSlice } from "../../stores/CurrentGroup.slice"
@@ -14,19 +13,19 @@ export const PreviousRolls = () => {
 
   if (previousRolls.length > 0) {
     return (
-      <HStack>
-        <Button onClick={() => {
+      <div className="hStack">
+        <button onClick={() => {
           setPosition(position - 1)
-        }}>Previous</Button>
+        }}>Previous</button>
         {rollType === RollType.FFA ?
           <FfaRollPlayers roll={previousRolls[position]} /> :
           <RollPlayers roll={previousRolls[position]} />
         }
-        <Button onClick={() => {
+        <button onClick={() => {
           setPosition(position + 1)
-        }}>Next</Button>
+        }}>Next</button>
 
-      </HStack>
+      </div>
     )
   }
   return null

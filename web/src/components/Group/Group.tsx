@@ -1,5 +1,4 @@
 import { DeleteIcon } from "@chakra-ui/icons"
-import { Button, HStack, Heading, Spinner, useToast } from "@chakra-ui/react"
 import { useSession } from "next-auth/react"
 import { useRouter } from "next/router"
 import { useDeleteGroup } from "../../utils/group.api"
@@ -15,7 +14,6 @@ export const Group = (params: { group: IGroup }) => {
   const router = useRouter()
   const groups = useGroupSlice(state => state.groups)
   const [group, setGroup] = useState<IGroup | undefined>(undefined)
-  const toast = useToast()
   const deleteGroup = useDeleteGroup({
     onSuccess: () => { }
   })
@@ -34,14 +32,14 @@ export const Group = (params: { group: IGroup }) => {
         groupId: group.id,
         sessionToken: session?.id
       })
-      toast({
+      console.log('present to user', {
         title: "deleted record",
         isClosable: true,
         status: "info"
 
       })
     }
-    toast({
+    console.log('present to user', {
       title: "Error, no group found to delete",
       isClosable: true,
       status: 'error'
@@ -50,19 +48,19 @@ export const Group = (params: { group: IGroup }) => {
 
   if (group && players) {
     return (
-      <HStack>
-        <Button variant={'solid'} colorScheme={'green'} disabled={status !== "authenticated"} onClick={async () => {
+      <div className="hStack">
+        <button onClick={async () => {
           await router.push(`/group/${group.id}`)
         }}>
-          <HStack >
-            <Heading>{group.name}</Heading>
+          <div className="hStack" >
+            <h1>{group.name}</h1>
             {isError}
-            {isLoading ? <Spinner /> : <Heading size={'small'}> Players: {players.length}</Heading>}
-          </HStack>
-        </Button>
+            {isLoading ? <div className="spinner" /> : <h3> Players: {players.length}</h3>}
+          </div>
+        </button>
         <GroupForm group={group} />
-        <Button onClick={handleDelete} disabled={status !== "authenticated"}><DeleteIcon /></Button>
-      </HStack>
+        <button onClick={handleDelete} disabled={status !== "authenticated"}><DeleteIcon /></button>
+      </div>
     )
   }
   return (

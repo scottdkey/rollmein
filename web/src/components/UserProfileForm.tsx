@@ -1,4 +1,3 @@
-import { Button, HStack, Input, Text } from "@chakra-ui/react"
 import { UserRoutes } from "../types/UserRoutes.enum"
 import { useEffect, useState } from "react"
 import { SubmitHandler, useForm } from "react-hook-form"
@@ -46,21 +45,21 @@ const UserProfileForm = () => {
     return (
 
       <form onSubmit={handleSubmit(onSubmit)}>
-        <HStack>
-          <Text fontSize='2xl'>Username: </Text>
-          <Input className={styles.profileInput} defaultValue={`${meQuery.user.username}`} {...register("username")} />
-          <Button type='submit'>Save</Button>
-        </HStack>
+        <div className="hStack">
+          <text>Username: </text>
+          <input className={styles.profileInput} defaultValue={`${meQuery.user.username}`} {...register("username")} />
+          <button type='submit'>Save</button>
+        </div>
       </form>
 
     );
   }
   return (
-    <HStack>
-      <Text fontSize='2xl'>Username: </Text>
-      <Text fontSize='2xl'>{`${meQuery?.user?.username}`}</Text>
-      <Button onClick={() => { setEditing(true) }}>Edit</Button>
-    </HStack>
+    <div className="hStack">
+      <text>Username: </text>
+      <text>{`${meQuery?.user?.username}`}</text>
+      <button onClick={() => { setEditing(true) }}>Edit</button>
+    </div>
   )
 }
 

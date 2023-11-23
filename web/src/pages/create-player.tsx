@@ -1,9 +1,8 @@
-import { HStack, Input } from '@chakra-ui/react';
+
 import { useRouter } from 'next/router';
 import React from 'react';
 import { useQueryClient } from 'react-query';
 import { SubmitHandler, useForm } from 'react-hook-form';
-import { Layout } from '../components/Layout';
 
 interface ICreatePlayer {
   name: string,
@@ -22,14 +21,12 @@ const CreatePlayer: React.FC<{}> = ({ }) => {
   const router = useRouter()
 
   const onSubmit: SubmitHandler<ICreatePlayer> = (data) => {
-    console.log('create player submit')
+    console.log('create player submit', data)
   }
   return (
     <>
       <form onSubmit={handleSubmit(onSubmit)}>
-        <HStack>
-          <Input {...register('name')} />
-        </HStack>
+        <input {...register('name')} />
       </form>
     </>
   )

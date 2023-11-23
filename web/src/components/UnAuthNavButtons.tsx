@@ -1,24 +1,31 @@
-import { Tabs, TabList, Tab, TabPanels, TabPanel } from "@chakra-ui/react"
+
+import { useState } from "react"
 import LoginMenu from "./LoginMenu"
 import RegisterMenu from "./RegisterMenu"
 
 const UnAuthComponents = (): JSX.Element => {
+  const [activeTab, setActiveTab] = useState('login')
+
+
   return (
-    <Tabs margin={'0'}>
-      <TabList>
-        <Tab>Login</Tab>
-        <Tab >Register</Tab>
-      </TabList>
-      <TabPanels>
-        <TabPanel>
-          <LoginMenu />
-        </TabPanel>
-        <TabPanel>
-          <RegisterMenu />
-        </TabPanel>
-      </TabPanels>
-    </Tabs>
+    <>
+      <button onClick={() => setActiveTab('login')}>login</button>
+      <button onClick={() => setActiveTab('register')}>register</button>
+      <ActiveTab tab={activeTab} />
+    </>
   )
 }
 
 export default UnAuthComponents
+
+const ActiveTab = ({ tab }: { tab: string }) => {
+  switch (tab) {
+    case 'login':
+      return <LoginMenu />
+    case 'register':
+      return <RegisterMenu />
+    default:
+      return <>something went wrong</>
+  }
+
+}

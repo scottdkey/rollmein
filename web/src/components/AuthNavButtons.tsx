@@ -1,6 +1,6 @@
-import { MenuItem } from "@chakra-ui/react"
+
 import { useRouter } from 'next/router';
-import {signOut} from "next-auth/react"
+import { signOut } from "next-auth/react"
 
 const AuthComponents = (): JSX.Element => {
   const router = useRouter()
@@ -10,9 +10,9 @@ const AuthComponents = (): JSX.Element => {
     router.push('/')
   }
   return (
-    <MenuItem onClick={handleSignOut} margin={'0'}>
+    <button onClick={handleSignOut} >
       Logout
-    </MenuItem>
+    </button>
   )
 }
 
