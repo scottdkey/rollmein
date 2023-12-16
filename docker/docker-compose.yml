@@ -31,7 +31,7 @@ services:
     volumes:
       - ../api/:/usr/app
     env_file:
-      - .env
+      - .env.dev
     environment:
       - POSTGRES_HOST=database
       - REDIS_HOST=redis
@@ -39,6 +39,27 @@ services:
       - 8000:8000
     expose:
       - 8000
+    depends_on:
+      - database
+      - redis
+  websocket:
+    hostname: "websocket"
+    container_name: "websocket"
+    build:
+      context: ../websocket
+      dockerfile: Dockerfile.dev
+    volumes:
+      - ../websocket/:/usr/app
+    env_file:
+      - .env.dev
+    environment:
+      - POSTGRES_HOST=database
+      - REDIS_HOST=redis
+      - PORT=8050
+    ports:
+      - 8050:8050
+    expose:
+      - 8050
     depends_on:
       - database
       - redis

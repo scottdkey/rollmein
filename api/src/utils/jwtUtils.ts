@@ -1,7 +1,7 @@
 import { ConfigService } from '../common/config/config.service';
 import { container } from '../container';
 
-import jwt from "jsonwebtoken"
+import * as jwt from "jsonwebtoken"
 
 const secretKey = container.get(ConfigService).serverConfig.secretKey
 

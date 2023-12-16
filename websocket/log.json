@@ -1,0 +1,570 @@
+{"level":30,"time":1681535717761,"pid":20636,"hostname":"fiona","name":"RedisService","message":"connected to redis"}
+{"level":30,"time":1681535717762,"pid":20636,"hostname":"fiona","name":"RollService","message":"RollService created"}
+{"level":20,"time":1681535717802,"pid":20636,"hostname":"fiona","name":"IndexLogger","message":"starting indexRouter"}
+{"level":20,"time":1681535717802,"pid":20636,"hostname":"fiona","name":"IndexLogger","message":"starting userRouter"}
+{"level":20,"time":1681535717802,"pid":20636,"hostname":"fiona","name":"IndexLogger","message":"starting groupRouter"}
+{"level":20,"time":1681535717802,"pid":20636,"hostname":"fiona","name":"IndexLogger","message":"starting userOptionsRouter"}
+{"level":20,"time":1681535717802,"pid":20636,"hostname":"fiona","name":"IndexLogger","message":"starting rollRouter"}
+{"level":20,"time":1681535717802,"pid":20636,"hostname":"fiona","name":"IndexLogger","message":"starting playerRouter"}
+{"level":20,"time":1681535717802,"pid":20636,"hostname":"fiona","name":"IndexLogger","message":"starting authRouter"}
+{"level":30,"time":1681535717804,"pid":20636,"hostname":"fiona","name":"IndexLogger","message":"server started on http://localhost:8000"}
+{"level":30,"time":1681535717950,"pid":20650,"hostname":"fiona","name":"RedisService","message":"connected to redis"}
+{"level":30,"time":1681535717952,"pid":20650,"hostname":"fiona","name":"RollService","message":"RollService created"}
+{"level":20,"time":1681535717987,"pid":20650,"hostname":"fiona","name":"IndexLogger","message":"starting indexRouter"}
+{"level":20,"time":1681535717987,"pid":20650,"hostname":"fiona","name":"IndexLogger","message":"starting userRouter"}
+{"level":20,"time":1681535717987,"pid":20650,"hostname":"fiona","name":"IndexLogger","message":"starting groupRouter"}
+{"level":20,"time":1681535717987,"pid":20650,"hostname":"fiona","name":"IndexLogger","message":"starting userOptionsRouter"}
+{"level":20,"time":1681535717987,"pid":20650,"hostname":"fiona","name":"IndexLogger","message":"starting rollRouter"}
+{"level":20,"time":1681535717987,"pid":20650,"hostname":"fiona","name":"IndexLogger","message":"starting playerRouter"}
+{"level":20,"time":1681535717987,"pid":20650,"hostname":"fiona","name":"IndexLogger","message":"starting authRouter"}
+{"level":30,"time":1681535717990,"pid":20650,"hostname":"fiona","name":"IndexLogger","message":"server started on http://localhost:8000"}
+{"level":30,"time":1681535718132,"pid":20664,"hostname":"fiona","name":"RedisService","message":"connected to redis"}
+{"level":30,"time":1681535718133,"pid":20664,"hostname":"fiona","name":"RollService","message":"RollService created"}
+{"level":20,"time":1681535718172,"pid":20664,"hostname":"fiona","name":"IndexLogger","message":"starting indexRouter"}
+{"level":20,"time":1681535718172,"pid":20664,"hostname":"fiona","name":"IndexLogger","message":"starting userRouter"}
+{"level":20,"time":1681535718172,"pid":20664,"hostname":"fiona","name":"IndexLogger","message":"starting groupRouter"}
+{"level":20,"time":1681535718172,"pid":20664,"hostname":"fiona","name":"IndexLogger","message":"starting userOptionsRouter"}
+{"level":20,"time":1681535718172,"pid":20664,"hostname":"fiona","name":"IndexLogger","message":"starting rollRouter"}
+{"level":20,"time":1681535718172,"pid":20664,"hostname":"fiona","name":"IndexLogger","message":"starting playerRouter"}
+{"level":20,"time":1681535718172,"pid":20664,"hostname":"fiona","name":"IndexLogger","message":"starting authRouter"}
+{"level":30,"time":1681535718175,"pid":20664,"hostname":"fiona","name":"IndexLogger","message":"server started on http://localhost:8000"}
+{"level":30,"time":1681535718320,"pid":20678,"hostname":"fiona","name":"RedisService","message":"connected to redis"}
+{"level":30,"time":1681535718321,"pid":20678,"hostname":"fiona","name":"RollService","message":"RollService created"}
+{"level":20,"time":1681535718358,"pid":20678,"hostname":"fiona","name":"IndexLogger","message":"starting indexRouter"}
+{"level":20,"time":1681535718358,"pid":20678,"hostname":"fiona","name":"IndexLogger","message":"starting userRouter"}
+{"level":20,"time":1681535718358,"pid":20678,"hostname":"fiona","name":"IndexLogger","message":"starting groupRouter"}
+{"level":20,"time":1681535718358,"pid":20678,"hostname":"fiona","name":"IndexLogger","message":"starting userOptionsRouter"}
+{"level":20,"time":1681535718358,"pid":20678,"hostname":"fiona","name":"IndexLogger","message":"starting rollRouter"}
+{"level":20,"time":1681535718358,"pid":20678,"hostname":"fiona","name":"IndexLogger","message":"starting playerRouter"}
+{"level":20,"time":1681535718358,"pid":20678,"hostname":"fiona","name":"IndexLogger","message":"starting authRouter"}
+{"level":30,"time":1681535718360,"pid":20678,"hostname":"fiona","name":"IndexLogger","message":"server started on http://localhost:8000"}
+{"level":30,"time":1681535718510,"pid":20692,"hostname":"fiona","name":"RedisService","message":"connected to redis"}
+{"level":30,"time":1681535718511,"pid":20692,"hostname":"fiona","name":"RollService","message":"RollService created"}
+{"level":20,"time":1681535718548,"pid":20692,"hostname":"fiona","name":"IndexLogger","message":"starting indexRouter"}
+{"level":20,"time":1681535718548,"pid":20692,"hostname":"fiona","name":"IndexLogger","message":"starting userRouter"}
+{"level":20,"time":1681535718548,"pid":20692,"hostname":"fiona","name":"IndexLogger","message":"starting groupRouter"}
+{"level":20,"time":1681535718548,"pid":20692,"hostname":"fiona","name":"IndexLogger","message":"starting userOptionsRouter"}
+{"level":20,"time":1681535718548,"pid":20692,"hostname":"fiona","name":"IndexLogger","message":"starting rollRouter"}
+{"level":20,"time":1681535718548,"pid":20692,"hostname":"fiona","name":"IndexLogger","message":"starting playerRouter"}
+{"level":20,"time":1681535718548,"pid":20692,"hostname":"fiona","name":"IndexLogger","message":"starting authRouter"}
+{"level":30,"time":1681535718551,"pid":20692,"hostname":"fiona","name":"IndexLogger","message":"server started on http://localhost:8000"}
+{"level":30,"time":1681535718694,"pid":20706,"hostname":"fiona","name":"RedisService","message":"connected to redis"}
+{"level":30,"time":1681535718696,"pid":20706,"hostname":"fiona","name":"RollService","message":"RollService created"}
+{"level":20,"time":1681535718736,"pid":20706,"hostname":"fiona","name":"IndexLogger","message":"starting indexRouter"}
+{"level":20,"time":1681535718736,"pid":20706,"hostname":"fiona","name":"IndexLogger","message":"starting userRouter"}
+{"level":20,"time":1681535718736,"pid":20706,"hostname":"fiona","name":"IndexLogger","message":"starting groupRouter"}
+{"level":20,"time":1681535718736,"pid":20706,"hostname":"fiona","name":"IndexLogger","message":"starting userOptionsRouter"}
+{"level":20,"time":1681535718736,"pid":20706,"hostname":"fiona","name":"IndexLogger","message":"starting rollRouter"}
+{"level":20,"time":1681535718736,"pid":20706,"hostname":"fiona","name":"IndexLogger","message":"starting playerRouter"}
+{"level":20,"time":1681535718736,"pid":20706,"hostname":"fiona","name":"IndexLogger","message":"starting authRouter"}
+{"level":30,"time":1681535718739,"pid":20706,"hostname":"fiona","name":"IndexLogger","message":"server started on http://localhost:8000"}
+{"level":30,"time":1681535718888,"pid":20721,"hostname":"fiona","name":"RedisService","message":"connected to redis"}
+{"level":30,"time":1681535718889,"pid":20721,"hostname":"fiona","name":"RollService","message":"RollService created"}
+{"level":20,"time":1681535718928,"pid":20721,"hostname":"fiona","name":"IndexLogger","message":"starting indexRouter"}
+{"level":20,"time":1681535718928,"pid":20721,"hostname":"fiona","name":"IndexLogger","message":"starting userRouter"}
+{"level":20,"time":1681535718928,"pid":20721,"hostname":"fiona","name":"IndexLogger","message":"starting groupRouter"}
+{"level":20,"time":1681535718928,"pid":20721,"hostname":"fiona","name":"IndexLogger","message":"starting userOptionsRouter"}
+{"level":20,"time":1681535718928,"pid":20721,"hostname":"fiona","name":"IndexLogger","message":"starting rollRouter"}
+{"level":20,"time":1681535718928,"pid":20721,"hostname":"fiona","name":"IndexLogger","message":"starting playerRouter"}
+{"level":20,"time":1681535718928,"pid":20721,"hostname":"fiona","name":"IndexLogger","message":"starting authRouter"}
+{"level":30,"time":1681535718931,"pid":20721,"hostname":"fiona","name":"IndexLogger","message":"server started on http://localhost:8000"}
+{"level":30,"time":1681535719076,"pid":20735,"hostname":"fiona","name":"RedisService","message":"connected to redis"}
+{"level":30,"time":1681535719077,"pid":20735,"hostname":"fiona","name":"RollService","message":"RollService created"}
+{"level":20,"time":1681535719114,"pid":20735,"hostname":"fiona","name":"IndexLogger","message":"starting indexRouter"}
+{"level":20,"time":1681535719114,"pid":20735,"hostname":"fiona","name":"IndexLogger","message":"starting userRouter"}
+{"level":20,"time":1681535719114,"pid":20735,"hostname":"fiona","name":"IndexLogger","message":"starting groupRouter"}
+{"level":20,"time":1681535719114,"pid":20735,"hostname":"fiona","name":"IndexLogger","message":"starting userOptionsRouter"}
+{"level":20,"time":1681535719114,"pid":20735,"hostname":"fiona","name":"IndexLogger","message":"starting rollRouter"}
+{"level":20,"time":1681535719114,"pid":20735,"hostname":"fiona","name":"IndexLogger","message":"starting playerRouter"}
+{"level":20,"time":1681535719114,"pid":20735,"hostname":"fiona","name":"IndexLogger","message":"starting authRouter"}
+{"level":30,"time":1681535719116,"pid":20735,"hostname":"fiona","name":"IndexLogger","message":"server started on http://localhost:8000"}
+{"level":30,"time":1681535719260,"pid":20749,"hostname":"fiona","name":"RedisService","message":"connected to redis"}
+{"level":30,"time":1681535719261,"pid":20749,"hostname":"fiona","name":"RollService","message":"RollService created"}
+{"level":20,"time":1681535719297,"pid":20749,"hostname":"fiona","name":"IndexLogger","message":"starting indexRouter"}
+{"level":20,"time":1681535719298,"pid":20749,"hostname":"fiona","name":"IndexLogger","message":"starting userRouter"}
+{"level":20,"time":1681535719298,"pid":20749,"hostname":"fiona","name":"IndexLogger","message":"starting groupRouter"}
+{"level":20,"time":1681535719298,"pid":20749,"hostname":"fiona","name":"IndexLogger","message":"starting userOptionsRouter"}
+{"level":20,"time":1681535719298,"pid":20749,"hostname":"fiona","name":"IndexLogger","message":"starting rollRouter"}
+{"level":20,"time":1681535719298,"pid":20749,"hostname":"fiona","name":"IndexLogger","message":"starting playerRouter"}
+{"level":20,"time":1681535719298,"pid":20749,"hostname":"fiona","name":"IndexLogger","message":"starting authRouter"}
+{"level":30,"time":1681535719300,"pid":20749,"hostname":"fiona","name":"IndexLogger","message":"server started on http://localhost:8000"}
+{"level":30,"time":1681535719450,"pid":20763,"hostname":"fiona","name":"RedisService","message":"connected to redis"}
+{"level":30,"time":1681535719452,"pid":20763,"hostname":"fiona","name":"RollService","message":"RollService created"}
+{"level":20,"time":1681535719490,"pid":20763,"hostname":"fiona","name":"IndexLogger","message":"starting indexRouter"}
+{"level":20,"time":1681535719490,"pid":20763,"hostname":"fiona","name":"IndexLogger","message":"starting userRouter"}
+{"level":20,"time":1681535719490,"pid":20763,"hostname":"fiona","name":"IndexLogger","message":"starting groupRouter"}
+{"level":20,"time":1681535719491,"pid":20763,"hostname":"fiona","name":"IndexLogger","message":"starting userOptionsRouter"}
+{"level":20,"time":1681535719491,"pid":20763,"hostname":"fiona","name":"IndexLogger","message":"starting rollRouter"}
+{"level":20,"time":1681535719491,"pid":20763,"hostname":"fiona","name":"IndexLogger","message":"starting playerRouter"}
+{"level":20,"time":1681535719491,"pid":20763,"hostname":"fiona","name":"IndexLogger","message":"starting authRouter"}
+{"level":30,"time":1681535719493,"pid":20763,"hostname":"fiona","name":"IndexLogger","message":"server started on http://localhost:8000"}
+{"level":30,"time":1681535719640,"pid":20777,"hostname":"fiona","name":"RedisService","message":"connected to redis"}
+{"level":30,"time":1681535719642,"pid":20777,"hostname":"fiona","name":"RollService","message":"RollService created"}
+{"level":20,"time":1681535719677,"pid":20777,"hostname":"fiona","name":"IndexLogger","message":"starting indexRouter"}
+{"level":20,"time":1681535719677,"pid":20777,"hostname":"fiona","name":"IndexLogger","message":"starting userRouter"}
+{"level":20,"time":1681535719677,"pid":20777,"hostname":"fiona","name":"IndexLogger","message":"starting groupRouter"}
+{"level":20,"time":1681535719677,"pid":20777,"hostname":"fiona","name":"IndexLogger","message":"starting userOptionsRouter"}
+{"level":20,"time":1681535719677,"pid":20777,"hostname":"fiona","name":"IndexLogger","message":"starting rollRouter"}
+{"level":20,"time":1681535719677,"pid":20777,"hostname":"fiona","name":"IndexLogger","message":"starting playerRouter"}
+{"level":20,"time":1681535719677,"pid":20777,"hostname":"fiona","name":"IndexLogger","message":"starting authRouter"}
+{"level":30,"time":1681535719680,"pid":20777,"hostname":"fiona","name":"IndexLogger","message":"server started on http://localhost:8000"}
+{"level":30,"time":1681535719826,"pid":20791,"hostname":"fiona","name":"RedisService","message":"connected to redis"}
+{"level":30,"time":1681535719827,"pid":20791,"hostname":"fiona","name":"RollService","message":"RollService created"}
+{"level":20,"time":1681535719864,"pid":20791,"hostname":"fiona","name":"IndexLogger","message":"starting indexRouter"}
+{"level":20,"time":1681535719864,"pid":20791,"hostname":"fiona","name":"IndexLogger","message":"starting userRouter"}
+{"level":20,"time":1681535719864,"pid":20791,"hostname":"fiona","name":"IndexLogger","message":"starting groupRouter"}
+{"level":20,"time":1681535719864,"pid":20791,"hostname":"fiona","name":"IndexLogger","message":"starting userOptionsRouter"}
+{"level":20,"time":1681535719864,"pid":20791,"hostname":"fiona","name":"IndexLogger","message":"starting rollRouter"}
+{"level":20,"time":1681535719864,"pid":20791,"hostname":"fiona","name":"IndexLogger","message":"starting playerRouter"}
+{"level":20,"time":1681535719864,"pid":20791,"hostname":"fiona","name":"IndexLogger","message":"starting authRouter"}
+{"level":30,"time":1681535719867,"pid":20791,"hostname":"fiona","name":"IndexLogger","message":"server started on http://localhost:8000"}
+{"level":30,"time":1681535720013,"pid":20805,"hostname":"fiona","name":"RedisService","message":"connected to redis"}
+{"level":30,"time":1681535720015,"pid":20805,"hostname":"fiona","name":"RollService","message":"RollService created"}
+{"level":20,"time":1681535720054,"pid":20805,"hostname":"fiona","name":"IndexLogger","message":"starting indexRouter"}
+{"level":20,"time":1681535720054,"pid":20805,"hostname":"fiona","name":"IndexLogger","message":"starting userRouter"}
+{"level":20,"time":1681535720054,"pid":20805,"hostname":"fiona","name":"IndexLogger","message":"starting groupRouter"}
+{"level":20,"time":1681535720054,"pid":20805,"hostname":"fiona","name":"IndexLogger","message":"starting userOptionsRouter"}
+{"level":20,"time":1681535720054,"pid":20805,"hostname":"fiona","name":"IndexLogger","message":"starting rollRouter"}
+{"level":20,"time":1681535720054,"pid":20805,"hostname":"fiona","name":"IndexLogger","message":"starting playerRouter"}
+{"level":20,"time":1681535720054,"pid":20805,"hostname":"fiona","name":"IndexLogger","message":"starting authRouter"}
+{"level":30,"time":1681535720056,"pid":20805,"hostname":"fiona","name":"IndexLogger","message":"server started on http://localhost:8000"}
+{"level":30,"time":1681535720203,"pid":20841,"hostname":"fiona","name":"RedisService","message":"connected to redis"}
+{"level":30,"time":1681535720205,"pid":20841,"hostname":"fiona","name":"RollService","message":"RollService created"}
+{"level":20,"time":1681535720241,"pid":20841,"hostname":"fiona","name":"IndexLogger","message":"starting indexRouter"}
+{"level":20,"time":1681535720242,"pid":20841,"hostname":"fiona","name":"IndexLogger","message":"starting userRouter"}
+{"level":20,"time":1681535720242,"pid":20841,"hostname":"fiona","name":"IndexLogger","message":"starting groupRouter"}
+{"level":20,"time":1681535720242,"pid":20841,"hostname":"fiona","name":"IndexLogger","message":"starting userOptionsRouter"}
+{"level":20,"time":1681535720242,"pid":20841,"hostname":"fiona","name":"IndexLogger","message":"starting rollRouter"}
+{"level":20,"time":1681535720242,"pid":20841,"hostname":"fiona","name":"IndexLogger","message":"starting playerRouter"}
+{"level":20,"time":1681535720242,"pid":20841,"hostname":"fiona","name":"IndexLogger","message":"starting authRouter"}
+{"level":30,"time":1681535720246,"pid":20841,"hostname":"fiona","name":"IndexLogger","message":"server started on http://localhost:8000"}
+{"level":30,"time":1681535720399,"pid":20855,"hostname":"fiona","name":"RedisService","message":"connected to redis"}
+{"level":30,"time":1681535720400,"pid":20855,"hostname":"fiona","name":"RollService","message":"RollService created"}
+{"level":20,"time":1681535720438,"pid":20855,"hostname":"fiona","name":"IndexLogger","message":"starting indexRouter"}
+{"level":20,"time":1681535720438,"pid":20855,"hostname":"fiona","name":"IndexLogger","message":"starting userRouter"}
+{"level":20,"time":1681535720438,"pid":20855,"hostname":"fiona","name":"IndexLogger","message":"starting groupRouter"}
+{"level":20,"time":1681535720438,"pid":20855,"hostname":"fiona","name":"IndexLogger","message":"starting userOptionsRouter"}
+{"level":20,"time":1681535720438,"pid":20855,"hostname":"fiona","name":"IndexLogger","message":"starting rollRouter"}
+{"level":20,"time":1681535720438,"pid":20855,"hostname":"fiona","name":"IndexLogger","message":"starting playerRouter"}
+{"level":20,"time":1681535720438,"pid":20855,"hostname":"fiona","name":"IndexLogger","message":"starting authRouter"}
+{"level":30,"time":1681535720441,"pid":20855,"hostname":"fiona","name":"IndexLogger","message":"server started on http://localhost:8000"}
+{"level":30,"time":1681535720585,"pid":20869,"hostname":"fiona","name":"RedisService","message":"connected to redis"}
+{"level":30,"time":1681535720587,"pid":20869,"hostname":"fiona","name":"RollService","message":"RollService created"}
+{"level":20,"time":1681535720624,"pid":20869,"hostname":"fiona","name":"IndexLogger","message":"starting indexRouter"}
+{"level":20,"time":1681535720624,"pid":20869,"hostname":"fiona","name":"IndexLogger","message":"starting userRouter"}
+{"level":20,"time":1681535720624,"pid":20869,"hostname":"fiona","name":"IndexLogger","message":"starting groupRouter"}
+{"level":20,"time":1681535720624,"pid":20869,"hostname":"fiona","name":"IndexLogger","message":"starting userOptionsRouter"}
+{"level":20,"time":1681535720624,"pid":20869,"hostname":"fiona","name":"IndexLogger","message":"starting rollRouter"}
+{"level":20,"time":1681535720624,"pid":20869,"hostname":"fiona","name":"IndexLogger","message":"starting playerRouter"}
+{"level":20,"time":1681535720624,"pid":20869,"hostname":"fiona","name":"IndexLogger","message":"starting authRouter"}
+{"level":30,"time":1681535720627,"pid":20869,"hostname":"fiona","name":"IndexLogger","message":"server started on http://localhost:8000"}
+{"level":30,"time":1681535720776,"pid":20883,"hostname":"fiona","name":"RedisService","message":"connected to redis"}
+{"level":30,"time":1681535720777,"pid":20883,"hostname":"fiona","name":"RollService","message":"RollService created"}
+{"level":20,"time":1681535720814,"pid":20883,"hostname":"fiona","name":"IndexLogger","message":"starting indexRouter"}
+{"level":20,"time":1681535720814,"pid":20883,"hostname":"fiona","name":"IndexLogger","message":"starting userRouter"}
+{"level":20,"time":1681535720814,"pid":20883,"hostname":"fiona","name":"IndexLogger","message":"starting groupRouter"}
+{"level":20,"time":1681535720814,"pid":20883,"hostname":"fiona","name":"IndexLogger","message":"starting userOptionsRouter"}
+{"level":20,"time":1681535720814,"pid":20883,"hostname":"fiona","name":"IndexLogger","message":"starting rollRouter"}
+{"level":20,"time":1681535720814,"pid":20883,"hostname":"fiona","name":"IndexLogger","message":"starting playerRouter"}
+{"level":20,"time":1681535720814,"pid":20883,"hostname":"fiona","name":"IndexLogger","message":"starting authRouter"}
+{"level":30,"time":1681535720817,"pid":20883,"hostname":"fiona","name":"IndexLogger","message":"server started on http://localhost:8000"}
+{"level":30,"time":1681535720970,"pid":20897,"hostname":"fiona","name":"RedisService","message":"connected to redis"}
+{"level":30,"time":1681535720971,"pid":20897,"hostname":"fiona","name":"RollService","message":"RollService created"}
+{"level":20,"time":1681535721009,"pid":20897,"hostname":"fiona","name":"IndexLogger","message":"starting indexRouter"}
+{"level":20,"time":1681535721009,"pid":20897,"hostname":"fiona","name":"IndexLogger","message":"starting userRouter"}
+{"level":20,"time":1681535721009,"pid":20897,"hostname":"fiona","name":"IndexLogger","message":"starting groupRouter"}
+{"level":20,"time":1681535721009,"pid":20897,"hostname":"fiona","name":"IndexLogger","message":"starting userOptionsRouter"}
+{"level":20,"time":1681535721009,"pid":20897,"hostname":"fiona","name":"IndexLogger","message":"starting rollRouter"}
+{"level":20,"time":1681535721009,"pid":20897,"hostname":"fiona","name":"IndexLogger","message":"starting playerRouter"}
+{"level":20,"time":1681535721009,"pid":20897,"hostname":"fiona","name":"IndexLogger","message":"starting authRouter"}
+{"level":30,"time":1681535721012,"pid":20897,"hostname":"fiona","name":"IndexLogger","message":"server started on http://localhost:8000"}
+{"level":30,"time":1681535721171,"pid":20939,"hostname":"fiona","name":"RedisService","message":"connected to redis"}
+{"level":30,"time":1681535721172,"pid":20939,"hostname":"fiona","name":"RollService","message":"RollService created"}
+{"level":20,"time":1681535721211,"pid":20939,"hostname":"fiona","name":"IndexLogger","message":"starting indexRouter"}
+{"level":20,"time":1681535721211,"pid":20939,"hostname":"fiona","name":"IndexLogger","message":"starting userRouter"}
+{"level":20,"time":1681535721211,"pid":20939,"hostname":"fiona","name":"IndexLogger","message":"starting groupRouter"}
+{"level":20,"time":1681535721211,"pid":20939,"hostname":"fiona","name":"IndexLogger","message":"starting userOptionsRouter"}
+{"level":20,"time":1681535721211,"pid":20939,"hostname":"fiona","name":"IndexLogger","message":"starting rollRouter"}
+{"level":20,"time":1681535721211,"pid":20939,"hostname":"fiona","name":"IndexLogger","message":"starting playerRouter"}
+{"level":20,"time":1681535721211,"pid":20939,"hostname":"fiona","name":"IndexLogger","message":"starting authRouter"}
+{"level":30,"time":1681535721215,"pid":20939,"hostname":"fiona","name":"IndexLogger","message":"server started on http://localhost:8000"}
+{"level":30,"time":1681535721366,"pid":20953,"hostname":"fiona","name":"RedisService","message":"connected to redis"}
+{"level":30,"time":1681535721368,"pid":20953,"hostname":"fiona","name":"RollService","message":"RollService created"}
+{"level":20,"time":1681535721405,"pid":20953,"hostname":"fiona","name":"IndexLogger","message":"starting indexRouter"}
+{"level":20,"time":1681535721405,"pid":20953,"hostname":"fiona","name":"IndexLogger","message":"starting userRouter"}
+{"level":20,"time":1681535721405,"pid":20953,"hostname":"fiona","name":"IndexLogger","message":"starting groupRouter"}
+{"level":20,"time":1681535721405,"pid":20953,"hostname":"fiona","name":"IndexLogger","message":"starting userOptionsRouter"}
+{"level":20,"time":1681535721405,"pid":20953,"hostname":"fiona","name":"IndexLogger","message":"starting rollRouter"}
+{"level":20,"time":1681535721405,"pid":20953,"hostname":"fiona","name":"IndexLogger","message":"starting playerRouter"}
+{"level":20,"time":1681535721405,"pid":20953,"hostname":"fiona","name":"IndexLogger","message":"starting authRouter"}
+{"level":30,"time":1681535721408,"pid":20953,"hostname":"fiona","name":"IndexLogger","message":"server started on http://localhost:8000"}
+{"level":30,"time":1681535721613,"pid":20967,"hostname":"fiona","name":"RedisService","message":"connected to redis"}
+{"level":30,"time":1681535721615,"pid":20967,"hostname":"fiona","name":"RollService","message":"RollService created"}
+{"level":20,"time":1681535721656,"pid":20967,"hostname":"fiona","name":"IndexLogger","message":"starting indexRouter"}
+{"level":20,"time":1681535721656,"pid":20967,"hostname":"fiona","name":"IndexLogger","message":"starting userRouter"}
+{"level":20,"time":1681535721656,"pid":20967,"hostname":"fiona","name":"IndexLogger","message":"starting groupRouter"}
+{"level":20,"time":1681535721656,"pid":20967,"hostname":"fiona","name":"IndexLogger","message":"starting userOptionsRouter"}
+{"level":20,"time":1681535721656,"pid":20967,"hostname":"fiona","name":"IndexLogger","message":"starting rollRouter"}
+{"level":20,"time":1681535721656,"pid":20967,"hostname":"fiona","name":"IndexLogger","message":"starting playerRouter"}
+{"level":20,"time":1681535721656,"pid":20967,"hostname":"fiona","name":"IndexLogger","message":"starting authRouter"}
+{"level":30,"time":1681535721659,"pid":20967,"hostname":"fiona","name":"IndexLogger","message":"server started on http://localhost:8000"}
+{"level":30,"time":1681535721816,"pid":20981,"hostname":"fiona","name":"RedisService","message":"connected to redis"}
+{"level":30,"time":1681535721817,"pid":20981,"hostname":"fiona","name":"RollService","message":"RollService created"}
+{"level":20,"time":1681535721853,"pid":20981,"hostname":"fiona","name":"IndexLogger","message":"starting indexRouter"}
+{"level":20,"time":1681535721854,"pid":20981,"hostname":"fiona","name":"IndexLogger","message":"starting userRouter"}
+{"level":20,"time":1681535721854,"pid":20981,"hostname":"fiona","name":"IndexLogger","message":"starting groupRouter"}
+{"level":20,"time":1681535721854,"pid":20981,"hostname":"fiona","name":"IndexLogger","message":"starting userOptionsRouter"}
+{"level":20,"time":1681535721854,"pid":20981,"hostname":"fiona","name":"IndexLogger","message":"starting rollRouter"}
+{"level":20,"time":1681535721854,"pid":20981,"hostname":"fiona","name":"IndexLogger","message":"starting playerRouter"}
+{"level":20,"time":1681535721854,"pid":20981,"hostname":"fiona","name":"IndexLogger","message":"starting authRouter"}
+{"level":30,"time":1681535721856,"pid":20981,"hostname":"fiona","name":"IndexLogger","message":"server started on http://localhost:8000"}
+{"level":30,"time":1681535722006,"pid":20995,"hostname":"fiona","name":"RedisService","message":"connected to redis"}
+{"level":30,"time":1681535722007,"pid":20995,"hostname":"fiona","name":"RollService","message":"RollService created"}
+{"level":20,"time":1681535722043,"pid":20995,"hostname":"fiona","name":"IndexLogger","message":"starting indexRouter"}
+{"level":20,"time":1681535722043,"pid":20995,"hostname":"fiona","name":"IndexLogger","message":"starting userRouter"}
+{"level":20,"time":1681535722043,"pid":20995,"hostname":"fiona","name":"IndexLogger","message":"starting groupRouter"}
+{"level":20,"time":1681535722043,"pid":20995,"hostname":"fiona","name":"IndexLogger","message":"starting userOptionsRouter"}
+{"level":20,"time":1681535722043,"pid":20995,"hostname":"fiona","name":"IndexLogger","message":"starting rollRouter"}
+{"level":20,"time":1681535722043,"pid":20995,"hostname":"fiona","name":"IndexLogger","message":"starting playerRouter"}
+{"level":20,"time":1681535722043,"pid":20995,"hostname":"fiona","name":"IndexLogger","message":"starting authRouter"}
+{"level":30,"time":1681535722047,"pid":20995,"hostname":"fiona","name":"IndexLogger","message":"server started on http://localhost:8000"}
+{"level":30,"time":1681535722191,"pid":21009,"hostname":"fiona","name":"RedisService","message":"connected to redis"}
+{"level":30,"time":1681535722193,"pid":21009,"hostname":"fiona","name":"RollService","message":"RollService created"}
+{"level":20,"time":1681535722229,"pid":21009,"hostname":"fiona","name":"IndexLogger","message":"starting indexRouter"}
+{"level":20,"time":1681535722229,"pid":21009,"hostname":"fiona","name":"IndexLogger","message":"starting userRouter"}
+{"level":20,"time":1681535722229,"pid":21009,"hostname":"fiona","name":"IndexLogger","message":"starting groupRouter"}
+{"level":20,"time":1681535722229,"pid":21009,"hostname":"fiona","name":"IndexLogger","message":"starting userOptionsRouter"}
+{"level":20,"time":1681535722229,"pid":21009,"hostname":"fiona","name":"IndexLogger","message":"starting rollRouter"}
+{"level":20,"time":1681535722229,"pid":21009,"hostname":"fiona","name":"IndexLogger","message":"starting playerRouter"}
+{"level":20,"time":1681535722229,"pid":21009,"hostname":"fiona","name":"IndexLogger","message":"starting authRouter"}
+{"level":30,"time":1681535722231,"pid":21009,"hostname":"fiona","name":"IndexLogger","message":"server started on http://localhost:8000"}
+{"level":30,"time":1681535722379,"pid":21023,"hostname":"fiona","name":"RedisService","message":"connected to redis"}
+{"level":30,"time":1681535722380,"pid":21023,"hostname":"fiona","name":"RollService","message":"RollService created"}
+{"level":20,"time":1681535722417,"pid":21023,"hostname":"fiona","name":"IndexLogger","message":"starting indexRouter"}
+{"level":20,"time":1681535722417,"pid":21023,"hostname":"fiona","name":"IndexLogger","message":"starting userRouter"}
+{"level":20,"time":1681535722417,"pid":21023,"hostname":"fiona","name":"IndexLogger","message":"starting groupRouter"}
+{"level":20,"time":1681535722417,"pid":21023,"hostname":"fiona","name":"IndexLogger","message":"starting userOptionsRouter"}
+{"level":20,"time":1681535722417,"pid":21023,"hostname":"fiona","name":"IndexLogger","message":"starting rollRouter"}
+{"level":20,"time":1681535722417,"pid":21023,"hostname":"fiona","name":"IndexLogger","message":"starting playerRouter"}
+{"level":20,"time":1681535722417,"pid":21023,"hostname":"fiona","name":"IndexLogger","message":"starting authRouter"}
+{"level":30,"time":1681535722419,"pid":21023,"hostname":"fiona","name":"IndexLogger","message":"server started on http://localhost:8000"}
+{"level":30,"time":1681535722566,"pid":21037,"hostname":"fiona","name":"RedisService","message":"connected to redis"}
+{"level":30,"time":1681535722567,"pid":21037,"hostname":"fiona","name":"RollService","message":"RollService created"}
+{"level":20,"time":1681535722603,"pid":21037,"hostname":"fiona","name":"IndexLogger","message":"starting indexRouter"}
+{"level":20,"time":1681535722603,"pid":21037,"hostname":"fiona","name":"IndexLogger","message":"starting userRouter"}
+{"level":20,"time":1681535722603,"pid":21037,"hostname":"fiona","name":"IndexLogger","message":"starting groupRouter"}
+{"level":20,"time":1681535722603,"pid":21037,"hostname":"fiona","name":"IndexLogger","message":"starting userOptionsRouter"}
+{"level":20,"time":1681535722603,"pid":21037,"hostname":"fiona","name":"IndexLogger","message":"starting rollRouter"}
+{"level":20,"time":1681535722603,"pid":21037,"hostname":"fiona","name":"IndexLogger","message":"starting playerRouter"}
+{"level":20,"time":1681535722603,"pid":21037,"hostname":"fiona","name":"IndexLogger","message":"starting authRouter"}
+{"level":30,"time":1681535722606,"pid":21037,"hostname":"fiona","name":"IndexLogger","message":"server started on http://localhost:8000"}
+{"level":30,"time":1681535722753,"pid":21051,"hostname":"fiona","name":"RedisService","message":"connected to redis"}
+{"level":30,"time":1681535722755,"pid":21051,"hostname":"fiona","name":"RollService","message":"RollService created"}
+{"level":20,"time":1681535722793,"pid":21051,"hostname":"fiona","name":"IndexLogger","message":"starting indexRouter"}
+{"level":20,"time":1681535722793,"pid":21051,"hostname":"fiona","name":"IndexLogger","message":"starting userRouter"}
+{"level":20,"time":1681535722793,"pid":21051,"hostname":"fiona","name":"IndexLogger","message":"starting groupRouter"}
+{"level":20,"time":1681535722793,"pid":21051,"hostname":"fiona","name":"IndexLogger","message":"starting userOptionsRouter"}
+{"level":20,"time":1681535722793,"pid":21051,"hostname":"fiona","name":"IndexLogger","message":"starting rollRouter"}
+{"level":20,"time":1681535722793,"pid":21051,"hostname":"fiona","name":"IndexLogger","message":"starting playerRouter"}
+{"level":20,"time":1681535722793,"pid":21051,"hostname":"fiona","name":"IndexLogger","message":"starting authRouter"}
+{"level":30,"time":1681535722795,"pid":21051,"hostname":"fiona","name":"IndexLogger","message":"server started on http://localhost:8000"}
+{"level":30,"time":1681535722941,"pid":21065,"hostname":"fiona","name":"RedisService","message":"connected to redis"}
+{"level":30,"time":1681535722942,"pid":21065,"hostname":"fiona","name":"RollService","message":"RollService created"}
+{"level":20,"time":1681535722978,"pid":21065,"hostname":"fiona","name":"IndexLogger","message":"starting indexRouter"}
+{"level":20,"time":1681535722978,"pid":21065,"hostname":"fiona","name":"IndexLogger","message":"starting userRouter"}
+{"level":20,"time":1681535722978,"pid":21065,"hostname":"fiona","name":"IndexLogger","message":"starting groupRouter"}
+{"level":20,"time":1681535722978,"pid":21065,"hostname":"fiona","name":"IndexLogger","message":"starting userOptionsRouter"}
+{"level":20,"time":1681535722978,"pid":21065,"hostname":"fiona","name":"IndexLogger","message":"starting rollRouter"}
+{"level":20,"time":1681535722978,"pid":21065,"hostname":"fiona","name":"IndexLogger","message":"starting playerRouter"}
+{"level":20,"time":1681535722978,"pid":21065,"hostname":"fiona","name":"IndexLogger","message":"starting authRouter"}
+{"level":30,"time":1681535722981,"pid":21065,"hostname":"fiona","name":"IndexLogger","message":"server started on http://localhost:8000"}
+{"level":30,"time":1681535723125,"pid":21079,"hostname":"fiona","name":"RedisService","message":"connected to redis"}
+{"level":30,"time":1681535723126,"pid":21079,"hostname":"fiona","name":"RollService","message":"RollService created"}
+{"level":20,"time":1681535723162,"pid":21079,"hostname":"fiona","name":"IndexLogger","message":"starting indexRouter"}
+{"level":20,"time":1681535723162,"pid":21079,"hostname":"fiona","name":"IndexLogger","message":"starting userRouter"}
+{"level":20,"time":1681535723162,"pid":21079,"hostname":"fiona","name":"IndexLogger","message":"starting groupRouter"}
+{"level":20,"time":1681535723162,"pid":21079,"hostname":"fiona","name":"IndexLogger","message":"starting userOptionsRouter"}
+{"level":20,"time":1681535723162,"pid":21079,"hostname":"fiona","name":"IndexLogger","message":"starting rollRouter"}
+{"level":20,"time":1681535723162,"pid":21079,"hostname":"fiona","name":"IndexLogger","message":"starting playerRouter"}
+{"level":20,"time":1681535723162,"pid":21079,"hostname":"fiona","name":"IndexLogger","message":"starting authRouter"}
+{"level":30,"time":1681535723165,"pid":21079,"hostname":"fiona","name":"IndexLogger","message":"server started on http://localhost:8000"}
+{"level":30,"time":1681535723316,"pid":21093,"hostname":"fiona","name":"RedisService","message":"connected to redis"}
+{"level":30,"time":1681535723317,"pid":21093,"hostname":"fiona","name":"RollService","message":"RollService created"}
+{"level":20,"time":1681535723357,"pid":21093,"hostname":"fiona","name":"IndexLogger","message":"starting indexRouter"}
+{"level":20,"time":1681535723357,"pid":21093,"hostname":"fiona","name":"IndexLogger","message":"starting userRouter"}
+{"level":20,"time":1681535723357,"pid":21093,"hostname":"fiona","name":"IndexLogger","message":"starting groupRouter"}
+{"level":20,"time":1681535723357,"pid":21093,"hostname":"fiona","name":"IndexLogger","message":"starting userOptionsRouter"}
+{"level":20,"time":1681535723357,"pid":21093,"hostname":"fiona","name":"IndexLogger","message":"starting rollRouter"}
+{"level":20,"time":1681535723357,"pid":21093,"hostname":"fiona","name":"IndexLogger","message":"starting playerRouter"}
+{"level":20,"time":1681535723357,"pid":21093,"hostname":"fiona","name":"IndexLogger","message":"starting authRouter"}
+{"level":30,"time":1681535723360,"pid":21093,"hostname":"fiona","name":"IndexLogger","message":"server started on http://localhost:8000"}
+{"level":30,"time":1681535723509,"pid":21107,"hostname":"fiona","name":"RedisService","message":"connected to redis"}
+{"level":30,"time":1681535723510,"pid":21107,"hostname":"fiona","name":"RollService","message":"RollService created"}
+{"level":20,"time":1681535723547,"pid":21107,"hostname":"fiona","name":"IndexLogger","message":"starting indexRouter"}
+{"level":20,"time":1681535723547,"pid":21107,"hostname":"fiona","name":"IndexLogger","message":"starting userRouter"}
+{"level":20,"time":1681535723547,"pid":21107,"hostname":"fiona","name":"IndexLogger","message":"starting groupRouter"}
+{"level":20,"time":1681535723547,"pid":21107,"hostname":"fiona","name":"IndexLogger","message":"starting userOptionsRouter"}
+{"level":20,"time":1681535723547,"pid":21107,"hostname":"fiona","name":"IndexLogger","message":"starting rollRouter"}
+{"level":20,"time":1681535723547,"pid":21107,"hostname":"fiona","name":"IndexLogger","message":"starting playerRouter"}
+{"level":20,"time":1681535723547,"pid":21107,"hostname":"fiona","name":"IndexLogger","message":"starting authRouter"}
+{"level":30,"time":1681535723550,"pid":21107,"hostname":"fiona","name":"IndexLogger","message":"server started on http://localhost:8000"}
+{"level":30,"time":1681535723700,"pid":21121,"hostname":"fiona","name":"RedisService","message":"connected to redis"}
+{"level":30,"time":1681535723701,"pid":21121,"hostname":"fiona","name":"RollService","message":"RollService created"}
+{"level":20,"time":1681535723739,"pid":21121,"hostname":"fiona","name":"IndexLogger","message":"starting indexRouter"}
+{"level":20,"time":1681535723739,"pid":21121,"hostname":"fiona","name":"IndexLogger","message":"starting userRouter"}
+{"level":20,"time":1681535723739,"pid":21121,"hostname":"fiona","name":"IndexLogger","message":"starting groupRouter"}
+{"level":20,"time":1681535723739,"pid":21121,"hostname":"fiona","name":"IndexLogger","message":"starting userOptionsRouter"}
+{"level":20,"time":1681535723739,"pid":21121,"hostname":"fiona","name":"IndexLogger","message":"starting rollRouter"}
+{"level":20,"time":1681535723739,"pid":21121,"hostname":"fiona","name":"IndexLogger","message":"starting playerRouter"}
+{"level":20,"time":1681535723739,"pid":21121,"hostname":"fiona","name":"IndexLogger","message":"starting authRouter"}
+{"level":30,"time":1681535723742,"pid":21121,"hostname":"fiona","name":"IndexLogger","message":"server started on http://localhost:8000"}
+{"level":30,"time":1681535723891,"pid":21135,"hostname":"fiona","name":"RedisService","message":"connected to redis"}
+{"level":30,"time":1681535723893,"pid":21135,"hostname":"fiona","name":"RollService","message":"RollService created"}
+{"level":20,"time":1681535723930,"pid":21135,"hostname":"fiona","name":"IndexLogger","message":"starting indexRouter"}
+{"level":20,"time":1681535723930,"pid":21135,"hostname":"fiona","name":"IndexLogger","message":"starting userRouter"}
+{"level":20,"time":1681535723930,"pid":21135,"hostname":"fiona","name":"IndexLogger","message":"starting groupRouter"}
+{"level":20,"time":1681535723930,"pid":21135,"hostname":"fiona","name":"IndexLogger","message":"starting userOptionsRouter"}
+{"level":20,"time":1681535723930,"pid":21135,"hostname":"fiona","name":"IndexLogger","message":"starting rollRouter"}
+{"level":20,"time":1681535723930,"pid":21135,"hostname":"fiona","name":"IndexLogger","message":"starting playerRouter"}
+{"level":20,"time":1681535723930,"pid":21135,"hostname":"fiona","name":"IndexLogger","message":"starting authRouter"}
+{"level":30,"time":1681535723933,"pid":21135,"hostname":"fiona","name":"IndexLogger","message":"server started on http://localhost:8000"}
+{"level":30,"time":1681535724084,"pid":21149,"hostname":"fiona","name":"RedisService","message":"connected to redis"}
+{"level":30,"time":1681535724085,"pid":21149,"hostname":"fiona","name":"RollService","message":"RollService created"}
+{"level":20,"time":1681535724123,"pid":21149,"hostname":"fiona","name":"IndexLogger","message":"starting indexRouter"}
+{"level":20,"time":1681535724123,"pid":21149,"hostname":"fiona","name":"IndexLogger","message":"starting userRouter"}
+{"level":20,"time":1681535724123,"pid":21149,"hostname":"fiona","name":"IndexLogger","message":"starting groupRouter"}
+{"level":20,"time":1681535724123,"pid":21149,"hostname":"fiona","name":"IndexLogger","message":"starting userOptionsRouter"}
+{"level":20,"time":1681535724123,"pid":21149,"hostname":"fiona","name":"IndexLogger","message":"starting rollRouter"}
+{"level":20,"time":1681535724123,"pid":21149,"hostname":"fiona","name":"IndexLogger","message":"starting playerRouter"}
+{"level":20,"time":1681535724123,"pid":21149,"hostname":"fiona","name":"IndexLogger","message":"starting authRouter"}
+{"level":30,"time":1681535724126,"pid":21149,"hostname":"fiona","name":"IndexLogger","message":"server started on http://localhost:8000"}
+{"level":30,"time":1681535724272,"pid":21163,"hostname":"fiona","name":"RedisService","message":"connected to redis"}
+{"level":30,"time":1681535724273,"pid":21163,"hostname":"fiona","name":"RollService","message":"RollService created"}
+{"level":20,"time":1681535724310,"pid":21163,"hostname":"fiona","name":"IndexLogger","message":"starting indexRouter"}
+{"level":20,"time":1681535724310,"pid":21163,"hostname":"fiona","name":"IndexLogger","message":"starting userRouter"}
+{"level":20,"time":1681535724310,"pid":21163,"hostname":"fiona","name":"IndexLogger","message":"starting groupRouter"}
+{"level":20,"time":1681535724310,"pid":21163,"hostname":"fiona","name":"IndexLogger","message":"starting userOptionsRouter"}
+{"level":20,"time":1681535724310,"pid":21163,"hostname":"fiona","name":"IndexLogger","message":"starting rollRouter"}
+{"level":20,"time":1681535724310,"pid":21163,"hostname":"fiona","name":"IndexLogger","message":"starting playerRouter"}
+{"level":20,"time":1681535724310,"pid":21163,"hostname":"fiona","name":"IndexLogger","message":"starting authRouter"}
+{"level":30,"time":1681535724313,"pid":21163,"hostname":"fiona","name":"IndexLogger","message":"server started on http://localhost:8000"}
+{"level":30,"time":1681535724463,"pid":21177,"hostname":"fiona","name":"RedisService","message":"connected to redis"}
+{"level":30,"time":1681535724465,"pid":21177,"hostname":"fiona","name":"RollService","message":"RollService created"}
+{"level":20,"time":1681535724503,"pid":21177,"hostname":"fiona","name":"IndexLogger","message":"starting indexRouter"}
+{"level":20,"time":1681535724503,"pid":21177,"hostname":"fiona","name":"IndexLogger","message":"starting userRouter"}
+{"level":20,"time":1681535724503,"pid":21177,"hostname":"fiona","name":"IndexLogger","message":"starting groupRouter"}
+{"level":20,"time":1681535724503,"pid":21177,"hostname":"fiona","name":"IndexLogger","message":"starting userOptionsRouter"}
+{"level":20,"time":1681535724503,"pid":21177,"hostname":"fiona","name":"IndexLogger","message":"starting rollRouter"}
+{"level":20,"time":1681535724503,"pid":21177,"hostname":"fiona","name":"IndexLogger","message":"starting playerRouter"}
+{"level":20,"time":1681535724503,"pid":21177,"hostname":"fiona","name":"IndexLogger","message":"starting authRouter"}
+{"level":30,"time":1681535724506,"pid":21177,"hostname":"fiona","name":"IndexLogger","message":"server started on http://localhost:8000"}
+{"level":30,"time":1681535724656,"pid":21191,"hostname":"fiona","name":"RedisService","message":"connected to redis"}
+{"level":30,"time":1681535724658,"pid":21191,"hostname":"fiona","name":"RollService","message":"RollService created"}
+{"level":20,"time":1681535724697,"pid":21191,"hostname":"fiona","name":"IndexLogger","message":"starting indexRouter"}
+{"level":20,"time":1681535724697,"pid":21191,"hostname":"fiona","name":"IndexLogger","message":"starting userRouter"}
+{"level":20,"time":1681535724697,"pid":21191,"hostname":"fiona","name":"IndexLogger","message":"starting groupRouter"}
+{"level":20,"time":1681535724697,"pid":21191,"hostname":"fiona","name":"IndexLogger","message":"starting userOptionsRouter"}
+{"level":20,"time":1681535724697,"pid":21191,"hostname":"fiona","name":"IndexLogger","message":"starting rollRouter"}
+{"level":20,"time":1681535724697,"pid":21191,"hostname":"fiona","name":"IndexLogger","message":"starting playerRouter"}
+{"level":20,"time":1681535724697,"pid":21191,"hostname":"fiona","name":"IndexLogger","message":"starting authRouter"}
+{"level":30,"time":1681535724701,"pid":21191,"hostname":"fiona","name":"IndexLogger","message":"server started on http://localhost:8000"}
+{"level":30,"time":1681535724854,"pid":21205,"hostname":"fiona","name":"RedisService","message":"connected to redis"}
+{"level":30,"time":1681535724855,"pid":21205,"hostname":"fiona","name":"RollService","message":"RollService created"}
+{"level":20,"time":1681535724897,"pid":21205,"hostname":"fiona","name":"IndexLogger","message":"starting indexRouter"}
+{"level":20,"time":1681535724897,"pid":21205,"hostname":"fiona","name":"IndexLogger","message":"starting userRouter"}
+{"level":20,"time":1681535724897,"pid":21205,"hostname":"fiona","name":"IndexLogger","message":"starting groupRouter"}
+{"level":20,"time":1681535724897,"pid":21205,"hostname":"fiona","name":"IndexLogger","message":"starting userOptionsRouter"}
+{"level":20,"time":1681535724897,"pid":21205,"hostname":"fiona","name":"IndexLogger","message":"starting rollRouter"}
+{"level":20,"time":1681535724897,"pid":21205,"hostname":"fiona","name":"IndexLogger","message":"starting playerRouter"}
+{"level":20,"time":1681535724897,"pid":21205,"hostname":"fiona","name":"IndexLogger","message":"starting authRouter"}
+{"level":30,"time":1681535724900,"pid":21205,"hostname":"fiona","name":"IndexLogger","message":"server started on http://localhost:8000"}
+{"level":30,"time":1681535725053,"pid":21219,"hostname":"fiona","name":"RedisService","message":"connected to redis"}
+{"level":30,"time":1681535725054,"pid":21219,"hostname":"fiona","name":"RollService","message":"RollService created"}
+{"level":20,"time":1681535725091,"pid":21219,"hostname":"fiona","name":"IndexLogger","message":"starting indexRouter"}
+{"level":20,"time":1681535725091,"pid":21219,"hostname":"fiona","name":"IndexLogger","message":"starting userRouter"}
+{"level":20,"time":1681535725091,"pid":21219,"hostname":"fiona","name":"IndexLogger","message":"starting groupRouter"}
+{"level":20,"time":1681535725091,"pid":21219,"hostname":"fiona","name":"IndexLogger","message":"starting userOptionsRouter"}
+{"level":20,"time":1681535725092,"pid":21219,"hostname":"fiona","name":"IndexLogger","message":"starting rollRouter"}
+{"level":20,"time":1681535725092,"pid":21219,"hostname":"fiona","name":"IndexLogger","message":"starting playerRouter"}
+{"level":20,"time":1681535725092,"pid":21219,"hostname":"fiona","name":"IndexLogger","message":"starting authRouter"}
+{"level":30,"time":1681535725094,"pid":21219,"hostname":"fiona","name":"IndexLogger","message":"server started on http://localhost:8000"}
+{"level":30,"time":1681535725251,"pid":21255,"hostname":"fiona","name":"RedisService","message":"connected to redis"}
+{"level":30,"time":1681535725252,"pid":21255,"hostname":"fiona","name":"RollService","message":"RollService created"}
+{"level":20,"time":1681535725290,"pid":21255,"hostname":"fiona","name":"IndexLogger","message":"starting indexRouter"}
+{"level":20,"time":1681535725290,"pid":21255,"hostname":"fiona","name":"IndexLogger","message":"starting userRouter"}
+{"level":20,"time":1681535725290,"pid":21255,"hostname":"fiona","name":"IndexLogger","message":"starting groupRouter"}
+{"level":20,"time":1681535725290,"pid":21255,"hostname":"fiona","name":"IndexLogger","message":"starting userOptionsRouter"}
+{"level":20,"time":1681535725290,"pid":21255,"hostname":"fiona","name":"IndexLogger","message":"starting rollRouter"}
+{"level":20,"time":1681535725290,"pid":21255,"hostname":"fiona","name":"IndexLogger","message":"starting playerRouter"}
+{"level":20,"time":1681535725290,"pid":21255,"hostname":"fiona","name":"IndexLogger","message":"starting authRouter"}
+{"level":30,"time":1681535725293,"pid":21255,"hostname":"fiona","name":"IndexLogger","message":"server started on http://localhost:8000"}
+{"level":30,"time":1681535725440,"pid":21269,"hostname":"fiona","name":"RedisService","message":"connected to redis"}
+{"level":30,"time":1681535725441,"pid":21269,"hostname":"fiona","name":"RollService","message":"RollService created"}
+{"level":20,"time":1681535725478,"pid":21269,"hostname":"fiona","name":"IndexLogger","message":"starting indexRouter"}
+{"level":20,"time":1681535725478,"pid":21269,"hostname":"fiona","name":"IndexLogger","message":"starting userRouter"}
+{"level":20,"time":1681535725478,"pid":21269,"hostname":"fiona","name":"IndexLogger","message":"starting groupRouter"}
+{"level":20,"time":1681535725478,"pid":21269,"hostname":"fiona","name":"IndexLogger","message":"starting userOptionsRouter"}
+{"level":20,"time":1681535725478,"pid":21269,"hostname":"fiona","name":"IndexLogger","message":"starting rollRouter"}
+{"level":20,"time":1681535725478,"pid":21269,"hostname":"fiona","name":"IndexLogger","message":"starting playerRouter"}
+{"level":20,"time":1681535725478,"pid":21269,"hostname":"fiona","name":"IndexLogger","message":"starting authRouter"}
+{"level":30,"time":1681535725481,"pid":21269,"hostname":"fiona","name":"IndexLogger","message":"server started on http://localhost:8000"}
+{"level":30,"time":1681535725630,"pid":21283,"hostname":"fiona","name":"RedisService","message":"connected to redis"}
+{"level":30,"time":1681535725631,"pid":21283,"hostname":"fiona","name":"RollService","message":"RollService created"}
+{"level":20,"time":1681535725667,"pid":21283,"hostname":"fiona","name":"IndexLogger","message":"starting indexRouter"}
+{"level":20,"time":1681535725667,"pid":21283,"hostname":"fiona","name":"IndexLogger","message":"starting userRouter"}
+{"level":20,"time":1681535725667,"pid":21283,"hostname":"fiona","name":"IndexLogger","message":"starting groupRouter"}
+{"level":20,"time":1681535725667,"pid":21283,"hostname":"fiona","name":"IndexLogger","message":"starting userOptionsRouter"}
+{"level":20,"time":1681535725667,"pid":21283,"hostname":"fiona","name":"IndexLogger","message":"starting rollRouter"}
+{"level":20,"time":1681535725667,"pid":21283,"hostname":"fiona","name":"IndexLogger","message":"starting playerRouter"}
+{"level":20,"time":1681535725667,"pid":21283,"hostname":"fiona","name":"IndexLogger","message":"starting authRouter"}
+{"level":30,"time":1681535725669,"pid":21283,"hostname":"fiona","name":"IndexLogger","message":"server started on http://localhost:8000"}
+{"level":30,"time":1681535725814,"pid":21297,"hostname":"fiona","name":"RedisService","message":"connected to redis"}
+{"level":30,"time":1681535725816,"pid":21297,"hostname":"fiona","name":"RollService","message":"RollService created"}
+{"level":20,"time":1681535725852,"pid":21297,"hostname":"fiona","name":"IndexLogger","message":"starting indexRouter"}
+{"level":20,"time":1681535725852,"pid":21297,"hostname":"fiona","name":"IndexLogger","message":"starting userRouter"}
+{"level":20,"time":1681535725852,"pid":21297,"hostname":"fiona","name":"IndexLogger","message":"starting groupRouter"}
+{"level":20,"time":1681535725852,"pid":21297,"hostname":"fiona","name":"IndexLogger","message":"starting userOptionsRouter"}
+{"level":20,"time":1681535725852,"pid":21297,"hostname":"fiona","name":"IndexLogger","message":"starting rollRouter"}
+{"level":20,"time":1681535725852,"pid":21297,"hostname":"fiona","name":"IndexLogger","message":"starting playerRouter"}
+{"level":20,"time":1681535725852,"pid":21297,"hostname":"fiona","name":"IndexLogger","message":"starting authRouter"}
+{"level":30,"time":1681535725855,"pid":21297,"hostname":"fiona","name":"IndexLogger","message":"server started on http://localhost:8000"}
+{"level":30,"time":1681535726002,"pid":21311,"hostname":"fiona","name":"RedisService","message":"connected to redis"}
+{"level":30,"time":1681535726003,"pid":21311,"hostname":"fiona","name":"RollService","message":"RollService created"}
+{"level":20,"time":1681535726040,"pid":21311,"hostname":"fiona","name":"IndexLogger","message":"starting indexRouter"}
+{"level":20,"time":1681535726040,"pid":21311,"hostname":"fiona","name":"IndexLogger","message":"starting userRouter"}
+{"level":20,"time":1681535726040,"pid":21311,"hostname":"fiona","name":"IndexLogger","message":"starting groupRouter"}
+{"level":20,"time":1681535726040,"pid":21311,"hostname":"fiona","name":"IndexLogger","message":"starting userOptionsRouter"}
+{"level":20,"time":1681535726040,"pid":21311,"hostname":"fiona","name":"IndexLogger","message":"starting rollRouter"}
+{"level":20,"time":1681535726040,"pid":21311,"hostname":"fiona","name":"IndexLogger","message":"starting playerRouter"}
+{"level":20,"time":1681535726040,"pid":21311,"hostname":"fiona","name":"IndexLogger","message":"starting authRouter"}
+{"level":30,"time":1681535726043,"pid":21311,"hostname":"fiona","name":"IndexLogger","message":"server started on http://localhost:8000"}
+{"level":30,"time":1681535726188,"pid":21353,"hostname":"fiona","name":"RedisService","message":"connected to redis"}
+{"level":30,"time":1681535726190,"pid":21353,"hostname":"fiona","name":"RollService","message":"RollService created"}
+{"level":20,"time":1681535726226,"pid":21353,"hostname":"fiona","name":"IndexLogger","message":"starting indexRouter"}
+{"level":20,"time":1681535726226,"pid":21353,"hostname":"fiona","name":"IndexLogger","message":"starting userRouter"}
+{"level":20,"time":1681535726226,"pid":21353,"hostname":"fiona","name":"IndexLogger","message":"starting groupRouter"}
+{"level":20,"time":1681535726226,"pid":21353,"hostname":"fiona","name":"IndexLogger","message":"starting userOptionsRouter"}
+{"level":20,"time":1681535726226,"pid":21353,"hostname":"fiona","name":"IndexLogger","message":"starting rollRouter"}
+{"level":20,"time":1681535726226,"pid":21353,"hostname":"fiona","name":"IndexLogger","message":"starting playerRouter"}
+{"level":20,"time":1681535726226,"pid":21353,"hostname":"fiona","name":"IndexLogger","message":"starting authRouter"}
+{"level":30,"time":1681535726229,"pid":21353,"hostname":"fiona","name":"IndexLogger","message":"server started on http://localhost:8000"}
+{"level":30,"time":1681535726382,"pid":21367,"hostname":"fiona","name":"RedisService","message":"connected to redis"}
+{"level":30,"time":1681535726383,"pid":21367,"hostname":"fiona","name":"RollService","message":"RollService created"}
+{"level":20,"time":1681535726421,"pid":21367,"hostname":"fiona","name":"IndexLogger","message":"starting indexRouter"}
+{"level":20,"time":1681535726421,"pid":21367,"hostname":"fiona","name":"IndexLogger","message":"starting userRouter"}
+{"level":20,"time":1681535726421,"pid":21367,"hostname":"fiona","name":"IndexLogger","message":"starting groupRouter"}
+{"level":20,"time":1681535726421,"pid":21367,"hostname":"fiona","name":"IndexLogger","message":"starting userOptionsRouter"}
+{"level":20,"time":1681535726421,"pid":21367,"hostname":"fiona","name":"IndexLogger","message":"starting rollRouter"}
+{"level":20,"time":1681535726421,"pid":21367,"hostname":"fiona","name":"IndexLogger","message":"starting playerRouter"}
+{"level":20,"time":1681535726421,"pid":21367,"hostname":"fiona","name":"IndexLogger","message":"starting authRouter"}
+{"level":30,"time":1681535726424,"pid":21367,"hostname":"fiona","name":"IndexLogger","message":"server started on http://localhost:8000"}
+{"level":30,"time":1681535726576,"pid":21381,"hostname":"fiona","name":"RedisService","message":"connected to redis"}
+{"level":30,"time":1681535726577,"pid":21381,"hostname":"fiona","name":"RollService","message":"RollService created"}
+{"level":20,"time":1681535726616,"pid":21381,"hostname":"fiona","name":"IndexLogger","message":"starting indexRouter"}
+{"level":20,"time":1681535726616,"pid":21381,"hostname":"fiona","name":"IndexLogger","message":"starting userRouter"}
+{"level":20,"time":1681535726616,"pid":21381,"hostname":"fiona","name":"IndexLogger","message":"starting groupRouter"}
+{"level":20,"time":1681535726616,"pid":21381,"hostname":"fiona","name":"IndexLogger","message":"starting userOptionsRouter"}
+{"level":20,"time":1681535726616,"pid":21381,"hostname":"fiona","name":"IndexLogger","message":"starting rollRouter"}
+{"level":20,"time":1681535726616,"pid":21381,"hostname":"fiona","name":"IndexLogger","message":"starting playerRouter"}
+{"level":20,"time":1681535726616,"pid":21381,"hostname":"fiona","name":"IndexLogger","message":"starting authRouter"}
+{"level":30,"time":1681535726619,"pid":21381,"hostname":"fiona","name":"IndexLogger","message":"server started on http://localhost:8000"}
+{"level":30,"time":1681535726789,"pid":21395,"hostname":"fiona","name":"RedisService","message":"connected to redis"}
+{"level":30,"time":1681535726791,"pid":21395,"hostname":"fiona","name":"RollService","message":"RollService created"}
+{"level":20,"time":1681535726830,"pid":21395,"hostname":"fiona","name":"IndexLogger","message":"starting indexRouter"}
+{"level":20,"time":1681535726830,"pid":21395,"hostname":"fiona","name":"IndexLogger","message":"starting userRouter"}
+{"level":20,"time":1681535726830,"pid":21395,"hostname":"fiona","name":"IndexLogger","message":"starting groupRouter"}
+{"level":20,"time":1681535726830,"pid":21395,"hostname":"fiona","name":"IndexLogger","message":"starting userOptionsRouter"}
+{"level":20,"time":1681535726830,"pid":21395,"hostname":"fiona","name":"IndexLogger","message":"starting rollRouter"}
+{"level":20,"time":1681535726830,"pid":21395,"hostname":"fiona","name":"IndexLogger","message":"starting playerRouter"}
+{"level":20,"time":1681535726830,"pid":21395,"hostname":"fiona","name":"IndexLogger","message":"starting authRouter"}
+{"level":30,"time":1681535726833,"pid":21395,"hostname":"fiona","name":"IndexLogger","message":"server started on http://localhost:8000"}
+{"level":30,"time":1681535726982,"pid":21409,"hostname":"fiona","name":"RedisService","message":"connected to redis"}
+{"level":30,"time":1681535726983,"pid":21409,"hostname":"fiona","name":"RollService","message":"RollService created"}
+{"level":20,"time":1681535727022,"pid":21409,"hostname":"fiona","name":"IndexLogger","message":"starting indexRouter"}
+{"level":20,"time":1681535727022,"pid":21409,"hostname":"fiona","name":"IndexLogger","message":"starting userRouter"}
+{"level":20,"time":1681535727022,"pid":21409,"hostname":"fiona","name":"IndexLogger","message":"starting groupRouter"}
+{"level":20,"time":1681535727022,"pid":21409,"hostname":"fiona","name":"IndexLogger","message":"starting userOptionsRouter"}
+{"level":20,"time":1681535727022,"pid":21409,"hostname":"fiona","name":"IndexLogger","message":"starting rollRouter"}
+{"level":20,"time":1681535727022,"pid":21409,"hostname":"fiona","name":"IndexLogger","message":"starting playerRouter"}
+{"level":20,"time":1681535727022,"pid":21409,"hostname":"fiona","name":"IndexLogger","message":"starting authRouter"}
+{"level":30,"time":1681535727025,"pid":21409,"hostname":"fiona","name":"IndexLogger","message":"server started on http://localhost:8000"}
+{"level":30,"time":1681535727182,"pid":21423,"hostname":"fiona","name":"RedisService","message":"connected to redis"}
+{"level":30,"time":1681535727183,"pid":21423,"hostname":"fiona","name":"RollService","message":"RollService created"}
+{"level":20,"time":1681535727220,"pid":21423,"hostname":"fiona","name":"IndexLogger","message":"starting indexRouter"}
+{"level":20,"time":1681535727220,"pid":21423,"hostname":"fiona","name":"IndexLogger","message":"starting userRouter"}
+{"level":20,"time":1681535727220,"pid":21423,"hostname":"fiona","name":"IndexLogger","message":"starting groupRouter"}
+{"level":20,"time":1681535727220,"pid":21423,"hostname":"fiona","name":"IndexLogger","message":"starting userOptionsRouter"}
+{"level":20,"time":1681535727220,"pid":21423,"hostname":"fiona","name":"IndexLogger","message":"starting rollRouter"}
+{"level":20,"time":1681535727220,"pid":21423,"hostname":"fiona","name":"IndexLogger","message":"starting playerRouter"}
+{"level":20,"time":1681535727220,"pid":21423,"hostname":"fiona","name":"IndexLogger","message":"starting authRouter"}
+{"level":30,"time":1681535727223,"pid":21423,"hostname":"fiona","name":"IndexLogger","message":"server started on http://localhost:8000"}
+{"level":30,"time":1681535760158,"pid":21581,"hostname":"fiona","name":"RedisService","message":"connected to redis"}
+{"level":30,"time":1681535760159,"pid":21581,"hostname":"fiona","name":"RollService","message":"RollService created"}
+{"level":20,"time":1681535760203,"pid":21581,"hostname":"fiona","name":"IndexLogger","message":"starting indexRouter"}
+{"level":20,"time":1681535760203,"pid":21581,"hostname":"fiona","name":"IndexLogger","message":"starting userRouter"}
+{"level":20,"time":1681535760203,"pid":21581,"hostname":"fiona","name":"IndexLogger","message":"starting groupRouter"}
+{"level":20,"time":1681535760203,"pid":21581,"hostname":"fiona","name":"IndexLogger","message":"starting userOptionsRouter"}
+{"level":20,"time":1681535760203,"pid":21581,"hostname":"fiona","name":"IndexLogger","message":"starting rollRouter"}
+{"level":20,"time":1681535760203,"pid":21581,"hostname":"fiona","name":"IndexLogger","message":"starting playerRouter"}
+{"level":20,"time":1681535760203,"pid":21581,"hostname":"fiona","name":"IndexLogger","message":"starting authRouter"}
+{"level":30,"time":1681535760207,"pid":21581,"hostname":"fiona","name":"IndexLogger","message":"server started on http://localhost:8000"}
+{"level":30,"time":1681535760365,"pid":21610,"hostname":"fiona","name":"RedisService","message":"connected to redis"}
+{"level":30,"time":1681535760366,"pid":21610,"hostname":"fiona","name":"RollService","message":"RollService created"}
+{"level":20,"time":1681535760404,"pid":21610,"hostname":"fiona","name":"IndexLogger","message":"starting indexRouter"}
+{"level":20,"time":1681535760404,"pid":21610,"hostname":"fiona","name":"IndexLogger","message":"starting userRouter"}
+{"level":20,"time":1681535760404,"pid":21610,"hostname":"fiona","name":"IndexLogger","message":"starting groupRouter"}
+{"level":20,"time":1681535760404,"pid":21610,"hostname":"fiona","name":"IndexLogger","message":"starting userOptionsRouter"}
+{"level":20,"time":1681535760404,"pid":21610,"hostname":"fiona","name":"IndexLogger","message":"starting rollRouter"}
+{"level":20,"time":1681535760404,"pid":21610,"hostname":"fiona","name":"IndexLogger","message":"starting playerRouter"}
+{"level":20,"time":1681535760404,"pid":21610,"hostname":"fiona","name":"IndexLogger","message":"starting authRouter"}
+{"level":30,"time":1681535760407,"pid":21610,"hostname":"fiona","name":"IndexLogger","message":"server started on http://localhost:8000"}
+{"level":30,"time":1681535760562,"pid":21628,"hostname":"fiona","name":"RedisService","message":"connected to redis"}
+{"level":30,"time":1681535760563,"pid":21628,"hostname":"fiona","name":"RollService","message":"RollService created"}
+{"level":20,"time":1681535760601,"pid":21628,"hostname":"fiona","name":"IndexLogger","message":"starting indexRouter"}
+{"level":20,"time":1681535760601,"pid":21628,"hostname":"fiona","name":"IndexLogger","message":"starting userRouter"}
+{"level":20,"time":1681535760601,"pid":21628,"hostname":"fiona","name":"IndexLogger","message":"starting groupRouter"}
+{"level":20,"time":1681535760601,"pid":21628,"hostname":"fiona","name":"IndexLogger","message":"starting userOptionsRouter"}
+{"level":20,"time":1681535760601,"pid":21628,"hostname":"fiona","name":"IndexLogger","message":"starting rollRouter"}
+{"level":20,"time":1681535760601,"pid":21628,"hostname":"fiona","name":"IndexLogger","message":"starting playerRouter"}
+{"level":20,"time":1681535760601,"pid":21628,"hostname":"fiona","name":"IndexLogger","message":"starting authRouter"}
+{"level":30,"time":1681535760603,"pid":21628,"hostname":"fiona","name":"IndexLogger","message":"server started on http://localhost:8000"}
+{"level":30,"time":1681535760757,"pid":21664,"hostname":"fiona","name":"RedisService","message":"connected to redis"}
+{"level":30,"time":1681535760758,"pid":21664,"hostname":"fiona","name":"RollService","message":"RollService created"}
+{"level":20,"time":1681535760799,"pid":21664,"hostname":"fiona","name":"IndexLogger","message":"starting indexRouter"}
+{"level":20,"time":1681535760799,"pid":21664,"hostname":"fiona","name":"IndexLogger","message":"starting userRouter"}
+{"level":20,"time":1681535760799,"pid":21664,"hostname":"fiona","name":"IndexLogger","message":"starting groupRouter"}
+{"level":20,"time":1681535760799,"pid":21664,"hostname":"fiona","name":"IndexLogger","message":"starting userOptionsRouter"}
+{"level":20,"time":1681535760799,"pid":21664,"hostname":"fiona","name":"IndexLogger","message":"starting rollRouter"}
+{"level":20,"time":1681535760799,"pid":21664,"hostname":"fiona","name":"IndexLogger","message":"starting playerRouter"}
+{"level":20,"time":1681535760799,"pid":21664,"hostname":"fiona","name":"IndexLogger","message":"starting authRouter"}
+{"level":30,"time":1681535760802,"pid":21664,"hostname":"fiona","name":"IndexLogger","message":"server started on http://localhost:8000"}
+{"level":30,"time":1681535760966,"pid":21678,"hostname":"fiona","name":"RedisService","message":"connected to redis"}
+{"level":30,"time":1681535760967,"pid":21678,"hostname":"fiona","name":"RollService","message":"RollService created"}
+{"level":20,"time":1681535761011,"pid":21678,"hostname":"fiona","name":"IndexLogger","message":"starting indexRouter"}
+{"level":20,"time":1681535761011,"pid":21678,"hostname":"fiona","name":"IndexLogger","message":"starting userRouter"}
+{"level":20,"time":1681535761011,"pid":21678,"hostname":"fiona","name":"IndexLogger","message":"starting groupRouter"}
+{"level":20,"time":1681535761011,"pid":21678,"hostname":"fiona","name":"IndexLogger","message":"starting userOptionsRouter"}
+{"level":20,"time":1681535761011,"pid":21678,"hostname":"fiona","name":"IndexLogger","message":"starting rollRouter"}
+{"level":20,"time":1681535761011,"pid":21678,"hostname":"fiona","name":"IndexLogger","message":"starting playerRouter"}
+{"level":20,"time":1681535761011,"pid":21678,"hostname":"fiona","name":"IndexLogger","message":"starting authRouter"}
+{"level":30,"time":1681535761014,"pid":21678,"hostname":"fiona","name":"IndexLogger","message":"server started on http://localhost:8000"}
+{"level":30,"time":1681535761167,"pid":21692,"hostname":"fiona","name":"RedisService","message":"connected to redis"}
+{"level":30,"time":1681535761168,"pid":21692,"hostname":"fiona","name":"RollService","message":"RollService created"}
+{"level":20,"time":1681535761206,"pid":21692,"hostname":"fiona","name":"IndexLogger","message":"starting indexRouter"}
+{"level":20,"time":1681535761206,"pid":21692,"hostname":"fiona","name":"IndexLogger","message":"starting userRouter"}
+{"level":20,"time":1681535761206,"pid":21692,"hostname":"fiona","name":"IndexLogger","message":"starting groupRouter"}
+{"level":20,"time":1681535761206,"pid":21692,"hostname":"fiona","name":"IndexLogger","message":"starting userOptionsRouter"}
+{"level":20,"time":1681535761206,"pid":21692,"hostname":"fiona","name":"IndexLogger","message":"starting rollRouter"}
+{"level":20,"time":1681535761206,"pid":21692,"hostname":"fiona","name":"IndexLogger","message":"starting playerRouter"}
+{"level":20,"time":1681535761206,"pid":21692,"hostname":"fiona","name":"IndexLogger","message":"starting authRouter"}
+{"level":30,"time":1681535761209,"pid":21692,"hostname":"fiona","name":"IndexLogger","message":"server started on http://localhost:8000"}
+{"level":30,"time":1681535761363,"pid":21706,"hostname":"fiona","name":"RedisService","message":"connected to redis"}
+{"level":30,"time":1681535761364,"pid":21706,"hostname":"fiona","name":"RollService","message":"RollService created"}
+{"level":20,"time":1681535761403,"pid":21706,"hostname":"fiona","name":"IndexLogger","message":"starting indexRouter"}
+{"level":20,"time":1681535761403,"pid":21706,"hostname":"fiona","name":"IndexLogger","message":"starting userRouter"}
+{"level":20,"time":1681535761403,"pid":21706,"hostname":"fiona","name":"IndexLogger","message":"starting groupRouter"}
+{"level":20,"time":1681535761403,"pid":21706,"hostname":"fiona","name":"IndexLogger","message":"starting userOptionsRouter"}
+{"level":20,"time":1681535761403,"pid":21706,"hostname":"fiona","name":"IndexLogger","message":"starting rollRouter"}
+{"level":20,"time":1681535761403,"pid":21706,"hostname":"fiona","name":"IndexLogger","message":"starting playerRouter"}
+{"level":20,"time":1681535761403,"pid":21706,"hostname":"fiona","name":"IndexLogger","message":"starting authRouter"}
+{"level":30,"time":1681535761405,"pid":21706,"hostname":"fiona","name":"IndexLogger","message":"server started on http://localhost:8000"}

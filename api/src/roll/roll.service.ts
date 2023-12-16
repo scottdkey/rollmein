@@ -120,9 +120,7 @@ export class RollService {
       userId
     );
 
-    const previousRolls = getRoll.currentRoll
-      ? [...getRoll.previousRolls, getRoll.currentRoll]
-      : getRoll.previousRolls;
+    const previousRolls = getRoll.previousRolls;
 
     const rollReturn = await this.rollUtilities.handleRoll(
       rollType,
