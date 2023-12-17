@@ -81,7 +81,7 @@ type ToastStatus =
 
 interface IGroupWsResponse {
   messageType: GroupWSMessageTypes;
-  data: any;
+  data: unknown;
   announce?: {
     status: ToastStatus;
     title: string | undefined;

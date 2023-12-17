@@ -1,7 +1,7 @@
 import { Next, ParameterizedContext } from "koa";
-import { SessionService } from "../../session/session.service";
-import { LoggerService } from "../../logger/logger.service";
-import { container } from "../../container";
+import { SessionService } from "../session/session.service.js";
+import { LoggerService } from "../logger/logger.service.js";
+import { container } from "../container.js";
 
 const sessionService = container.get(SessionService);
 const logger = container.get(LoggerService).getLogger("isAuthLogger");

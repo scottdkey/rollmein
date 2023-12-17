@@ -1,10 +1,11 @@
-import { addToContainer } from "../container";
-import { PlayerRepository } from "./player.repository";
-import { GroupWsService } from "../group/groupWs.service";
+import { addToContainer } from "../container.js";
+import { PlayerRepository } from "./player.repository.js";
+import { GroupWsService } from "../group/groupWs.service.js";
 import { Logger } from "pino";
-import { LoggerService } from "../logger/logger.service";
-import { createError } from "../utils/CreateError";
-import { ErrorTypes } from "../../../web/src/types/ErrorCodes.enum";
+import { LoggerService } from "../logger/logger.service.js";
+import { createError } from "../utils/CreateError.js";
+import { ErrorTypes } from "../types/ErrorCodes.enum.js";
+import { HTTPCodes } from "../types/HttpCodes.enum.js";
 
 @addToContainer()
 export class PlayerService {
@@ -87,6 +88,7 @@ export class PlayerService {
         type: ErrorTypes.PLAYER_ERROR,
         context: this.updateUserPlayer.name,
         detail: "player is not valid",
+        status: HTTPCodes.BAD_REQUEST,
       });
     }
     return await this.updatePlayer(input);

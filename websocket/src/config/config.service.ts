@@ -3,7 +3,6 @@ import { Logger } from "pino";
 import { addToContainer } from "../container.js";
 import { LoggerService } from "../logger/logger.service.js";
 import { ServerConfig } from "./Server.config.js";
-import { GoogleOauth2Config } from "./Google.OAuth2.config.js";
 import { PostgresConfig } from "./Postgres.config.js";
 import { RedisConfig } from "./Redis.config.js";
 
@@ -13,7 +12,6 @@ export class ConfigService {
   serverConfig = ServerConfig();
   pgConfig = PostgresConfig();
   redisConfig = RedisConfig();
-  googleOauth2Config = GoogleOauth2Config();
   constructor(private ls: LoggerService) {
     this.logger = this.ls.getLogger(ConfigService.name);
     dotenv.config();
@@ -30,10 +28,6 @@ export class ConfigService {
       {
         configName: "RedisConfig",
         configObject: RedisConfig,
-      },
-      {
-        configName: "GoogleOauth2Config",
-        configObject: GoogleOauth2Config(),
       },
     ]);
   }

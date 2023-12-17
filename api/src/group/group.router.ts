@@ -1,28 +1,26 @@
-import { Next, ParameterizedContext } from "koa";
+import { Next } from "koa";
 import Router from "koa-router";
 
-import { container } from "../container";
-import { GroupService } from "./group.service";
+import { container } from "../container.js";
+import { GroupService } from "./group.service.js";
 
-import { RequireAuth } from "../common/middleware/requireAuth.middleware";
-import { LoggerService } from "../logger/logger.service";
-import { GroupCountService } from "../groupCount/groupCount.service";
-import { createError } from "../utils/CreateError";
-import {
-  ICreateGroup,
-  IGroup,
-  IUpdateGroup,
-} from "../../../web/src/types/Group";
-import { HTTPCodes } from "../../../web/src/types/HttpCodes.enum";
-import { ErrorTypes } from "../../../web/src/types/ErrorCodes.enum";
-import { ErrorMessages } from "../../../web/src/types/ErrorTypes.enum";
+import { RequireAuth } from "../middleware/requireAuth.middleware.js";
+import { LoggerService } from "../logger/logger.service.js";
+import { GroupCountService } from "../groupCount/groupCount.service.js";
+import { createError } from "../utils/CreateError.js";
+import { ICreateGroup, IGroup, IUpdateGroup } from "../types/Group.js";
+import { ErrorTypes } from "../types/ErrorCodes.enum.js";
+import { ErrorMessages } from "../types/ErrorTypes.enum.js";
+import { HTTPCodes } from "../types/HttpCodes.enum.js";
+import { CreatePlayerValidation } from "../player/validation/CreatePlayer.validation.js";
+import { z } from "zod";
 
 const groupRouter = new Router({ prefix: "/group" });
 const groupService = container.get(GroupService);
 const groupCountService = container.get(GroupCountService);
 const logger = container.get(LoggerService).getLogger("groupRouter");
 
-groupRouter.get("/", async (ctx: ParameterizedContext, next: Next) => {
+groupRouter.get("/", async (ctx, next: Next) => {
   try {
     let returnGroups: IGroup[] = [];
     const user = ctx.state.user;
@@ -36,14 +34,14 @@ groupRouter.get("/", async (ctx: ParameterizedContext, next: Next) => {
     ctx.body = [...new Set(returnGroups)];
     ctx.status = HTTPCodes.OK;
   } catch (e) {
-    ctx.status = HTTPCodes.INTERNAL_SERVER_ERROR;
+    ctx.status = HTTPCodes.SERVER_ERROR;
     ctx.body = e;
   }
 
   await next();
 });
 
-groupRouter.get("/:groupId", async (ctx: ParameterizedContext, next: Next) => {
+groupRouter.get("/:groupId", async (ctx, next: Next) => {
   try {
     const userId = ctx.state.user?.id;
     const groupId = ctx.params.groupId;
@@ -84,38 +82,35 @@ groupRouter.get("/:groupId", async (ctx: ParameterizedContext, next: Next) => {
   await next();
 });
 
-groupRouter.post(
-  "/",
-  RequireAuth,
-  async (ctx: ParameterizedContext, next: Next) => {
-    try {
-      const userId = ctx.state.user?.id;
-      const validUser = ctx.state.validUser;
-      const body = ctx.request.body as unknown as ICreateGroup;
-      if (userId && validUser) {
-        const group = await groupService.createGroup(ctx.state.user.id, body);
-        if (group) {
-          ctx.body = group;
-          ctx.status = HTTPCodes.CREATED;
-        }
-        if (!group) {
-          ctx.throw(HTTPCodes.UNPROCESSABLE_ENTITY, "group not created");
-        }
-      }
-      if (!userId || !validUser) {
-        ctx.throw(HTTPCodes.UNAUTHORIZED, "not signed in, cannot create group");
-      }
-    } catch (e) {
-      ctx.throw(HTTPCodes.SERVER_ERROR, e);
-    }
-    await next();
-  }
-);
-
-groupRouter.put("/", async (ctx: ParameterizedContext, next: Next) => {
-  const userId = ctx.state.user?.id;
+groupRouter.post("/", RequireAuth, async (ctx, next: Next) => {
   try {
-    const body = ctx.request.body as unknown as IUpdateGroup;
+    const userId = ctx.state.user?.id;
+    const validUser = ctx.state.validUser;
+    const body = ctx.request.body as ICreateGroup;
+    if (userId && validUser) {
+      const group = await groupService.createGroup(ctx.state.user.id, body);
+      if (group) {
+        ctx.body = group;
+        ctx.status = HTTPCodes.CREATED;
+      }
+      if (!group) {
+        ctx.throw(HTTPCodes.UNPROCESSABLE_ENTITY, "group not created");
+      }
+    }
+    if (!userId || !validUser) {
+      ctx.throw(HTTPCodes.NOT_AUTHORIZED, "not signed in, cannot create group");
+    }
+  } catch (e) {
+    ctx.throw(HTTPCodes.SERVER_ERROR, e);
+  }
+  await next();
+});
+
+groupRouter.put("/", RequireAuth, async (ctx, next: Next) => {
+  try {
+    const userId = ctx.state.user?.id;
+    const body = ctx.request.body as IUpdateGroup;
+    console.log({ body, userId });
     if (userId && ctx.state.validUser) {
       const group = await groupService.updateGroup(userId, body);
       if (group) {
@@ -123,12 +118,12 @@ groupRouter.put("/", async (ctx: ParameterizedContext, next: Next) => {
         ctx.status = HTTPCodes.OK;
       }
       if (!group) {
-        ctx.body = createError({
+        createError({
           message: "group not updated",
           type: ErrorTypes.GROUP_ERROR,
           context: "group router update group",
+          status: HTTPCodes.UNPROCESSABLE_ENTITY,
         });
-        ctx.status = HTTPCodes.UNPROCESSABLE_ENTITY;
       }
     }
   } catch (e) {
@@ -140,7 +135,7 @@ groupRouter.put("/", async (ctx: ParameterizedContext, next: Next) => {
   await next();
 });
 
-groupRouter.delete("/", async (ctx: ParameterizedContext, next: Next) => {
+groupRouter.delete("/", RequireAuth, async (ctx, next: Next) => {
   ctx.body = {
     message: "received",
   };
@@ -148,12 +143,11 @@ groupRouter.delete("/", async (ctx: ParameterizedContext, next: Next) => {
   await next();
 });
 
-groupRouter.post(
-  "/addPlayer",
-  RequireAuth,
-  async (ctx: ParameterizedContext, next: Next) => {
-    const body = ctx.request.body as unknown as ICreatePlayer | undefined;
-    const groupId = body?.groupId as string;
+groupRouter.post("/addPlayer", RequireAuth, async (ctx, next: Next) => {
+  try {
+    logger.info(ctx.request.body);
+    const body: ICreatePlayer = CreatePlayerValidation.parse(ctx.request.body);
+    const groupId = body.groupId;
     const userId = ctx.state.user.id;
     if (groupId && userId && body) {
       const player = await groupService.createGroupPlayer(
@@ -168,7 +162,7 @@ groupRouter.post(
       ctx.status = HTTPCodes.OK;
     }
 
-    if (groupId === "") {
+    if (groupId === "" || groupId === null || groupId === undefined) {
       ctx.status = HTTPCodes.UNPROCESSABLE_ENTITY;
       ctx.body = {
         player: null,
@@ -180,59 +174,64 @@ groupRouter.post(
         },
       };
     }
-
-    await next();
+  } catch (e) {
+    logger.error(
+      {
+        body: ctx.request.body,
+        error: JSON.parse(e.message),
+      },
+      "unable to add player to group"
+    );
+    ctx.body = e.message;
+    ctx.status = e.status;
   }
-);
+  await next();
+});
 
-groupRouter.post(
-  "/joinGroup",
-  RequireAuth,
-  async (ctx: ParameterizedContext, next: Next) => {
-    const userId = ctx.state.user.id as string;
-    const groupId = ctx.request.body?.groupId as string | undefined;
-    if (groupId) {
-      await groupService.userJoinGroup(groupId, userId);
-      ctx.status = HTTPCodes.OK;
-      ctx.body = {
-        success: true,
-      };
-    }
-    if (groupId === undefined) {
-      ctx.throw(
-        HTTPCodes.BAD_REQUEST,
-        "must include a group id on this request"
-      );
-    }
+groupRouter.post("/joinGroup", RequireAuth, async (ctx, next: Next) => {
+  const userId = ctx.state.user.id as string;
+  const body = z
+    .object({
+      groupId: z.string().uuid().optional(),
+    })
+    .parse(ctx.request.body);
 
-    await next();
+  if (body && body.groupId) {
+    await groupService.userJoinGroup(body.groupId, userId);
+    ctx.status = HTTPCodes.OK;
+    ctx.body = {
+      success: true,
+    };
   }
-);
-
-groupRouter.get(
-  "/count/:groupId",
-  async (ctx: ParameterizedContext, next: Next) => {
-    const groupId = ctx.params.groupId;
-    const groupCounts = await groupCountService.getGroupPlayerCounts(groupId);
-    if (groupCounts) {
-      ctx.body = groupCounts;
-    }
-    /**
-     * default return
-     */
-    if (!groupCounts) {
-      const playerCounts: PlayerCounts = {
-        locked: 0,
-        inTheRoll: 0,
-        tanks: 0,
-        healers: 0,
-        dps: 0,
-      };
-      ctx.message = `group counts with groupId: ${groupId} not found`;
-      ctx.body = playerCounts;
-    }
-    await next();
+  if (body.groupId === undefined) {
+    ctx.status = HTTPCodes.BAD_REQUEST;
+    ctx.message = "must include a group id on this request";
   }
-);
+
+  await next();
+});
+
+groupRouter.get("/count/:groupId", async (ctx, next: Next) => {
+  const groupId = ctx.params.groupId;
+  const groupCounts = await groupCountService.getGroupPlayerCounts(groupId);
+  if (groupCounts) {
+    ctx.body = groupCounts;
+  }
+  /**
+   * default return
+   */
+  if (!groupCounts) {
+    const playerCounts: PlayerCounts = {
+      locked: 0,
+      inTheRoll: 0,
+      tanks: 0,
+      healers: 0,
+      dps: 0,
+    };
+    ctx.message = `group counts with groupId: ${groupId} not found`;
+    ctx.body = playerCounts;
+  }
+  await next();
+});
 
 export default groupRouter;

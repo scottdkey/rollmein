@@ -1,11 +1,11 @@
-import { PlayerService } from "./player.service";
-import { container } from "../container";
+import { PlayerService } from "./player.service.js";
+import { container } from "../container.js";
 import Router from "koa-router";
 import { Next, ParameterizedContext } from "koa";
-import { RequireAuth } from "../common/middleware/requireAuth.middleware";
-import { LoggerService } from "../logger/logger.service";
-import { GroupCountService } from "../groupCount/groupCount.service";
-import { HTTPCodes } from "../../../web/src/types/HttpCodes.enum";
+import { RequireAuth } from "../middleware/requireAuth.middleware.js";
+import { LoggerService } from "../logger/logger.service.js";
+import { GroupCountService } from "../groupCount/groupCount.service.js";
+import { HTTPCodes } from "../types/HttpCodes.enum.js";
 
 const router = new Router({ prefix: "/player" });
 const playerService = container.get(PlayerService);
@@ -36,9 +36,9 @@ router.get(
   }
 );
 
-router.put("/", RequireAuth, async (ctx: ParameterizedContext, next: Next) => {
+router.put("/", RequireAuth, async (ctx, next: Next) => {
   try {
-    const requestBody = ctx.request.body as unknown as IUpdatePlayer;
+    const requestBody = ctx.request.body as IUpdatePlayer;
     const updateRes = await playerService.updatePlayer(requestBody);
 
     if (updateRes && updateRes.groupId) {
@@ -55,28 +55,24 @@ router.put("/", RequireAuth, async (ctx: ParameterizedContext, next: Next) => {
   }
 });
 
-router.put(
-  "/userPlayer",
-  RequireAuth,
-  async (ctx: ParameterizedContext, next: Next) => {
-    try {
-      const userId = ctx.state.user.id;
-      const requestBody = ctx.request.body as unknown as IUpdatePlayer;
-      const updateRes = await playerService.updateUserPlayer(
-        requestBody as IUpdatePlayer,
-        userId
-      );
-      ctx.body = updateRes;
-      ctx.status = HTTPCodes.OK;
-      await next();
-    } catch (e) {
-      logger.error(e);
-      ctx.body = e.message;
-      ctx.status = HTTPCodes.SERVER_ERROR;
-      await next();
-    }
+router.put("/userPlayer", RequireAuth, async (ctx, next: Next) => {
+  try {
+    const userId = ctx.state.user.id;
+    const requestBody = ctx.request.body as IUpdatePlayer;
+    const updateRes = await playerService.updateUserPlayer(
+      requestBody as IUpdatePlayer,
+      userId
+    );
+    ctx.body = updateRes;
+    ctx.status = HTTPCodes.OK;
+    await next();
+  } catch (e) {
+    logger.error(e);
+    ctx.body = e.message;
+    ctx.status = HTTPCodes.SERVER_ERROR;
+    await next();
   }
-);
+});
 
 router.get(
   "/:userId",

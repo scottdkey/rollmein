@@ -1,6 +1,6 @@
-import { addToContainer, container } from "../../container";
-import { LoggerService } from "../../logger/logger.service";
-import { DatabaseService } from "../database/database.service";
+import { addToContainer, container } from "../container.js";
+import { LoggerService } from "../logger/logger.service.js";
+import { DatabaseService } from "../database/database.service.js";
 
 @addToContainer()
 export abstract class DataServiceAbstract<DbType, DataType> {

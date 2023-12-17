@@ -1,13 +1,19 @@
-import { IApplicationError } from "../../../web/src/types/ApplicationError";
+import { IApplicationError } from "../types/ApplicationError";
 
-
-
-export function createError({type, message, context, stacktrace, detail}: IApplicationError): IApplicationError {
+export function createError({
+  type,
+  message,
+  context,
+  stacktrace,
+  detail,
+  status,
+}: IApplicationError) {
   return {
+    status,
     type,
     message,
     context,
     stacktrace,
-    detail
-  }
+    detail,
+  };
 }

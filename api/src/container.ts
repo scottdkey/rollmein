@@ -1,9 +1,14 @@
 import { Container, injectable } from "inversify";
-import { LoggerService } from "./logger/logger.service";
-import { DateService } from "./common/date/date.service";
+import pino from "pino";
 
 export const container = new Container({ defaultScope: "Singleton" });
-const logger = new LoggerService(new DateService()).getLogger("container");
+const logger = pino({
+  name: "container",
+  level: "trace",
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  //@ts-ignore
+  prettifier: import("pino-pretty"),
+});
 
 export function addToContainer() {
   return function (target: any) {

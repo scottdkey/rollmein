@@ -1,18 +1,17 @@
 import { Next, ParameterizedContext } from "koa";
-import { SessionService } from "../../session/session.service";
-import { container } from "../../container";
-import { ConfigService } from "../config/config.service";
-import { DateService } from "../date/date.service";
+import { SessionService } from "../session/session.service.js";
+import { container } from "../container.js";
+import { ConfigService } from "../config/config.service.js";
+import { DateService } from "../date/date.service.js";
 
 const sessionService = container.get(SessionService);
 const date = container.get(DateService);
 const serverConfig = container.get(ConfigService).serverConfig;
 
-
 /**
  * This middleware is intended to refresh the internal session
- * @param ctx 
- * @param next 
+ * @param ctx
+ * @param next
  */
 export async function RefreshSession(ctx: ParameterizedContext, next: Next) {
   const user = ctx.state.user;

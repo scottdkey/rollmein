@@ -1,12 +1,12 @@
-import { UserService } from "./user.service";
-import { container } from "../container";
+import { UserService } from "./user.service.js";
+import { container } from "../container.js";
 import Router from "koa-router";
 import { Next, ParameterizedContext } from "koa";
-import { SessionService } from "../session/session.service";
-import { PlayerService } from "../player/player.service";
-import { RequireAuth } from "../common/middleware/requireAuth.middleware";
-import { isAuth } from "../common/middleware/isAuth";
-import { HTTPCodes } from "../../../web/src/types/HttpCodes.enum";
+import { SessionService } from "../session/session.service.js";
+import { PlayerService } from "../player/player.service.js";
+import { RequireAuth } from "../middleware/requireAuth.middleware.js";
+import { isAuth } from "../middleware/isAuth.js";
+import { HTTPCodes } from "../types/HttpCodes.enum.js";
 
 const router = new Router({
   prefix: "/user",
@@ -30,12 +30,17 @@ router.get("/me", RequireAuth, async (ctx, next) => {
 
 router.put(
   "/profile",
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  //@ts-expect-error
   isAuth,
   RequireAuth,
-  async (ctx: ParameterizedContext, next: Next) => {
+  async (ctx, next: Next) => {
     try {
-      if (ctx.request.body && ctx.request.body.username) {
-        const username = ctx.request.body.username as string;
+      const body: { username: string | undefined } = ctx.request.body as
+        | any
+        | undefined;
+      if (body && body.username) {
+        const username = body.username as string;
 
         const sessionId = ctx.state.token as string;
 
@@ -47,7 +52,7 @@ router.put(
           ctx.body = res.scrubbedUser;
         }
         if (!sessionId) {
-          ctx.status = HTTPCodes.INTERNAL_SERVER_ERROR;
+          ctx.status = HTTPCodes.SERVER_ERROR;
           ctx.body = {
             error: "Error updating profile",
           };

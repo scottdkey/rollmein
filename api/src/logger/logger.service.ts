@@ -1,25 +1,23 @@
-import { addToContainer } from "../container";
-import pino, { Logger } from "pino"
-import dotenv from "dotenv"
-import { DateService } from "../common/date/date.service";
-dotenv.config()
-
+import { addToContainer } from "../container.js";
+import pino, { Logger } from "pino";
+import dotenv from "dotenv";
+import { DateService } from "../date/date.service.js";
+dotenv.config();
 
 @addToContainer()
 export class LoggerService {
-    private readonly prod: boolean
-    constructor(private date: DateService) {
-        this.prod = process.env.NODE_ENV === 'production'
-    }
-    timestamp(): string {
-        return this.date.now().toISOString()
-    }
+  private readonly prod: boolean;
+  constructor(private date: DateService) {
+    this.prod = process.env.NODE_ENV === "production";
+  }
+  timestamp(): string {
+    return this.date.now().toISOString();
+  }
 
-    getLogger(context: string): Logger {
-        return pino({
-            name: context,
-            level: this.prod ? "info": "debug",
-            prettifier: require('pino-pretty')
-        })
-    }
+  getLogger(context: string): Logger {
+    return pino({
+      name: context,
+      level: this.prod ? "trace" : "debug",
+    });
+  }
 }

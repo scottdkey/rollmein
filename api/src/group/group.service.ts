@@ -1,16 +1,13 @@
 import { Logger } from "pino";
-import {
-  ICreateGroup,
-  IGroup,
-  IUpdateGroup,
-} from "../../../web/src/types/Group";
-import { addToContainer } from "../container";
-import { LoggerService } from "../logger/logger.service";
-import { PlayerService } from "../player/player.service";
-import { createError } from "../utils/CreateError";
-import { GroupRepository } from "./group.repository";
-import { GroupWsService } from "./groupWs.service";
-import { ErrorTypes } from "../../../web/src/types/ErrorCodes.enum";
+import { ICreateGroup, IGroup, IUpdateGroup } from "../types/Group.js";
+import { addToContainer } from "../container.js";
+import { LoggerService } from "../logger/logger.service.js";
+import { PlayerService } from "../player/player.service.js";
+import { createError } from "../utils/CreateError.js";
+import { GroupRepository } from "./group.repository.js";
+import { GroupWsService } from "./groupWs.service.js";
+import { ErrorTypes } from "../types/ErrorCodes.enum.js";
+import { HTTPCodes } from "../types/HttpCodes.enum.js";
 
 @addToContainer()
 export class GroupService {
@@ -40,7 +37,7 @@ export class GroupService {
   async getGroups() {
     const res = await this.groupRepo.getGroups();
     if (res) {
-      const sorted = res.sort((a: any, b: any) => {
+      const sorted = res.sort((a: IGroup, b: IGroup) => {
         const date1 = new Date(a.createdAt).getMilliseconds();
 
         const date2 = new Date(b.createdAt).getMilliseconds();
@@ -110,6 +107,7 @@ export class GroupService {
         message: "Error updating group",
         type: ErrorTypes.GROUP_ERROR,
         context: "GroupService.updateGroup",
+        status: HTTPCodes.SERVER_ERROR,
       });
     }
   }
@@ -147,7 +145,7 @@ export class GroupService {
     userId: string
   ) {
     const group = await this.getGroup(groupId, userId);
-    if (group.auth && group) {
+    if (group.auth === true && group.group) {
       const nulledUserInput = { ...input, userId: null };
       const player = await this.playerService.createPlayer(nulledUserInput);
       if (player) {
@@ -262,6 +260,7 @@ export class GroupService {
           message: "Not authorized",
           type: ErrorTypes.APP_ERROR,
           context: "deleteGroup",
+          status: HTTPCodes.NOT_AUTHORIZED,
         });
       }
       return await this.groupRepo.deleteByUserId(id, userId);
@@ -270,6 +269,7 @@ export class GroupService {
         message: "Group not found",
         type: ErrorTypes.APP_ERROR,
         context: "deleteGroup",
+        status: HTTPCodes.NOT_FOUND,
       });
     }
   }
@@ -287,34 +287,32 @@ export class GroupService {
   }
 
   async userJoinGroup(groupId: string, userId: string) {
-    try {
-      const player = await this.playerService.getPlayerByUserId(userId);
-      const groupRes = await this.getGroup(groupId, userId);
-      if (groupRes.group && groupRes.auth && player) {
-        const updatedGroup = await this.addMember(groupId, userId, player);
-        return updatedGroup;
-      }
+    const player = await this.playerService.getPlayerByUserId(userId);
+    const groupRes = await this.getGroup(groupId, userId);
+
+    if (groupRes.group && groupRes.auth && player) {
+      const updatedGroup = await this.addMember(groupId, userId, player);
+      return updatedGroup;
+    }
+    if (!player) {
       throw createError({
-        message: "Not authorized",
-        type: ErrorTypes.APP_ERROR,
+        message: "No User Player Found",
+        type: ErrorTypes.PLAYER_ERROR,
         context: "userJoinGroup",
-        detail: {
-          ...groupRes,
-        },
-      });
-    } catch (e) {
-      const error = createError({
-        type: ErrorTypes.GROUP_ERROR,
+        status: HTTPCodes.BAD_REQUEST,
         detail: {
           groupId,
-          userId,
         },
-        context: "userJoinGroup",
-        message: e.message,
-        stacktrace: e.stacktrace,
       });
-      this.logger.error(error);
-      throw error;
     }
+    throw createError({
+      message: "Not authorized",
+      type: ErrorTypes.APP_ERROR,
+      context: "userJoinGroup",
+      status: HTTPCodes.NOT_AUTHORIZED,
+      detail: {
+        ...groupRes,
+      },
+    });
   }
 }

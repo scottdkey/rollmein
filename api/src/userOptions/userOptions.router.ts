@@ -1,16 +1,14 @@
-import { ParameterizedContext } from "koa";
 import Router from "koa-router";
-import { container } from "../container";
-import { UserOptionsService } from "./userOptions.service";
-import { HTTPCodes } from "../../../web/src/types/HttpCodes.enum";
-import { UserOptionsInput } from "../../../web/src/types/UserOptions";
+import { HTTPCodes } from "../types/HttpCodes.enum.js";
+import { container } from "../container.js";
+import { UserOptionsService } from "./userOptions.service.js";
 
 const optionsService = container.get(UserOptionsService);
 const router = new Router({
   prefix: "/options",
 });
 
-router.get("/", async (ctx: ParameterizedContext, next) => {
+router.get("/", async (ctx, next) => {
   if (ctx.state.user) {
     const res = await optionsService.getUserOptions(ctx.state.user.id);
     if (res) {
@@ -18,7 +16,7 @@ router.get("/", async (ctx: ParameterizedContext, next) => {
       ctx.status = HTTPCodes.OK;
     }
     if (!res) {
-      ctx.status = HTTPCodes.INTERNAL_SERVER_ERROR;
+      ctx.status = HTTPCodes.SERVER_ERROR;
       ctx.body = {
         error: "Error getting user options",
       };
@@ -28,17 +26,17 @@ router.get("/", async (ctx: ParameterizedContext, next) => {
   await next();
 });
 
-router.post("/", async (ctx: ParameterizedContext, next) => {
+router.post("/", async (ctx, next) => {
   if (ctx.state.user) {
     const userId: string = ctx.state.user.id;
-    const params: UserOptionsInput = ctx.params;
+    const params: UserOptionsInput = ctx.params as any;
     const updateOptions = await optionsService.updateOptions(userId, params);
     if (updateOptions) {
       ctx.body = updateOptions;
       ctx.status = HTTPCodes.OK;
     }
     if (!updateOptions) {
-      ctx.status = HTTPCodes.INTERNAL_SERVER_ERROR;
+      ctx.status = HTTPCodes.SERVER_ERROR;
       ctx.body = {
         error: "Error updating user options",
       };

@@ -1,11 +1,11 @@
 import { Logger } from "pino";
-import { DataServiceAbstract } from "../common/data/dataService.abstract";
-import { DatabaseService } from "../common/database/database.service";
-import { addToContainer } from "../container";
-import { LoggerService } from "../logger/logger.service";
-import { createError } from "../utils/CreateError";
-import { ErrorTypes } from "../../../web/src/types/ErrorCodes.enum";
-import { DbUserOptions, UserOptions, UserOptionsInput } from "../../types/UserOptions";
+import { DataServiceAbstract } from "../data/dataService.abstract.js";
+import { DatabaseService } from "../database/database.service.js";
+import { addToContainer } from "../container.js";
+import { LoggerService } from "../logger/logger.service.js";
+import { createError } from "../utils/CreateError.js";
+import { ErrorTypes } from "../types/ErrorCodes.enum.js";
+import { HTTPCodes } from "../types/HttpCodes.enum.js";
 
 @addToContainer()
 export class UserOptionsService extends DataServiceAbstract<
@@ -76,6 +76,7 @@ export class UserOptionsService extends DataServiceAbstract<
         message: "userId does not match userOptions.userId",
         context: "validateUserOptionsInput",
         type: ErrorTypes.AUTH_ERROR,
+        status: HTTPCodes.BAD_REQUEST,
       });
       this.logger.error(error);
       throw error;
@@ -85,6 +86,7 @@ export class UserOptionsService extends DataServiceAbstract<
         message: "null input",
         context: "validateUserOptionsInput",
         type: ErrorTypes.INPUT_ERROR,
+        status: HTTPCodes.BAD_REQUEST,
       });
       this.logger.error(error);
 

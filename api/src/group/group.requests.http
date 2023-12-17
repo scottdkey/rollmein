@@ -1,0 +1,67 @@
+### GET all
+GET http://localhost:8000/group/
+Accept: application/json
+
+### GET by id
+GET http://localhost:8000/group/a8e955ff-de63-4bde-a7d7-81285581d4e6
+Accept: application/json
+
+### POST Create group
+### RollType can be ffa or role
+POST http://localhost:8000/group/
+Content-Type: application/json
+Authorization: Bearer 81d359ed-bf33-4ab7-8aa3-9e98186b4486
+
+{
+  "name": "second",
+  "rollType": "ffa",
+  "membersCanUpdate": false,
+  "lockAfterOut": false
+}
+
+
+
+### PUT Update Group
+
+PUT http://localhost:8000/group/
+Content-Type: application/json
+Authorization: Bearer ce9d7769-4bf1-42e6-b695-38491f1479d3
+
+{
+  "id": "a8e955ff-de63-4bde-a7d7-81285581d4e6",
+  "name": "second",
+  "rollType": "ffa",
+  "membersCanUpdate": true,
+  "lockAfterOut": true,
+  "memberId": "test4",
+  "playerId": "test4"
+}
+
+### DELETE group not fully implmented
+DELETE http://localhost:8000/group/
+Authorization: Bearer ce9d7769-4bf1-42e6-b695-38491f1479d3
+Accept: application/json
+
+### add player
+POST http://localhost:8000/group/addPlayer
+Content-Type: application/json
+Authorization: Bearer 81d359ed-bf33-4ab7-8aa3-9e98186b4486
+
+{
+  "groupId": "a8e955ff-de63-4bde-a7d7-81285581d4e6",
+  "userId": null,
+  "name": "first",
+  "tank": true,
+  "healer": true,
+  "dps": true,
+  "locked": true,
+  "inTheRoll": true
+}
+### join group
+POST http://localhost:8000/group/joinGroup
+Content-Type: application/json
+Authorization: Bearer 81d359ed-bf33-4ab7-8aa3-9e98186b4486
+
+{
+  "groupId": "a8e955ff-de63-4bde-a7d7-81285581d4e6"
+}

@@ -1,11 +1,11 @@
-import { RollService } from "./roll.service";
-import { container } from "../container";
+import { RollService } from "./roll.service.js";
+import { container } from "../container.js";
 import Router from "koa-router";
-import { LoggerService } from "../logger/logger.service";
-import { RequireAuth } from "../common/middleware/requireAuth.middleware";
-import { RollUtilities } from "./roll.utilities";
+import { LoggerService } from "../logger/logger.service.js";
+import { RequireAuth } from "../middleware/requireAuth.middleware.js";
+import { RollUtilities } from "./roll.utilities.js";
 import { ParameterizedContext } from "koa";
-import { HTTPCodes } from "../../../web/src/types/HttpCodes.enum";
+import { HTTPCodes } from "../types/HttpCodes.enum.js";
 
 const router = new Router({ prefix: "/roll" });
 
@@ -67,9 +67,11 @@ router.post(
   }
 );
 
-router.get("/inCount", RequireAuth, async (ctx: ParameterizedContext, next) => {
+router.get("/inCount", RequireAuth, async (ctx, next) => {
   try {
-    const requestBody = ctx.request.body;
+    const requestBody = ctx.request.body as {
+      players: IPlayer[] | undefined;
+    };
     if (requestBody && requestBody.players) {
       const res = rollUtilities.inCount(requestBody.players as IPlayer[]);
       ctx.body = {
@@ -84,7 +86,7 @@ router.get("/inCount", RequireAuth, async (ctx: ParameterizedContext, next) => {
   }
 });
 
-router.post("start", RequireAuth, async (ctx: ParameterizedContext, next) => {
+router.post("start", RequireAuth, async (ctx, next) => {
   try {
     const body = ctx.request.body as {
       groupId: string | undefined;

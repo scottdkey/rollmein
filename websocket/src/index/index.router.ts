@@ -1,16 +1,10 @@
-import Router from 'koa-router'
+import { Router } from "express";
 
+const indexRouter = Router();
 
-const indexRouter = new Router()
+indexRouter.get("/", (_, res, next) => {
+  res.send({ message: "index" });
+  next();
+});
 
-indexRouter.get("/", async (ctx, next) => {
-  ctx.body = 'index'
-  await next()
-})
-
-indexRouter.get('/hello', async (ctx, next) => {
-  ctx.body = 'bye'
-  await next()
-})
-
-export default indexRouter
+export { indexRouter };
