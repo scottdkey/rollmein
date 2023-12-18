@@ -1,13 +1,13 @@
 import { Logger } from "pino";
 import { addToContainer } from "../container.js";
 import { GroupService } from "../group/group.service.js";
-import { GroupWsService } from "../group/groupWs.service.js";
 import { LoggerService } from "../logger/logger.service.js";
 import { PlayerService } from "../player/player.service.js";
 import { RollRepository } from "./roll.repository.js";
 import { RollUtilities } from "./roll.utilities.js";
 import { GroupCountService } from "../groupCount/groupCount.service.js";
 import { IGroup } from "../types/Group.js";
+import { SocketService } from "../socket/socket.service.js";
 
 @addToContainer()
 export class RollService {
@@ -16,10 +16,10 @@ export class RollService {
     private ls: LoggerService,
     private groupService: GroupService,
     private playerService: PlayerService,
-    private webSocketService: GroupWsService,
     private rollUtilities: RollUtilities,
     private rollRepository: RollRepository,
-    private groupCountService: GroupCountService
+    private groupCountService: GroupCountService,
+    private socket: SocketService
   ) {
     this.logger = this.ls.getLogger(RollService.name);
   }
@@ -131,7 +131,7 @@ export class RollService {
 
       await this.updatePlayersAfterRoll(group, rollReturn);
 
-      await this.webSocketService.rollUpdated(groupId, rollReturn);
+      await this.socket.io.emit(`group-${group.id}`, rollReturn);
 
       await this.rollRepository.setRollToCache(groupId, rollReturn);
 

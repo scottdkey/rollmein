@@ -23,8 +23,7 @@ services:
     volumes:
       - redis_data:/data
   api:
-    hostname: "api"
-    container_name: "api"
+    container_name: api
     build:
       context: ../api
       dockerfile: Dockerfile.dev
@@ -35,6 +34,8 @@ services:
     environment:
       - POSTGRES_HOST=database
       - REDIS_HOST=redis
+      - WEBSOCKET_HOST=http://websocket
+      - WEBSOCKET_PORT=8050
     ports:
       - 8000:8000
     expose:
@@ -43,8 +44,7 @@ services:
       - database
       - redis
   websocket:
-    hostname: "websocket"
-    container_name: "websocket"
+    container_name: websocket
     build:
       context: ../websocket
       dockerfile: Dockerfile.dev

@@ -12,7 +12,7 @@ import helmet from "helmet";
 import { AuthService } from "./auth/auth.service.js";
 
 const config = container.get(ConfigService).serverConfig;
-const logger = container.get(LoggerService).getLogger("index.ts");
+const logger = container.get(LoggerService).getLogger("Application");
 const app = Express();
 const socketHttp = http.createServer(app);
 export const socketServer = new SocketServer(socketHttp);
@@ -32,6 +32,7 @@ const server = async () => {
         socket.handshake.auth.key
       );
       if (!validAuth) {
+        logger.info({}, "unable to validate token, disconnecting client");
         socket.disconnect();
       }
 

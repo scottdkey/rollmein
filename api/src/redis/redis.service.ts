@@ -16,7 +16,7 @@ export class RedisService {
     this.logger = this.ls.getLogger(RedisService.name);
     this.connect()
       .then((res) => {
-        this.logger.info(res, "redis connected");
+        this.logger.debug(res, "redis connected");
       })
       .catch((e) => {
         this.logger.error(e);

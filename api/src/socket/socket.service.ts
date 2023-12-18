@@ -7,15 +7,13 @@ import { LoggerService } from "../logger/logger.service.js";
 @addToContainer()
 export class SocketService {
   private logger: Logger;
-  socketConnection: Socket;
-  constructor(
-    private ls: LoggerService,
-    private config: ConfigService,
-  ) {
+  private retryCount = 0;
+  io: Socket;
+  constructor(private ls: LoggerService, private config: ConfigService) {
     this.logger = this.ls.getLogger(SocketService.name);
     this.init();
   }
-  init = async () => {
+  private init = async () => {
     const socket = io(
       `${this.config.serverConfig.websocketHost}:${this.config.serverConfig.websocketPort}`,
       {
@@ -24,20 +22,29 @@ export class SocketService {
         },
       }
     );
-    socket.io.on("open", async () => {
-      this.logger.info("connection open");
+    socket.on("open", async () => {
+      this.logger.debug("connection open");
+      this.retryCount = 0;
     });
-    socket.io.on("close", async () => {
-      this.logger.info("connection closed");
+    socket.onAny((message) => {
+      this.logger.info(message);
     });
-    this.socketConnection = socket;
-    this.connect().catch((e) => {
-      this.logger.error(e, "unable to connect to socket");
+    socket.on("close", async () => {
+      this.logger.warn({}, "disconnected from server");
     });
-  };
-
-  connect = async () => {
-    await this.socketConnection.connect();
-    this.logger.info("socket connected");
+    socket.on("reconnect_attempt", () => {
+      this.io.connect();
+      console.log(this.config.serverConfig);
+      this.logger.warn(
+        { retryCount: this.retryCount },
+        "attempting to reconnect"
+      );
+      this.retryCount++;
+    });
+    socket.on("error", async (e) => {
+      this.logger.error({ ...e }, "websocket error");
+    });
+    socket.connect();
+    this.io = socket;
   };
 }

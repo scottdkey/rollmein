@@ -3,9 +3,10 @@ import pino from "pino";
 
 export const container = new Container({ defaultScope: "Singleton" });
 const logger = pino({
-  name: "container",
+  name: "Container",
   level: "trace",
 });
+container.load();
 export function addToContainer() {
   return function (target: any) {
     logger.debug(`${target.name} added to container`);

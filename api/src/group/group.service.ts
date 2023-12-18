@@ -5,9 +5,9 @@ import { LoggerService } from "../logger/logger.service.js";
 import { PlayerService } from "../player/player.service.js";
 import { createError } from "../utils/CreateError.js";
 import { GroupRepository } from "./group.repository.js";
-import { GroupWsService } from "./groupWs.service.js";
 import { ErrorTypes } from "../types/ErrorCodes.enum.js";
 import { HTTPCodes } from "../types/HttpCodes.enum.js";
+import { SocketService } from "../socket/socket.service.js";
 
 @addToContainer()
 export class GroupService {
@@ -16,7 +16,7 @@ export class GroupService {
     private groupRepo: GroupRepository,
     private ls: LoggerService,
     private playerService: PlayerService,
-    private groupWs: GroupWsService
+    private socket: SocketService
   ) {
     this.logger = this.ls.getLogger(GroupService.name);
   }
@@ -56,10 +56,8 @@ export class GroupService {
     return await this.groupRepo.createGroup(userId, createParams);
   }
 
-  async updateActiveGroup(group: IGroup) {
-    const res = await this.groupRepo.updateGroup(group);
-    await this.groupWs.groupUpdated(group);
-    return res;
+  async updateGroupSocket(group: IGroup) {
+    await this.socket.io.emit(`/group/${group.id}`, group);
   }
 
   async updateGroup(
@@ -96,11 +94,25 @@ export class GroupService {
             ? updateValueInput.membersCanUpdate
             : group.membersCanUpdate;
         const res = await this.groupRepo.updateGroup(group);
-        this.groupWs.groupUpdated(group);
-
+        if (res === null) {
+          throw createError({
+            type: ErrorTypes.GROUP_ERROR,
+            message: "update failed",
+            context: "updateGroup",
+            status: HTTPCodes.SERVER_ERROR,
+          });
+        }
+        if (res) {
+          await this.updateGroupSocket(res);
+        }
         return res;
       }
-      return null;
+      throw createError({
+        type: ErrorTypes.GROUP_ERROR,
+        message: "update failed",
+        context: "updateGroup",
+        status: HTTPCodes.SERVER_ERROR,
+      });
     } catch (e) {
       this.logger.error(e);
       throw createError({
@@ -133,8 +145,7 @@ export class GroupService {
         group.relations.players,
         player.id
       );
-      this.groupWs.playerWasAdded(player);
-      return await this.updateActiveGroup(group);
+      return await this.updateGroupSocket(group);
     }
     return null;
   }
@@ -162,9 +173,15 @@ export class GroupService {
       group.relations.players = group.relations.players.filter(
         (value: string) => value === playerId
       );
-      return await this.updateActiveGroup(group);
+      await this.updateGroupSocket(group);
+      return group;
     }
-    return null;
+    throw createError({
+      message: "group not found",
+      context: "removePlayer",
+      status: HTTPCodes.NOT_FOUND,
+      type: ErrorTypes.GROUP_ERROR,
+    });
   }
 
   async addMember(groupId: string, userId: string, player: IPlayer) {
@@ -180,10 +197,8 @@ export class GroupService {
         return group;
       }
 
-      this.groupWs.playerJoinedGroup(player);
-
       if (group) {
-        return await this.updateActiveGroup(group);
+        return await this.updateGroupSocket(group);
       }
 
       if (!group) {
@@ -200,9 +215,8 @@ export class GroupService {
         const group = await this.setupUpdateGeneric(groupId, userId);
         if (group && groupPlayer) {
           const newGroup = await this.pushPlayerToGroup(group, groupPlayer);
-          const res = await this.updateActiveGroup(newGroup);
-          this.groupWs.playerJoinedGroup(groupPlayer);
-          return res;
+          await this.updateGroupSocket(newGroup);
+          return newGroup;
         }
       }
       return null;
@@ -233,22 +247,31 @@ export class GroupService {
     };
   }
 
-  async removeMember(group: IGroup, userId: string) {
-    const setupGroup = await this.setupUpdateGeneric(group.id, userId);
-    const player = await this.playerService.getGroupPlayer(userId, group.id);
+  async removeMember(input: IGroup, userId: string) {
+    const group = await this.setupUpdateGeneric(input.id, userId);
+    const player = await this.playerService.getGroupPlayer(userId, input.id);
 
-    if (player && setupGroup) {
-      group.relations.members = setupGroup.relations.members.filter(
+    if (player && group) {
+      group.relations.members = group.relations.members.filter(
         (value: string) => value !== userId
       );
-      group.relations.players = setupGroup.relations.players.filter(
+      group.relations.players = group.relations.players.filter(
         (value: string) => value !== player.id
       );
       await this.playerService.deletePlayer(player.id);
-      await this.groupWs.playerLeftGroup(player);
+      await this.updateGroupSocket(group);
+      return group;
     }
-
-    await this.updateActiveGroup(group);
+    throw createError({
+      type: ErrorTypes.GROUP_ERROR,
+      message: "player or group not found",
+      context: "removeMember",
+      status: HTTPCodes.NOT_FOUND,
+      detail: {
+        group,
+        player,
+      },
+    });
   }
 
   async deleteGroup(id: string, userId: string): Promise<boolean> {
@@ -292,6 +315,14 @@ export class GroupService {
 
     if (groupRes.group && groupRes.auth && player) {
       const updatedGroup = await this.addMember(groupId, userId, player);
+      if (updatedGroup === null) {
+        throw createError({
+          message: "updated group returned null",
+          context: "userJoinGroup",
+          type: ErrorTypes.GROUP_ERROR,
+          status: HTTPCodes.SERVER_ERROR,
+        });
+      }
       return updatedGroup;
     }
     if (!player) {

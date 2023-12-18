@@ -1,11 +1,11 @@
 import { addToContainer } from "../container.js";
 import { PlayerRepository } from "./player.repository.js";
-import { GroupWsService } from "../group/groupWs.service.js";
 import { Logger } from "pino";
 import { LoggerService } from "../logger/logger.service.js";
 import { createError } from "../utils/CreateError.js";
 import { ErrorTypes } from "../types/ErrorCodes.enum.js";
 import { HTTPCodes } from "../types/HttpCodes.enum.js";
+import { SocketService } from "../socket/socket.service.js";
 
 @addToContainer()
 export class PlayerService {
@@ -13,7 +13,7 @@ export class PlayerService {
   constructor(
     private playerRepo: PlayerRepository,
     private ls: LoggerService,
-    private groupWs: GroupWsService
+    private socket: SocketService
   ) {
     this.logger = this.ls.getLogger(PlayerService.name);
   }
@@ -97,7 +97,7 @@ export class PlayerService {
   async updatePlayer(input: IUpdatePlayer) {
     const res = await this.playerRepo.updatePlayer(input);
     if (res && res.groupId !== null) {
-      this.groupWs.playerUpdated(res);
+      this.socket.io.emit(`player-${input.id}`, res);
     }
     return res;
   }

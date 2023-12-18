@@ -1,103 +1,70 @@
-import { RedisClientType, createClient } from "redis";
+import Redis from "ioredis";
 import { Logger } from "pino";
 import { ConfigService } from "../config/config.service.js";
 import { addToContainer } from "../container.js";
 import { LoggerService } from "../logger/logger.service.js";
-import { v4 as uuidV4 } from "uuid";
 
 @addToContainer()
 export class RedisService {
-  redis: RedisClientType;
+  redis: Redis;
   private logger: Logger;
-  private failureCount = 0;
 
   constructor(private cs: ConfigService, private ls: LoggerService) {
     this.logger = this.ls.getLogger(RedisService.name);
-    this.connect()
-      .then((res) => {
-        this.logger.info(res, "redis connected");
-      })
-      .catch((e) => {
-        this.logger.error(e);
-      });
+    this.redis = new Redis(this.cs.redisConfig.port, this.cs.redisConfig.host);
   }
-  testKey = async () => {
-    return await this.set(
-      "auth",
-      uuidV4(),
-      JSON.stringify({ message: "test" }),
-      10000
-    );
-  };
 
-  private connect = async () => {
-    try {
-      const config = this.cs.redisConfig;
-      await createClient({
-        url: `redis://${config.host}:${config.port}`,
-      })
-        .on("error", (e) => {
-          this.logger.error({
-            message: e.message,
-            context: "redis had an error",
-          });
-          this.failureCount++;
-          this.exitOnHighFailure();
-        })
-        .connect()
-        .then((data) => {
-          this.redis = data as any;
-        });
-    } catch (e) {
-      this.logger.error(e, "unable to connect to redis");
-    }
-  };
-
-  private exitOnHighFailure = () => {
-    if (this.failureCount > 3) {
-      process.exit();
-    }
-  };
-  async get<T>(key: string, id: string): Promise<T | null> {
-    const res = await this.redis.get(`${key}-${id}`);
-    if (res) {
-      return (await JSON.parse(res)) as T;
+  /**
+   *
+   * @param key redis primary key
+   * @param id id of item in the key namespace
+   * @returns data or null if not found
+   */
+  async get<T>(key: string, id: string) {
+    const data = await this.redis.get(`${key}-${id}`);
+    if (data) {
+      return JSON.parse(data) as T;
     }
     return null;
   }
 
-  async refreshExpire<T>(
-    key: string,
-    id: string,
-    expireTime?: number
-  ): Promise<T | null> {
-    const data = await this.get<T>(key, id);
-    if (data) {
-      return await this.setWithRetry<T>(key, id, data, expireTime);
-    }
-    return data;
-  }
-
-  //expire time is in seconds
+  /**
+   *
+   * @param key primary redis key namespace
+   * @param id id in that namespace
+   * @param data data to set in k-v
+   * @param expireTime time in seconds to keep in store will default to 10,000 sec otherwise
+   * @returns the data that was just set
+   */
   async set<T>(
     key: string,
     id: string,
     data: T,
     expireTime = 100000
   ): Promise<T | null> {
-    const res = await this.redis.set(`${key}-${id}`, JSON.stringify(data), {
-      EX: expireTime,
-      NX: true,
-    });
+    const res = await this.redis.set(
+      `${key}-${id}`,
+      JSON.stringify(data),
+      "EX",
+      expireTime
+    );
 
-    console.log(res);
+    this.logger.info(res);
     if (res === "OK") {
       return data;
     }
     return res as T | null;
   }
 
-  //expire time is in seconds
+  /**
+   *
+   * @param key redis namespace key
+   * @param id id of item in namespace
+   * @param data object to set in redis, will be stringified
+   * @param retry how many times to retry
+   * @param expireTime time in seconds to keep in store will default to 10,000 sec otherwise
+   * @returns data that was just set or null if error occurred
+   */
   async setWithRetry<T>(
     key: string,
     id: string,

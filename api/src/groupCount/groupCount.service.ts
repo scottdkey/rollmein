@@ -1,15 +1,15 @@
 import { addToContainer } from "../container.js";
 import { GroupService } from "../group/group.service.js";
-import { GroupWsService } from "../group/groupWs.service.js";
 import { PlayerService } from "../player/player.service.js";
 import { RollUtilities } from "../roll/roll.utilities.js";
+import { SocketService } from "../socket/socket.service.js";
 
 @addToContainer()
 export class GroupCountService {
   constructor(
     private groupService: GroupService,
     private playerService: PlayerService,
-    private groupWs: GroupWsService,
+    private socket: SocketService,
     private rollUtilities: RollUtilities
   ) {}
 
@@ -29,7 +29,7 @@ export class GroupCountService {
 
   async messageIfTooManyLocked(groupId: string, playerCounts: PlayerCounts) {
     if (playerCounts.locked > 5) {
-      this.groupWs.tooManyLocked(groupId, playerCounts.locked);
+      this.socket.io.emit(`/group/${groupId}/counts`, playerCounts);
     }
   }
 
@@ -37,7 +37,7 @@ export class GroupCountService {
     const groupCounts = await this.getGroupPlayerCounts(groupId);
     if (groupCounts) {
       await this.messageIfTooManyLocked(groupId, groupCounts);
-      await this.groupWs.updateGroupCount(groupId, groupCounts);
+      await this.socket.io.emit(`/group/${groupId}/counts`, groupCounts);
     }
   }
 }

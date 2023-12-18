@@ -3,14 +3,14 @@ GET http://localhost:8000/group/
 Accept: application/json
 
 ### GET by id
-GET http://localhost:8000/group/a8e955ff-de63-4bde-a7d7-81285581d4e6
+GET http://localhost:8000/group/fa8ac06a-fe65-48f3-83bf-81d278cea486
 Accept: application/json
 
 ### POST Create group
 ### RollType can be ffa or role
 POST http://localhost:8000/group/
 Content-Type: application/json
-Authorization: Bearer 81d359ed-bf33-4ab7-8aa3-9e98186b4486
+Authorization: Bearer 4d44a098-59b9-4672-9c55-230261d442bc
 
 {
   "name": "second",
@@ -25,10 +25,10 @@ Authorization: Bearer 81d359ed-bf33-4ab7-8aa3-9e98186b4486
 
 PUT http://localhost:8000/group/
 Content-Type: application/json
-Authorization: Bearer ce9d7769-4bf1-42e6-b695-38491f1479d3
+Authorization: Bearer 4d44a098-59b9-4672-9c55-230261d442bc
 
 {
-  "id": "a8e955ff-de63-4bde-a7d7-81285581d4e6",
+  "id": "fa8ac06a-fe65-48f3-83bf-81d278cea486",
   "name": "second",
   "rollType": "ffa",
   "membersCanUpdate": true,
@@ -42,13 +42,17 @@ DELETE http://localhost:8000/group/
 Authorization: Bearer ce9d7769-4bf1-42e6-b695-38491f1479d3
 Accept: application/json
 
+{
+  "id": "fa8ac06a-fe65-48f3-83bf-81d278cea486"
+}
+
 ### add player
 POST http://localhost:8000/group/addPlayer
 Content-Type: application/json
 Authorization: Bearer 81d359ed-bf33-4ab7-8aa3-9e98186b4486
 
 {
-  "groupId": "a8e955ff-de63-4bde-a7d7-81285581d4e6",
+  "groupId": "fa8ac06a-fe65-48f3-83bf-81d278cea486",
   "userId": null,
   "name": "first",
   "tank": true,
@@ -63,5 +67,5 @@ Content-Type: application/json
 Authorization: Bearer 81d359ed-bf33-4ab7-8aa3-9e98186b4486
 
 {
-  "groupId": "a8e955ff-de63-4bde-a7d7-81285581d4e6"
+  "groupId": "fa8ac06a-fe65-48f3-83bf-81d278cea486"
 }
