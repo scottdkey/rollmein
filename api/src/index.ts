@@ -3,13 +3,12 @@ import Koa from "koa";
 import bodyParser from "koa-bodyparser";
 import cors from "koa-cors";
 import { container } from "./container.js";
-import { Routers } from "./routers.js";
+import { RegisterRouters } from "./routers.js";
 import { ConfigService } from "./config/config.service.js";
 import { isAuth } from "./middleware/isAuth.js";
 import { LoggerService } from "./logger/logger.service.js";
 import helmet from "koa-helmet";
 import { RequestLogger } from "./middleware/requestLogger.middleware.js";
-
 
 const logger = container.get(LoggerService).getLogger("IndexLogger");
 const server = async () => {
@@ -30,10 +29,8 @@ const server = async () => {
     })
   );
 
-  Routers.forEach(({ router, routerName }) => {
-    logger.trace(`${routerName} Routes added`);
-    app.use(router.routes()).use(router.allowedMethods());
-  });
+  RegisterRouters(app);
+
 
   return app.listen(config.port, () => {
     const localDomain = `http://localhost:${config.port}`;

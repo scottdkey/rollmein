@@ -17,7 +17,7 @@ export class LoggerService {
   getLogger(context: string): Logger {
     return pino({
       name: context,
-      level: this.prod ? "trace" : "debug",
+      level: this.prod ? "trace" : "info",
     });
   }
 }

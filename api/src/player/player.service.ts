@@ -5,7 +5,7 @@ import { LoggerService } from "../logger/logger.service.js";
 import { createError } from "../utils/CreateError.js";
 import { ErrorTypes } from "../types/ErrorCodes.enum.js";
 import { HTTPCodes } from "../types/HttpCodes.enum.js";
-import { SocketService } from "../socket/socket.service.js";
+import { WebsocketService } from "../socket/websocket.service.js";
 
 @addToContainer()
 export class PlayerService {
@@ -13,7 +13,7 @@ export class PlayerService {
   constructor(
     private playerRepo: PlayerRepository,
     private ls: LoggerService,
-    private socket: SocketService
+    private socket: WebsocketService
   ) {
     this.logger = this.ls.getLogger(PlayerService.name);
   }
@@ -97,7 +97,7 @@ export class PlayerService {
   async updatePlayer(input: IUpdatePlayer) {
     const res = await this.playerRepo.updatePlayer(input);
     if (res && res.groupId !== null) {
-      this.socket.io.emit(`player-${input.id}`, res);
+      this.socket.publish(`player-${input.id}`, [res]);
     }
     return res;
   }

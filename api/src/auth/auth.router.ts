@@ -113,7 +113,7 @@ authRouter.post("/devSession", async (ctx, next) => {
     const devKey = config.serverConfig.devKey;
     const authorized = devKey !== null && parsedBody.devKey === devKey;
     const user = await userService.getById(
-      "c17ef89d-080e-48f2-be67-612b6c917133"
+      "9ec0af8c-dc39-4049-a763-1de9e3474371"
     );
 
     if (authorized && user) {

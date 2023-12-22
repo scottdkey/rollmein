@@ -9,7 +9,7 @@ const logger = pino({
 container.load();
 export function addToContainer() {
   return function (target: any) {
-    logger.debug(`${target.name} added to container`);
+    logger.trace(`${target.name} added to container`);
     const temp = injectable()(target as any);
     container.bind(temp).toSelf();
   };

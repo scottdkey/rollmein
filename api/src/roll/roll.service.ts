@@ -7,7 +7,7 @@ import { RollRepository } from "./roll.repository.js";
 import { RollUtilities } from "./roll.utilities.js";
 import { GroupCountService } from "../groupCount/groupCount.service.js";
 import { IGroup } from "../types/Group.js";
-import { SocketService } from "../socket/socket.service.js";
+import { WebsocketService } from "../socket/websocket.service.js";
 
 @addToContainer()
 export class RollService {
@@ -19,7 +19,7 @@ export class RollService {
     private rollUtilities: RollUtilities,
     private rollRepository: RollRepository,
     private groupCountService: GroupCountService,
-    private socket: SocketService
+    private socket: WebsocketService
   ) {
     this.logger = this.ls.getLogger(RollService.name);
   }
@@ -131,7 +131,7 @@ export class RollService {
 
       await this.updatePlayersAfterRoll(group, rollReturn);
 
-      await this.socket.io.emit(`group-${group.id}`, rollReturn);
+      await this.socket.publish(`group-${group.id}`, [rollReturn]);
 
       await this.rollRepository.setRollToCache(groupId, rollReturn);
 

@@ -7,7 +7,7 @@ import { createError } from "../utils/CreateError.js";
 import { GroupRepository } from "./group.repository.js";
 import { ErrorTypes } from "../types/ErrorCodes.enum.js";
 import { HTTPCodes } from "../types/HttpCodes.enum.js";
-import { SocketService } from "../socket/socket.service.js";
+import { WebsocketService } from "../socket/websocket.service.js";
 
 @addToContainer()
 export class GroupService {
@@ -16,7 +16,7 @@ export class GroupService {
     private groupRepo: GroupRepository,
     private ls: LoggerService,
     private playerService: PlayerService,
-    private socket: SocketService
+    private socket: WebsocketService
   ) {
     this.logger = this.ls.getLogger(GroupService.name);
   }
@@ -57,7 +57,7 @@ export class GroupService {
   }
 
   async updateGroupSocket(group: IGroup) {
-    await this.socket.io.emit(`/group/${group.id}`, group);
+    await this.socket.publish(`/group/${group.id}`, [group]);
   }
 
   async updateGroup(

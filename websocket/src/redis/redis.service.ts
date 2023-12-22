@@ -83,4 +83,20 @@ export class RedisService {
     }
     return null;
   }
+
+  /**
+   *
+   * @param key publishing to to a stream
+   * @param data data payload to publish
+   */
+  async publish<T>(key: string, data: T) {
+    try {
+      await this.redis.publish(key, JSON.stringify(data));
+    } catch (e) {
+      this.logger.error(e, `redis publish error to ${key}`);
+      throw e;
+    }
+  }
+
+  async subscribe(key: string, handler: (data: any) => void) {}
 }

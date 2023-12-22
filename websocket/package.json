@@ -7,13 +7,13 @@
   "author": "Scott Key",
   "license": "MIT",
   "scripts": {
-    "start": "node ./dist/websocket/src/index.js",
+    "start": "node ./dist/index.js",
     "dev": "run-p watch:*",
     "test": "mocha -r ts-node/register src/tests/**/*.test.ts --exit",
     "lint": "eslint",
     "build": "tsc",
     "watch:ts": "tsc -w",
-    "watch:node": "nodemon ./dist/websocket/src/index.js | npx pino-pretty",
+    "watch:node": "nodemon ./dist/index.js | npx pino-pretty",
     "docker:build": "docker build -t scottdkey/rollmein_websocket:$(echo $npm_package_version) -f Dockerfile ../ --no-cache && docker tag scottdkey/rollmein_api:$(echo $npm_package_version) scottdkey/rollmein_api:latest",
     "docker:push": "docker push scottdkey/rollmein_websocket:$(echo $npm_package_version) && docker push scottdkey/rollmein_api:latest"
   },
@@ -34,7 +34,8 @@
     "redis": "^4.6.11",
     "reflect-metadata": "0.2.1",
     "socket.io": "4.7.2",
-    "uuid": "9.0.1"
+    "uuid": "9.0.1",
+    "ws": "^8.15.1"
   },
   "devDependencies": {
     "@types/chai": "4.3.11",
@@ -45,6 +46,7 @@
     "@types/pg": "8.10.9",
     "@types/superagent": "4.1.24",
     "@types/uuid": "9.0.7",
+    "@types/ws": "^8.5.10",
     "@typescript-eslint/eslint-plugin": "6.14.0",
     "@typescript-eslint/parser": "6.14.0",
     "chai": "4.3.10",

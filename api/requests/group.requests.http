@@ -10,7 +10,7 @@ Accept: application/json
 ### RollType can be ffa or role
 POST http://localhost:8000/group/
 Content-Type: application/json
-Authorization: Bearer 4d44a098-59b9-4672-9c55-230261d442bc
+Authorization: Bearer aa477ae1-dff4-4c93-9b7d-a752f4ab91d0
 
 {
   "name": "second",

@@ -5,6 +5,7 @@ import { LoggerService } from "../logger/logger.service.js";
 import { ServerConfig } from "./Server.config.js";
 import { PostgresConfig } from "./Postgres.config.js";
 import { RedisConfig } from "./Redis.config.js";
+import { WebsocketConfig } from "./webSocket.config.js";
 
 @addToContainer()
 export class ConfigService {
@@ -12,6 +13,7 @@ export class ConfigService {
   serverConfig = ServerConfig();
   pgConfig = PostgresConfig();
   redisConfig = RedisConfig();
+  webSocketConfig = WebsocketConfig();
   constructor(private ls: LoggerService) {
     this.logger = this.ls.getLogger(ConfigService.name);
     dotenv.config();
@@ -27,7 +29,11 @@ export class ConfigService {
       },
       {
         configName: "RedisConfig",
-        configObject: RedisConfig,
+        configObject: RedisConfig(),
+      },
+      {
+        configName: "WebsocketConfig",
+        configObject: WebsocketConfig() as any,
       },
     ]);
   }
