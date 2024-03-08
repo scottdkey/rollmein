@@ -1,5 +1,4 @@
-[![Vercel](http://therealsujitk-vercel-badge.vercel.app/?app=therealsujitk-vercel-badge)]
-[![Backend](https://github.com/scottdkey/rollmein/actions/workflows/Backend.yaml/badge.svg)](https://github.com/scottdkey/rollmein/actions/workflows/Backend.yaml)
+
 
 
 
